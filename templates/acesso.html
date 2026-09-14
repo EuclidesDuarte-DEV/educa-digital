@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}{% if modo == "login" %}Entrar fácil{% elif modo == "cadastro" %}Criar conta fácil{% elif modo == "recuperar" %}Recuperar conta{% else %}Conta pronta{% endif %} | Educa+ Digital{% endblock %}
+{% block body_class %}pagina-autenticacao auth-idoso-pagina{% endblock %}
+
+{% block content %}
+{% if modo == "login" %}
+<div class="auth-pagina auth-idoso-layout" data-leitura-principal>
+  <a class="auth-logo" href="{{ url_for('index') }}" aria-label="Voltar para o início do Educa+ Digital">
+    <img src="{{ url_for('static', filename='img/marca/educado.png') }}" alt="Educa+ Digital">
+  </a>
+
+  <div class="auth-idoso-grid auth-idoso-grid-login">
+    <section class="auth-card auth-card-idoso" aria-labelledby="tituloLogin">
+      <nav class="auth-abas" aria-label="Entrar ou criar conta">
+        <a class="auth-aba ativa" href="{{ url_for('login') }}" aria-current="page">Entrar</a>
+        <a class="auth-aba" href="{{ url_for('cadastro') }}">Criar conta</a>
+      </nav>
+
+      <header class="auth-intro">
+        <span class="auth-etapa-selo">ENTRAR É SIMPLES</span>
+        <h1 id="tituloLogin">Bem-vindo(a) de volta</h1>
+        <p>Digite seu celular e sua senha.</p>
+      </header>
+
+      <form class="auth-form" method="post" novalidate>
+        <div class="auth-campo auth-campo-guiado" data-ajuda-auth="Digite o número do seu celular com DDD. Contas antigas também podem usar o nome de acesso.">
+          <span class="auth-passo-numero">1</span>
+          <label for="identificador">Seu celular</label>
+          <input id="identificador" type="text" name="identificador" value="{{ request.form.get('identificador', '') }}" placeholder="Ex.: (65) 99999-9999" autocomplete="username" maxlength="32" required>
+          <small>Contas antigas também podem entrar usando o nome de acesso.</small>
+        </div>
+
+        <div class="auth-campo auth-campo-guiado" data-ajuda-auth="Agora digite sua senha. Você pode tocar em Mostrar para conferir as letras antes de entrar.">
+          <span class="auth-passo-numero">2</span>
+          <label for="senha">Sua senha</label>
+          <span class="campo-senha">
+            <input id="senha" type="password" name="senha" placeholder="Digite sua senha" autocomplete="current-password" required>
+            <button class="mostrar-senha" type="button" data-toggle-senha="senha" aria-label="Mostrar senha">Mostrar</button>
+          </span>
+        </div>
+
+        <button class="auth-botao-principal auth-botao-grande botao botao-principal botao-largo" type="submit">Entrar no Educa+</button>
+
+        <a class="auth-recuperar-link" href="{{ url_for('recuperar_conta') }}">Esqueci minha senha</a>
+
+        <footer class="auth-ajuda-final">
+          <span>Ainda não tem uma conta?</span>
+          <a href="{{ url_for('cadastro') }}">Criar conta fácil</a>
+        </footer>
+      </form>
+    </section>
+
+    <aside class="assistente-auth" id="assistenteAuth" aria-label="Assistente Educa+">
+      <span class="assistente-auth-avatar assistente-auth-avatar-img" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/ai.png') }}" alt=""></span>
+      <span class="assistente-auth-selo">ASSISTENTE EDUCA+</span>
+      <h2>Estou aqui para ajudar</h2>
+      <p id="assistenteAuthTexto">Digite primeiro seu celular. Depois coloque sua senha.</p>
+      <button type="button" class="assistente-auth-ouvir" id="assistenteAuthOuvir"><img class="ui-icon ui-icon-inline" src="{{ url_for('static', filename='img/icones/ui/speaker.svg') }}" alt="" aria-hidden="true"> Ouvir esta ajuda</button>
+      <aside class="assistente-auth-seguranca">
+        <strong>Segurança</strong>
+        <p>Nunca diga sua senha para outra pessoa. O Educa+ não pede sua senha por mensagem ou ligação.</p>
+      </aside>
+    </aside>
+  </div>
+</div>
+
+{% elif modo == "cadastro" %}
+<section class="cadastro-guiado-pagina" data-leitura-principal>
+  <a class="cadastro-guiado-logo" href="{{ url_for('index') }}" aria-label="Voltar para o início do Educa+ Digital">
+    <img src="{{ url_for('static', filename='img/marca/educado.png') }}" alt="Educa+ Digital">
+  </a>
+
+  <section class="cadastro-guiado-apresentacao" aria-labelledby="cadastroApoioTitulo">
+    <span class="auth-etapa-selo">CADASTRO SIMPLES</span>
+    <h1 id="cadastroApoioTitulo">Vamos fazer uma coisa de cada vez.</h1>
+    <p>O cadastro tem somente três etapas: seu nome, seu celular e uma senha.</p>
+    <p class="cadastro-guiado-seguranca"><strong>Importante:</strong> o Educa+ nunca pede sua senha por ligação ou mensagem.</p>
+  </section>
+
+  <dialog class="cadastro-dialogo" id="cadastroDialogo" aria-labelledby="cadastroTitulo" data-etapa-inicial="{{ etapa_cadastro|default(1) }}">
+    <form class="cadastro-etapas-form" method="post" id="formCadastroGuiado" novalidate>
+      <header class="cadastro-dialogo-cabecalho">
+        <div>
+          <span class="cadastro-dialogo-marca">Educa+ Digital</span>
+          <p class="cadastro-progresso-texto" id="cadastroProgressoTexto" aria-live="polite">Etapa 1 de 3</p>
+        </div>
+        <a class="cadastro-dialogo-fechar" href="{{ url_for('index') }}" aria-label="Fechar cadastro e voltar ao início"><img class="ui-icon ui-icon-fechar" src="{{ url_for('static', filename='img/icones/ui/close.svg') }}" alt="" aria-hidden="true"></a>
+      </header>
+
+      <div class="cadastro-progresso" aria-hidden="true">
+        <span class="cadastro-progresso-barra" id="cadastroProgressoBarra"></span>
+      </div>
+
+      {% with avisos_cadastro = get_flashed_messages() %}
+        {% if avisos_cadastro %}
+          <aside class="cadastro-aviso" role="status" aria-live="polite">
+            {{ avisos_cadastro[-1] }}
+          </aside>
+        {% endif %}
+      {% endwith %}
+
+      <section class="cadastro-etapa" data-cadastro-etapa="1" aria-labelledby="cadastroTitulo">
+        <span class="cadastro-etapa-icone" aria-hidden="true">1</span>
+        <p class="cadastro-etapa-chamada">Primeiro, quero conhecer você.</p>
+        <h2 id="cadastroTitulo">Como você se chama?</h2>
+        <p class="cadastro-etapa-ajuda">Digite seu nome completo ou o nome pelo qual você gosta de ser chamado.</p>
+
+        <label class="cadastro-label" for="nome">Seu nome</label>
+        <input class="cadastro-input" id="nome" type="text" name="nome" value="{{ request.form.get('nome', '') }}" placeholder="Ex.: Maria da Silva" autocomplete="name" required>
+        <p class="cadastro-erro" id="erroNome" aria-live="polite"></p>
+
+        <footer class="cadastro-acoes cadastro-acoes-direita">
+          <button class="cadastro-botao cadastro-botao-principal botao botao-principal" type="button" data-proxima-etapa="2">Continuar</button>
+        </footer>
+      </section>
+
+      <section class="cadastro-etapa" data-cadastro-etapa="2" aria-labelledby="tituloEtapaTelefone" hidden>
+        <span class="cadastro-etapa-icone" aria-hidden="true">2</span>
+        <p class="cadastro-etapa-chamada">Muito bem! Agora falta seu contato.</p>
+        <h2 id="tituloEtapaTelefone">Qual é o seu celular?</h2>
+        <p class="cadastro-etapa-ajuda">Digite o número com DDD. Você também poderá usar esse número para entrar na sua conta.</p>
+
+        <label class="cadastro-label" for="telefone">Número de celular</label>
+        <input class="cadastro-input" id="telefone" type="tel" name="telefone" value="{{ request.form.get('telefone', '') }}" placeholder="Ex.: (65) 99999-9999" autocomplete="tel" inputmode="numeric" maxlength="15" required>
+        <p class="cadastro-erro" id="erroTelefone" aria-live="polite"></p>
+
+        <footer class="cadastro-acoes">
+          <button class="cadastro-botao cadastro-botao-secundario botao botao-secundario" type="button" data-voltar-etapa="1"><img class="ui-icon ui-icon-inline" src="{{ url_for('static', filename='img/icones/ui/arrow-left.svg') }}" alt="" aria-hidden="true"> Voltar</button>
+          <button class="cadastro-botao cadastro-botao-principal botao botao-principal" type="button" data-proxima-etapa="3">Continuar</button>
+        </footer>
+      </section>
+
+      <section class="cadastro-etapa" data-cadastro-etapa="3" aria-labelledby="tituloEtapaSenha" hidden>
+        <span class="cadastro-etapa-icone" aria-hidden="true">3</span>
+        <p class="cadastro-etapa-chamada">Última etapa.</p>
+        <h2 id="tituloEtapaSenha">Crie uma senha</h2>
+        <p class="cadastro-etapa-ajuda">Use pelo menos 8 caracteres. Você pode tocar em “Mostrar” para conferir antes de criar a conta.</p>
+
+        <label class="cadastro-label" for="senha">Sua senha</label>
+        <span class="cadastro-campo-senha">
+          <input class="cadastro-input" id="senha" type="password" name="senha" placeholder="Pelo menos 8 caracteres" minlength="8" autocomplete="new-password" required>
+          <button class="cadastro-mostrar-senha" type="button" data-toggle-senha="senha" aria-label="Mostrar senha">Mostrar</button>
+        </span>
+        <p class="cadastro-senha-dica" id="forcaSenha" aria-live="polite">A senha fica protegida e não é mostrada para outras pessoas.</p>
+        <p class="cadastro-erro" id="erroSenha" aria-live="polite"></p>
+
+        <footer class="cadastro-acoes">
+          <button class="cadastro-botao cadastro-botao-secundario botao botao-secundario" type="button" data-voltar-etapa="2"><img class="ui-icon ui-icon-inline" src="{{ url_for('static', filename='img/icones/ui/arrow-left.svg') }}" alt="" aria-hidden="true"> Voltar</button>
+          <button class="cadastro-botao cadastro-botao-principal botao botao-principal" type="submit">Criar minha conta</button>
+        </footer>
+      </section>
+
+      <footer class="cadastro-dialogo-rodape">
+        <span>Já tem uma conta?</span>
+        <a href="{{ url_for('login') }}">Entrar</a>
+      </footer>
+    </form>
+  </dialog>
+</section>
+
+{% elif modo == "recuperar" %}
+<div class="auth-pagina auth-idoso-layout" data-leitura-principal>
+  <div class="auth-idoso-grid auth-idoso-grid-login">
+    <section class="auth-card auth-card-idoso" aria-labelledby="tituloRecuperar">
+      <header class="auth-intro">
+        <span class="auth-etapa-selo">RECUPERAR CONTA</span>
+        <h1 id="tituloRecuperar">Esqueceu a senha? Tudo bem.</h1>
+        <p>Confirme seu nome para entrar e o celular que você cadastrou.</p>
+      </header>
+
+      <form class="auth-form" method="post" novalidate>
+        <div class="auth-campo auth-campo-guiado" data-ajuda-auth="Digite o mesmo nome para entrar que você escolheu quando criou sua conta.">
+          <span class="auth-passo-numero">1</span>
+          <label for="login_nome">Seu nome para entrar</label>
+          <input id="login_nome" name="login_nome" type="text" value="{{ request.form.get('login_nome', '') }}" autocomplete="username" required>
+        </div>
+
+        <div class="auth-campo auth-campo-guiado" data-ajuda-auth="Digite o número de celular com DDD que foi informado no cadastro.">
+          <span class="auth-passo-numero">2</span>
+          <label for="telefone">Seu celular cadastrado</label>
+          <input id="telefone" name="telefone" type="tel" value="{{ request.form.get('telefone', '') }}" placeholder="Ex.: (65) 99999-9999" autocomplete="tel" inputmode="tel" maxlength="18" required>
+          <small>Use o mesmo celular informado quando sua conta foi criada.</small>
+        </div>
+
+        <div class="auth-campo auth-campo-guiado" data-ajuda-auth="Agora crie uma nova senha com pelo menos oito caracteres.">
+          <span class="auth-passo-numero">3</span>
+          <label for="senha">Nova senha</label>
+          <span class="campo-senha">
+            <input id="senha" name="senha" type="password" minlength="8" autocomplete="new-password" required>
+            <button class="mostrar-senha" type="button" data-toggle-senha="senha">Mostrar</button>
+          </span>
+        </div>
+
+        <div class="auth-campo auth-campo-guiado" data-ajuda-auth="Digite a mesma nova senha mais uma vez.">
+          <span class="auth-passo-numero">4</span>
+          <label for="confirmar">Repita a nova senha</label>
+          <span class="campo-senha">
+            <input id="confirmar" name="confirmar" type="password" minlength="8" autocomplete="new-password" required>
+            <button class="mostrar-senha" type="button" data-toggle-senha="confirmar">Mostrar</button>
+          </span>
+        </div>
+
+        <button class="auth-botao-principal auth-botao-grande botao botao-principal botao-largo" type="submit">Criar nova senha</button>
+        <footer class="auth-ajuda-final"><a href="{{ url_for('login') }}"><img class="ui-icon ui-icon-inline" src="{{ url_for('static', filename='img/icones/ui/arrow-left.svg') }}" alt="" aria-hidden="true"> Voltar para entrar</a></footer>
+      </form>
+    </section>
+
+    <aside class="assistente-auth" id="assistenteAuth" aria-label="Assistente Educa+">
+      <span class="assistente-auth-avatar assistente-auth-avatar-img" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/ai.png') }}" alt=""></span>
+      <span class="assistente-auth-selo">ASSISTENTE EDUCA+</span>
+      <h2>Vamos recuperar juntos</h2>
+      <p id="assistenteAuthTexto">Digite seu nome para entrar e o celular que você cadastrou.</p>
+      <button type="button" class="assistente-auth-ouvir" id="assistenteAuthOuvir"><img class="ui-icon ui-icon-inline" src="{{ url_for('static', filename='img/icones/ui/speaker.svg') }}" alt="" aria-hidden="true"> Ouvir esta ajuda</button>
+      <aside class="assistente-auth-seguranca">
+        <strong>Segurança</strong>
+        <p>O Educa+ nunca pede sua senha por ligação ou mensagem.</p>
+      </aside>
+    </aside>
+  </div>
+</div>
+
+{% elif modo == "conta_pronta" %}
+<section class="conta-pronta-pagina" data-leitura-principal>
+  <section class="conta-pronta-card" aria-labelledby="tituloContaPronta">
+    <span class="conta-pronta-check conta-pronta-check-img" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/ui/check.svg') }}" alt=""></span>
+    <span class="auth-etapa-selo">CONTA CRIADA</span>
+    <h1 id="tituloContaPronta">Pronto, {{ nome.split()[0] }}!</h1>
+    <p>Sua conta está pronta. Para entrar novamente, você só precisa do seu celular e da sua senha.</p>
+
+    <div class="conta-pronta-dado">
+      <span>Seu celular para entrar</span>
+      <strong id="telefoneCriado">{{ telefone }}</strong>
+      <button type="button" data-copiar="telefoneCriado">Copiar</button>
+      <small>Na próxima vez, use este celular e sua senha para entrar.</small>
+    </div>
+
+    <aside class="conta-pronta-alerta" aria-label="Aviso de segurança">
+      <strong>Esqueceu a senha?</strong>
+      <p>Toque em “Esqueci minha senha” na tela de entrada para iniciar a recuperação.</p>
+    </aside>
+
+    <a class="auth-botao-principal auth-botao-grande botao botao-principal botao-largo" href="{{ url_for('estudos') }}">Começar meus estudos</a>
+  </section>
+</section>
+
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/acesso.js') }}?v=20260909"></script>
+{% endblock %}

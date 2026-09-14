@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true">
+<rect width="512" height="512" rx="112" fill="#1351B4"/>
+<circle cx="256" cy="178" r="62" fill="#FFFFFF" opacity=".96"/>
+<path d="M134 385c14-83 65-126 122-126s108 43 122 126" fill="#FFFFFF" opacity=".96"/>
+<text x="256" y="445" text-anchor="middle" font-family="Arial,sans-serif" font-size="54" font-weight="800" fill="#FFFFFF">INSS</text>
+</svg>

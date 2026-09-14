@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}{{ aula.titulo }} | Educa+ Digital{% endblock %}
+{% block content %}
+<article
+  class="aula-interativa aula-idoso-limpa"
+  id="aulaInterativa"
+  data-aula-slug="{{ aula.slug }}"
+  data-passo-inicial="{{ passo_inicial }}"
+  data-total-passos="{{ aula.passos|length }}"
+  data-objetivo="{{ aula.resumo|e }}"
+>
+  <div class="aula-interativa-shell">
+    <nav class="aula-interativa-topo aula-topo-simples" aria-label="Voltar para a lista de aulas">
+      <a class="voltar" href="{{ url_for('trilha', slug=trilha.slug) }}">← Voltar para as aulas</a>
+    </nav>
+
+    <header class="aula-interativa-cabecalho aula-cabecalho-limpo aula-cabecalho-minimo">
+      <span class="aula-selo-guiada">AULA GUIADA</span>
+      <h1>{{ aula.titulo }}</h1>
+      <p>Vamos fazer juntos, um passo de cada vez.</p>
+      {% if aula.aviso %}
+        <aside class="aula-aviso-seguranca" aria-label="Aviso importante">
+          <strong>Treinamento seguro:</strong> {{ aula.aviso }}
+        </aside>
+      {% endif %}
+      {% if aula.fonte_url %}
+        <a class="aula-fonte-oficial" href="{{ aula.fonte_url }}" target="_blank" rel="noopener noreferrer">
+          Fonte oficial usada nesta aula: {{ aula.fonte_titulo or 'ver fonte' }} ↗
+        </a>
+      {% endif %}
+    </header>
+
+    <aside class="aula-missao" aria-label="Objetivo desta aula">
+      <span class="aula-missao-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/missao.svg') }}" alt=""></span>
+      <div>
+        <small class="aula-missao-etiqueta">Aprender no seu ritmo</small>
+        <strong>Sua missão de hoje</strong>
+        <p id="aulaObjetivo">{{ aula.resumo }}</p>
+      </div>
+    </aside>
+
+    <section class="aula-modo-aprendizado" aria-label="Escolha como quer aprender">
+      <span>Escolha como quer aprender. Você pode mudar quando quiser.</span>
+      <button class="aula-modo-btn" type="button" data-ouvir-objetivo><span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/ouvir.svg') }}" alt=""></span><span>Ouvir objetivo</span></button>
+      <button class="aula-modo-btn ativo" type="button" data-modo-aula="guiado" aria-pressed="true"><span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/fazer-junto.svg') }}" alt=""></span><span>Fazer comigo</span></button>
+      <button class="aula-modo-btn" type="button" data-modo-aula="sozinho" aria-pressed="false"><span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/praticar.svg') }}" alt=""></span><span>Quero tentar sozinho</span></button>
+    </section>
+
+    <ol class="aula-etapas-simples" aria-label="Etapas do estudo">
+      <li class="aula-etapa ativa" id="etapaAula" data-etapa="aula">
+        <span>1</span>
+        <strong>Aula guiada</strong>
+      </li>
+      <li class="aula-etapa" id="etapaAtividade" data-etapa="atividade">
+        <span>2</span>
+        <strong>Atividades</strong>
+      </li>
+    </ol>
+
+    <aside class="aula-progresso-minimo" aria-label="Progresso da aula">
+      <span class="aula-progresso-barra" aria-hidden="true">
+        <span id="aulaProgressoBarra"></span>
+      </span>
+      <span id="aulaProgressoNumero">0%</span>
+      <span id="aulaProgressoMensagem" class="somente-leitor">Vamos com calma. Uma coisa de cada vez.</span>
+    </aside>
+
+    <div class="aula-passos" id="aulaPassos" aria-label="Passos da aula">
+      {% for passo in aula.passos %}
+        <article class="aula-passo aula-passo-limpo" data-passo="{{ loop.index }}" hidden>
+          <div class="aula-passo-texto" aria-labelledby="passoTitulo{{ loop.index }}">
+            <span class="aula-passo-numero">PASSO {{ loop.index }} DE {{ aula.passos|length }}</span>
+            <h2 id="passoTitulo{{ loop.index }}">{{ passo.instrucao }}</h2>
+
+            <p class="aula-passo-narracao aula-narracao-foco">{{ passo.narracao }}</p>
+
+            <p class="aula-passo-dica-visivel" data-dica-passo hidden>
+              {% if passo.dica %}
+                {{ passo.dica }}
+              {% else %}
+                Procure no celular o mesmo nome mostrado na instrução. Vá com calma.
+              {% endif %}
+            </p>
+
+            <menu class="aula-passo-acoes" aria-label="Ajuda deste passo">
+              <button class="aula-btn-secundario" type="button" data-ouvir-explicacao>
+                <span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/ouvir.svg') }}" alt=""></span>
+                <span>Ouvir</span>
+              </button>
+              <button class="aula-btn-secundario" type="button" data-ver-dica-passo>
+                <span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/dica.svg') }}" alt=""></span>
+                <span>Quero uma dica</span>
+              </button>
+              <button class="aula-btn-secundario" type="button" data-focar-simulador>
+                <span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/mostrar.svg') }}" alt=""></span>
+                <span>Mostrar onde tocar</span>
+              </button>
+            </menu>
+          </div>
+
+          <aside class="aula-simulador-coluna" aria-label="Celular de treino do passo {{ loop.index }}">
+            <span class="aula-simulador-selo">Celular de treino</span>
+            <figure class="aula-simulador {% if passo.tipo == 'computador' %}simulador-computador{% else %}simulador-celular{% endif %}">
+              {{ passo.tela_html|safe }}
+            </figure>
+            <p class="aula-simulador-ajuda" data-feedback-passo>
+              Procure a opção indicada. Você pode tentar quantas vezes precisar.
+            </p>
+          </aside>
+        </article>
+      {% endfor %}
+    </div>
+
+    <section class="aula-atividade-interativa atividade-limpa" id="aulaAtividade" hidden>
+      <section class="atividade-texto" aria-labelledby="atividadePergunta">
+        <span class="aula-passo-numero" id="atividadeNumero">ATIVIDADE</span>
+        <h2 id="atividadePergunta">Agora vamos praticar?</h2>
+        <div class="atividade-ajudas" aria-label="Ajuda para esta atividade">
+          <button class="atividade-btn-dica" id="ouvirPerguntaAtividade" type="button">
+            <span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/ouvir.svg') }}" alt=""></span>
+            <span>Ouvir pergunta</span>
+          </button>
+          <button class="atividade-btn-dica" id="mostrarDicaAtividade" type="button">
+            <span class="educa-ui-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/educa_ui/dica.svg') }}" alt=""></span>
+            <span>Ver uma dica</span>
+          </button>
+        </div>
+
+        <output class="atividade-dica" id="atividadeDica" aria-live="polite" hidden></output>
+        <output class="atividade-feedback" id="atividadeFeedback" aria-live="polite" hidden></output>
+      </section>
+
+      <aside class="aula-simulador-coluna" aria-label="Celular de treino da atividade">
+        <span class="aula-simulador-selo">Celular da atividade</span>
+        <figure class="atividade-celular iphone-atividade" aria-label="Celular de treino da atividade">
+          <span class="iphone-ilha-dinamica" aria-hidden="true"></span>
+          <header class="iphone-status" aria-hidden="true">
+            <strong>10:30</strong>
+            <span>●●● 100%</span>
+          </header>
+          <header class="atividade-celular-topo">
+            <span>Educa+ Digital</span>
+            <strong id="atividadeContador">1 / {{ aula.atividades|length }}</strong>
+          </header>
+          <div class="atividade-celular-tela" id="atividadeOpcoes"></div>
+        </figure>
+        <p class="aula-simulador-ajuda">Toque na resposta que você acha correta.</p>
+      </aside>
+    </section>
+
+    <section class="aula-concluida" id="aulaConcluida" hidden>
+      <span class="aula-concluida-icone aula-concluida-icone-img" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/security.png') }}" alt=""></span>
+      <h2>Parabéns! Você concluiu esta aula.</h2>
+      <p>Você praticou uma situação que poderá usar no dia a dia.</p>
+      <div class="aula-habilidade-conquistada">✓ Habilidade conquistada: {{ aula.titulo }}</div>
+      <a class="aula-btn-principal" id="irProximaAula" href="{{ url_for('estudos_catalogo') }}">Continuar aprendendo</a>
+    </section>
+
+    <nav class="aula-navegacao aula-navegacao-limpa" id="aulaNavegacao" aria-label="Navegação da aula">
+      <button class="aula-btn-nav" id="passoAnterior" type="button">← Passo anterior</button>
+      <button class="aula-btn-principal" id="proximoPasso" type="button" disabled>Próximo passo</button>
+    </nav>
+
+    <footer class="aula-rodape-simples">
+      <p class="aula-instrucao-rodape" id="aulaInstrucaoRodape">
+        Toque no lugar indicado no celular para liberar o próximo passo.
+      </p>
+      <button class="aula-recomecar-discreto" id="recomecarAula" type="button">Começar a aula de novo</button>
+    </footer>
+  </div>
+</article>
+
+<script id="dadosAtividades" type="application/json">{{ aula.atividades|tojson }}</script>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/aula.js') }}?v=20260912-experiencia-guiada"></script>
+{% endblock %}

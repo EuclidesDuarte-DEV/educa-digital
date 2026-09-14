@@ -1,0 +1,1865 @@
+/* Educa+ Digital — Acessibilidade inclusiva e simples */
+
+.atalho-conteudo {
+  position: fixed;
+  left: 16px;
+  top: 12px;
+  z-index: 10000;
+  padding: 12px 16px;
+  transform: translateY(-180%);
+  border-radius: 12px;
+  background: #0b2357;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+}
+.atalho-conteudo:focus { transform: translateY(0); outline: 4px solid #ffd43b; }
+
+.painel-acessibilidade-inclusivo {
+  width: min(460px, calc(100vw - 32px)) !important;
+  padding: 24px !important;
+  border-radius: 26px !important;
+  background: linear-gradient(180deg,#fff 0%,#f8fbff 100%) !important;
+}
+
+.acess-topo-inclusivo { padding-bottom: 16px; border-bottom: 1px solid #e2ecf8; }
+.acess-kicker {
+  display: inline-flex;
+  margin-bottom: 7px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #eef6ff;
+  color: #2863eb;
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.acess-topo-inclusivo h2 { font-size: 1.38rem !important; }
+.acess-topo-inclusivo p { max-width: 340px !important; }
+
+.acess-tela { display: grid; gap: 12px; margin-top: 16px; }
+.acess-card {
+  width: 100%;
+  min-height: 88px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 54px minmax(0,1fr) auto;
+  gap: 13px;
+  align-items: center;
+  border: 1px solid #d9e8fb;
+  border-radius: 19px;
+  background: #fff;
+  color: #0b2357;
+  text-align: left;
+  box-shadow: 0 9px 22px rgba(29,67,121,.06);
+}
+button.acess-card { cursor: pointer; }
+button.acess-card:hover, button.acess-card:focus-visible {
+  border-color: #2863eb;
+  box-shadow: 0 0 0 3px rgba(40,99,235,.10),0 12px 26px rgba(29,67,121,.10);
+  outline: none;
+}
+.acess-card-icone {
+  width: 54px; height: 54px; display: grid; place-items: center;
+  border-radius: 17px;
+  background: linear-gradient(145deg,#eef6ff,#fff);
+  border: 1px solid #d9e8fb;
+  color: #2863eb;
+  font-weight: 900;
+}
+.acess-card-icone img { width: 29px; height: 29px; object-fit: contain; }
+.acess-icone-letra { font-size: 1.2rem; }
+.acess-icone-senior { font-size: 1.05rem; }
+.acess-card-conteudo { display: grid; gap: 3px; min-width: 0; }
+.acess-card-conteudo strong { color: #0b2357; font-size: .98rem; font-weight: 800; }
+.acess-card-conteudo small { color: #657b98; font-size: .78rem; line-height: 1.45; }
+.acess-card-seta { color: #2863eb; font-size: 2rem; font-weight: 500; }
+
+.acess-card-fonte { grid-template-columns: 54px minmax(0,1fr); }
+.controle-fonte-simples { margin-top: 9px !important; gap: 10px !important; }
+.controle-fonte-simples button { width: auto !important; min-width: 50px; height: 42px !important; border-radius: 12px !important; font-size: .95rem !important; font-weight: 800; }
+.controle-fonte-simples span { min-width: 60px !important; font-size: 1rem !important; }
+
+.acess-card-toggle { cursor: pointer; }
+.acess-card-toggle .switch-acess { justify-self: end; }
+.acess-card-audio { grid-template-columns: 54px minmax(0,1fr) auto; }
+.acess-icone-tema { font-size: 1.65rem; line-height: 1; }
+.status-voz-inline {
+  min-height: 0; margin: 2px 0 0; color: #2863eb; font-size: .7rem; font-weight: 800; line-height: 1.35;
+}
+.status-voz-inline:empty { display: none; }
+.acess-acoes-audio { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+.acess-botao-primario,.acess-botao-secundario {
+  min-height: 40px; padding: 8px 12px; border-radius: 11px; font-weight: 800; cursor: pointer;
+}
+.acess-botao-primario { border: 1px solid #2863eb; background: #2863eb; color: #fff; }
+.acess-botao-secundario { border: 1px solid #c9dbf0; background: #fff; color: #0b2357; }
+
+.acess-mais-opcoes {
+  width: 100%; min-height: 62px; padding: 10px 14px; display: grid;
+  grid-template-columns: 34px minmax(0,1fr) auto; align-items: center; gap: 9px;
+  border: 0; border-radius: 15px; background: transparent; color: #47617f; text-align: left; cursor: pointer;
+}
+.acess-mais-opcoes:hover,.acess-mais-opcoes:focus-visible { background: #eef6ff; outline: 3px solid rgba(40,99,235,.12); }
+.acess-mais-opcoes > span:nth-child(2) { display: grid; gap: 2px; }
+.acess-mais-opcoes strong { color: #0b2357; font-size: .9rem; }
+.acess-mais-opcoes small { color: #70839d; font-size: .72rem; }
+
+.acess-subtela { margin-top: 16px; }
+.acess-subtela[hidden] { display: none !important; }
+.acess-voltar {
+  min-height: 40px; padding: 8px 11px; border: 1px solid #d9e8fb; border-radius: 11px;
+  background: #fff; color: #2863eb; font-weight: 800; cursor: pointer;
+}
+.acess-subtitulo { margin: 14px 0 12px; }
+.acess-subtitulo h3 { margin: 0 0 5px; color: #0b2357; font-size: 1.16rem; }
+.acess-subtitulo p { margin: 0; color: #657b98; font-size: .82rem; line-height: 1.45; }
+
+.acess-previa {
+  padding: 14px; border: 1px solid #d9e8fb; border-radius: 17px; background: #fff;
+  box-shadow: 0 8px 20px rgba(29,67,121,.05);
+}
+.acess-previa > strong { color: #0b2357; font-size: .88rem; }
+.acess-previa-estados { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0; }
+.acess-previa-estados span { padding: 6px 9px; border-radius: 9px; border: 1px solid currentColor; font-size: .72rem; font-weight: 800; }
+.previa-sucesso { color: var(--cor-sucesso,#18c97a); }
+.previa-atencao { color: #8a6500; background: #fff8d7; }
+.previa-info { color: var(--cor-primaria-forte,#2863eb); }
+.acess-previa button { min-height: 40px; padding: 8px 15px; border: 0; border-radius: 11px; background: var(--cor-primaria-forte,#2863eb); color: #fff; font-weight: 800; }
+
+.acess-paletas { margin: 14px 0 0; padding: 0; border: 0; display: grid; gap: 8px; }
+.acess-paletas legend,.acess-opcoes-compactas legend { margin-bottom: 8px; color: #0b2357; font-size: .86rem; font-weight: 800; }
+.acess-paleta-opcao {
+  min-height: 62px; padding: 10px 12px; display: grid; grid-template-columns: auto minmax(0,1fr) auto;
+  align-items: center; gap: 10px; border: 1px solid #d9e8fb; border-radius: 15px; background: #fff; cursor: pointer;
+}
+.acess-paleta-opcao:has(input:checked) { border-color: #2863eb; box-shadow: 0 0 0 3px rgba(40,99,235,.10); }
+.acess-paleta-opcao input { width: 20px; height: 20px; accent-color: #2863eb; }
+.acess-paleta-texto { display: grid; gap: 2px; }
+.acess-paleta-texto strong { color: #0b2357; font-size: .86rem; }
+.acess-paleta-texto small { color: #6d819b; font-size: .7rem; line-height: 1.35; }
+.acess-amostras { display: flex; gap: 4px; }
+.acess-amostras i { width: 18px; height: 18px; border-radius: 50%; background: var(--c); border: 1px solid rgba(11,35,87,.12); }
+
+.acess-opcoes-compactas { margin: 0; padding: 12px; display: grid; gap: 7px; border: 1px solid #d9e8fb; border-radius: 16px; background: #fff; }
+.acess-opcoes-compactas label { min-height: 40px; display: flex; align-items: center; gap: 9px; color: #0b2357; font-size: .82rem; font-weight: 700; cursor: pointer; }
+.acess-opcoes-compactas input { width: 19px; height: 19px; accent-color: #2863eb; }
+.acess-linha-nova,.acess-velocidade {
+  min-height: 64px; margin-top: 9px; padding: 11px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border: 1px solid #d9e8fb; border-radius: 15px; background: #fff;
+}
+.acess-linha-nova > span,.acess-velocidade > span { display: grid; gap: 2px; }
+.acess-linha-nova strong,.acess-velocidade strong { color: #0b2357; font-size: .84rem; }
+.acess-linha-nova small,.acess-velocidade small { color: #6d819b; font-size: .7rem; line-height: 1.35; }
+.acess-velocidade { align-items: flex-start; flex-direction: column; }
+.acess-velocidade > div { width: 100%; display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.acess-velocidade button { min-height: 38px; border: 1px solid #cddff2; border-radius: 10px; background: #f7fbff; color: #0b2357; font-size: .7rem; font-weight: 800; cursor: pointer; }
+.acess-velocidade button.ativo { border-color: #2863eb; background: #eef6ff; color: #0b2357; }
+
+/* Restaurar é uma ação global e aparece somente no fim da rolagem.
+   O !important evita que estilos antigos do painel o deixem fixo/sticky. */
+.acess-tela > .acess-rodape-novo {
+  position: static !important;
+  inset: auto !important;
+  z-index: auto !important;
+  width: 100%;
+  margin: 10px 0 2px;
+  padding: 20px 0 4px;
+  border-top: 1px solid #e2ecf8;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.acess-tela > .acess-rodape-novo .btn-restaurar-novo {
+  width: 100%;
+  min-height: 48px;
+  justify-content: center;
+}
+.status-voz { min-height: 0; margin-bottom: 0; }
+
+/* Paletas escolhidas pelo usuário. A cor nunca é o único indicador. */
+body.paleta-azul-laranja {
+  --cor-primaria:#0072B2; --cor-primaria-forte:#005F95; --cor-sucesso:#009E73; --cor-atencao:#E69F00;
+  --azul:var(--cor-primaria); --azul-2:var(--cor-primaria-forte); --verde:var(--cor-sucesso);
+}
+body.paleta-azul-rosa {
+  --cor-primaria:#0072B2; --cor-primaria-forte:#005F95; --cor-sucesso:#CC79A7; --cor-atencao:#F0E442;
+  --azul:var(--cor-primaria); --azul-2:var(--cor-primaria-forte); --verde:var(--cor-sucesso);
+}
+body.paleta-universal {
+  --cor-primaria:#0072B2; --cor-primaria-forte:#005F95; --cor-sucesso:#009E73; --cor-atencao:#E69F00;
+  --azul:var(--cor-primaria); --azul-2:var(--cor-primaria-forte); --verde:var(--cor-sucesso);
+}
+body.paleta-cinza {
+  --cor-primaria:#374151; --cor-primaria-forte:#1F2937; --cor-marinho:#111827; --cor-texto-secundario:#4B5563;
+  --cor-fundo-suave:#F3F4F6; --cor-borda:#D1D5DB; --cor-sucesso:#4B5563; --cor-atencao:#737373;
+  --azul:var(--cor-primaria); --azul-2:var(--cor-primaria-forte); --marinho:var(--cor-marinho); --texto:var(--cor-texto-secundario); --fundo:var(--cor-fundo-suave); --borda:var(--cor-borda); --verde:var(--cor-sucesso);
+}
+body.paleta-cinza img:not(.logo img):not([src*="marca/"]) { filter: grayscale(1); }
+
+body.contraste-reforcado {
+  --cor-marinho:#061A3A; --cor-texto-secundario:#394F6A; --cor-borda:#9DB5D0;
+  --marinho:var(--cor-marinho); --texto:var(--cor-texto-secundario); --borda:var(--cor-borda);
+}
+body.contraste-reforcado button, body.contraste-reforcado input, body.contraste-reforcado select, body.contraste-reforcado textarea,
+body.contraste-reforcado .cartao-ui, body.contraste-reforcado .biblioteca-trilha-card, body.contraste-reforcado .lista-aula-card { border-width: 2px !important; }
+
+body.modo-escuro-acessivel:not(.alto-contraste) {
+  --cor-marinho:#F7FAFF; --cor-texto-secundario:#D4DEEB; --cor-fundo-suave:#132033; --cor-borda:#42546B; --cor-branco:#0E1827;
+  --marinho:var(--cor-marinho); --texto:var(--cor-texto-secundario); --fundo:var(--cor-fundo-suave); --borda:var(--cor-borda); --branco:var(--cor-branco);
+  background:#0A1320 !important; color:#F7FAFF !important;
+}
+body.modo-escuro-acessivel:not(.alto-contraste) main,
+body.modo-escuro-acessivel:not(.alto-contraste) .topo,
+body.modo-escuro-acessivel:not(.alto-contraste) .rodape { background:#0A1320 !important; color:#F7FAFF !important; }
+body.modo-escuro-acessivel:not(.alto-contraste) .painel-acessibilidade-inclusivo,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-card,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-paleta-opcao,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-previa,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-opcoes-compactas,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-linha-nova,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-velocidade { background:#122034 !important; border-color:#42546B !important; }
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-card-conteudo strong,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-subtitulo h3,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-paleta-texto strong,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-previa > strong,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-linha-nova strong,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-velocidade strong { color:#F7FAFF !important; }
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-card-conteudo small,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-subtitulo p,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-paleta-texto small,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-linha-nova small,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-velocidade small { color:#D4DEEB !important; }
+
+body.foco-reforcado :focus-visible { outline: 5px solid #E69F00 !important; outline-offset: 4px !important; box-shadow: 0 0 0 2px #fff !important; }
+body.reduzir-movimento *, body.reduzir-movimento *::before, body.reduzir-movimento *::after { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+
+body.alto-contraste .painel-acessibilidade-inclusivo,
+body.alto-contraste .acess-card,
+body.alto-contraste .acess-paleta-opcao,
+body.alto-contraste .acess-previa,
+body.alto-contraste .acess-opcoes-compactas,
+body.alto-contraste .acess-linha-nova,
+body.alto-contraste .acess-velocidade { background:#091a31 !important; border-color:#9aabc0 !important; }
+body.alto-contraste .acess-card-conteudo strong,
+body.alto-contraste .acess-subtitulo h3,
+body.alto-contraste .acess-paleta-texto strong,
+body.alto-contraste .acess-previa > strong,
+body.alto-contraste .acess-linha-nova strong,
+body.alto-contraste .acess-velocidade strong { color:#fff !important; }
+body.alto-contraste .acess-card-conteudo small,
+body.alto-contraste .acess-subtitulo p,
+body.alto-contraste .acess-paleta-texto small,
+body.alto-contraste .acess-linha-nova small,
+body.alto-contraste .acess-velocidade small { color:#dce6f3 !important; }
+body.alto-contraste .acess-card-icone { background:#07172c !important; border-color:#ffd51f !important; }
+body.alto-contraste .acess-kicker { background:#ffd51f !important; color:#061425 !important; }
+
+@media (max-width:620px) {
+  .painel-acessibilidade-inclusivo { width:100% !important; max-height:88vh !important; padding:18px !important; border-radius:24px 24px 0 0 !important; }
+  .acess-card { grid-template-columns:48px minmax(0,1fr) auto; min-height:82px; padding:12px; }
+  .acess-card-icone { width:48px; height:48px; border-radius:15px; }
+  .acess-card-fonte { grid-template-columns:48px minmax(0,1fr); }
+  .acess-card-audio { grid-template-columns:48px minmax(0,1fr) auto; }
+  .acess-amostras { display:none; }
+  .acess-velocidade > div { grid-template-columns:1fr; }
+}
+
+
+/* =========================================================
+   SUBTELAS COMO POP-UPS REAIS
+   Cores e visão / Mais opções usam <dialog>, não crescem
+   para baixo dentro do painel principal.
+   ========================================================= */
+.acess-dialogo {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  width: min(560px, calc(100vw - 28px));
+  max-height: min(82vh, 760px);
+  margin: 0;
+  padding: 22px;
+  overflow: auto;
+  transform: translate(-50%, -50%);
+  border: 1px solid #d9e8fb;
+  border-radius: 26px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  color: #0b2357;
+  box-shadow: 0 30px 80px rgba(3, 24, 58, .28);
+  z-index: 2147483000;
+}
+
+.acess-dialogo:not([open]) { display: none !important; }
+.acess-dialogo::backdrop { background: rgba(3, 16, 38, .46); backdrop-filter: blur(2px); }
+
+.acess-dialogo .acess-voltar {
+  min-height: 44px;
+  padding: 8px 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #cfe0f3;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #0b2357;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.acess-dialogo .acess-voltar:hover,
+.acess-dialogo .acess-voltar:focus-visible {
+  border-color: var(--cor-primaria, #2863eb);
+  background: #eef6ff;
+  outline: 3px solid color-mix(in srgb, var(--cor-primaria, #2863eb) 18%, transparent);
+  outline-offset: 2px;
+}
+
+.acess-dialogo .acess-subtitulo { margin: 16px 0 14px; }
+.acess-dialogo-kicker {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--cor-fundo-suave, #eef6ff);
+  color: var(--cor-primaria-forte, #2863eb);
+  border: 1px solid var(--cor-borda, #d9e5f3);
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.acess-dialogo .acess-subtitulo h3 {
+  margin: 8px 0 5px;
+  color: var(--cor-marinho, #0b2357);
+  font-size: clamp(1.28rem, 3vw, 1.65rem);
+  line-height: 1.15;
+}
+.acess-dialogo .acess-subtitulo p {
+  margin: 0;
+  color: var(--cor-texto-secundario, #657b98);
+  line-height: 1.5;
+}
+
+/* =========================================================
+   PALETAS — APLICAÇÃO GLOBAL E CONSISTENTE
+   Mantém logos/ícones reais de apps com suas cores oficiais.
+   ========================================================= */
+body.paleta-azul-laranja {
+  --cor-primaria:#0072B2;
+  --cor-primaria-forte:#005A8D;
+  --cor-marinho:#102A43;
+  --cor-texto-secundario:#486581;
+  --cor-fundo-suave:#F0F7FB;
+  --cor-borda:#C7DCE8;
+  --cor-sucesso:#009E73;
+  --cor-atencao:#E69F00;
+  --cor-info-fundo:#EAF6FC;
+  --cor-info-texto:#005A8D;
+  --cor-info-borda:#BBD8E8;
+  --auth-azul:#0072B2;
+  --auth-azul-hover:#005A8D;
+  --auth-fundo-1:#F0F7FB;
+  --auth-fundo-2:#FFF7E8;
+}
+body.paleta-azul-rosa {
+  --cor-primaria:#0072B2;
+  --cor-primaria-forte:#005A8D;
+  --cor-marinho:#17243A;
+  --cor-texto-secundario:#52657A;
+  --cor-fundo-suave:#F3F8FB;
+  --cor-borda:#CCDCE7;
+  --cor-sucesso:#CC79A7;
+  --cor-atencao:#D8B900;
+  --cor-info-fundo:#EEF7FB;
+  --cor-info-texto:#005A8D;
+  --cor-info-borda:#C6DEE9;
+  --auth-azul:#0072B2;
+  --auth-azul-hover:#005A8D;
+  --auth-fundo-1:#F2F8FB;
+  --auth-fundo-2:#FFF4FA;
+}
+body.paleta-universal {
+  --cor-primaria:#0072B2;
+  --cor-primaria-forte:#005A8D;
+  --cor-marinho:#142536;
+  --cor-texto-secundario:#4D6478;
+  --cor-fundo-suave:#F2F8FA;
+  --cor-borda:#C8DBE3;
+  --cor-sucesso:#009E73;
+  --cor-atencao:#E69F00;
+  --cor-info-fundo:#EDF8F6;
+  --cor-info-texto:#006B55;
+  --cor-info-borda:#BDE0D7;
+  --auth-azul:#0072B2;
+  --auth-azul-hover:#005A8D;
+  --auth-fundo-1:#F1F8FB;
+  --auth-fundo-2:#F1FAF7;
+}
+body.paleta-cinza {
+  --cor-primaria:#374151;
+  --cor-primaria-forte:#1F2937;
+  --cor-marinho:#111827;
+  --cor-texto-secundario:#4B5563;
+  --cor-fundo-suave:#F3F4F6;
+  --cor-borda:#C7CBD1;
+  --cor-sucesso:#4B5563;
+  --cor-atencao:#6B7280;
+  --cor-info-fundo:#F3F4F6;
+  --cor-info-texto:#1F2937;
+  --cor-info-borda:#D1D5DB;
+  --auth-azul:#374151;
+  --auth-azul-hover:#1F2937;
+  --auth-fundo-1:#F3F4F6;
+  --auth-fundo-2:#E5E7EB;
+}
+
+body.paleta-azul-laranja,
+body.paleta-azul-rosa,
+body.paleta-universal,
+body.paleta-cinza {
+  --azul:var(--cor-primaria);
+  --azul-2:var(--cor-primaria-forte);
+  --marinho:var(--cor-marinho);
+  --texto:var(--cor-texto-secundario);
+  --fundo:var(--cor-fundo-suave);
+  --borda:var(--cor-borda);
+  --verde:var(--cor-sucesso);
+}
+
+/* Componentes que ainda tinham azul fixo passam a obedecer à paleta. */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-principal,.btn-entrar,.home-acao-principal,.auth-botao-principal,.cadastro-botao,.aula-btn-principal,.home-jornada-numero,.auth-passo-numero,.cadastro-etapa-icone,.aula-passo-numero) {
+  background: var(--cor-primaria-forte) !important;
+  border-color: var(--cor-primaria-forte) !important;
+  color: #ffffff !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-secundario,.botao-info,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,.assistente-auth-ouvir) {
+  border-color: var(--cor-primaria) !important;
+  color: var(--cor-primaria-forte) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.titulo-home-simples span,.hero h1 span,.trilhas-ajuda-texto strong,.aula-fonte-oficial,.area-ver-tudo,.auth-link,.cadastro-link) {
+  color: var(--cor-primaria-forte) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aula-progresso-barra > span,.cadastro-progresso-barra > span,.cadastro-progresso-barra::before) {
+  background: var(--cor-primaria) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.lista-aula-card.atual,.biblioteca-trilha-card:focus-visible,.trilhas-opcao:focus-visible) {
+  border-color: var(--cor-primaria) !important;
+}
+
+/* O painel e os pop-ups também acompanham a paleta escolhida. */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .painel-acessibilidade-inclusivo,
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .acess-dialogo {
+  border-color: var(--cor-borda) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .acess-kicker,
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .acess-card-icone {
+  color: var(--cor-primaria-forte) !important;
+  border-color: var(--cor-borda) !important;
+  background: var(--cor-fundo-suave) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .acess-botao-primario {
+  background: var(--cor-primaria-forte) !important;
+  border-color: var(--cor-primaria-forte) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .acess-paleta-opcao:has(input:checked) {
+  border-color: var(--cor-primaria) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 14%, transparent) !important;
+}
+
+/* Logos e ícones oficiais de aplicativos NÃO são recoloridos pelas paletas:
+   reconhecimento visual real é parte das aulas. */
+body.paleta-cinza img[src*="/simulador/"],
+body.paleta-cinza img[src*="gov"],
+body.paleta-cinza img[src*="whatsapp"],
+body.paleta-cinza img[src*="instagram"],
+body.paleta-cinza img[src*="facebook"],
+body.paleta-cinza img[src*="chrome"],
+body.paleta-cinza img[src*="gmail"] { filter: none !important; }
+
+/* Alto contraste e modo escuro também alcançam os diálogos. */
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-dialogo {
+  background:#122034 !important;
+  border-color:#42546B !important;
+  color:#F7FAFF !important;
+}
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-dialogo h3,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-dialogo strong { color:#F7FAFF !important; }
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-dialogo p,
+body.modo-escuro-acessivel:not(.alto-contraste) .acess-dialogo small { color:#D4DEEB !important; }
+body.alto-contraste .acess-dialogo {
+  background:#091A31 !important;
+  border-color:#FFD51F !important;
+  color:#FFFFFF !important;
+}
+body.alto-contraste .acess-dialogo h3,
+body.alto-contraste .acess-dialogo strong { color:#FFFFFF !important; }
+body.alto-contraste .acess-dialogo p,
+body.alto-contraste .acess-dialogo small { color:#E7EFF8 !important; }
+
+@media (max-width:620px) {
+  .acess-dialogo {
+    inset:auto 8px 10px 8px;
+    width:auto;
+    max-height:86vh;
+    transform:none;
+    padding:18px;
+    border-radius:24px;
+  }
+}
+
+/* =========================================================
+   EDUCA+ — MOTOR FINAL DE TEMAS ACESSÍVEIS
+   Garante aplicação coerente da paleta em toda a interface.
+   Carregado por último para neutralizar regras antigas.
+   ========================================================= */
+
+/* ---------- Tokens de cada paleta ---------- */
+body.paleta-azul-laranja {
+  --tema-bg:#F6FAFC;
+  --tema-surface:#FFFFFF;
+  --tema-surface-2:#EDF6FA;
+  --tema-text:#102A43;
+  --tema-muted:#486581;
+  --tema-primary:#005A8D;
+  --tema-accent:#0072B2;
+  --tema-secondary:#E69F00;
+  --tema-on-primary:#FFFFFF;
+  --tema-border:#B9D0DF;
+  --tema-focus:#E69F00;
+  --tema-link:#005A8D;
+  --tema-success:#006F56;
+  --tema-success-bg:#E7F7F1;
+  --tema-warning:#8A5A00;
+  --tema-warning-bg:#FFF5DD;
+  --tema-danger:#8B2C21;
+  --tema-danger-bg:#FFF0ED;
+}
+
+body.paleta-azul-rosa {
+  --tema-bg:#F7FAFC;
+  --tema-surface:#FFFFFF;
+  --tema-surface-2:#F1F7FA;
+  --tema-text:#17243A;
+  --tema-muted:#52657A;
+  --tema-primary:#005A8D;
+  --tema-accent:#0072B2;
+  --tema-secondary:#A34079;
+  --tema-on-primary:#FFFFFF;
+  --tema-border:#C3D6E1;
+  --tema-focus:#A34079;
+  --tema-link:#005A8D;
+  --tema-success:#006F56;
+  --tema-success-bg:#E7F7F1;
+  --tema-warning:#7A6500;
+  --tema-warning-bg:#FFF9D9;
+  --tema-danger:#A34079;
+  --tema-danger-bg:#FFF0F7;
+}
+
+body.paleta-universal {
+  --tema-bg:#F5FAFB;
+  --tema-surface:#FFFFFF;
+  --tema-surface-2:#EDF8F6;
+  --tema-text:#142536;
+  --tema-muted:#4D6478;
+  --tema-primary:#005A8D;
+  --tema-accent:#0072B2;
+  --tema-secondary:#E69F00;
+  --tema-on-primary:#FFFFFF;
+  --tema-border:#BFD7DD;
+  --tema-focus:#E69F00;
+  --tema-link:#005A8D;
+  --tema-success:#006F56;
+  --tema-success-bg:#E6F7F1;
+  --tema-warning:#8A5A00;
+  --tema-warning-bg:#FFF5DD;
+  --tema-danger:#8B3927;
+  --tema-danger-bg:#FFF0E9;
+}
+
+body.paleta-cinza {
+  --tema-bg:#F3F4F6;
+  --tema-surface:#FFFFFF;
+  --tema-surface-2:#E9EBEF;
+  --tema-text:#111827;
+  --tema-muted:#4B5563;
+  --tema-primary:#1F2937;
+  --tema-accent:#374151;
+  --tema-secondary:#6B7280;
+  --tema-on-primary:#FFFFFF;
+  --tema-border:#B8BEC7;
+  --tema-focus:#111827;
+  --tema-link:#1F2937;
+  --tema-success:#374151;
+  --tema-success-bg:#ECEEF1;
+  --tema-warning:#4B5563;
+  --tema-warning-bg:#F3F4F6;
+  --tema-danger:#1F2937;
+  --tema-danger-bg:#E5E7EB;
+}
+
+/* Faz os tokens do Design System acompanharem a paleta escolhida. */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) {
+  --cor-primaria:var(--tema-accent);
+  --cor-primaria-forte:var(--tema-primary);
+  --cor-marinho:var(--tema-text);
+  --cor-texto-secundario:var(--tema-muted);
+  --cor-fundo-suave:var(--tema-surface-2);
+  --cor-borda:var(--tema-border);
+  --cor-sucesso:var(--tema-success);
+  --cor-atencao:var(--tema-secondary);
+  --cor-info-fundo:var(--tema-surface-2);
+  --cor-info-texto:var(--tema-primary);
+  --cor-info-borda:var(--tema-border);
+  --azul:var(--tema-accent);
+  --azul-2:var(--tema-primary);
+  --marinho:var(--tema-text);
+  --texto:var(--tema-muted);
+  --fundo:var(--tema-surface-2);
+  --borda:var(--tema-border);
+  --verde:var(--tema-success);
+  background:var(--tema-bg) !important;
+  color:var(--tema-text) !important;
+}
+
+/* ---------- Fundo e superfícies ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.topo,.rodape) {
+  background:var(--tema-surface) !important;
+  color:var(--tema-text) !important;
+  border-color:var(--tema-border) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(main,.hero,.hero-inicio-limpo,.home-jornada,.home-publico-novo,.home-como-comecar,.pagina,.formulario-pagina,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina,.trilhas-inicio,.biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell) {
+  color:var(--tema-text) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.hero,.hero-inicio-limpo,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina) {
+  background:linear-gradient(135deg,var(--tema-surface) 0%,var(--tema-surface-2) 100%) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,.aula-missao,.aula-modo-aprendizado,.biblioteca-area-cabecalho,.cadastro-dialogo,.cadastro-etapas-form,.conta-pronta-card,.video-card-personalizado,.sobre-video-card,.acess-card,.acess-dialogo,.painel-acessibilidade-inclusivo) {
+  background:var(--tema-surface) !important;
+  color:var(--tema-text) !important;
+  border-color:var(--tema-border) !important;
+}
+
+/* ---------- Textos ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(h1,h2,h3,h4,h5,h6,.titulo-home-simples,.home-jornada-cabecalho h2,.home-publico-novo-cabecalho h2,.aula-missao strong,.trilhas-opcao-texto strong,.lista-aula-info h3,.biblioteca-area-cabecalho h1) {
+  color:var(--tema-text) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(p,.hero-descricao,.home-jornada-cabecalho p,.home-jornada-passo p,.home-publico-novo-cabecalho p,.home-publico-novo-texto p,.aula-missao p,.trilhas-opcao-texto small,.lista-aula-info p,.biblioteca-area-cabecalho p,.acess-card-conteudo small,.acess-paleta-texto small) {
+  color:var(--tema-muted) !important;
+}
+
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+a:not(.botao):not(.btn-entrar):not(.aula-btn-principal):not(.lista-aula-botao) {
+  color:var(--tema-link) !important;
+}
+
+/* ---------- Cabeçalho e navegação ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .menu a {
+  color:var(--tema-text) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .menu a.menu-ativo {
+  color:var(--tema-primary) !important;
+  border-color:var(--tema-accent) !important;
+}
+
+/* ---------- Botões preenchidos ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,.cadastro-botao,.aula-btn-principal,.lista-aula-botao,.atividade-digitacao-conferir,.acess-botao-primario) {
+  background:var(--tema-primary) !important;
+  border-color:var(--tema-primary) !important;
+  color:var(--tema-on-primary) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,.cadastro-botao,.aula-btn-principal,.lista-aula-botao,.atividade-digitacao-conferir,.acess-botao-primario) :is(span,strong,small) {
+  color:var(--tema-on-primary) !important;
+}
+
+/* ---------- Botões contornados ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button) {
+  background:var(--tema-surface) !important;
+  border-color:var(--tema-accent) !important;
+  color:var(--tema-primary) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button) :is(span,strong,small) {
+  color:var(--tema-primary) !important;
+}
+
+/* ---------- Formulários ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(input,textarea,select,.campo-ui-input,.cadastro-input,.atividade-digitacao-input) {
+  background:var(--tema-surface) !important;
+  color:var(--tema-text) !important;
+  border-color:var(--tema-border) !important;
+  caret-color:var(--tema-primary) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(input,textarea)::placeholder {
+  color:var(--tema-muted) !important;
+  opacity:1;
+}
+
+/* ---------- Estados, avisos e progresso ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aula-progresso-barra,.cadastro-progresso-barra) {
+  background:color-mix(in srgb,var(--tema-accent) 14%,var(--tema-surface)) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aula-progresso-barra>span,.cadastro-progresso-barra>span,.cadastro-progresso-barra::before,.home-jornada-numero,.auth-passo-numero,.cadastro-etapa-icone,.aula-passo-numero) {
+  background:var(--tema-primary) !important;
+  color:var(--tema-on-primary) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aviso-ui-sucesso,.lista-aula-card.concluida,.aula-habilidade-conquistada) {
+  background:var(--tema-success-bg) !important;
+  color:var(--tema-success) !important;
+  border-color:var(--tema-success) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aviso-ui-atencao,.area-regra-seguranca,.aula-aviso-seguranca,.aula-passo-dica-visivel) {
+  background:var(--tema-warning-bg) !important;
+  color:var(--tema-warning) !important;
+  border-color:var(--tema-secondary) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .aviso-ui-erro {
+  background:var(--tema-danger-bg) !important;
+  color:var(--tema-danger) !important;
+  border-color:var(--tema-danger) !important;
+}
+
+/* ---------- Foco visível em qualquer paleta ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(a,button,input,textarea,select,[tabindex]):focus-visible {
+  outline:3px solid var(--tema-focus) !important;
+  outline-offset:3px !important;
+}
+
+/* ---------- Ícones da própria interface ---------- */
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.acess-card-icone,.educa-ui-icone,.aula-missao-icone,.biblioteca-area-icone) {
+  border-color:var(--tema-border) !important;
+}
+body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.acess-card-icone,.educa-ui-icone,.biblioteca-area-icone) {
+  background:var(--tema-surface-2) !important;
+}
+
+/* Preto e branco afeta conteúdo visual comum, mas nunca os ícones de apps
+   que o aluno precisa reconhecer no telefone verdadeiro. */
+body.paleta-cinza img:not([src*="/simulador/"]):not([src*="gov"]):not([src*="whatsapp"]):not([src*="instagram"]):not([src*="facebook"]):not([src*="chrome"]):not([src*="gmail"]):not([src*="maps"]):not([src*="youtube"]):not([src*="uber"]) {
+  filter:grayscale(1) !important;
+}
+body.paleta-cinza :is(.logo img,.auth-logo img),
+body.paleta-cinza img[src*="/simulador/"],
+body.paleta-cinza img[src*="gov"],
+body.paleta-cinza img[src*="whatsapp"],
+body.paleta-cinza img[src*="instagram"],
+body.paleta-cinza img[src*="facebook"],
+body.paleta-cinza img[src*="chrome"],
+body.paleta-cinza img[src*="gmail"],
+body.paleta-cinza img[src*="maps"],
+body.paleta-cinza img[src*="youtube"],
+body.paleta-cinza img[src*="uber"] {
+  filter:none !important;
+}
+
+/* =========================================================
+   CONTRASTE REFORÇADO
+   Mantém a paleta escolhida, mas aumenta separação de bordas/foco.
+   ========================================================= */
+body.contraste-reforcado:not(.alto-contraste) {
+  --cor-borda:#6D7F91;
+}
+body.contraste-reforcado:not(.alto-contraste)
+:is(.cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,.aula-missao,.aula-modo-aprendizado,input,textarea,select,button) {
+  border-width:2px !important;
+}
+body.contraste-reforcado:not(.alto-contraste) :focus-visible {
+  outline-width:4px !important;
+  outline-offset:3px !important;
+}
+
+/* =========================================================
+   CONTRASTE MÁXIMO — coerente e legível em TODO o site
+   Não converte fotos nem ícones reais de aplicativos em negativos.
+   ========================================================= */
+body.alto-contraste {
+  --cor-primaria:#FFD43B;
+  --cor-primaria-forte:#FFD43B;
+  --cor-marinho:#FFFFFF;
+  --cor-texto-secundario:#E6EDF5;
+  --cor-fundo-suave:#000000;
+  --cor-borda:#FFFFFF;
+  --cor-sucesso:#7CFFB2;
+  --cor-atencao:#FFD43B;
+  --cor-info-fundo:#101820;
+  --cor-info-texto:#FFFFFF;
+  --cor-info-borda:#FFFFFF;
+  --azul:#FFD43B;
+  --azul-2:#FFD43B;
+  --marinho:#FFFFFF;
+  --texto:#E6EDF5;
+  --fundo:#000000;
+  --borda:#FFFFFF;
+  --verde:#7CFFB2;
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  color-scheme:dark;
+}
+
+body.alto-contraste :is(.topo,.rodape,main,.hero,.hero-inicio-limpo,.home-jornada,.home-publico-novo,.home-como-comecar,.pagina,.formulario-pagina,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina,.trilhas-inicio,.biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell) {
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  border-color:#FFFFFF !important;
+}
+
+body.alto-contraste :is(.cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,.aula-missao,.aula-modo-aprendizado,.biblioteca-area-cabecalho,.cadastro-dialogo,.cadastro-etapas-form,.cadastro-etapa,.conta-pronta-card,.video-card-personalizado,.sobre-video-card,.acess-card,.acess-dialogo,.painel-acessibilidade-inclusivo,.acess-paleta-opcao,.acess-previa,.acess-opcoes-compactas,.acess-linha-nova,.acess-velocidade) {
+  background:#0B1220 !important;
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+  box-shadow:none !important;
+}
+
+/* Textos principais e secundários */
+body.alto-contraste :is(h1,h2,h3,h4,h5,h6,strong,label,legend,.titulo-home-simples,.home-jornada-cabecalho h2,.home-publico-novo-cabecalho h2,.trilhas-opcao-texto strong,.lista-aula-info h3,.biblioteca-area-cabecalho h1,.aula-missao strong) {
+  color:#FFFFFF !important;
+}
+body.alto-contraste :is(p,small,.hero-descricao,.home-jornada-cabecalho p,.home-jornada-passo p,.home-publico-novo-cabecalho p,.home-publico-novo-texto p,.trilhas-opcao-texto small,.lista-aula-info p,.biblioteca-area-cabecalho p,.aula-missao p,.acess-card-conteudo small,.acess-paleta-texto small) {
+  color:#E6EDF5 !important;
+}
+body.alto-contraste a:not(.botao):not(.btn-entrar):not(.aula-btn-principal):not(.lista-aula-botao) {
+  color:#66CCFF !important;
+  text-decoration-color:#66CCFF !important;
+}
+body.alto-contraste .menu a {
+  color:#FFFFFF !important;
+}
+body.alto-contraste .menu a.menu-ativo {
+  color:#FFD43B !important;
+  border-color:#FFD43B !important;
+}
+
+/* Ações principais: amarelo + preto, contraste muito alto. */
+body.alto-contraste :is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,.cadastro-botao,.aula-btn-principal,.lista-aula-botao,.atividade-digitacao-conferir,.acess-botao-primario) {
+  background:#FFD43B !important;
+  border:2px solid #FFD43B !important;
+  color:#000000 !important;
+  box-shadow:none !important;
+}
+body.alto-contraste :is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,.cadastro-botao,.aula-btn-principal,.lista-aula-botao,.atividade-digitacao-conferir,.acess-botao-primario) :is(span,strong,small) {
+  color:#000000 !important;
+}
+
+/* Ações secundárias */
+body.alto-contraste :is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo) {
+  background:#000000 !important;
+  border:2px solid #FFD43B !important;
+  color:#FFD43B !important;
+  box-shadow:none !important;
+}
+body.alto-contraste :is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo) :is(span,strong,small) {
+  color:#FFD43B !important;
+}
+
+/* Campos */
+body.alto-contraste :is(input,textarea,select,.campo-ui-input,.cadastro-input,.atividade-digitacao-input) {
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+  caret-color:#FFD43B !important;
+}
+body.alto-contraste :is(input,textarea)::placeholder {
+  color:#D8E1EB !important;
+  opacity:1 !important;
+}
+body.alto-contraste input[type="radio"],
+body.alto-contraste input[type="checkbox"] {
+  accent-color:#FFD43B !important;
+}
+
+/* Progresso e estados */
+body.alto-contraste :is(.aula-progresso-barra,.cadastro-progresso-barra) {
+  background:#344054 !important;
+  border:1px solid #FFFFFF !important;
+}
+body.alto-contraste :is(.aula-progresso-barra>span,.cadastro-progresso-barra>span,.cadastro-progresso-barra::before,.home-jornada-numero,.auth-passo-numero,.cadastro-etapa-icone,.aula-passo-numero) {
+  background:#FFD43B !important;
+  color:#000000 !important;
+}
+body.alto-contraste :is(.aviso-ui-sucesso,.lista-aula-card.concluida,.aula-habilidade-conquistada) {
+  background:#071F16 !important;
+  color:#A7FFD0 !important;
+  border-color:#7CFFB2 !important;
+}
+body.alto-contraste :is(.aviso-ui-atencao,.area-regra-seguranca,.aula-aviso-seguranca,.aula-passo-dica-visivel) {
+  background:#211A00 !important;
+  color:#FFF1A6 !important;
+  border-color:#FFD43B !important;
+}
+body.alto-contraste .aviso-ui-erro {
+  background:#2B0A0A !important;
+  color:#FFD6D6 !important;
+  border-color:#FF9B9B !important;
+}
+
+/* Foco máximo */
+body.alto-contraste :is(a,button,input,textarea,select,[tabindex]):focus-visible {
+  outline:4px solid #FFD43B !important;
+  outline-offset:4px !important;
+}
+
+/* Ícones da interface ganham superfície própria. */
+body.alto-contraste :is(.acess-card-icone,.educa-ui-icone,.biblioteca-area-icone) {
+  background:#000000 !important;
+  border:2px solid #FFD43B !important;
+  color:#FFFFFF !important;
+}
+body.alto-contraste :is(.acess-card-icone,.educa-ui-icone) img {
+  filter:brightness(0) invert(1) !important;
+}
+body.alto-contraste .aula-missao-icone {
+  background:#FFD43B !important;
+  border:2px solid #FFFFFF !important;
+}
+body.alto-contraste .aula-missao-icone img {
+  filter:brightness(0) !important;
+}
+body.alto-contraste .acessibilidade-flutuante {
+  background:#000000 !important;
+  border:3px solid #FFFFFF !important;
+  color:#FFFFFF !important;
+}
+body.alto-contraste .acessibilidade-flutuante-icone {
+  background:#FFD43B !important;
+  border:2px solid #FFFFFF !important;
+}
+body.alto-contraste .acessibilidade-flutuante-icone img {
+  filter:brightness(0) !important;
+}
+
+/* Imagens e marcas permanecem reconhecíveis — remove filtros históricos. */
+body.alto-contraste img,
+body.alto-contraste :is(.logo img,.auth-logo img,.hero-imagem img,.trilhas-opcao-foto,.home-publico-novo-card img,.card-estudante img,.video-card-personalizado img) {
+  filter:none !important;
+  mix-blend-mode:normal !important;
+}
+body.alto-contraste :is(.logo,.auth-logo) {
+  background:#FFFFFF !important;
+  border-radius:10px !important;
+  padding:3px 6px !important;
+}
+body.alto-contraste :is(.hero-imagem,.video-card-personalizado,.card-estudante,.trilhas-opcao-media) {
+  border-color:#FFFFFF !important;
+  box-shadow:0 0 0 2px #000000,0 0 0 4px #FFFFFF !important;
+}
+/* Ícones oficiais de apps nunca são recoloridos. */
+body.alto-contraste img[src*="/simulador/"],
+body.alto-contraste img[src*="gov"],
+body.alto-contraste img[src*="whatsapp"],
+body.alto-contraste img[src*="instagram"],
+body.alto-contraste img[src*="facebook"],
+body.alto-contraste img[src*="chrome"],
+body.alto-contraste img[src*="gmail"],
+body.alto-contraste img[src*="maps"],
+body.alto-contraste img[src*="youtube"],
+body.alto-contraste img[src*="uber"] {
+  filter:none !important;
+}
+
+/* =========================================================
+   MODO ESCURO ACESSÍVEL — separado do contraste máximo
+   ========================================================= */
+body.modo-escuro-acessivel:not(.alto-contraste) {
+  --cor-marinho:#F7FAFF;
+  --cor-texto-secundario:#D4DEEB;
+  --cor-fundo-suave:#0A1320;
+  --cor-borda:#52667D;
+  background:#0A1320 !important;
+  color:#F7FAFF !important;
+  color-scheme:dark;
+}
+body.modo-escuro-acessivel:not(.alto-contraste)
+:is(.topo,.rodape,.hero,.hero-inicio-limpo,.home-jornada,.home-publico-novo,.home-como-comecar,.pagina,.formulario-pagina,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina,.trilhas-inicio,.biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell) {
+  background:#0A1320 !important;
+  color:#F7FAFF !important;
+  border-color:#52667D !important;
+}
+body.modo-escuro-acessivel:not(.alto-contraste)
+:is(.cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,.aula-missao,.aula-modo-aprendizado,.biblioteca-area-cabecalho,.cadastro-dialogo,.conta-pronta-card,.acess-card,.acess-dialogo,.painel-acessibilidade-inclusivo) {
+  background:#122034 !important;
+  color:#F7FAFF !important;
+  border-color:#52667D !important;
+}
+body.modo-escuro-acessivel:not(.alto-contraste) :is(h1,h2,h3,h4,h5,h6,strong,label) { color:#F7FAFF !important; }
+body.modo-escuro-acessivel:not(.alto-contraste) :is(p,small) { color:#D4DEEB !important; }
+body.modo-escuro-acessivel:not(.alto-contraste) :is(input,textarea,select) {
+  background:#091522 !important;
+  color:#FFFFFF !important;
+  border-color:#6C8096 !important;
+}
+
+/* Redução de movimento continua prevalecendo sobre animações de interface. */
+body.reduzir-movimento *,
+body.reduzir-movimento *::before,
+body.reduzir-movimento *::after {
+  scroll-behavior:auto !important;
+  transition-duration:.01ms !important;
+  animation-duration:.01ms !important;
+  animation-iteration-count:1 !important;
+}
+
+/* Correções finais de especificidade para controles antigos do cabeçalho. */
+html body.alto-contraste .topo .acoes-topo a.btn-entrar.botao,
+html body.alto-contraste .topo .acoes-topo a.btn-entrar.botao:link,
+html body.alto-contraste .topo .acoes-topo a.btn-entrar.botao:visited {
+  background:#FFD43B !important;
+  border:2px solid #FFD43B !important;
+  color:#000000 !important;
+}
+html body.alto-contraste .topo .acoes-topo a.btn-entrar.botao > * {
+  color:#000000 !important;
+}
+html body.alto-contraste .topo .acoes-topo a.btn-entrar.botao:hover,
+html body.alto-contraste .topo .acoes-topo a.btn-entrar.botao:focus-visible {
+  background:#FFE36B !important;
+  color:#000000 !important;
+}
+
+/* Depois de remover filtros de fotos, reaplica somente nos ícones funcionais
+   que precisam ficar claros sobre superfícies escuras. */
+html body.alto-contraste .acess-card-icone img,
+html body.alto-contraste .educa-ui-icone img {
+  filter:brightness(0) invert(1) !important;
+  mix-blend-mode:normal !important;
+}
+html body.alto-contraste .aula-missao-icone img,
+html body.alto-contraste .acessibilidade-flutuante-icone img {
+  filter:brightness(0) !important;
+  mix-blend-mode:normal !important;
+}
+
+/* Texto do botão flutuante deve continuar branco no contraste máximo. */
+html body.alto-contraste .acessibilidade-flutuante-texto {
+  color:#FFFFFF !important;
+}
+
+
+/* =========================================================
+   EDUCA+ — CAMADA FINAL DE TEMAS ACESSÍVEIS V4
+   Garante que paletas, contraste e modo escuro sejam aplicados
+   de forma consistente em TODOS os componentes da interface.
+   Esta camada é carregada por último e não altera o layout.
+   ========================================================= */
+
+/* 1) Tokens completos por paleta */
+html body.paleta-azul-laranja {
+  --a11y-bg:#F6FAFC;
+  --a11y-surface:#FFFFFF;
+  --a11y-surface-soft:#EAF4F8;
+  --a11y-text:#102A43;
+  --a11y-muted:#486581;
+  --a11y-primary:#005A8D;
+  --a11y-accent:#E69F00;
+  --a11y-on-primary:#FFFFFF;
+  --a11y-border:#AFC8D8;
+  --a11y-focus:#E69F00;
+  --a11y-link:#005A8D;
+  --a11y-success:#006F56;
+  --a11y-success-bg:#E7F7F1;
+  --a11y-warning:#704900;
+  --a11y-warning-bg:#FFF4D8;
+  --a11y-danger:#7F3026;
+  --a11y-danger-bg:#FFF0ED;
+}
+html body.paleta-azul-rosa {
+  --a11y-bg:#F7FAFC;
+  --a11y-surface:#FFFFFF;
+  --a11y-surface-soft:#EFF6F9;
+  --a11y-text:#17243A;
+  --a11y-muted:#52657A;
+  --a11y-primary:#005A8D;
+  --a11y-accent:#A34079;
+  --a11y-on-primary:#FFFFFF;
+  --a11y-border:#BDD2DE;
+  --a11y-focus:#A34079;
+  --a11y-link:#005A8D;
+  --a11y-success:#006F56;
+  --a11y-success-bg:#E7F7F1;
+  --a11y-warning:#6F5B00;
+  --a11y-warning-bg:#FFF9D9;
+  --a11y-danger:#8E315F;
+  --a11y-danger-bg:#FFF0F7;
+}
+html body.paleta-universal {
+  --a11y-bg:#F5FAFB;
+  --a11y-surface:#FFFFFF;
+  --a11y-surface-soft:#EAF7F4;
+  --a11y-text:#142536;
+  --a11y-muted:#4D6478;
+  --a11y-primary:#005A8D;
+  --a11y-accent:#E69F00;
+  --a11y-on-primary:#FFFFFF;
+  --a11y-border:#B7D1D7;
+  --a11y-focus:#E69F00;
+  --a11y-link:#005A8D;
+  --a11y-success:#006F56;
+  --a11y-success-bg:#E6F7F1;
+  --a11y-warning:#704900;
+  --a11y-warning-bg:#FFF4D8;
+  --a11y-danger:#7F392B;
+  --a11y-danger-bg:#FFF0E9;
+}
+html body.paleta-cinza {
+  --a11y-bg:#F3F4F6;
+  --a11y-surface:#FFFFFF;
+  --a11y-surface-soft:#E5E7EB;
+  --a11y-text:#111827;
+  --a11y-muted:#4B5563;
+  --a11y-primary:#1F2937;
+  --a11y-accent:#4B5563;
+  --a11y-on-primary:#FFFFFF;
+  --a11y-border:#AEB5BF;
+  --a11y-focus:#111827;
+  --a11y-link:#1F2937;
+  --a11y-success:#374151;
+  --a11y-success-bg:#ECEEF1;
+  --a11y-warning:#4B5563;
+  --a11y-warning-bg:#F3F4F6;
+  --a11y-danger:#1F2937;
+  --a11y-danger-bg:#E5E7EB;
+}
+
+/* 2) Ponte para o Design System existente */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) {
+  --cor-primaria:var(--a11y-primary) !important;
+  --cor-primaria-forte:var(--a11y-primary) !important;
+  --cor-marinho:var(--a11y-text) !important;
+  --cor-texto-secundario:var(--a11y-muted) !important;
+  --cor-fundo-suave:var(--a11y-surface-soft) !important;
+  --cor-borda:var(--a11y-border) !important;
+  --cor-sucesso:var(--a11y-success) !important;
+  --cor-atencao:var(--a11y-accent) !important;
+  --cor-branco:var(--a11y-surface) !important;
+  --azul:var(--a11y-primary) !important;
+  --azul-2:var(--a11y-primary) !important;
+  --marinho:var(--a11y-text) !important;
+  --texto:var(--a11y-muted) !important;
+  --fundo:var(--a11y-surface-soft) !important;
+  --borda:var(--a11y-border) !important;
+  --verde:var(--a11y-success) !important;
+  background:var(--a11y-bg) !important;
+  color:var(--a11y-text) !important;
+}
+
+/* 3) Estrutura geral */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.topo,.rodape) {
+  background:var(--a11y-surface) !important;
+  color:var(--a11y-text) !important;
+  border-color:var(--a11y-border) !important;
+}
+
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(main,.pagina,.formulario-pagina,.trilhas-inicio,.biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell,.home-jornada,.home-publico-novo,.home-como-comecar) {
+  color:var(--a11y-text) !important;
+}
+
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.hero,.hero-inicio-limpo,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina) {
+  background:linear-gradient(135deg,var(--a11y-surface) 0%,var(--a11y-surface-soft) 100%) !important;
+  color:var(--a11y-text) !important;
+}
+
+/* 4) Todas as superfícies/cartões relevantes */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(
+  .cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,
+  .perfil-card,.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,
+  .aula-passo-limpo,.atividade-limpa,.aula-missao,.aula-modo-aprendizado,
+  .biblioteca-area-cabecalho,.cadastro-dialogo,.cadastro-etapas-form,.cadastro-etapa,
+  .conta-pronta-card,.video-card-personalizado,.sobre-video-card,.acess-card,.acess-dialogo,
+  .painel-acessibilidade-inclusivo,.acess-paleta-opcao,.acess-previa,.acess-opcoes-compactas,
+  .acess-linha-nova,.acess-velocidade,.estudos-metodo-resumo,.estudos-continuar-faixa
+) {
+  background:var(--a11y-surface) !important;
+  color:var(--a11y-text) !important;
+  border-color:var(--a11y-border) !important;
+}
+
+/* 5) Tipografia: elimina restos de cores antigas */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(h1,h2,h3,h4,h5,h6,strong,label,legend,.titulo-home-simples,.home-jornada-cabecalho h2,
+.home-publico-novo-cabecalho h2,.aula-missao strong,.trilhas-opcao-texto strong,
+.lista-aula-info h3,.biblioteca-area-cabecalho h1,.trilhas-ajuda-texto strong) {
+  color:var(--a11y-text) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(p,small,.hero-descricao,.hero-descricao-limpa,.home-ajuda-curta,.home-jornada-cabecalho p,
+.home-jornada-passo p,.home-publico-novo-cabecalho p,.home-publico-novo-texto p,
+.aula-missao p,.trilhas-opcao-texto small,.lista-aula-info p,.biblioteca-area-cabecalho p,
+.acess-card-conteudo small,.acess-paleta-texto small,.aula-simulador-ajuda) {
+  color:var(--a11y-muted) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.mini-selo,.trilhas-ajuda-etiqueta,.aula-missao-etiqueta,.estudos-metodo-item,.lista-aula-tags span) {
+  background:var(--a11y-surface-soft) !important;
+  color:var(--a11y-text) !important;
+  border-color:var(--a11y-border) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+
+/* 6) Navegação e links */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .menu a {
+  color:var(--a11y-text) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .menu a.menu-ativo {
+  color:var(--a11y-primary) !important;
+  border-color:var(--a11y-accent) !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+a:not(.botao):not(.btn-entrar):not(.aula-btn-principal):not(.lista-aula-botao):not(.home-acao-principal) {
+  color:var(--a11y-link) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+
+/* 7) Botões principais — inclusive texto interno e texto direto do link */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,
+.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario) {
+  background:var(--a11y-primary) !important;
+  border-color:var(--a11y-primary) !important;
+  color:var(--a11y-on-primary) !important;
+  -webkit-text-fill-color:var(--a11y-on-primary) !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,
+.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario) * {
+  color:inherit !important;
+  -webkit-text-fill-color:currentColor !important;
+  opacity:1 !important;
+}
+
+/* Hover/foco mantém legibilidade */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,
+.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario):is(:hover,:focus-visible) {
+  background:var(--a11y-accent) !important;
+  border-color:var(--a11y-accent) !important;
+  color:var(--a11y-text) !important;
+  -webkit-text-fill-color:var(--a11y-text) !important;
+}
+
+/* Azul/rosa: o rosa é bom como foco/destaque, mas não como fundo de texto branco.
+   Por isso o hover usa superfície clara com borda rosa. */
+html body.paleta-azul-rosa
+:is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,
+.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario):is(:hover,:focus-visible) {
+  background:#F8EAF3 !important;
+  border-color:#A34079 !important;
+  color:#54203E !important;
+  -webkit-text-fill-color:#54203E !important;
+}
+
+/* 8) Botões secundários */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,
+.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo,
+.acess-botao-secundario,.acess-mais-opcoes) {
+  background:var(--a11y-surface) !important;
+  border-color:var(--a11y-primary) !important;
+  color:var(--a11y-primary) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,
+.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo,
+.acess-botao-secundario,.acess-mais-opcoes) * {
+  color:inherit !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+
+/* 9) Formulários */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(input,textarea,select,.campo-ui-input,.cadastro-input,.atividade-digitacao-input) {
+  background:var(--a11y-surface) !important;
+  color:var(--a11y-text) !important;
+  -webkit-text-fill-color:var(--a11y-text) !important;
+  border-color:var(--a11y-border) !important;
+  caret-color:var(--a11y-primary) !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(input,textarea)::placeholder {
+  color:var(--a11y-muted) !important;
+  -webkit-text-fill-color:var(--a11y-muted) !important;
+  opacity:1 !important;
+}
+
+/* 10) Estados e progresso */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aula-progresso-barra,.cadastro-progresso-barra) {
+  background:var(--a11y-surface-soft) !important;
+  border-color:var(--a11y-border) !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aula-progresso-barra>span,.cadastro-progresso-barra>span,.cadastro-progresso-barra::before,
+.home-jornada-numero,.auth-passo-numero,.cadastro-etapa-icone,.aula-passo-numero) {
+  background:var(--a11y-primary) !important;
+  color:var(--a11y-on-primary) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aviso-ui-sucesso,.lista-aula-card.concluida,.aula-habilidade-conquistada) {
+  background:var(--a11y-success-bg) !important;
+  color:var(--a11y-success) !important;
+  border-color:var(--a11y-success) !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.aviso-ui-atencao,.area-regra-seguranca,.aula-aviso-seguranca,.aula-passo-dica-visivel) {
+  background:var(--a11y-warning-bg) !important;
+  color:var(--a11y-warning) !important;
+  border-color:var(--a11y-accent) !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .aviso-ui-erro {
+  background:var(--a11y-danger-bg) !important;
+  color:var(--a11y-danger) !important;
+  border-color:var(--a11y-danger) !important;
+}
+
+/* 11) Benefícios da home — cor + símbolo, nunca só cor */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .hero-beneficios li {
+  color:var(--a11y-primary) !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza) .hero-beneficios li::before {
+  background:var(--a11y-primary) !important;
+  color:var(--a11y-on-primary) !important;
+}
+
+/* 12) Ícones de interface: superfícies legíveis em qualquer tema */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(.acess-card-icone,.educa-ui-icone,.biblioteca-area-icone,.aula-missao-icone) {
+  background:var(--a11y-surface-soft) !important;
+  border-color:var(--a11y-border) !important;
+  color:var(--a11y-primary) !important;
+}
+
+/* Ícones reais de aplicativos continuam com as cores oficiais para reconhecimento. */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="/simulador/"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="whatsapp"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="instagram"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="facebook"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="gov"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="chrome"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="gmail"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="maps"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="youtube"],
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+img[src*="uber"] {
+  filter:none !important;
+  opacity:1 !important;
+}
+
+/* Preto e branco: UI/fotos ficam monocromáticas, apps reais ficam preservados. */
+html body.paleta-cinza :is(.hero-imagem img,.trilhas-opcao-foto,.home-publico-novo-card img,.video-card-personalizado img) {
+  filter:grayscale(1) !important;
+}
+html body.paleta-cinza :is(.logo img,.auth-logo img) {
+  filter:grayscale(1) contrast(1.08) !important;
+}
+
+/* 13) Foco */
+html body:is(.paleta-azul-laranja,.paleta-azul-rosa,.paleta-universal,.paleta-cinza)
+:is(a,button,input,textarea,select,[tabindex]):focus-visible {
+  outline:4px solid var(--a11y-focus) !important;
+  outline-offset:3px !important;
+}
+
+/* =========================================================
+   CONTRASTE MÁXIMO V4 — regra soberana
+   Preto + branco + amarelo, sem depender de cor para significado.
+   ========================================================= */
+html body.alto-contraste {
+  --cor-primaria:#FFD43B !important;
+  --cor-primaria-forte:#FFE36B !important;
+  --cor-marinho:#FFFFFF !important;
+  --cor-texto-secundario:#E6EDF5 !important;
+  --cor-fundo-suave:#000000 !important;
+  --cor-borda:#FFFFFF !important;
+  --cor-branco:#0B1220 !important;
+  --azul:#FFD43B !important;
+  --azul-2:#FFE36B !important;
+  --marinho:#FFFFFF !important;
+  --texto:#E6EDF5 !important;
+  --fundo:#000000 !important;
+  --borda:#FFFFFF !important;
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  color-scheme:dark;
+}
+
+html body.alto-contraste :is(.topo,.rodape,main,.hero,.hero-inicio-limpo,.home-jornada,.home-publico-novo,
+.home-como-comecar,.pagina,.formulario-pagina,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina,
+.trilhas-inicio,.biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell) {
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  border-color:#FFFFFF !important;
+}
+
+html body.alto-contraste :is(
+  .cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,
+  .biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,
+  .aula-missao,.aula-modo-aprendizado,.biblioteca-area-cabecalho,.cadastro-dialogo,.cadastro-etapas-form,
+  .cadastro-etapa,.conta-pronta-card,.video-card-personalizado,.sobre-video-card,.acess-card,.acess-dialogo,
+  .painel-acessibilidade-inclusivo,.acess-paleta-opcao,.acess-previa,.acess-opcoes-compactas,
+  .acess-linha-nova,.acess-velocidade,.estudos-metodo-resumo,.estudos-continuar-faixa
+) {
+  background:#0B1220 !important;
+  color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+  box-shadow:none !important;
+}
+
+html body.alto-contraste :is(h1,h2,h3,h4,h5,h6,strong,label,legend,.titulo-home-simples,
+.trilhas-opcao-texto strong,.lista-aula-info h3,.biblioteca-area-cabecalho h1,.trilhas-ajuda-texto strong) {
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+}
+html body.alto-contraste :is(p,small,.hero-descricao,.hero-descricao-limpa,.home-ajuda-curta,
+.home-jornada-cabecalho p,.home-jornada-passo p,.home-publico-novo-cabecalho p,.home-publico-novo-texto p,
+.trilhas-opcao-texto small,.lista-aula-info p,.biblioteca-area-cabecalho p,.aula-missao p,
+.acess-card-conteudo small,.acess-paleta-texto small,.aula-simulador-ajuda) {
+  color:#E6EDF5 !important;
+  -webkit-text-fill-color:#E6EDF5 !important;
+}
+
+html body.alto-contraste .menu a {
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+}
+html body.alto-contraste .menu a.menu-ativo {
+  color:#FFD43B !important;
+  -webkit-text-fill-color:#FFD43B !important;
+  border-color:#FFD43B !important;
+}
+
+html body.alto-contraste :is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,
+.auth-botao-principal,.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario) {
+  background:#FFD43B !important;
+  border:2px solid #FFD43B !important;
+  color:#000000 !important;
+  -webkit-text-fill-color:#000000 !important;
+  opacity:1 !important;
+  box-shadow:none !important;
+  text-shadow:none !important;
+}
+html body.alto-contraste :is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,
+.auth-botao-principal,.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario) * {
+  color:#000000 !important;
+  -webkit-text-fill-color:#000000 !important;
+  opacity:1 !important;
+}
+html body.alto-contraste :is(.botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,
+.auth-botao-principal,.cadastro-botao,.cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,
+.atividade-digitacao-conferir,.acess-botao-primario):is(:hover,:focus-visible) {
+  background:#FFE36B !important;
+  border-color:#FFFFFF !important;
+  color:#000000 !important;
+  -webkit-text-fill-color:#000000 !important;
+}
+
+html body.alto-contraste :is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,
+.aula-modo-btn,.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo,
+.acess-botao-secundario,.acess-mais-opcoes) {
+  background:#000000 !important;
+  border:2px solid #FFD43B !important;
+  color:#FFD43B !important;
+  -webkit-text-fill-color:#FFD43B !important;
+  box-shadow:none !important;
+}
+html body.alto-contraste :is(.botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,
+.aula-modo-btn,.assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo,
+.acess-botao-secundario,.acess-mais-opcoes) * {
+  color:#FFD43B !important;
+  -webkit-text-fill-color:#FFD43B !important;
+}
+
+html body.alto-contraste :is(input,textarea,select,.campo-ui-input,.cadastro-input,.atividade-digitacao-input) {
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  border:2px solid #FFFFFF !important;
+  caret-color:#FFD43B !important;
+}
+html body.alto-contraste :is(input,textarea)::placeholder {
+  color:#D8E1EB !important;
+  -webkit-text-fill-color:#D8E1EB !important;
+  opacity:1 !important;
+}
+
+html body.alto-contraste :is(.mini-selo,.trilhas-ajuda-etiqueta,.aula-missao-etiqueta,
+.estudos-metodo-item,.lista-aula-tags span) {
+  background:#000000 !important;
+  color:#FFD43B !important;
+  -webkit-text-fill-color:#FFD43B !important;
+  border:2px solid #FFD43B !important;
+}
+
+html body.alto-contraste :is(.aula-progresso-barra,.cadastro-progresso-barra) {
+  background:#303846 !important;
+  border:1px solid #FFFFFF !important;
+}
+html body.alto-contraste :is(.aula-progresso-barra>span,.cadastro-progresso-barra>span,
+.cadastro-progresso-barra::before,.home-jornada-numero,.auth-passo-numero,.cadastro-etapa-icone,.aula-passo-numero) {
+  background:#FFD43B !important;
+  color:#000000 !important;
+  -webkit-text-fill-color:#000000 !important;
+}
+
+html body.alto-contraste :is(a,button,input,textarea,select,[tabindex]):focus-visible {
+  outline:4px solid #FFD43B !important;
+  outline-offset:4px !important;
+  box-shadow:0 0 0 2px #000000,0 0 0 5px #FFFFFF !important;
+}
+
+/* Interface: ícones claros; apps reais e fotos permanecem reconhecíveis. */
+html body.alto-contraste :is(.acess-card-icone,.educa-ui-icone,.biblioteca-area-icone) {
+  background:#000000 !important;
+  border:2px solid #FFD43B !important;
+  color:#FFFFFF !important;
+}
+html body.alto-contraste :is(.acess-card-icone,.educa-ui-icone) img {
+  filter:brightness(0) invert(1) !important;
+}
+html body.alto-contraste .aula-missao-icone {
+  background:#FFD43B !important;
+  border:2px solid #FFFFFF !important;
+}
+html body.alto-contraste .aula-missao-icone img {
+  filter:brightness(0) !important;
+}
+html body.alto-contraste img[src*="/simulador/"],
+html body.alto-contraste img[src*="whatsapp"],
+html body.alto-contraste img[src*="instagram"],
+html body.alto-contraste img[src*="facebook"],
+html body.alto-contraste img[src*="gov"],
+html body.alto-contraste img[src*="chrome"],
+html body.alto-contraste img[src*="gmail"],
+html body.alto-contraste img[src*="maps"],
+html body.alto-contraste img[src*="youtube"],
+html body.alto-contraste img[src*="uber"],
+html body.alto-contraste :is(.hero-imagem img,.trilhas-opcao-foto,.home-publico-novo-card img,.video-card-personalizado img) {
+  filter:none !important;
+  opacity:1 !important;
+  mix-blend-mode:normal !important;
+}
+html body.alto-contraste :is(.logo,.auth-logo) {
+  background:#FFFFFF !important;
+  border-radius:12px !important;
+  padding:4px 7px !important;
+}
+html body.alto-contraste :is(.logo img,.auth-logo img) {
+  filter:none !important;
+  opacity:1 !important;
+}
+
+/* Botão flutuante de acessibilidade */
+html body.alto-contraste .acessibilidade-flutuante {
+  background:#000000 !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  border:3px solid #FFFFFF !important;
+}
+html body.alto-contraste .acessibilidade-flutuante-icone {
+  background:#FFD43B !important;
+  border:2px solid #FFFFFF !important;
+}
+html body.alto-contraste .acessibilidade-flutuante-icone img {
+  filter:brightness(0) !important;
+}
+html body.alto-contraste .acessibilidade-flutuante-texto {
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+}
+
+/* =========================================================
+   MODO ESCURO V4 — mantém contraste legível e não conflita
+   com o contraste máximo.
+   ========================================================= */
+html body.modo-escuro-acessivel:not(.alto-contraste) {
+  --cor-marinho:#F7FAFF !important;
+  --cor-texto-secundario:#D4DEEB !important;
+  --cor-fundo-suave:#0A1320 !important;
+  --cor-borda:#61758B !important;
+  background:#0A1320 !important;
+  color:#F7FAFF !important;
+  color-scheme:dark;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste)
+:is(.topo,.rodape,.hero,.hero-inicio-limpo,.home-jornada,.home-publico-novo,.home-como-comecar,
+.pagina,.formulario-pagina,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina,.trilhas-inicio,
+.biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell) {
+  background:#0A1320 !important;
+  color:#F7FAFF !important;
+  border-color:#61758B !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste)
+:is(.cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,
+.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,
+.aula-missao,.aula-modo-aprendizado,.biblioteca-area-cabecalho,.cadastro-dialogo,.conta-pronta-card,
+.acess-card,.acess-dialogo,.painel-acessibilidade-inclusivo,.estudos-metodo-resumo,.estudos-continuar-faixa) {
+  background:#122034 !important;
+  color:#F7FAFF !important;
+  border-color:#61758B !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste)
+:is(h1,h2,h3,h4,h5,h6,strong,label,legend) {
+  color:#F7FAFF !important;
+  -webkit-text-fill-color:#F7FAFF !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste)
+:is(p,small,.hero-descricao,.hero-descricao-limpa,.home-ajuda-curta) {
+  color:#D4DEEB !important;
+  -webkit-text-fill-color:#D4DEEB !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste)
+:is(input,textarea,select) {
+  background:#091522 !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  border-color:#71869C !important;
+}
+
+/* 14) Contraste reforçado: não muda a paleta escolhida; apenas separa melhor. */
+html body.contraste-reforcado:not(.alto-contraste)
+:is(.cartao-ui,.home-jornada-passo,.home-publico-novo-card,.auth-card,.assistente-auth,.perfil-card,
+.biblioteca-trilha-card,.lista-aula-card,.trilhas-opcao,.trilhas-ajuda,.aula-passo-limpo,.atividade-limpa,
+.aula-missao,.aula-modo-aprendizado,.biblioteca-area-cabecalho,.cadastro-dialogo,.conta-pronta-card,
+.acess-card,.acess-dialogo,.estudos-metodo-resumo,.estudos-continuar-faixa) {
+  border-width:2px !important;
+}
+html body.contraste-reforcado:not(.alto-contraste)
+:is(a,button,input,textarea,select,[tabindex]):focus-visible {
+  outline-width:4px !important;
+}
+
+
+/* =========================================================
+   MODO ESCURO V5 — cobertura total da interface
+   Evita cartões claros com texto claro e mantém controles,
+   campos, menus e estados de foco legíveis.
+   ========================================================= */
+html body.modo-escuro-acessivel:not(.alto-contraste) {
+  --a11y-bg:#08121E !important;
+  --a11y-surface:#101F31 !important;
+  --a11y-surface-soft:#172A40 !important;
+  --a11y-text:#F8FBFF !important;
+  --a11y-muted:#CBD8E7 !important;
+  --a11y-primary:#6EA8FF !important;
+  --a11y-accent:#FFD166 !important;
+  --a11y-on-primary:#07111D !important;
+  --a11y-border:#71869D !important;
+  --a11y-focus:#FFD166 !important;
+  --a11y-link:#8DBBFF !important;
+  --cor-primaria:#6EA8FF !important;
+  --cor-primaria-forte:#8DBBFF !important;
+  --cor-marinho:#F8FBFF !important;
+  --cor-texto-secundario:#CBD8E7 !important;
+  --cor-fundo-suave:#08121E !important;
+  --cor-borda:#71869D !important;
+  --cor-branco:#101F31 !important;
+  --azul:#6EA8FF !important;
+  --azul-2:#8DBBFF !important;
+  --marinho:#F8FBFF !important;
+  --texto:#CBD8E7 !important;
+  --fundo:#08121E !important;
+  --borda:#71869D !important;
+  background:#08121E !important;
+  color:#F8FBFF !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  main,.pagina,.conteudo,.conteudo-principal,.pagina-conteudo,.secao,
+  .topo,.rodape,.hero,.hero-inicio-limpo,.home-jornada,.home-publico-novo,.home-como-comecar,
+  .formulario-pagina,.auth-pagina,.cadastro-guiado-pagina,.conta-pronta-pagina,.trilhas-inicio,
+  .biblioteca-aulas,.lista-aulas-trilha,.aula-interativa,.aula-interativa-shell
+) {
+  background-color:#08121E !important;
+  color:#F8FBFF !important;
+  border-color:#71869D !important;
+}
+
+/* Fallback amplo para componentes do projeto que usam nomes diferentes entre páginas. */
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  [class*="card"],[class*="cartao"],[class*="cartão"],[class*="painel"],
+  [class*="faixa"],[class*="bloco"],[class*="box"],[class*="quadro"],
+  [class*="modal"],dialog,fieldset
+) {
+  background-color:#101F31 !important;
+  background-image:none !important;
+  color:#F8FBFF !important;
+  border-color:#71869D !important;
+  box-shadow:none !important;
+}
+
+/* Seções e artigos não podem conservar fundo branco definido em estilos locais. */
+html body.modo-escuro-acessivel:not(.alto-contraste) main :is(section,article,aside,form) {
+  color:#F8FBFF !important;
+  border-color:#71869D !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  h1,h2,h3,h4,h5,h6,strong,b,label,legend,.titulo,.subtitulo,
+  .titulo-home-simples,.trilhas-opcao-texto strong,.lista-aula-info h3,
+  .biblioteca-area-cabecalho h1,.acess-card-conteudo strong,.acess-paleta-texto strong
+) {
+  color:#F8FBFF !important;
+  -webkit-text-fill-color:#F8FBFF !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  p,small,.texto-secundario,.descricao,.hero-descricao,.hero-descricao-limpa,.home-ajuda-curta,
+  .home-jornada-cabecalho p,.home-jornada-passo p,.home-publico-novo-cabecalho p,.home-publico-novo-texto p,
+  .trilhas-opcao-texto small,.lista-aula-info p,.biblioteca-area-cabecalho p,.aula-missao p,
+  .acess-card-conteudo small,.acess-paleta-texto small,.aula-simulador-ajuda
+) {
+  color:#CBD8E7 !important;
+  -webkit-text-fill-color:#CBD8E7 !important;
+  opacity:1 !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) a:not(.botao):not(.btn-entrar) {
+  color:#8DBBFF !important;
+  -webkit-text-fill-color:#8DBBFF !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(input,textarea,select,.campo-ui-input,.cadastro-input,.atividade-digitacao-input) {
+  background:#07111D !important;
+  color:#FFFFFF !important;
+  -webkit-text-fill-color:#FFFFFF !important;
+  border:2px solid #8297AE !important;
+  caret-color:#FFD166 !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(input,textarea)::placeholder {
+  color:#B9C8D8 !important;
+  -webkit-text-fill-color:#B9C8D8 !important;
+  opacity:1 !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  .botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,
+  .cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,.atividade-digitacao-conferir,
+  .acess-botao-primario
+) {
+  background:#6EA8FF !important;
+  border-color:#9EC5FF !important;
+  color:#07111D !important;
+  -webkit-text-fill-color:#07111D !important;
+  opacity:1 !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  .botao-principal,.btn-entrar.botao,.botao-info,.home-acao-principal,.auth-botao-principal,
+  .cadastro-botao-principal,.aula-btn-principal,.lista-aula-botao,.atividade-digitacao-conferir,
+  .acess-botao-primario
+) * {
+  color:#07111D !important;
+  -webkit-text-fill-color:#07111D !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  .botao-secundario,.area-ouvir,.aula-btn-secundario,.atividade-btn-dica,.aula-modo-btn,
+  .assistente-auth-ouvir,.acess-voltar,.controle-fonte-novo button,.btn-restaurar-novo,
+  .acess-botao-secundario
+) {
+  background:#172A40 !important;
+  border:2px solid #8DBBFF !important;
+  color:#F8FBFF !important;
+  -webkit-text-fill-color:#F8FBFF !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) .menu a {
+  color:#E9F1FB !important;
+  -webkit-text-fill-color:#E9F1FB !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste) .menu a.menu-ativo {
+  color:#8DBBFF !important;
+  -webkit-text-fill-color:#8DBBFF !important;
+  border-color:#8DBBFF !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(a,button,input,textarea,select,[tabindex]):focus-visible {
+  outline:4px solid #FFD166 !important;
+  outline-offset:3px !important;
+  box-shadow:0 0 0 2px #08121E,0 0 0 5px #F8FBFF !important;
+}
+
+/* Mantém fotos, logotipos e ícones de serviços reconhecíveis no tema escuro. */
+html body.modo-escuro-acessivel:not(.alto-contraste) :is(
+  img,.hero-imagem img,.trilhas-opcao-foto,.home-publico-novo-card img,.video-card-personalizado img
+) {
+  opacity:1 !important;
+  mix-blend-mode:normal !important;
+}
+
+html body.modo-escuro-acessivel:not(.alto-contraste) .painel-acessibilidade-inclusivo {
+  background:#0D1A2A !important;
+  border-color:#71869D !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste) .acess-card-icone {
+  background:#172A40 !important;
+  border-color:#71869D !important;
+  color:#8DBBFF !important;
+}
+html body.modo-escuro-acessivel:not(.alto-contraste) .status-voz-inline {
+  color:#9EC5FF !important;
+  -webkit-text-fill-color:#9EC5FF !important;
+}
+
+/* Contraste máximo continua soberano quando os dois controles estão ligados. */
+html body.alto-contraste .status-voz-inline {
+  color:#FFD43B !important;
+  -webkit-text-fill-color:#FFD43B !important;
+}

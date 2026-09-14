@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Meu perfil | Educa+ Digital{% endblock %}
+
+{% block content %}
+<section class="perfil-pagina-nova" aria-labelledby="tituloPerfil">
+  <div class="perfil-painel-principal">
+    <header class="perfil-identidade">
+      <figure class="perfil-avatar" aria-hidden="true">
+        <img src="{{ url_for('static', filename='img/icones/ui/user.svg') }}" alt="">
+      </figure>
+
+      <div class="perfil-identidade-texto">
+        <span class="perfil-status"><span aria-hidden="true">✓</span> Conta ativa</span>
+        <h1 id="tituloPerfil">Olá, {{ nome.split()[0] if nome else 'Aluno' }}!</h1>
+        <p class="perfil-boas-vindas">Bem-vindo ao seu espaço no Educa+ Digital.</p>
+        <dl class="perfil-dados">
+          <div>
+            <dt>Seu nome</dt>
+            <dd>{{ nome }}</dd>
+          </div>
+          <div>
+            <dt>Celular para entrar</dt>
+            <dd>{{ telefone or 'Não informado' }}</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <section class="perfil-continuar" aria-labelledby="tituloContinuarPerfil">
+      <div class="perfil-continuar-icone" aria-hidden="true">
+        <img src="{{ url_for('static', filename='img/icones/lesson.png') }}" alt="">
+      </div>
+      <div class="perfil-continuar-texto">
+        <span>{{ 'Continue de onde parou' if tem_progresso else 'Comece seus estudos' }}</span>
+        <h2 id="tituloContinuarPerfil">{{ aula_atual_perfil.titulo }}</h2>
+      </div>
+      <a class="perfil-continuar-botao" href="{{ url_for('continuar_aula') }}">
+        <span>{{ 'Continuar agora' if tem_progresso else 'Começar agora' }}</span>
+        <span aria-hidden="true">›</span>
+      </a>
+    </section>
+
+    <nav class="perfil-acoes" aria-label="Ações do perfil">
+      <a class="perfil-acao perfil-acao-estudos" href="{{ url_for('estudos') }}">
+        <span class="perfil-acao-icone" aria-hidden="true">
+          <img src="{{ url_for('static', filename='img/icones/ui/trilhas.svg') }}" alt="">
+        </span>
+        <span class="perfil-acao-texto">
+          <strong>Minhas trilhas</strong>
+          <small>Veja seus estudos</small>
+        </span>
+        <span class="perfil-acao-seta" aria-hidden="true">›</span>
+      </a>
+
+      <button class="perfil-acao perfil-acao-acess" id="abrirAcessibilidadePerfil" type="button">
+        <span class="perfil-acao-icone" aria-hidden="true">
+          <img src="{{ url_for('static', filename='img/icones/ui/accessibility.svg') }}" alt="">
+        </span>
+        <span class="perfil-acao-texto">
+          <strong>Acessibilidade</strong>
+          <small>Deixe do seu jeito</small>
+        </span>
+        <span class="perfil-acao-seta" aria-hidden="true">›</span>
+      </button>
+
+      <a class="perfil-acao perfil-acao-sair" href="{{ url_for('sair') }}">
+        <span class="perfil-acao-icone" aria-hidden="true">
+          <img src="{{ url_for('static', filename='img/icones/ui/logout.svg') }}" alt="">
+        </span>
+        <span class="perfil-acao-texto">
+          <strong>Sair da conta</strong>
+          <small>Encerrar sessão</small>
+        </span>
+        <span class="perfil-acao-seta" aria-hidden="true">›</span>
+      </a>
+    </nav>
+
+    <details class="perfil-progresso">
+      <summary>
+        <span class="perfil-progresso-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/ui/progresso.svg') }}" alt=""></span>
+        <span>Ver meu progresso</span>
+        <span class="perfil-progresso-seta" aria-hidden="true">›</span>
+      </summary>
+      <div class="perfil-progresso-conteudo">
+        <div>
+          <strong>{{ aulas_concluidas }}</strong>
+          <span>Aulas concluídas</span>
+        </div>
+        <div>
+          <strong>{{ total_aulas }}</strong>
+          <span>Aulas disponíveis</span>
+        </div>
+      </div>
+    </details>
+
+    <aside class="perfil-mensagem" aria-label="Mensagem do Educa+">
+      <span class="perfil-mensagem-icone" aria-hidden="true"><img src="{{ url_for('static', filename='img/icones/ui/coracao.svg') }}" alt=""></span>
+      <div>
+        <strong>Você está aprendendo no seu ritmo.</strong>
+        <p>Quando precisar, o Educa+ pode explicar novamente e ajudar você a continuar.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+  const atalho = document.getElementById('abrirAcessibilidadePerfil');
+  const abrir = document.getElementById('abrirAcessibilidadeFlutuante');
+  if (atalho && abrir) {
+    atalho.addEventListener('click', () => abrir.click());
+  }
+})();
+</script>
+{% endblock %}

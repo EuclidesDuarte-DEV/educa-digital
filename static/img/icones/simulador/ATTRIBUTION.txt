@@ -1,0 +1,18 @@
+Educa+ Digital — ícones do simulador
+
+Os símbolos de interface e alguns glifos de marcas contidos nesta pasta usam formas vetoriais do Font Awesome Free 6.7.2 (CC BY 4.0 para ícones), adaptadas apenas para apresentação dentro dos blocos do simulador.
+https://fontawesome.com/license/free
+
+WhatsApp, Pix, Bluetooth, gov.br, Google Fotos e outras marcas citadas pertencem aos respectivos titulares. O uso no Educa+ é exclusivamente educacional, para reconhecimento visual durante o treinamento.
+
+Brand-identification icons added for educational recognition:
+- WhatsApp: WhatsApp/Meta recognizable green app mark (educational identification).
+- Instagram: Instagram recognizable gradient glyph (educational identification).
+- Facebook: Facebook recognizable blue "f" app mark (educational identification).
+- YouTube: YouTube recognizable red play mark (educational identification).
+- Chrome: Google Chrome current multicolor mark based on Google's published logo geometry.
+- Gmail: recognizable multicolor Gmail "M" mark for educational identification.
+- Google: recognizable multicolor Google "G" mark for educational identification.
+- gov.br / Meu INSS / CTPS: training representations used only to help learners recognize official services. Always confirm the official app/site before entering personal data.
+
+These marks remain property of their respective owners and are used here only to identify the services being taught.
