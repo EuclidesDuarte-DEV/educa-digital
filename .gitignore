@@ -1,8 +1,36 @@
+# Python / ambiente virtual / dados locais
 __pycache__/
 *.py[cod]
+.pytest_cache/
 .venv/
 venv/
+instance/
+.local/
+*.sqlite
+*.sqlite3
+*.db
+
+# Node / Cloudflare
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
+
+# Segredos e arquivos locais
 .env
-educa.db
-*.db-journal
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor e sistema operacional
+.vscode/
+.idea/
 .DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+coverage/
+
+# Pacotes de distribuição
+*.zip

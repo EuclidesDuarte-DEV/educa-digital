@@ -1,0 +1,16 @@
+# Configuração do plano gratuito Cloudflare Workers + D1
+# Banco D1 existente do projeto, já criado e utilizado em produção.
+name = "educa-digital"
+main = "src/worker.js"
+compatibility_date = "2026-10-18"
+workers_dev = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/", "/index.html", "/api/*", "/treino"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "educa-digital"
+database_id = "25613d89-8073-40f2-af9b-91e751fb28d7"

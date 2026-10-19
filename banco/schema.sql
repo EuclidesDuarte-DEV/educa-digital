@@ -1,0 +1,145 @@
+-- Educa+ Digital | banco SQLite (Flask) e D1 (Cloudflare)
+-- Modelo de dados baseado no diagrama do projeto:
+-- Módulo -> Capítulo -> Atividade -> Progresso <- Usuário
+-- Usuário -> Código de acesso; Usuário -> Perfil de acessibilidade.
+--
+-- O catálogo é populado para disponibilizar as 22 atividades do protótipo.
+-- A chave atividade_codigo permanece por compatibilidade com a V102 publicada.
+-- A atividade_id relaciona o progresso à tabela de atividades.
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS modulos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    codigo TEXT NOT NULL UNIQUE,
+    titulo TEXT NOT NULL,
+    criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS capitulos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    modulo_id INTEGER NOT NULL REFERENCES modulos(id) ON DELETE CASCADE,
+    codigo TEXT NOT NULL UNIQUE,
+    titulo TEXT NOT NULL,
+    ordem INTEGER NOT NULL,
+    criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS atividades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    capitulo_id INTEGER NOT NULL REFERENCES capitulos(id) ON DELETE CASCADE,
+    codigo TEXT NOT NULL UNIQUE,
+    titulo TEXT NOT NULL,
+    tipo TEXT NOT NULL,
+    conteudo TEXT NOT NULL DEFAULT '{}',
+    video_url TEXT,
+    ordem INTEGER NOT NULL,
+    criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    funcao TEXT NOT NULL DEFAULT 'aluno',
+    nome TEXT NOT NULL,
+    numero TEXT NOT NULL UNIQUE,
+    criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ultimo_login TEXT
+);
+
+-- Relação 1:1 com Usuário: a chave primária é o próprio usuário_id.
+CREATE TABLE IF NOT EXISTS codigos_acesso (
+    usuario_id INTEGER PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+    pin TEXT NOT NULL,
+    expira_em INTEGER NOT NULL,
+    criado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS perfil_acessibilidade (
+    usuario_id INTEGER PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+    tamanho_fonte TEXT NOT NULL DEFAULT 'grande',
+    alto_contraste INTEGER NOT NULL DEFAULT 0 CHECK (alto_contraste IN (0, 1)),
+    narracao_automatica INTEGER NOT NULL DEFAULT 0 CHECK (narracao_automatica IN (0, 1)),
+    atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS progresso (
+    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    atividade_codigo TEXT NOT NULL,
+    atividade_id INTEGER REFERENCES atividades(id),
+    tentativas INTEGER NOT NULL DEFAULT 0,
+    concluido INTEGER NOT NULL DEFAULT 0 CHECK (concluido IN (0, 1)),
+    data_conclusao TEXT,
+    atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (usuario_id, atividade_codigo)
+);
+
+CREATE INDEX IF NOT EXISTS idx_capitulos_modulo ON capitulos(modulo_id);
+CREATE INDEX IF NOT EXISTS idx_atividades_capitulo ON atividades(capitulo_id);
+CREATE INDEX IF NOT EXISTS idx_progresso_atividade ON progresso(atividade_id);
+
+-- Mantém a ligação à atividade mesmo quando a API antiga grava por código.
+CREATE TRIGGER IF NOT EXISTS vincular_progresso_atividade
+AFTER INSERT ON progresso
+FOR EACH ROW
+BEGIN
+    UPDATE progresso
+       SET atividade_id = (SELECT id FROM atividades WHERE codigo = NEW.atividade_codigo)
+     WHERE usuario_id = NEW.usuario_id
+       AND atividade_codigo = NEW.atividade_codigo;
+END;
+
+-- Conteúdo das trilhas preservado da V102.
+INSERT OR IGNORE INTO modulos(codigo, titulo) VALUES ('pix', 'PIX');
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'pix-primeiros-passos', 'Primeiros passos no Pix', 1 FROM modulos WHERE codigo='pix';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'pix-recipient', 'Encontrar o Pix no banco', 'video_pratica', '{"resumo":"Abra o banco, entre no Pix e confira o destinatário.","acao_frontend":"pix-recipient"}', '/static/videos/pix_seguranca.mp4', 1 FROM capitulos WHERE codigo='pix-primeiros-passos';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'pix-chaves', 'Chaves Pix', 2 FROM modulos WHERE codigo='pix';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'pix-key', 'Entender as chaves Pix', 'video_pratica', '{"resumo":"Veja CPF, celular, e-mail e chave aleatória.","acao_frontend":"pix-key"}', '/static/videos/pix-key.mp4?v=71', 1 FROM capitulos WHERE codigo='pix-chaves';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'pix-seguranca', 'Segurança no pagamento', 3 FROM modulos WHERE codigo='pix';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'pix-scam', 'Reconhecer pedido suspeito', 'video_pratica', '{"resumo":"Aprenda a parar diante de urgência e número novo.","acao_frontend":"pix-scam"}', 'https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/a5a4b9cc-d596-4040-9a48-131c706b76d9.mp4', 1 FROM capitulos WHERE codigo='pix-seguranca';
+INSERT OR IGNORE INTO modulos(codigo, titulo) VALUES ('security', 'Segurança');
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'seg-falso-familiar', 'Golpe do falso familiar', 1 FROM modulos WHERE codigo='security';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'family', 'Golpe do falso filho', 'video_pratica', '{"resumo":"Aprenda a confirmar antes de fazer um Pix.","acao_frontend":"family"}', '/static/videos/family.mp4?v=71', 1 FROM capitulos WHERE codigo='seg-falso-familiar';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'seg-link-falso', 'Links e mensagens falsas', 2 FROM modulos WHERE codigo='security';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'bank', 'Link falso do banco', 'video_pratica', '{"resumo":"Veja como agir quando receber um link urgente.","acao_frontend":"bank"}', '/static/videos/bank.mp4?v=71', 1 FROM capitulos WHERE codigo='seg-link-falso';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'seg-codigos', 'Códigos de verificação', 3 FROM modulos WHERE codigo='security';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'code', 'Código por SMS', 'video_pratica', '{"resumo":"Saiba por que nunca compartilhar códigos.","acao_frontend":"code"}', '/static/videos/code.mp4?v=71', 1 FROM capitulos WHERE codigo='seg-codigos';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'seg-falsa-central', 'Falsa central bancária', 4 FROM modulos WHERE codigo='security';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'fake-bank-call', 'Falsa central bancária', 'video_pratica', '{"resumo":"Treine como agir quando alguém pede senha ou instalação de aplicativo.","acao_frontend":"fake-bank-call"}', '/static/videos/fake-bank-call.mp4?v=71', 1 FROM capitulos WHERE codigo='seg-falsa-central';
+INSERT OR IGNORE INTO modulos(codigo, titulo) VALUES ('whatsapp', 'WhatsApp');
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'wa-conversas', 'Conversas', 1 FROM modulos WHERE codigo='whatsapp';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'wa-list', 'Encontrar uma conversa', 'video_pratica', '{"resumo":"Aprenda a localizar uma pessoa na lista.","acao_frontend":"wa-list"}', '/static/videos/wa-list.mp4?v=71', 1 FROM capitulos WHERE codigo='wa-conversas';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'wa-mensagens', 'Mensagens', 2 FROM modulos WHERE codigo='whatsapp';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'wa-message', 'Enviar uma mensagem', 'video_pratica', '{"resumo":"Abra uma conversa e escreva uma mensagem.","acao_frontend":"wa-message"}', '/static/videos/wa-message.mp4?v=71', 1 FROM capitulos WHERE codigo='wa-mensagens';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'wa-chamadas', 'Chamadas', 3 FROM modulos WHERE codigo='whatsapp';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'wa-call', 'Fazer uma ligação', 'video_pratica', '{"resumo":"Conheça onde fica o botão de chamada.","acao_frontend":"wa-call"}', '/static/videos/wa-call.mp4?v=71', 1 FROM capitulos WHERE codigo='wa-chamadas';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'wa-codigo', 'Código de verificação', 4 FROM modulos WHERE codigo='whatsapp';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'wa-code-safety', 'Proteger código de verificação', 'video_pratica', '{"resumo":"Aprenda por que códigos nunca devem ser enviados por mensagem.","acao_frontend":"wa-code-safety"}', 'https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/a5a4b9cc-d596-4040-9a48-131c706b76d9.mp4', 1 FROM capitulos WHERE codigo='wa-codigo';
+INSERT OR IGNORE INTO modulos(codigo, titulo) VALUES ('settings', 'Ajustes');
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'ajustes-fonte', 'Tamanho do texto', 1 FROM modulos WHERE codigo='settings';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'settings-font', 'Aumentar as letras', 'video_pratica', '{"resumo":"Deixe textos maiores e mais fáceis de ler.","acao_frontend":"settings-font"}', '/static/videos/settings-font.mp4?v=71', 1 FROM capitulos WHERE codigo='ajustes-fonte';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'ajustes-volume', 'Som e volume', 2 FROM modulos WHERE codigo='settings';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'settings-volume', 'Ajustar o volume', 'video_pratica', '{"resumo":"Aumente ou diminua o som do aparelho.","acao_frontend":"settings-volume"}', '/static/videos/settings-volume.mp4?v=71', 1 FROM capitulos WHERE codigo='ajustes-volume';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'ajustes-wifi', 'Wi-Fi', 3 FROM modulos WHERE codigo='settings';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'settings-wifi', 'Conectar ao Wi-Fi', 'video_pratica', '{"resumo":"Aprenda a escolher uma rede com segurança.","acao_frontend":"settings-wifi"}', '/static/videos/settings-wifi.mp4?v=71', 1 FROM capitulos WHERE codigo='ajustes-wifi';
+INSERT OR IGNORE INTO modulos(codigo, titulo) VALUES ('govbr', 'GOV.BR');
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'gov-acesso', 'Acesso seguro', 1 FROM modulos WHERE codigo='govbr';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'gov-login', 'Entrar com segurança', 'video_pratica', '{"resumo":"Reconheça o acesso oficial do GOV.BR.","acao_frontend":"gov-login"}', 'https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/55e49222-b669-47d8-8363-0f6d12b11c96.mp4', 1 FROM capitulos WHERE codigo='gov-acesso';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'gov-servicos', 'Serviços públicos', 2 FROM modulos WHERE codigo='govbr';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'gov-service', 'Encontrar um serviço', 'video_pratica', '{"resumo":"Saiba onde procurar o que você precisa.","acao_frontend":"gov-service"}', '/static/videos/gov-service.mp4?v=71', 1 FROM capitulos WHERE codigo='gov-servicos';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'gov-sair', 'Encerrar sessão', 3 FROM modulos WHERE codigo='govbr';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'gov-logout', 'Sair da conta', 'video_pratica', '{"resumo":"Proteja seus dados depois de usar.","acao_frontend":"gov-logout"}', '/static/videos/gov-logout.mp4?v=71', 1 FROM capitulos WHERE codigo='gov-sair';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'gov-2fa-cap', 'Verificação em duas etapas', 4 FROM modulos WHERE codigo='govbr';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'gov-2fa', 'Verificação em duas etapas', 'video_pratica', '{"resumo":"Entenda onde o código é gerado e como protegê-lo.","acao_frontend":"gov-2fa"}', 'https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/55e49222-b669-47d8-8363-0f6d12b11c96.mp4', 1 FROM capitulos WHERE codigo='gov-2fa-cap';
+INSERT OR IGNORE INTO modulos(codigo, titulo) VALUES ('playstore', 'Apps seguros');
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'apps-oficial', 'Encontrar um aplicativo oficial', 1 FROM modulos WHERE codigo='playstore';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'play-find', 'Encontrar um aplicativo oficial', 'video_pratica', '{"resumo":"Vídeo narrado de encontrar um aplicativo oficial.","acao_frontend":"play-find"}', '/static/videos/play-find.mp4?v=71', 1 FROM capitulos WHERE codigo='apps-oficial';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'apps-desenvolvedor', 'Conferir o desenvolvedor', 2 FROM modulos WHERE codigo='playstore';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'play-developer', 'Conferir o desenvolvedor', 'video_pratica', '{"resumo":"Vídeo narrado de conferir o desenvolvedor.","acao_frontend":"play-developer"}', '/static/videos/play-developer.mp4?v=71', 1 FROM capitulos WHERE codigo='apps-desenvolvedor';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'apps-play-protect', 'Usar o Play Protect', 3 FROM modulos WHERE codigo='playstore';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'play-protect', 'Usar o Play Protect', 'video_pratica', '{"resumo":"Vídeo narrado de usar o play protect.","acao_frontend":"play-protect"}', '/static/videos/play-protect.mp4?v=71', 1 FROM capitulos WHERE codigo='apps-play-protect';
+INSERT OR IGNORE INTO capitulos(modulo_id, codigo, titulo, ordem) SELECT id, 'apps-permissoes', 'Revisar permissões dos aplicativos', 4 FROM modulos WHERE codigo='playstore';
+INSERT OR IGNORE INTO atividades(capitulo_id, codigo, titulo, tipo, conteudo, video_url, ordem) SELECT id, 'play-permissions', 'Revisar permissões dos aplicativos', 'video_pratica', '{"resumo":"Vídeo narrado de revisar permissões dos aplicativos.","acao_frontend":"play-permissions"}', '/static/videos/play-permissions.mp4?v=71', 1 FROM capitulos WHERE codigo='apps-permissoes';
+

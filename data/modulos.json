@@ -1,0 +1,440 @@
+[
+  {
+    "codigo": "pix",
+    "titulo": "PIX",
+    "ordem": 1,
+    "capitulos": [
+      {
+        "codigo": "pix-primeiros-passos",
+        "titulo": "Primeiros passos no Pix",
+        "ordem": 1,
+        "atividades": [
+          {
+            "codigo": "pix-recipient",
+            "titulo": "Encontrar o Pix no banco",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Abra o banco, entre no Pix e confira o destinatário.",
+              "acao_frontend": "pix-recipient"
+            },
+            "video_url": "/static/videos/pix_seguranca.mp4",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "pix-chaves",
+        "titulo": "Chaves Pix",
+        "ordem": 2,
+        "atividades": [
+          {
+            "codigo": "pix-key",
+            "titulo": "Entender as chaves Pix",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Veja CPF, celular, e-mail e chave aleatória.",
+              "acao_frontend": "pix-key"
+            },
+            "video_url": "/static/videos/pix-key.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "pix-seguranca",
+        "titulo": "Segurança no pagamento",
+        "ordem": 3,
+        "atividades": [
+          {
+            "codigo": "pix-scam",
+            "titulo": "Reconhecer pedido suspeito",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Aprenda a parar diante de urgência e número novo.",
+              "acao_frontend": "pix-scam"
+            },
+            "video_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/a5a4b9cc-d596-4040-9a48-131c706b76d9.mp4",
+            "ordem": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "security",
+    "titulo": "Segurança",
+    "ordem": 2,
+    "capitulos": [
+      {
+        "codigo": "seg-falso-familiar",
+        "titulo": "Golpe do falso familiar",
+        "ordem": 1,
+        "atividades": [
+          {
+            "codigo": "family",
+            "titulo": "Golpe do falso filho",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Aprenda a confirmar antes de fazer um Pix.",
+              "acao_frontend": "family"
+            },
+            "video_url": "/static/videos/family.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "seg-link-falso",
+        "titulo": "Links e mensagens falsas",
+        "ordem": 2,
+        "atividades": [
+          {
+            "codigo": "bank",
+            "titulo": "Link falso do banco",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Veja como agir quando receber um link urgente.",
+              "acao_frontend": "bank"
+            },
+            "video_url": "/static/videos/bank.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "seg-codigos",
+        "titulo": "Códigos de verificação",
+        "ordem": 3,
+        "atividades": [
+          {
+            "codigo": "code",
+            "titulo": "Código por SMS",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Saiba por que nunca compartilhar códigos.",
+              "acao_frontend": "code"
+            },
+            "video_url": "/static/videos/code.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "seg-falsa-central",
+        "titulo": "Falsa central bancária",
+        "ordem": 4,
+        "atividades": [
+          {
+            "codigo": "fake-bank-call",
+            "titulo": "Falsa central bancária",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Treine como agir quando alguém pede senha ou instalação de aplicativo.",
+              "acao_frontend": "fake-bank-call"
+            },
+            "video_url": "/static/videos/fake-bank-call.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "whatsapp",
+    "titulo": "WhatsApp",
+    "ordem": 3,
+    "capitulos": [
+      {
+        "codigo": "wa-conversas",
+        "titulo": "Conversas",
+        "ordem": 1,
+        "atividades": [
+          {
+            "codigo": "wa-list",
+            "titulo": "Encontrar uma conversa",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Aprenda a localizar uma pessoa na lista.",
+              "acao_frontend": "wa-list"
+            },
+            "video_url": "/static/videos/wa-list.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "wa-mensagens",
+        "titulo": "Mensagens",
+        "ordem": 2,
+        "atividades": [
+          {
+            "codigo": "wa-message",
+            "titulo": "Enviar uma mensagem",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Abra uma conversa e escreva uma mensagem.",
+              "acao_frontend": "wa-message"
+            },
+            "video_url": "/static/videos/wa-message.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "wa-chamadas",
+        "titulo": "Chamadas",
+        "ordem": 3,
+        "atividades": [
+          {
+            "codigo": "wa-call",
+            "titulo": "Fazer uma ligação",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Conheça onde fica o botão de chamada.",
+              "acao_frontend": "wa-call"
+            },
+            "video_url": "/static/videos/wa-call.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "wa-codigo",
+        "titulo": "Código de verificação",
+        "ordem": 4,
+        "atividades": [
+          {
+            "codigo": "wa-code-safety",
+            "titulo": "Proteger código de verificação",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Aprenda por que códigos nunca devem ser enviados por mensagem.",
+              "acao_frontend": "wa-code-safety"
+            },
+            "video_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/a5a4b9cc-d596-4040-9a48-131c706b76d9.mp4",
+            "ordem": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "settings",
+    "titulo": "Ajustes",
+    "ordem": 4,
+    "capitulos": [
+      {
+        "codigo": "ajustes-fonte",
+        "titulo": "Tamanho do texto",
+        "ordem": 1,
+        "atividades": [
+          {
+            "codigo": "settings-font",
+            "titulo": "Aumentar as letras",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Deixe textos maiores e mais fáceis de ler.",
+              "acao_frontend": "settings-font"
+            },
+            "video_url": "/static/videos/settings-font.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "ajustes-volume",
+        "titulo": "Som e volume",
+        "ordem": 2,
+        "atividades": [
+          {
+            "codigo": "settings-volume",
+            "titulo": "Ajustar o volume",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Aumente ou diminua o som do aparelho.",
+              "acao_frontend": "settings-volume"
+            },
+            "video_url": "/static/videos/settings-volume.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "ajustes-wifi",
+        "titulo": "Wi-Fi",
+        "ordem": 3,
+        "atividades": [
+          {
+            "codigo": "settings-wifi",
+            "titulo": "Conectar ao Wi-Fi",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Aprenda a escolher uma rede com segurança.",
+              "acao_frontend": "settings-wifi"
+            },
+            "video_url": "/static/videos/settings-wifi.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "govbr",
+    "titulo": "GOV.BR",
+    "ordem": 5,
+    "capitulos": [
+      {
+        "codigo": "gov-acesso",
+        "titulo": "Acesso seguro",
+        "ordem": 1,
+        "atividades": [
+          {
+            "codigo": "gov-login",
+            "titulo": "Entrar com segurança",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Reconheça o acesso oficial do GOV.BR.",
+              "acao_frontend": "gov-login"
+            },
+            "video_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/55e49222-b669-47d8-8363-0f6d12b11c96.mp4",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "gov-servicos",
+        "titulo": "Serviços públicos",
+        "ordem": 2,
+        "atividades": [
+          {
+            "codigo": "gov-service",
+            "titulo": "Encontrar um serviço",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Saiba onde procurar o que você precisa.",
+              "acao_frontend": "gov-service"
+            },
+            "video_url": "/static/videos/gov-service.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "gov-sair",
+        "titulo": "Encerrar sessão",
+        "ordem": 3,
+        "atividades": [
+          {
+            "codigo": "gov-logout",
+            "titulo": "Sair da conta",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Proteja seus dados depois de usar.",
+              "acao_frontend": "gov-logout"
+            },
+            "video_url": "/static/videos/gov-logout.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "gov-2fa-cap",
+        "titulo": "Verificação em duas etapas",
+        "ordem": 4,
+        "atividades": [
+          {
+            "codigo": "gov-2fa",
+            "titulo": "Verificação em duas etapas",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Entenda onde o código é gerado e como protegê-lo.",
+              "acao_frontend": "gov-2fa"
+            },
+            "video_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/55e49222-b669-47d8-8363-0f6d12b11c96.mp4",
+            "ordem": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "codigo": "playstore",
+    "titulo": "Apps seguros",
+    "ordem": 6,
+    "capitulos": [
+      {
+        "codigo": "apps-oficial",
+        "titulo": "Encontrar um aplicativo oficial",
+        "ordem": 1,
+        "atividades": [
+          {
+            "codigo": "play-find",
+            "titulo": "Encontrar um aplicativo oficial",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Vídeo narrado de encontrar um aplicativo oficial.",
+              "acao_frontend": "play-find"
+            },
+            "video_url": "/static/videos/play-find.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "apps-desenvolvedor",
+        "titulo": "Conferir o desenvolvedor",
+        "ordem": 2,
+        "atividades": [
+          {
+            "codigo": "play-developer",
+            "titulo": "Conferir o desenvolvedor",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Vídeo narrado de conferir o desenvolvedor.",
+              "acao_frontend": "play-developer"
+            },
+            "video_url": "/static/videos/play-developer.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "apps-play-protect",
+        "titulo": "Usar o Play Protect",
+        "ordem": 3,
+        "atividades": [
+          {
+            "codigo": "play-protect",
+            "titulo": "Usar o Play Protect",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Vídeo narrado de usar o play protect.",
+              "acao_frontend": "play-protect"
+            },
+            "video_url": "/static/videos/play-protect.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      },
+      {
+        "codigo": "apps-permissoes",
+        "titulo": "Revisar permissões dos aplicativos",
+        "ordem": 4,
+        "atividades": [
+          {
+            "codigo": "play-permissions",
+            "titulo": "Revisar permissões dos aplicativos",
+            "tipo": "video_pratica",
+            "conteudo": {
+              "resumo": "Vídeo narrado de revisar permissões dos aplicativos.",
+              "acao_frontend": "play-permissions"
+            },
+            "video_url": "/static/videos/play-permissions.mp4?v=71",
+            "ordem": 1
+          }
+        ]
+      }
+    ]
+  }
+]
