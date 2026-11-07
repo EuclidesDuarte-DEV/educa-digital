@@ -1,8 +1,8 @@
-# Configuração do plano gratuito Cloudflare Workers + D1
+# V111.28: Worker original gratuito; Kokoro experimental roda no navegador, não no Cloudflare Container
 # Banco D1 existente do projeto, já criado e utilizado em produção.
 name = "educa-digital"
 main = "src/worker.js"
-compatibility_date = "2026-10-18"
+compatibility_date = "2026-11-01"
 workers_dev = true
 
 [assets]
@@ -14,3 +14,16 @@ run_worker_first = ["/", "/index.html", "/api/*", "/treino"]
 binding = "DB"
 database_name = "educa-digital"
 database_id = "25613d89-8073-40f2-af9b-91e751fb28d7"
+
+# Motor de personagens do Modo Livre V105; sem token no navegador.
+[ai]
+binding = "AI"
+
+# O motor Kokoro no navegador não exige Containers ou Durable Objects.
+
+[vars]
+LIA_CONTAINER_ENABLED = "false"
+LIA_ENABLED = "false"
+# Voice stays STAFF ONLY by default. Enable publicly only after load/security tests.
+LIA_PUBLIC_VOICE_ENABLED = "false"
+LIA_PUBLIC_VIDEO_ENABLED = "false"

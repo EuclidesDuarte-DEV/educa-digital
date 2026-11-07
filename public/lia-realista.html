@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lia Realista | Educa+ Digital</title><meta name="description" content="Chamada educativa com Lia, personagem fictícia; referência de vídeo e conversação com IA.">
+<link rel="stylesheet" href="/static/css/lia-realista.css?v=1114"><link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111"></head>
+<body><main class="site"><header><a href="/" class="brand">✦ Educa<span>+</span> Digital</a><span class="badge">SIMULAÇÃO EDUCATIVA COM IA</span></header>
+<div class="layout"><section class="call" aria-label="Videochamada educativa da Lia">
+<div class="portrait" id="portrait"><img id="avatarStill" src="/static/img/lia-lovable-poster.jpg" alt="Lia, personagem fictícia com aparência realista"><video id="avatarVideo" playsinline preload="metadata" hidden></video>
+<div class="top"><div class="name"><span>●</span><div><strong>Lia · Personagem virtual</strong><small id="callClock">Chamada ainda não iniciada</small></div></div><span class="ia-tag">IA FICTÍCIA</span></div>
+<div class="stage-status" id="stageLabel">Aparência de referência do Lovable · vídeo de referência (sem lip-sync)</div>
+<div class="subtitle" id="subtitle" aria-live="polite">A Lia está pronta para conversar sobre segurança digital.</div>
+<button type="button" id="resumeVideo" class="resume" hidden>▶ Tocar vídeo gerado</button>
+<div class="call-actions"><button type="button" id="begin" class="action accept" aria-label="Atender ligação" title="Atender">☎</button>
+<button type="button" id="mic" class="action" disabled aria-label="Falar com a Lia" title="Falar por microfone">🎙</button>
+<button type="button" id="repeat" class="action" disabled aria-label="Repetir resposta" title="Repetir resposta">↻</button>
+<button type="button" id="end" class="action hangup" disabled aria-label="Encerrar ligação" title="Encerrar">✕</button></div>
+</div></div><button type="button" id="preview" class="preview">▶ Ver referência gravada (6 segundos)</button>
+<p class="disclosure">Este vídeo é uma gravação usada como referência visual. Ele não é uma resposta ao vivo da IA. Os vídeos personalizados só aparecem quando o MuseTalk os produz com o áudio da Lia.</p></section>
+<section class="aside"><p class="eyebrow">LIA REALISTA · V111.5</p><h1>Aparência humana. <em>Conversa educativa.</em></h1>
+<p class="lede">A mesma personagem fictícia do vídeo do Lovable, agora preparada para conversar pela IA do Educa+ Digital. Sem Simli. Com fallback para áudio em português quando a geração neural de vídeo não estiver disponível.</p>
+<div class="chips"><span>Vídeo de referência incluído</span><span>Kokoro pt-BR opcional</span><span>MuseTalk com GPU</span></div>
+<div class="card"><div class="card-head"><strong>Conversa</strong><span id="status" role="status" aria-live="polite">Pronta para iniciar</span></div>
+<div class="messages" id="messages" aria-live="polite"><div class="message lia">Oi! Eu sou a Lia, uma personagem fictícia. Vamos aprender juntos a identificar tentativas de golpes?</div></div>
+<form id="form" class="compose"><input id="text" disabled maxlength="350" autocomplete="off" aria-label="Mensagem para Lia" placeholder="Escreva para a Lia..."><button id="send" disabled type="submit">Enviar</button></form></div>
+<div class="configuration"><button type="button" id="setup">Ativar sincronização neural (equipe)</button><button type="button" id="chooseFemaleVoice">🎙 Escolher voz feminina</button><span id="backendStatus">Modo inicial: voz do navegador</span></div>
+<p class="info">O vídeo gerado só acompanha a fala quando o servidor da equipe realmente renderiza a resposta. Nunca digite dados reais de Pix, senhas, CPF ou códigos de acesso. A transcrição por voz depende das permissões do navegador..</p>
+</section></div></main><script src="/static/js/lia-female-voice.js?v=11111"></script><script src="/static/js/lia-realista.js?v=11111"></script></body></html>

@@ -1,0 +1,126 @@
+/* Educa+ Digital — preferências de acessibilidade da experiência principal. */
+.a11y-header-button{display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid #aacceb;border-radius:999px;background:#ecf5ff;color:#123a74;font-weight:800;font-size:14px;line-height:1.2;cursor:pointer;white-space:nowrap}
+.a11y-header-button:focus-visible,.a11y-dialog button:focus-visible,.a11y-dialog select:focus-visible,.a11y-dialog input:focus-visible,.a11y-read-button:focus-visible,.a11y-floating-settings:focus-visible{outline:3px solid #ea9000;outline-offset:3px}
+/* V111.40 - Painel lateral: no desktop nasce na direita; no celular ocupa a largura disponivel. */
+.a11y-dialog{position:fixed;inset:0 0 0 auto;margin:0;width:min(440px,100vw);height:100dvh;max-width:100vw;max-height:100dvh;padding:0;border:0;border-radius:26px 0 0 26px;overflow:hidden;background:#f7faff;color:#122d50;box-shadow:-20px 0 75px #071d364a;font-family:Inter,system-ui,sans-serif;line-height:1.48;grid-template-rows:auto minmax(0,1fr) auto}
+.a11y-dialog[open]{display:grid;animation:a11y-enter .22s cubic-bezier(.2,.7,.2,1) both}
+.a11y-dialog:not([open]){display:none}
+@keyframes a11y-enter{from{transform:translateX(45px);opacity:.7}to{transform:translateX(0);opacity:1}}
+.a11y-dialog::backdrop{background:rgba(6,24,49,.38);backdrop-filter:blur(2px)}
+.a11y-dialog-header{padding:24px 25px 20px;background:linear-gradient(145deg,#edf6ff 4%,#fff 85%);border-bottom:1px solid #e3ecf7}
+.a11y-dialog-titlebar{display:flex;align-items:center;gap:12px}
+.a11y-panel-emblem{display:grid;place-items:center;width:44px;height:44px;flex:none;border-radius:14px;background:linear-gradient(145deg,#1975d6,#07529f);color:#fff;box-shadow:0 5px 13px #1269bf30}
+.a11y-panel-emblem svg{width:31px;height:31px}
+.a11y-panel-heading{min-width:0;flex:1}
+.a11y-eyebrow{margin:0 0 3px;color:#236cb4;font-size:10px;font-weight:900;letter-spacing:.085em}
+.a11y-dialog h2{font-size:clamp(22px,3vw,26px);line-height:1.15;letter-spacing:-.03em;margin:0;font-weight:850;color:#123461}
+.a11y-dialog-close{display:grid;place-items:center;width:40px;height:40px;flex:none;background:#fff;border:1px solid #d6e3f1;color:#45617f;border-radius:13px;cursor:pointer}
+.a11y-dialog-close svg{width:18px;height:18px}
+.a11y-dialog-close:hover{background:#e6f1ff;color:#094eaa}
+.a11y-dialog .a11y-intro{font-size:13px;line-height:1.52;margin:15px 0 0;color:#516b87}
+.a11y-options{padding:20px 23px 22px;display:flex;flex-direction:column;gap:13px;overflow-y:auto;min-height:0;overscroll-behavior:contain;scrollbar-color:#bfd1e6 transparent}
+.a11y-option{border:1px solid #e0eaf5;border-radius:19px;padding:19px 17px;background:#fff;min-width:0;box-shadow:0 3px 16px rgba(24,73,130,.045)}
+.a11y-option-heading{display:flex;align-items:center;gap:12px;color:#14355f}
+.a11y-option-heading>div{display:grid;gap:1px}
+.a11y-option-heading strong,.a11y-switch-copy strong{font-size:15px;font-weight:850;color:#13365c}
+.a11y-option-heading div>span,.a11y-switch-copy>span{font-size:12px;line-height:1.42;color:#65809c;font-weight:500}
+.a11y-option-icon{width:43px;height:43px;flex:none;display:grid;place-items:center;background:#e8f2ff;color:#1266c4;border-radius:13px}
+.a11y-option-icon svg{width:24px;height:24px}
+.a11y-option-icon-contrast{color:#8956b7;background:#f2eaff}
+.a11y-option-icon-audio{color:#08958a;background:#e5f8f4}
+.a11y-select-label{display:block;font-size:12px;font-weight:750;color:#45647e;margin:19px 0 7px}
+.a11y-option select{width:100%;min-height:48px;padding:10px 13px;font-size:14px;font-family:inherit;border-radius:12px;background:#f7faff;color:#15355a;border:1.5px solid #cbddef;cursor:pointer}
+.a11y-switch-row{display:flex;align-items:center;gap:12px;cursor:pointer}
+.a11y-switch-copy{display:grid;gap:2px;flex:1;min-width:0}
+.a11y-toggle{appearance:none;-webkit-appearance:none;width:46px;height:28px;border:1.5px solid #c9d7e8;border-radius:999px;background:#dfe8f3;position:relative;flex:none;cursor:pointer;transition:background .17s,border .17s}
+.a11y-toggle::before{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #152b4760;transition:transform .17s}
+.a11y-toggle:checked{background:#1268ca;border-color:#1268ca}
+.a11y-toggle:checked::before{transform:translateX(18px)}
+.a11y-example{display:inline-flex;align-items:center;gap:6px;margin:14px 0 0 55px;padding:7px 10px;border:1px solid #cfe2f7;border-radius:10px;color:#155ba7;background:#f3f8ff;font-size:12px;font-weight:750;cursor:pointer}
+.a11y-example svg{width:16px;height:16px}
+.a11y-privacy{display:flex;align-items:flex-start;gap:8px;margin:7px 3px 0;color:#5b718a;font-size:12px;line-height:1.5}
+.a11y-privacy svg{width:18px;height:18px;flex:none;color:#298573}
+.a11y-dialog-footer{padding:14px 23px max(18px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e0eaf6;box-shadow:0 -9px 26px #071d3510;display:flex;flex-direction:column;gap:11px}
+.a11y-footer-autosave{display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:750;color:#398069}
+.a11y-footer-autosave svg{width:17px;height:17px}
+.a11y-footer-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:10px}
+.a11y-primary,.a11y-secondary{display:inline-flex;justify-content:center;align-items:center;gap:7px;min-height:48px;padding:11px 12px;border-radius:13px;font-size:14px;font-family:inherit;font-weight:850;cursor:pointer}
+.a11y-primary{border:1px solid #0761c3;background:linear-gradient(135deg,#1779ee,#0756bd);color:#fff;box-shadow:0 6px 16px #0864c42b}
+.a11y-primary:hover{background:#0756bd}
+.a11y-primary svg{width:18px;height:18px}
+.a11y-secondary{border:1px solid #d1deed;background:#fff;color:#2b557f}
+.a11y-secondary:hover{background:#eef6ff}
+.a11y-feedback{font-size:11px;color:#637c96;margin:0;text-align:center;min-height:0}
+.a11y-read-button{position:fixed;z-index:145;left:14px;bottom:18px;max-width:calc(100vw - 28px);background:#104e9b;color:white;border:2px solid white;border-radius:999px;padding:12px 16px;font-size:15px;font-weight:850;box-shadow:0 6px 28px #0a234c38;cursor:pointer}
+.a11y-read-button[hidden]{display:none!important}
+.a11y-read-status{position:fixed;z-index:144;left:15px;bottom:74px;max-width:min(350px,90vw);background:#fff;color:#193c69;border-radius:8px;padding:4px 9px;font-weight:700;font-size:12px}
+.a11y-read-status:empty{display:none}
+/* zoom recalcula o layout (não estica a imagem nem distorce o fundo); suporta mudanças dinâmicas. */
+html.a11y-text-large body>main{zoom:1.12}
+html.a11y-text-extra body>main{zoom:1.23}
+html.a11y-text-large .site-header{font-size:1.08em}
+html.a11y-text-extra .site-header{font-size:1.17em}
+/* Contraste e pistas visuais adicionais. Não simula daltonismo nem aplica filtros em vídeos. */
+html.a11y-distinct-colors body{--ink:#0e203d;--bg:#f4f8ff}
+html.a11y-distinct-colors .hero-primary,html.a11y-distinct-colors .success-screen button,html.a11y-distinct-colors .create-account-btn{background:#064899!important;color:white!important;border:2px solid #002c6b!important}
+html.a11y-distinct-colors :is(button,a,input,select):focus-visible{outline:3px solid #f6a600!important;outline-offset:3px}
+html.a11y-distinct-colors .hero-trust-row span,html.a11y-distinct-colors .coach-card,html.a11y-distinct-colors .learning-card{border-color:#25538e!important}
+html.a11y-distinct-colors .phone-screen .decision-sheet button{border:2px solid #164e86!important}
+html.a11y-distinct-colors .phone-screen .security-note{background:#fff3bb;color:#372c07;border-left:4px solid #c16b00}
+@media(max-width:600px){
+  .a11y-dialog{width:100vw;border-radius:0}
+  .a11y-dialog-header{padding:18px 18px 16px}
+  .a11y-options{padding:15px 16px;gap:10px}
+  .a11y-option{padding:15px}
+  .a11y-dialog-footer{padding:12px 16px max(14px,env(safe-area-inset-bottom))}
+  .a11y-header-button{padding:9px 10px;font-size:12px}
+  .a11y-header-button .a11y-header-word{display:none}
+  .header-trust{display:none!important}
+}
+@media(max-width:360px){.a11y-footer-actions{grid-template-columns:1fr}.a11y-primary,.a11y-secondary{min-height:43px}}
+@media(prefers-reduced-motion:reduce){
+  .a11y-dialog[open]{animation:none}
+  .a11y-dialog::backdrop{backdrop-filter:none}
+  .a11y-toggle,.a11y-toggle::before{transition:none}
+}
+
+/* V111.39 — Na página inicial, botão integrado à barra SUPERIOR (não ao lado do celular). */
+.a11y-icon-bubble{display:grid;place-items:center;flex:0 0 auto;width:35px;height:35px;border-radius:50%;background:linear-gradient(145deg,#176cc6,#07509d);color:#fff;box-shadow:0 2px 6px #07479333}
+.a11y-icon-figure{width:27px;height:27px;display:block}
+.educa-external-access{
+  display:inline-flex;position:relative;inset:auto;z-index:auto;
+  flex:0 0 auto;width:max-content;max-width:100%;pointer-events:auto;
+}
+.educa-external-access .a11y-header-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  min-height:44px;padding:4px 13px 4px 5px;
+  border:1.5px solid #a8cef7;background:linear-gradient(110deg,#f2f8ff,#deedff);
+  border-radius:999px;box-shadow:0 5px 15px rgba(17,79,148,.14);
+  color:#153b77;font:850 13px/1.15 Inter,system-ui,sans-serif;cursor:pointer;
+}
+.educa-external-access .a11y-header-button:hover{background:#d7eaff;box-shadow:0 8px 24px #114f9440}
+.educa-external-access .a11y-header-button:focus-visible{outline:3px solid #ea9000;outline-offset:3px}
+/* Mantém o título da tela de aprendizagem com toda a largura do celular. */
+#learningView .learning-header{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:4px 4px 12px}
+#learningView .learning-header>strong{width:100%}
+/* A tela cheia oculta o cabeçalho original. O atalho vai para o body e fica logo abaixo de sair. */
+html.educa-fullscreen-active .educa-external-access.a11y-below-exit{
+  position:fixed;left:auto;bottom:auto;
+  top:var(--a11y-fullscreen-top,72px);
+  right:var(--a11y-fullscreen-right,16px);
+  z-index:99998;max-width:calc(100vw - 24px);
+}
+html.educa-fullscreen-active .educa-external-access.a11y-below-exit .a11y-header-button{min-height:44px;box-shadow:0 5px 20px rgba(0,0,0,.17)}
+/* Em qualquer cadastro, login ou janela de informações, NÃO flutuar sobre formulários. */
+body:has(#startModal:not([hidden]),#returnModal:not([hidden]),#infoModal:not([hidden])) .educa-external-access{
+  visibility:hidden!important;pointer-events:none!important;
+}
+/* Respeitar a barra superior em celulares estreitos. */
+@media(max-width:760px){
+  .home-simple-header .header-actions{gap:6px}
+  .educa-external-access .a11y-header-button{padding:4px;min-width:40px;min-height:40px}
+  .educa-external-access .a11y-icon-bubble{width:31px;height:31px}
+  .educa-external-access .a11y-icon-figure{width:24px;height:24px}
+  .educa-external-access .a11y-header-word{display:none}
+}
+@media(prefers-reduced-motion:reduce){.educa-external-access .a11y-header-button{transition:none}}

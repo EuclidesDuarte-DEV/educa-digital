@@ -1,0 +1,259 @@
+/* V111.5 — Só a Lia foto-realista ocupa a videochamada principal. */
+#freeVideoPortrait.lia-photo-real{background:#28303a!important}
+#freeVideoPortrait.lia-photo-real>img,#freeVideoPortrait.lia-photo-real>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%;transform:none!important;animation:none!important;filter:none!important;transition:none!important;pointer-events:none}
+#freeVideoPortrait.lia-photo-real>video{z-index:1}
+#freeVideoPortrait.lia-photo-real>video[hidden],#freeVideoPortrait.lia-photo-real .lia-photo-play[hidden]{display:none!important}
+#freeVideoPortrait.lia-photo-real:after{z-index:2;opacity:.6}
+.lia-photo-indicator{position:absolute;top:130px;left:14px;right:14px;z-index:3;background:#0b1929bc;border:1px solid #a4c8e660;padding:8px 10px;border-radius:12px;text-align:center;font-size:11px;color:#fff}
+.lia-photo-configure{position:absolute;top:178px;left:14px;z-index:3;border:1px solid #9ecaff88;border-radius:10px;padding:9px 10px;color:#fff;background:#163858c9;font-size:11px;max-width:calc(100% - 28px)}
+.lia-photo-play{position:absolute;top:48%;left:50%;transform:translate(-50%,-50%);z-index:5;border:2px solid #b5d9ff;border-radius:14px;background:#113860;color:#fff;padding:12px 14px;font-size:13px}
+#freeVideoView .v110-video-top{z-index:4}#freeVideoView .v110-video-bottom{z-index:5}
+@media(max-height:690px){.lia-photo-indicator{top:110px}.lia-photo-configure{top:154px}}
+
+/* V111.6: não cubra o rosto com mensagens técnicas; modo equipe só via ?equipe=1 */
+.lia-photo-configure[hidden]{display:none!important}
+.lia-photo-indicator{display:none!important}
+
+/* V111.7: diagnóstico acessível, sem bloquear boca e olhos. */
+#freeVideoPortrait .lia-photo-configure{top:138px;left:12px;right:auto;max-width:210px;background:#07253fdc;border:1px solid #91caffad;font-size:10px;z-index:6}
+@media(max-width:380px){#freeVideoPortrait .lia-photo-configure{top:126px;max-width:185px;font-size:9px}}
+
+/* Botão de ativação na barra inferior, NÃO sobre a face da Lia. */
+#freeVideoView #liaPhotoConfigure.lia-photo-configure {position:static!important;top:auto!important;left:auto!important;right:auto!important;z-index:auto!important;align-self:center;min-height:30px;padding:5px 12px;max-width:95%;font-size:10px;background:#103658e8}
+@media(max-height:690px){#freeVideoView #liaPhotoConfigure.lia-photo-configure{min-height:26px;padding:3px 10px}}
+
+/* V111.8: o rosto realista fica animado em ESCUTA e em FALA. */
+#freeVideoPortrait.lia-photo-real video.lia-photo-idle{z-index:1;opacity:1;object-fit:cover;object-position:center 28%;}
+#freeVideoPortrait.lia-photo-real video.lia-photo-video{z-index:2;opacity:0;object-fit:cover;object-position:center 28%;transition:opacity .22s ease!important;}
+#freeVideoPortrait.lia-photo-real.lia-photo-speaking video.lia-photo-video{opacity:1;}
+#freeVideoPortrait.lia-photo-real video[hidden]{display:none!important;}
+
+/* V111.9 — transição A/B sem tela preta e clipes sem repetição imediata. */
+#freeVideoPortrait.lia-photo-real video.lia-photo-idle,
+#freeVideoPortrait.lia-photo-real video.lia-photo-video {
+ opacity:0!important;
+ transition:opacity .26s ease!important;
+}
+#freeVideoPortrait.lia-photo-real video.lia-photo-idle.lia-clip-visible{opacity:1!important;}
+#freeVideoPortrait.lia-photo-real.lia-photo-speaking video.lia-photo-video.lia-clip-visible{opacity:1!important;}
+
+/* V111.12 — Chamada imersiva: rosto em destaque, controles compactos e opcionais recolhidos. */
+#freeVideoView .v110-video-photo:after{opacity:.35}
+#freeVideoView .v110-video-top{top:42px;left:10px;right:10px;gap:7px;align-items:flex-start}
+#freeVideoView .v110-video-top>div:first-child{gap:3px;max-width:calc(100% - 65px)}
+#freeVideoView .v110-training-mark{font-size:8px;padding:3px 6px;border-radius:7px;max-width:215px}
+#freeVideoView .v110-video-top strong{font-size:14px;line-height:1.22}
+#freeVideoView #freeVideoDuration{font-size:10px}
+#freeVideoView .v110-selfie{width:56px;height:77px;border-radius:10px;padding:2px}
+#freeVideoView .v110-self-silhouette{font-size:34px;line-height:52px}
+#freeVideoView .v110-video-bottom{bottom:28px;left:9px;right:9px;gap:5px;max-height:calc(100% - 176px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+#freeVideoView .v112-caption-box{display:flex;align-items:center;gap:5px;border-radius:11px;background:#0b1c2ecc;box-shadow:0 2px 12px #0015;min-height:0}
+#freeVideoView .v110-video-subtitle{flex:1;min-width:0;min-height:0;max-height:none;background:transparent;box-shadow:none;border:0;border-radius:0;padding:8px 9px;font-size:11px;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+#freeVideoView .v110-video-subtitle.v112-caption-expanded{display:block;max-height:115px;overflow-y:auto;-webkit-line-clamp:unset;line-clamp:unset}
+#freeVideoView #freeVideoCaptionToggle{flex:none;max-width:64px;margin-right:6px;align-self:center;background:#2d526b;color:white;border:0;border-radius:7px;padding:6px;font-size:10px;font-weight:700}
+#freeVideoView #freeVideoCaptionToggle[hidden]{display:none!important}
+#freeVideoView .v110-video-toolbar{gap:5px;flex-wrap:nowrap}
+#freeVideoView .v110-tool{min-width:0;min-height:42px;flex:1;padding:4px 2px;border-radius:999px;font-size:9px;gap:0}
+#freeVideoView .v110-tool>span{font-size:16px;line-height:19px}
+#freeVideoView .v110-video-actions{gap:5px}
+#freeVideoView .v110-video-actions button{min-height:31px;padding:4px 8px;font-size:10px;border-radius:999px;background:#e9f2fb}
+#freeVideoView .v110-video-actions #freeVideoVerify{background:#e6f8ef;color:#16553b;border-color:#a8e2c0}
+#freeVideoView .v110-video-chat{gap:5px}
+#freeVideoView .v110-video-chat input{min-height:37px;height:37px;border-radius:20px;font-size:12px;padding:8px 12px}
+#freeVideoView .v110-video-chat button{width:37px;height:37px}
+#freeVideoView .v112-video-more{align-self:center;width:100%;font-size:10px;color:#e3f0fa}
+#freeVideoView .v112-video-more summary{cursor:pointer;list-style:none;text-align:center;max-width:max-content;margin:auto;background:#0e2a43a3;border:1px solid #8eacc064;border-radius:999px;padding:4px 10px;min-height:22px;box-sizing:border-box}
+#freeVideoView .v112-video-more summary::-webkit-details-marker{display:none}
+#freeVideoView .v112-video-more-content{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:5px;padding:7px;border:1px solid #557797;border-radius:12px;background:#0b1e32ef}
+#freeVideoView .v112-video-more-content .v110-video-state{grid-column:1/-1;background:transparent;padding:2px 4px;font-size:10px;max-height:85px;overflow-y:auto}
+#freeVideoView .v112-video-more-content #liaPhotoConfigure,
+#freeVideoView .v112-video-more-content #freeVideoVoiceSettings{max-width:none;min-height:33px;width:100%;padding:5px;border-radius:9px;font-size:10px;align-self:stretch;position:static!important}
+#freeVideoView .v112-video-more-content #liaPhotoConfigure[hidden]{display:none!important}
+.v112-summary-auto{font-size:12px!important;font-weight:800;color:#175c91!important;background:#e7f3ff;border-radius:10px;padding:10px;margin:9px 0!important}
+.v112-summary-auto[hidden]{display:none!important}
+@media(max-height:650px){
+ #freeVideoView .v110-video-top{top:38px}
+ #freeVideoView .v110-video-bottom{bottom:24px;gap:3px;max-height:calc(100% - 150px)}
+ #freeVideoView .v110-video-subtitle{font-size:10px;padding:6px 8px}
+ #freeVideoView .v110-tool{min-height:39px}
+ #freeVideoView .v110-video-actions button{min-height:29px}
+ #freeVideoView .v110-selfie{width:48px;height:66px}
+}
+@media(prefers-reduced-motion:reduce){#freeVideoView .v110-video-subtitle{scroll-behavior:auto}}
+
+/* V111.12 QA: rótulo do microfone nunca pode ultrapassar seu botão. */
+#freeVideoView #freeVideoMic .v110-mic-label{font-size:9px!important;line-height:1.05!important;letter-spacing:-.1px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#freeVideoView .v110-video-subtitle:not(.v112-caption-expanded){box-sizing:border-box;height:44px;max-height:44px;padding:7px 9px}
+#freeVideoView .v110-video-subtitle.v112-caption-expanded{height:auto;box-sizing:border-box}
+@media(max-height:650px){#freeVideoView .v110-video-subtitle:not(.v112-caption-expanded){height:39px;max-height:39px;padding:5px 8px}}
+
+/* Limite preciso de duas linhas mesmo em fontes/sistemas Android menores. */
+#freeVideoView .v110-video-subtitle:not(.v112-caption-expanded){height:40px;max-height:40px;padding:6px 9px;line-height:1.25}
+
+
+/* V111.13 — UI imersiva com poucas ações à vista e acesso a tudo pelos Ajustes. */
+#freeVideoView .v110-video-bottom{
+ bottom:22px;left:10px;right:10px;gap:7px;
+ max-height:calc(100% - 170px);overflow:visible;
+ padding:0 0 env(safe-area-inset-bottom, 0px);
+}
+#freeVideoView .v110-video-toolbar{order:2;justify-content:center;gap:10px;}
+#freeVideoView .v110-video-actions{order:1;justify-content:center;}
+#freeVideoView .v110-video-actions button{flex:0 1 auto;min-height:33px;padding:6px 16px;font-size:11px;}
+#freeVideoView .v112-caption-box{order:0;background:#081b2acc;}
+#freeVideoView .v110-video-chat{order:3;}
+#freeVideoView .v112-video-more{order:4;}
+#freeVideoView .v110-tool{flex:0 0 67px;min-width:60px;min-height:51px;max-width:84px;font-size:11px;border-radius:21px;padding:5px;}
+#freeVideoView .v110-tool>span{font-size:19px;}
+#freeVideoView #freeVideoHangup{background:#c7354e;}
+#freeVideoView #freeVideoText[aria-expanded="true"]{background:#245c8f;}
+#freeVideoView .v112-video-more-content{max-height:145px;overflow-y:auto;}
+#freeVideoView .v113-extra-actions{grid-column:1/-1;display:flex;gap:5px;flex-wrap:wrap;}
+#freeVideoView .v113-extra-actions>button{flex:1 1 90px;min-height:38px;border-radius:10px;border:1px solid #6286a5;color:white;background:#214766;font-size:11px;font-weight:700;}
+#freeVideoView .v113-extra-actions>button[hidden]{display:none!important}
+#freeVideoView .v112-video-more-content #liaPhotoConfigure,#freeVideoView .v112-video-more-content #freeVideoVoiceSettings{min-height:36px;font-size:11px;}
+#freeVideoView .v110-video-chat:not([hidden]){background:#102b45c9;padding:5px;border-radius:24px;}
+@media(max-height:680px){
+ #freeVideoView .v110-video-bottom{bottom:16px;gap:4px;max-height:calc(100% - 133px)}
+ #freeVideoView .v110-tool{min-height:44px;flex-basis:61px;font-size:10px;}
+ #freeVideoView .v110-video-actions button{min-height:29px;padding:4px 10px}
+ #freeVideoView .v112-video-more-content{max-height:110px}
+}
+@media(max-width:370px){
+ #freeVideoView .v110-video-bottom{left:7px;right:7px}
+ #freeVideoView .v110-video-toolbar{gap:6px}
+ #freeVideoView .v110-tool{flex-basis:60px;}
+}
+
+
+/* V111.14 — estilo de videochamada imersiva (organização semelhante ao WhatsApp). */
+#freeVideoView .v110-video{background:#0c151a;isolation:isolate}
+#freeVideoView .v110-video-photo:after{background:linear-gradient(180deg,rgba(0,0,0,.54) 0%,rgba(0,0,0,.18) 24%,transparent 46%,rgba(0,0,0,.08) 70%,rgba(0,0,0,.47) 100%);opacity:1!important}
+#freeVideoView .v110-video-top{position:absolute;top:30px;left:10px;right:10px;display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:start;gap:4px;z-index:8;text-align:center}
+#freeVideoView .v110-video-top .wa-contact-info{min-width:0;max-width:none;display:flex;align-items:center;flex-direction:column;gap:5px;margin:auto;overflow:hidden;text-shadow:0 1px 6px #000d}
+#freeVideoView .wa-contact-info strong{font-size:21px;line-height:1.1;font-weight:650;letter-spacing:-.35px;color:white}
+#freeVideoView .wa-contact-info .v110-training-mark{display:block;max-width:100%;background:transparent;border:0;padding:0;color:#fff;letter-spacing:0;font-size:9px;line-height:1.3;font-weight:550;text-wrap:balance}
+#freeVideoView .wa-contact-info #freeVideoDuration{font-size:10px;line-height:1.1;color:#f2f2f2}
+#freeVideoView .wa-top-button{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;border:0;background:#252621dc;color:#fff;padding:0;touch-action:manipulation}
+#freeVideoView .wa-top-button[hidden]{visibility:hidden!important;display:block!important;pointer-events:none}
+#freeVideoView .wa-icon{width:23px;height:23px;display:block;flex:none;stroke-width:2}
+#freeVideoView .v110-selfie{position:absolute;z-index:7;top:auto;left:auto;right:13px;bottom:112px;width:clamp(72px,26%,100px);height:clamp(104px,31%,143px);border:1px solid #ffffff96;border-radius:15px;background:linear-gradient(140deg,#303a3e,#485158);box-shadow:0 3px 15px #0009;padding:0;overflow:hidden}
+#freeVideoView .v110-selfie video{transform:scaleX(-1);object-fit:cover;z-index:1}
+#freeVideoView .v110-selfie span:first-child{font-size:10px;color:#fff;background:#0008;border-radius:5px;padding:2px 5px;align-self:flex-start;margin:6px;z-index:2}
+#freeVideoView .v110-selfie .v110-self-silhouette{position:absolute;inset:0;display:grid;place-items:center;font-size:0;color:#e6edf1;line-height:1;background:#344049}
+#freeVideoView .v110-selfie .v110-self-silhouette[hidden]{display:none!important}
+#freeVideoView .v110-selfie .v110-self-silhouette .wa-icon{width:27px;height:27px;opacity:.75}
+#freeVideoView .v110-video-bottom{position:absolute;bottom:12px;left:12px;right:12px;z-index:10;gap:10px;max-height:none;overflow:visible;padding:0;display:flex;flex-direction:column;align-items:stretch}
+#freeVideoView .v110-video-toolbar{position:relative;order:3;display:flex;flex-wrap:nowrap;justify-content:space-evenly;gap:6px;width:100%;padding:10px 9px;border-radius:70px;background:#756f68d9;box-shadow:0 5px 23px #0005;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+#freeVideoView .v110-video-toolbar>.v110-tool{flex:0 1 52px;width:clamp(40px,12vw,53px);height:clamp(42px,13vw,53px);min-width:0;min-height:42px;max-width:53px;padding:0;margin:0;border-radius:50%;border:0;background:#342f2ce8;color:#fff;display:grid;place-items:center;font-size:0;box-shadow:none;touch-action:manipulation}
+#freeVideoView .v110-video-toolbar>.v110-tool.v110-hangup{background:#ed0050}
+#freeVideoView .v110-video-toolbar>.v110-tool.v110-accept{background:#10ad67}
+#freeVideoView .v110-video-toolbar>.v110-tool[hidden]{display:none!important}
+#freeVideoView .v110-video-toolbar>.v110-tool[aria-pressed="true"]{background:#ecebe9;color:#16211f}
+#freeVideoView .v110-video-toolbar>.v110-tool.v110-hangup[aria-pressed="true"]{background:#ed0050;color:#fff}
+#freeVideoView #freeVideoMic .v110-mic-label{position:absolute!important;width:1px;height:1px;padding:0;clip:rect(0,0,0,0);overflow:hidden;white-space:nowrap}
+#freeVideoView #freeVideoMic .wa-mic-on, #freeVideoView #freeVideoSpeaker .wa-speaker-off{display:none}
+#freeVideoView #freeVideoMic[aria-pressed="false"] .wa-mic-on{display:block}
+#freeVideoView #freeVideoMic[aria-pressed="false"] .wa-mic-off{display:none}
+#freeVideoView #freeVideoSpeaker[aria-pressed="true"] .wa-speaker-off{display:block}
+#freeVideoView #freeVideoSpeaker[aria-pressed="true"] .wa-speaker-on{display:none}
+#freeVideoView .v112-video-more{position:static;order:0;align-self:unset;flex:0 1 52px;width:clamp(40px,12vw,53px);font-size:0;color:#fff;min-width:0}
+#freeVideoView .v112-video-more summary{position:relative;display:grid;place-items:center;width:clamp(40px,12vw,53px);height:clamp(42px,13vw,53px);min-height:42px;max-width:53px;border:0;border-radius:50%;padding:0;margin:0;background:#342f2ce8;list-style:none;cursor:pointer;touch-action:manipulation}
+#freeVideoView .v112-video-more summary::-webkit-details-marker{display:none}
+#freeVideoView .v112-video-more[open] summary{background:#ecebe9;color:#10151a}
+#freeVideoView .v112-video-more-content{position:absolute;bottom:calc(100% + 9px);left:0;right:0;z-index:20;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:min(55vh,300px);overflow:auto;overscroll-behavior:contain;margin:0;padding:11px;background:#242a2ded;border:1px solid #ffffff33;border-radius:19px;box-shadow:0 6px 25px #0009;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+#freeVideoView .v112-video-more-content>button,#freeVideoView .v112-video-more-content .v110-video-actions button,#freeVideoView .v112-video-more-content .v113-extra-actions>button{background:#3c4449!important;border:1px solid #ffffff1d!important;color:#fff!important;min-height:40px!important;max-width:none!important;width:100%!important;font-size:12px!important;padding:8px!important;border-radius:12px!important;position:static!important}
+#freeVideoView .v112-video-more-content .v110-video-state{grid-column:1/-1;max-height:80px;overflow:auto;font-size:11px;padding:6px 0;background:transparent;color:#e7edf4;text-align:left}
+#freeVideoView .v112-video-more-content .v110-video-actions{grid-column:auto;display:flex;align-items:stretch}
+#freeVideoView .v112-video-more-content .v110-video-actions[hidden]{display:none!important}
+#freeVideoView .v112-video-more-content .v113-extra-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+#freeVideoView .v112-video-more-content #liaPhotoConfigure,#freeVideoView .v112-video-more-content #freeVideoVoiceSettings{min-height:40px;font-size:12px}
+#freeVideoView .v112-caption-box{order:1;margin:0 auto;width:min(96%,375px);max-width:100%;border:0;border-radius:14px;background:#151919bf;box-shadow:0 2px 18px #0005;display:none;align-items:center;min-height:0}
+#freeVideoView[data-captions="on"] .v112-caption-box{display:flex}
+#freeVideoView .v110-video-subtitle:not(.v112-caption-expanded){height:auto;max-height:none;min-height:0;line-height:1.35;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;font-size:12px;padding:8px 10px}
+#freeVideoView .v110-video-subtitle.v112-caption-expanded{max-height:130px;font-size:12px}
+#freeVideoView .v110-video-chat{order:2;margin:0;gap:8px;border-radius:27px;background:#232a2bdc;padding:6px;box-shadow:0 3px 15px #0005}
+#freeVideoView .v110-video-chat[hidden]{display:none!important}
+#freeVideoView .v110-video-chat input{font-size:13px;background:#fff;border-radius:20px;min-height:38px;height:38px}
+#freeVideoView .v110-video-chat button{width:39px;height:39px;background:#0aa27b}
+#freeVideoView #liaPhotoPlay{top:50%;z-index:9}
+@media (max-width:380px){#freeVideoView .v110-video-toolbar{padding:8px 5px;gap:3px}#freeVideoView .v110-video-top{top:22px}#freeVideoView .wa-contact-info strong{font-size:19px}#freeVideoView .wa-contact-info .v110-training-mark{font-size:8px}#freeVideoView .v110-selfie{right:10px;bottom:102px}}
+@media (max-height:560px){#freeVideoView .v110-video-top{top:12px}#freeVideoView .v110-selfie{width:67px;height:92px;bottom:90px}#freeVideoView .v110-video-bottom{bottom:7px}#freeVideoView .v110-video-toolbar{padding:6px}#freeVideoView .v112-video-more-content{max-height:45vh}}
+/* Refinamento de largura para iPhone e Android: barra não ultrapassa a borda. */
+#freeVideoView .v110-video-toolbar{box-sizing:border-box}
+#freeVideoView .wa-contact-info .v110-training-mark{font-size:10px}
+@media(max-width:380px){#freeVideoView .wa-contact-info .v110-training-mark{font-size:9px}}
+#freeVideoView:fullscreen{width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;border-radius:0!important}
+
+
+/* V111.15 — fullscreen refinado, barra estável e miniatura proporcional. */
+#freeVideoView .v110-video-toolbar,
+#freeVideoView .v110-video-bottom,
+#freeVideoView .v110-selfie,
+#freeVideoView .v112-video-more summary,
+#freeVideoView .v112-video-more-content{box-sizing:border-box}
+#freeVideoView .v110-video-bottom{pointer-events:none}
+#freeVideoView .v110-video-bottom>*{pointer-events:auto}
+#freeVideoView .v110-video-toolbar{align-items:center;max-width:min(100%,392px);margin:0 auto;min-height:72px}
+#freeVideoView .v112-video-more{flex:0 0 54px;width:54px;min-width:54px;max-width:54px}
+#freeVideoView .v112-video-more summary{width:54px;height:54px;min-width:54px;max-width:54px;min-height:54px}
+#freeVideoView .v110-video-toolbar>.v110-tool{flex:0 0 54px;width:54px;height:54px;min-width:54px;max-width:54px;min-height:54px}
+#freeVideoView .v110-selfie{width:108px;height:144px;aspect-ratio:3/4;border-radius:18px}
+#freeVideoView .v110-selfie video,#freeVideoView .v110-selfie .v110-self-silhouette{width:100%;height:100%}
+#freeVideoView .v112-video-more-content{width:min(100%,392px);left:50%;right:auto;transform:translateX(-50%)}
+#freeVideoView:fullscreen .v110-video-top{
+ top:max(22px,env(safe-area-inset-top,0px) + 8px);
+ left:max(16px,env(safe-area-inset-left,0px) + 4px);
+ right:max(16px,env(safe-area-inset-right,0px) + 4px);
+}
+#freeVideoView:fullscreen .v110-video-bottom{
+ left:max(16px,env(safe-area-inset-left,0px) + 4px);
+ right:max(16px,env(safe-area-inset-right,0px) + 4px);
+ bottom:max(12px,env(safe-area-inset-bottom,0px));
+ gap:12px;
+}
+#freeVideoView:fullscreen .v110-video-toolbar{max-width:420px;padding:9px 10px;border-radius:999px}
+#freeVideoView:fullscreen .v112-video-more,
+#freeVideoView:fullscreen .v112-video-more summary,
+#freeVideoView:fullscreen .v110-video-toolbar>.v110-tool{width:56px;height:56px;min-width:56px;max-width:56px;min-height:56px}
+#freeVideoView:fullscreen .v110-selfie{right:max(16px,env(safe-area-inset-right,0px) + 4px);bottom:122px;width:118px;height:156px;border-radius:20px}
+#freeVideoView:fullscreen .v112-caption-box{width:min(92vw,430px)}
+#freeVideoView:fullscreen .v110-video-chat{width:min(92vw,420px);margin-inline:auto}
+@media (orientation:landscape){
+ #freeVideoView:fullscreen .v110-video-top{top:max(12px,env(safe-area-inset-top,0px))}
+ #freeVideoView:fullscreen .v110-selfie{width:92px;height:122px;bottom:96px}
+ #freeVideoView:fullscreen .v110-video-bottom{gap:8px}
+ #freeVideoView:fullscreen .v110-video-toolbar{max-width:388px}
+}
+@media (max-width:390px){
+ #freeVideoView .v110-selfie{width:96px;height:128px;bottom:108px}
+ #freeVideoView .v110-video-toolbar{max-width:360px}
+ #freeVideoView .v112-video-more,
+ #freeVideoView .v112-video-more summary,
+ #freeVideoView .v110-video-toolbar>.v110-tool{width:50px;height:50px;min-width:50px;max-width:50px;min-height:50px}
+}
+
+
+/* V111.16: escolha de prosódia na área avançada (sem poluir o rosto). */
+#freeVideoView .lia-voice-style-label{grid-column:1/-1;display:flex;flex-direction:column;gap:5px;color:#f7fbff;font-size:12px;font-weight:600;text-align:left}
+#freeVideoView .lia-voice-style-label select{appearance:auto;width:100%;min-height:42px;padding:8px 12px;border:1px solid #ffffff40;border-radius:11px;color:white;background:#323a3f;font:inherit;font-weight:500}
+#freeVideoView .lia-voice-style-label select option{background:#263039;color:white}
+
+/* V111.17 — A/B dissolve without cutting off the previous frame. */
+#freeVideoPortrait.lia-photo-real video.lia-photo-idle,
+#freeVideoPortrait.lia-photo-real video.lia-photo-video {
+ backface-visibility:hidden;
+ will-change:opacity;
+ transition:opacity .42s ease-in-out!important;
+}
+#freeVideoView .v110-video-photo{contain:paint}
+@media(prefers-reduced-motion:reduce){
+ #freeVideoPortrait.lia-photo-real video.lia-photo-idle,
+ #freeVideoPortrait.lia-photo-real video.lia-photo-video {transition-duration:.08s!important}
+}
+
+/* V111.31: progresso de TTS visível sem cobrir o rosto da personagem. */
+#freeVideoView #freeVideoVoiceProgress{display:block;font-size:10px;line-height:1.2;
+ color:#fff;background:#113a57d9;padding:4px 6px;border-radius:6px;max-width:205px;
+ overflow:hidden;white-space:normal;box-shadow:0 2px 7px #0016}
+#freeVideoView #freeVideoVoiceProgress[hidden]{display:none!important}

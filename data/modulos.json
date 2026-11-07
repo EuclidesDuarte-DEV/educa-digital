@@ -17,7 +17,7 @@
               "resumo": "Abra o banco, entre no Pix e confira o destinatário.",
               "acao_frontend": "pix-recipient"
             },
-            "video_url": "/static/videos/pix_seguranca.mp4",
+            "video_url": "/static/videos/pix_seguranca.mp4?v=1041",
             "ordem": 1
           }
         ]

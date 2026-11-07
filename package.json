@@ -1,13 +1,21 @@
 {
   "name": "educa-digital-cloudflare",
   "private": true,
+  "dependencies": {
+    "@cloudflare/containers": "^0.3.7"
+  },
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "test": "node --test tests/*.test.js"
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "db:init:local": "wrangler d1 execute educa-digital --local --file=./banco/schema.sql",
+    "db:check:local": "wrangler d1 execute educa-digital --local --command=\"SELECT name FROM sqlite_master WHERE type='table' AND name='usuarios';\"",
+    "predev": "npm run db:init:local",
+    "dev:lia": "node scripts/iniciar-local-com-lia.mjs",
+    "check:lia": "node scripts/iniciar-local-com-lia.mjs --verificar"
   },
   "devDependencies": {
-    "wrangler": "^4.34.0"
+    "wrangler": "^4.136.0"
   }
 }

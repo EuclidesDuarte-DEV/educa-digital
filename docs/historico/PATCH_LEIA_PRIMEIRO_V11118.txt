@@ -1,0 +1,12 @@
+PATCH V111.18 — CORRIGE A VOZ MASCULINA DA LIA
+
+Aplique SOBRE a pasta V111.17 ja instalada (onde estao lia_motor\.venv
+ e as credenciais). Pare o servidor na porta 8900 antes de substituir.
+No terminal PowerShell aberto naquela pasta:
+Expand-Archive -LiteralPath "$HOME\Downloads\PATCH_V111_18_LIA_VOZ_FEMININA.zip" -DestinationPath . -Force
+
+Depois reinicie com INICIAR_LIA_VOZ_HUMANA_WINDOWS.ps1 e execute:
+TESTAR_VOZ_LIA_WINDOWS.ps1 -Voz feminina
+
+Nunca copie arquivos .vars para outras pessoas. Este patch NAO inclui segredos.
+Guia completo: COMECE_AQUI_V111_18.md

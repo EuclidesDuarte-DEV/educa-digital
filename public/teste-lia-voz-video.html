@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Lia · Teste de movimento por voz</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#fff;background:#071c31}*{box-sizing:border-box}
+body{min-height:100svh;display:flex;align-items:center;justify-content:center;margin:0;padding:12px}
+.call{position:relative;aspect-ratio:9/16;width:min(100%,440px);max-height:95svh;overflow:hidden;background:#15253b;border-radius:30px;box-shadow:0 10px 55px #0007}
+.portrait{position:absolute;inset:0}.portrait img,.portrait video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 28%}
+#idle,#idle2{z-index:1;opacity:0;transition:opacity .26s ease}#talk,#talk2{z-index:2;opacity:0;transition:opacity .26s ease}.portrait video.visible{opacity:1}
+.shade{position:absolute;inset:0;z-index:3;background:linear-gradient(180deg,#091829aa,transparent 25%,transparent 54%,#06192ae9 90%);pointer-events:none}
+.top{position:absolute;left:18px;top:18px;right:16px;z-index:4}.tag{font-size:10px;font-weight:800;background:#0b2a49c9;border:1px solid #a7d2f4aa;padding:6px 10px;border-radius:15px;display:inline-block}.top strong{display:block;font-size:19px;margin-top:10px}.top small{display:block;margin-top:4px;opacity:.9}
+.bottom{position:absolute;bottom:14px;left:12px;right:12px;z-index:5;display:grid;gap:9px}.subtitle{background:#081c30df;border:1px solid #b5ddff33;border-radius:13px;min-height:50px;padding:11px;font-size:13px;line-height:1.3;max-height:80px;overflow:auto}.status{background:#173550c9;border-radius:10px;padding:7px 10px;font-size:11px;text-align:center}
+form{display:flex;gap:7px}input{flex:1;min-width:0;border:0;border-radius:13px;padding:12px;font-size:14px;color:#101820;background:white}button{cursor:pointer;border:0;border-radius:12px;padding:12px 13px;font-size:12px;font-weight:700;color:#fff;background:#256dc1}button:disabled{opacity:.5}#stop{background:#d94157}.buttons{display:flex;gap:8px}.buttons button{flex:1}
+.note{font-size:10px;text-align:center;color:#e2ecfb}#idle[hidden],#idle2[hidden],#talk[hidden],#talk2[hidden]{display:none}
+@media(max-height:680px){.call{max-height:100svh}.top{top:12px}.bottom{bottom:9px}}
+</style><link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111"></head><body>
+<main class="call" id="call"><div class="portrait">
+<img src="/static/img/lia-lovable-poster.jpg" alt="Lia fictícia">
+<video id="idle" muted playsinline preload="auto" hidden></video>
+<video id="idle2" muted playsinline preload="auto" hidden></video>
+<video id="talk" muted playsinline preload="auto" hidden></video>
+<video id="talk2" muted playsinline preload="auto" hidden></video>
+</div><div class="shade"></div>
+<div class="top"><span class="tag">SIMULAÇÃO COM IA · PERSONAGEM FICTÍCIA</span><strong>Lia · Videochamada</strong><small id="label">Aguardando sua fala</small></div>
+<div class="bottom"><div class="subtitle" id="sub">Teste: três clipes de fala e três variações de escuta, sem repetir o mesmo consecutivamente.</div><div class="status" id="state" role="status">Lia ouvindo · boca fechada</div>
+<form id="form"><input id="text" value="Olá! Eu sou a Lia. Que bom conversar com você! Como posso ajudar?" aria-label="Texto do teste" maxlength="350"><button type="submit">Fazer Lia falar</button></form>
+<div class="buttons"><button id="stop" type="button">Parar fala</button><button id="voice" type="button">Voz feminina</button><button id="alternate" type="button">Próximo gesto</button></div>
+<div class="note">Prévia local: a voz é gerada pelo navegador. Os vídeos seguem o início/fim da fala, sem sincronização exata de fonemas. No Educa+, o texto vem da IA da Cloudflare.</div></div></main>
+<script src="/static/js/lia-female-voice.js?v=11111"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),call=$('call'),state=$('state'),label=$('label'),sub=$('sub');
+const pools={talk:[$('talk'),$('talk2')],idle:[$('idle'),$('idle2')]};
+const files={talk:['lia-conversando-a.mp4','lia-conversando-b.mp4','lia-conversando-c.mp4'],idle:['lia-ouvindo.mp4','lia-ouvindo-b.mp4','lia-ouvindo-c.mp4']};
+const last={talk:-1,idle:-1},active={talk:null,idle:null};let token=0,serial=0,speaking=false;
+function different(kind){const len=files[kind].length;const i=last[kind]<0?Math.floor(Math.random()*len):(last[kind]+1+Math.floor(Math.random()*(len-1)))%len;last[kind]=i;return '/static/videos/'+files[kind][i];}
+function playKind(kind){
+ const old=active[kind],next=pools[kind].find(x=>x!==old)||pools[kind][0],src=different(kind),epoch=token;let swapped=false;
+ next.pause();next.classList.remove('visible');next.hidden=false;next.src=src;next.muted=true;next.playsInline=true;next.loop=false;next.load();
+ next.onended=null;next.ontimeupdate=null;
+ const valid=()=>token===epoch&&(kind==='talk'?speaking:!speaking);
+ function rotate(){if(swapped||!valid()||active[kind]!==next)return;swapped=true;playKind(kind);}
+ next.onended=rotate;
+ next.ontimeupdate=()=>{if(Number.isFinite(next.duration)&&next.duration>0&&next.currentTime>next.duration-.35)rotate();};
+ void Promise.resolve(next.play()).then(()=>{
+  if(!valid()){next.pause();return;}
+  active[kind]=next;next.classList.add('visible');
+  if(old&&old!==next){old.classList.remove('visible');setTimeout(()=>{if(active[kind]!==old){old.pause();old.hidden=true;}},270);}
+  state.textContent=kind==='talk'?'Lia falando · alterando vídeos durante o áudio':'Lia ouvindo · piscadas e gestos suaves';
+ }).catch(()=>{state.textContent='Vídeo bloqueado; a voz continua.';});
+}
+function pauseKind(kind){for(const video of pools[kind]){video.pause();video.onended=null;video.ontimeupdate=null;video.classList.remove('visible');video.hidden=true;}active[kind]=null;}
+function listen(){token++;speaking=false;pauseKind('talk');label.textContent='Aguardando você';playKind('idle');}
+function talkNow(){token++;speaking=true;pauseKind('idle');call.classList.add('speaking');label.textContent='Lia falando';playKind('talk');}
+function stop(){serial++;speechSynthesis.cancel();listen();call.classList.remove('speaking');}
+$('stop').onclick=stop;$('voice').onclick=()=>{stop();window.EducaLiaVoice?.openSettings?.();};
+$('alternate').onclick=()=>{if(speaking)playKind('talk');else playKind('idle');};
+$('form').addEventListener('submit',e=>{e.preventDefault();stop();const msg=$('text').value.trim();if(!msg)return;sub.textContent=msg;
+ if(!('speechSynthesis' in window)){state.textContent='O navegador não oferece síntese de voz';return;}
+ const id=++serial;
+ const playVoice=voice=>{
+ if(id!==serial)return;
+ if(!voice||!/^pt[-_]BR$/i.test(voice.lang)){state.textContent='Não há voz feminina disponível neste computador. Escolha manualmente ou configure Kokoro.';return;}
+ const u=new SpeechSynthesisUtterance(msg);u.lang='pt-BR';u.rate=.95;u.pitch=1;u.voice=voice;
+ u.onstart=()=>{if(id===serial)talkNow();};u.onend=()=>{if(id===serial)listen();};u.onerror=()=>{if(id===serial){listen();state.textContent='Não foi possível reproduzir a voz';}};
+ speechSynthesis.resume();speechSynthesis.speak(u);
+ };const female=window.EducaLiaVoice?.choose?.();if(female)playVoice(female);else {state.textContent='Procurando voz feminina pt-BR…';void window.EducaLiaVoice?.waitForFemale?.().then(playVoice);}
+});listen();
+})();
+</script></body></html>

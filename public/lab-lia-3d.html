@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Laboratório Lia 3D — Educa+ Digital</title>
+  <link rel="stylesheet" href="/static/css/lia3d-lab.css">
+  <!-- Versões conforme import map da documentação oficial do TalkingHead 1.8. -->
+  <script type="importmap">
+    {"imports":{
+      "three":"https://cdn.jsdelivr.net/npm/three@0.186/build/three.module.js/+esm",
+      "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.186/examples/jsm/",
+      "talkinghead":"https://cdn.jsdelivr.net/gh/met4citizen/TalkingHead@1.8/modules/talkinghead.mjs",
+      "headaudio":"https://cdn.jsdelivr.net/gh/met4citizen/HeadAudio@main/dist/headaudio.min.mjs"
+    }}
+  </script>
+  <script type="module" src="/static/js/lia3d-lab.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a href="/" aria-label="Voltar ao Educa+ Digital"><img src="/static/img/logo.png" alt="Educa+ Digital"><span>Voltar ao projeto</span></a>
+    <span class="pill">LABORATÓRIO V111.0</span>
+  </header>
+  <main>
+    <div class="intro">
+      <div><p class="eyebrow">PROTÓTIPO INTERNO · SEM SIMLI</p>
+      <h1>Teste da Lia em 3D</h1>
+      <p>Importe o modelo <strong>GLB</strong> exportado do Avaturn, teste expressões e sincronize a boca com um áudio real. Este laboratório não modifica a chamada atual nem usa Pix verdadeiro.</p>
+      </div>
+      <a class="secondary-link" href="https://avaturn.me/" target="_blank" rel="noopener noreferrer">Criar avatar no Avaturn ↗</a>
+    </div>
+    <div class="layout">
+      <section class="stage" aria-labelledby="previewTitle">
+        <div class="stage-top"><span class="live-dot"></span><strong id="previewTitle">Lia · simulação com IA</strong><span class="test-tag">PERSONAGEM FICTÍCIA</span></div>
+        <div id="avatarStage" class="avatar-stage" role="img" aria-label="Visualização 3D de avatar fictício; é necessário carregar um modelo GLB"><div class="stage-placeholder"><div class="placeholder-head"></div><strong>Aguardando avatar 3D</strong><span>Carregue o modelo de exemplo ou seu GLB do Avaturn</span></div></div>
+        <div class="stage-bottom"><span id="status" role="status" aria-live="polite">Aguardando modelo 3D.</span><span id="renderStatus">WebGL · áudio local</span></div>
+        <p class="privacy">Demonstração educativa com personagem digital. O GLB e os arquivos de áudio escolhidos no computador não são enviados ao Educa+.</p>
+      </section>
+      <section class="panel" aria-label="Controles do avatar">
+        <div class="control-section"><h2><span>1</span> Carregar avatar</h2>
+          <button type="button" id="sampleModel" class="primary">Testar avatar Avaturn de exemplo</button>
+          <label class="upload">Importar meu GLB do Avaturn <input id="modelFile" type="file" accept=".glb,model/gltf-binary" aria-label="Selecionar modelo GLB"></label>
+          <p class="tip">Use a exportação <strong>Avaturn T2 / GLB com expressões faciais</strong>. O modelo público de exemplo é de terceiros e serve somente para avaliação não comercial.</p>
+          <p class="file-label" id="modelName">Nenhum arquivo escolhido.</p>
+        </div>
+        <div class="control-section"><h2><span>2</span> Testar voz e movimentos</h2>
+          <div class="buttons"><button type="button" id="demoVoice" disabled>▶ Ouvir frase de teste</button><button type="button" id="stopVoice" disabled>■ Parar fala</button></div>
+          <label class="upload">Usar áudio WAV / MP3 meu <input type="file" id="audioFile" accept="audio/*,.wav,.mp3,.ogg,.m4a" aria-label="Selecionar áudio de teste"></label>
+          <div class="buttons"><button type="button" id="headView" disabled>Rosto</button><button type="button" id="upperView" disabled>Busto</button><button type="button" id="fullView" disabled>Corpo inteiro</button></div>
+          <label>Expressão <select id="mood" disabled><option value="neutral">Neutra</option><option value="happy">Alegre</option><option value="sad">Triste</option><option value="fear">Surpresa / medo</option></select></label>
+          <p class="tip">A boca usa o áudio de verdade com HeadAudio; a aproximação de visemas não é perfeita. Piscadas, cabeça e corpo vêm do TalkingHead e da qualidade do rig 3D.</p>
+        </div>
+        <div class="control-section"><h2><span>3</span> Conversar com a IA (opcional)</h2>
+          <label for="chatInput">Digite o que quer perguntar à Lia</label>
+          <textarea id="chatInput" maxlength="300" rows="2" placeholder="Lia, como posso verificar uma videochamada suspeita?"></textarea>
+          <div class="buttons"><button type="button" id="sendChat" disabled>Enviar à IA</button><button type="button" id="dictate" disabled>🎙 Ditar</button></div>
+          <label for="staffCode">Código de teste da equipe (somente se Kokoro estiver configurado)</label>
+          <input id="staffCode" type="password" maxlength="150" autocomplete="off" placeholder="Não informe senha do site">
+          <p class="tip">A IA de texto usa o Worker Cloudflare. A voz Kokoro só toca se o motor local/privado estiver ativo. Sem ele, exibimos a resposta em texto e você pode testar um áudio importado.</p>
+          <div class="reply" id="reply" aria-live="polite">Resposta da IA aparece aqui.</div>
+        </div>
+      </section>
+    </div>
+    <footer><span>Projeto Educa+ Digital · experimento 3D independente</span><span>Nenhuma compra ou assinatura é solicitada por este laboratório.</span></footer>
+  </main>
+</body>
+</html>

@@ -24,6 +24,12 @@ class EducaFlaskTests(unittest.TestCase):
         self.assertEqual(css.status_code, 200)
         self.assertGreater(len(css.data), 10000)
         self.assertEqual(self.client.get("/treino").status_code, 302)
+        preview=self.client.get('/lia-ao-vivo.html')
+        self.assertEqual(preview.status_code, 200)
+        self.assertIn(b'lia3dCallStage',preview.data)
+        realistic=self.client.get('/lia-realista.html')
+        self.assertEqual(realistic.status_code, 200)
+        self.assertIn(b'lia-realista.js', realistic.data)
 
     def test_catalog(self):
         result = self.client.get("/api/estrutura")

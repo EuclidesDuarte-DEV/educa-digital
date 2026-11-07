@@ -34,3 +34,12 @@ coverage/
 
 # Pacotes de distribuição
 *.zip
+
+# Arquivos temporarios criados pelo montador de narracao
+_backup_local/
+_trabalho_local/
+
+# Segredos locais da Lia
+.dev.vars
+lia_motor/.motor.vars.local
+lia_motor/generated/

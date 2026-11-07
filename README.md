@@ -1,83 +1,76 @@
-# Educa+ Digital — V102 (código organizado)
+# Educa+ Digital — V111.42 (inicialização única da LIA)
 
-Protótipo educacional para praticar atividades digitais com segurança. Projeto pensado inicialmente para pessoas idosas, com celular Android simulado, pré-teste de Pix, vídeos e atividades. **Mantém a interface e as simulações da V102**, sem substituir seu HTML, CSS e JavaScript.
+Projeto de **educação e segurança digital** com interface web responsiva e celular Android simulado. Este pacote é uma **reorganização da V111.40**, sem alteração intencional nas funcionalidades, no banco de dados, no conteúdo dos treinos ou no código da LIA AI.
 
-## Organização dos arquivos
+## Iniciar todos os servicos locais com um clique (Windows)
 
-```text
-EDUCA_DIGITAL_V102_GITHUB_AVALIACAO/
-├── app.py                       # Servidor Flask para demonstração local
-├── requirements.txt             # Dependência Python
-├── README.md                    # Guia de execução
-├── banco/
-│   ├── schema.sql               # Estrutura completa (nova instalação local)
-│   └── migracao_d1.sql          # Migração opcional do D1 existente
-├── data/
-│   └── modulos.json             # Módulos, capítulos e atividades
-├── public/                      # Mesma interface usada no Flask e na Cloudflare
-│   ├── html/
-│   │   └── index.html           # Página inicial e celular virtual
-│   └── static/
-│       ├── css/app.css          # Layout, componentes e responsividade
-│       ├── js/                  # Interações, pré-teste e simuladores
-│       ├── icons/               # Ícones dos aplicativos Android
-│       ├── icons_pwa/           # Ícones de instalação
-│       ├── img/                 # Logo e imagens
-│       ├── videos/              # Vídeos das atividades
-│       ├── manifest.webmanifest # Configuração PWA
-│       └── sw.js                # Cache do aplicativo web
-├── src/                         # API usada na Cloudflare
-│   ├── worker.js
-│   └── catalogo.js
-├── tests/                       # Testes do banco, Flask e Worker
-├── wrangler.toml                # Hospedagem e vínculo com o D1 existente
-└── package.json                 # Scripts de teste/deploy Cloudflare
-```
+1. Abra **`INICIAR_EDUCA_COM_LIA.cmd`** na pasta principal (ou `npm.cmd run dev:lia` no terminal do VS Code).
+2. O iniciador verifica serviços existentes, liga **Ollama** e o **motor Kokoro Python** *se já estiverem instalados* e sobe o site local Flask na porta **5015**.
+3. Ao responder, abre automaticamente `http://127.0.0.1:5015`. Se algum serviço opcional não estiver configurado, exibe a pendência sem tentar instalar modelos grandes.
+4. Mantenha o terminal aberto. Para desligar os processos iniciados por esta sessão, pressione `Ctrl+C`.
 
-**Por que uma pasta `public/static`?** Todos os arquivos acessados pelo navegador seguem o endereço `/static/...` tanto no Flask quanto na Cloudflare. Isso evita manter cópias distintas de CSS, JS ou mídia. O HTML fica **somente** em `public/html/index.html`; a página `/` é servida pelo Flask ou pelo Worker.
+**Importante:** é um iniciador LOCAL para desenvolvimento/demonstração. O navegador **não pode iniciar programas Windows automaticamente ao visitar uma página**. No endereço público Cloudflare, o backend da LIA exige hospedagem própria, não pode depender do notebook. **Kokoro no navegador** já realiza pré-aquecimento ao iniciar o Modo Livre, quando o visitante tem os recursos necessários.
 
-## Abrir com `app.py` (Windows / VS Code)
+A pasta `LIGAR_LIA_EDUCA/` foi preservada apenas por compatibilidade com os scripts antigos; não é necessária no fluxo de um clique. O comando `npm.cmd run dev` continua a iniciar o Cloudflare Wrangler, em `localhost:8787`, **sem ligar automaticamente Ollama/Kokoro Python**; para a LIA local use o iniciador acima.
 
-1. Extraia o ZIP e abra a pasta do projeto no VS Code.
+## Abrir no VS Code (Windows)
+
+1. Extraia o ZIP e abra a pasta `EDUCA_DIGITAL_V111_41_PROJETO_ORGANIZADO` no VS Code.
 2. No terminal PowerShell, execute:
 
 ```powershell
-py -3 -m pip install -r requirements.txt
-py -3 app.py
-```
-
-3. Abra `http://127.0.0.1:5000` no navegador.
-
-O arquivo do banco local será criado em `.local/educa_digital.sqlite3` na primeira execução. Não é necessário configurar Cloudflare para testar localmente.
-
-## Rodar testes
-
-```powershell
-py -3 -m unittest discover -s tests -p "test_*.py" -v
-npm.cmd test
-```
-
-Testes Flask precisam da dependência de `requirements.txt`. Para os testes do Worker, recomenda-se Node.js 22 ou superior devido ao SQLite do Node usado nos testes.
-
-## Cloudflare (somente quando quiser atualizar o site)
-
-```powershell
 npm.cmd install
-npm.cmd run deploy
+npm.cmd test
+npm.cmd run dev
 ```
 
-O `wrangler.toml` mantém o Worker `educa-digital` e a ligação ao D1 existente. A rota `/` busca internamente `public/html/index.html` e **não muda o endereço do site**. O conteúdo estático conserva as URLs `/static/css`, `/static/js`, etc.
+3. Abra a URL exibida pelo Wrangler (geralmente `http://localhost:8787`). O comando `predev` prepara o **D1 local** usando `banco/schema.sql` — não o D1 remoto.
 
-**Não rode `banco/schema.sql` novamente no D1 que já existe.** O arquivo `banco/migracao_d1.sql` é opcional e contém alterações de estrutura: use somente após realizar backup e conferir a versão do banco remoto. A hospedagem por Cloudflare e a demonstração local Flask usam bancos separados.
+> Para rodar é necessário ter Node.js instalado. Não execute `wrangler deploy` ou migrações remotas sem revisão e autorização. Nenhuma credencial está incluída no pacote.
 
-## Modelo de dados
+## Funcionalidades principais
 
-Baseado no diagrama do projeto: **módulos → capítulos → atividades**, com **usuários, progresso, códigos de acesso e perfil de acessibilidade**. A V102 conserva o identificador de atividade no progresso para compatibilidade.
+- Pré-teste, trilhas e atividades educativas interativas, com dados fictícios.
+- Celular virtual, módulos de Pix, segurança, WhatsApp, ajustes, GOV.BR e aplicativos.
+- Modo Livre com simulações de golpes via WhatsApp e videochamada com LIA AI.
+- Acessibilidade: painel lateral com tamanho de texto, contraste e leitura em voz alta; tutorial inicial guiado.
+- Integração com banco D1/SQLite e serviços Cloudflare Workers.
+- Motor Kokoro opcional da LIA. Os recursos de voz neural podem exigir download de modelo, backend local e configurações/recursos externos. Não há garantia de voz neural rápida em todo computador.
 
-## Limites de segurança
+## Organização das pastas
 
-O cadastro e os códigos de acesso são demonstrativos. O código de login retorna na própria API para a atividade educativa: **não use como autenticação real**. Não informe dados bancários, CPF, senhas ou números pessoais de participantes; use apenas dados fictícios nas avaliações.
+```text
+EDUCA_DIGITAL_V111_41_PROJETO_ORGANIZADO/
+├── banco/            # Esquema e migração (NÃO aplicar remotamente sem autorização)
+├── data/             # Catálogo das atividades
+├── public/           # Páginas HTML, CSS, JS, logo, vídeos, áudio e PWA
+├── src/              # Cloudflare Worker e APIs
+├── tests/            # Testes Node.js
+├── testes_lia_educa/ # Testes Python do Modo Livre
+├── lia_motor/        # Motor local opcional da LIA e seus arquivos de mídia
+├── LIGAR_LIA_EDUCA/  # Comandos legados de inicialização da LIA local
+├── deploy/           # Preparo opcional de infraestrutura Kokoro
+├── scripts/windows/  # Utilitários antigos de diagnóstico/inicialização
+├── docs/historico/   # Guias e relatórios das versões anteriores
+├── docs/ESTRUTURA.md # Registro da limpeza e preservação
+├── app.py            # Execução local alternativa em Flask
+├── lia_educa_local.py
+├── requirements.txt
+├── package.json
+├── wrangler.toml
+└── README.md
+```
 
----
+## Manutenção e versionamento
 
-**Dica para o avaliador:** abra `public/html/index.html` para estudar a estrutura semântica; `public/static/css/app.css` para analisar o design; `public/static/js/training.js` para explorar o simulador; `app.py` e `banco/schema.sql` para ver backend e modelo de dados.
+- Código-fonte: `src/`, `public/`, `app.py`, `lia_motor/` e utilitários específicos.
+- Testes: `npm.cmd test` (Node.js). Os testes Python são independentes e dependem de seus pacotes.
+- Arquivos históricos não precisam ficar na raiz: foram movidos para `docs/historico/` **sem exclusão**.
+- O repositório remoto `EuclidesDuarte-DEV/educa-digital` não foi alterado; **este ZIP não é um deploy**.
+- Antes de migrar esta organização para o GitHub, verifique o `git status` e gere um commit/PR específico, preservando o trabalho existente.
+
+**Status:** reorganizado localmente. Teste visual final no seu ambiente ainda recomendado antes de publicar.
+
+## V111.43 — Guia de primeiros passos
+
+O tour agora apresenta **Começar meu treino → Banco (pré-teste) → Acessibilidade**; pressione **Como usar** para rever. Detalhes em `docs/GUIA_VISUAL_V11143.md`. Não houve publicação no GitHub ou Cloudflare.

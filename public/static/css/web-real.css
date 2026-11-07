@@ -1,0 +1,37 @@
+/* Educa+ Digital V109 | Ferramentas web reais do Modo Livre */
+.webreal-app{background:#f4f7fb;color:#193858;font-family:Inter,Arial,sans-serif}
+.webreal-header{position:absolute;top:38px;left:0;right:0;height:64px;background:#fff;display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #dbe6f2;box-sizing:border-box;z-index:2}
+.webreal-header>button{width:35px;height:39px;border:0;background:transparent;font-size:34px;color:#2167b7;cursor:pointer;line-height:1}
+.webreal-header img{width:37px;height:37px;object-fit:contain;border-radius:9px}
+.webreal-header>div{min-width:0;display:flex;flex-direction:column;gap:3px}
+.webreal-header strong{font-size:15px;line-height:1.2;color:#153c70}
+.webreal-header small{font-size:10px;color:#5c738c}
+.webreal-scroll{position:absolute;top:102px;bottom:23px;left:0;right:0;padding:16px 13px 32px;box-sizing:border-box;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.webreal-scroll .wr-disclosure{margin:0 0 15px;font-size:11px;line-height:1.55;color:#556d89}
+.wr-card{border:1px solid #dbe5f1;background:white;border-radius:16px;padding:15px 13px;margin:0 0 12px;box-shadow:0 3px 11px #0a3b7410;display:flex;flex-direction:column;gap:12px}
+.wr-card>strong{font-size:15px;color:#183f77}
+.wr-card p{font-size:12px;line-height:1.55;color:#53677f;margin:0}
+.wr-card label,.webreal-scroll label{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;color:#35546f}
+.webreal-scroll input,.webreal-scroll textarea{box-sizing:border-box;display:block;border:1px solid #cad8e7;border-radius:12px;padding:11px 10px;min-height:42px;width:100%;color:#223d57;background:#fbfdff;font:inherit;font-size:13px}
+.webreal-scroll form{display:flex;flex-direction:column;gap:12px}
+.webreal-scroll button,.webreal-scroll .wr-upload{border:1px solid #bfd3eb;border-radius:12px;background:#eef5ff;color:#16539c;min-height:44px;font-size:12px;font-weight:760;padding:10px 12px;cursor:pointer;text-align:center;box-sizing:border-box}
+.webreal-scroll .wr-primary{background:#1566c8;color:#fff;border-color:#1566c8}
+.webreal-scroll button:focus-visible,.webreal-scroll input:focus-visible,.webreal-scroll textarea:focus-visible{outline:3px solid #186ddd;outline-offset:2px}
+.wr-row{display:flex;gap:7px;flex-wrap:wrap}.wr-row button{flex:1;min-width:110px}
+.wr-camera-frame{aspect-ratio:3/4;width:100%;border-radius:15px;background:#132c48;overflow:hidden;display:grid;place-items:center}
+.wr-camera-frame video{width:100%;height:100%;object-fit:cover}
+.webreal-scroll .wr-upload{display:block;background:#e8f2ff;position:relative}
+.wr-upload input{opacity:0;position:absolute;inset:0;cursor:pointer}
+.wr-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.wr-photo-tile{border:1px solid #d5e2ef;background:#fff;border-radius:12px;overflow:hidden;min-width:0}
+.wr-photo-tile img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.wr-photo-tile>div{display:flex;gap:4px;padding:5px}.wr-photo-tile button{min-width:0;flex:1;padding:6px 2px;font-size:10px;min-height:30px}
+.wr-event{display:flex;gap:5px;align-items:center;border-top:1px solid #e0e9f3;padding:10px 0}.wr-event>span{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}.wr-event strong{font-size:11px;overflow-wrap:anywhere}.wr-event small{font-size:10px;color:#627791}.wr-event button{min-height:31px;padding:6px 5px;font-size:10px}
+.wr-muted{color:#63778c;font-size:12px;line-height:1.5;margin:8px 0}
+.webreal-status{position:absolute;bottom:27px;left:10px;right:10px;z-index:45;padding:10px 12px;background:#e9f2ff;color:#1a4e83;border:1px solid #a9c9e8;border-radius:13px;font-size:11px;line-height:1.5;box-shadow:0 3px 20px #0002}
+.webreal-status.is-error{background:#fff0ed;color:#9b3523;border-color:#eac0b5}
+.webreal-status[hidden]{display:none!important}
+@media(max-width:430px){.webreal-scroll{padding:12px 10px 25px}.wr-card{padding:12px 10px}.webreal-header{padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){.webreal-app *{animation:none!important;transition:none!important}}
+/* Aviso de golpe não bloqueia os controles do aplicativo real. */
+.phone-screen[data-current-view="webreal"] .free-event-notice{top:auto;bottom:70px;z-index:42}

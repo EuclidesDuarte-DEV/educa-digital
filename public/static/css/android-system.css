@@ -1,0 +1,83 @@
+/*
+ * Educa+ Digital V103 — interface de sistema Android simulada.
+ * Esta camada não utiliza nem modifica os ajustes do aparelho verdadeiro.
+ * Os estilos são restritos ao celular virtual para preservar o site e as aulas.
+ */
+.phone-screen .android-shade-trigger {
+  position:absolute;z-index:79;top:0;left:33%;height:36px;width:34%;border:0;
+  padding:0;background:transparent;cursor:pointer;touch-action:pan-y;
+}
+.phone-screen .android-shade-trigger:focus-visible {outline:2px solid #3279ed;outline-offset:-4px;border-radius:12px;}
+.phone-screen .android-system-shade[hidden],
+.phone-screen .android-recents[hidden] {display:none!important;}
+.phone-screen .android-system-shade,
+.phone-screen .android-recents {
+  position:absolute;inset:0;z-index:230;box-sizing:border-box;
+  display:flex;flex-direction:column;overscroll-behavior:contain;
+  overflow-y:auto;scrollbar-width:none;font-family:Inter,"Segoe UI",sans-serif;
+}
+.phone-screen .android-system-shade::-webkit-scrollbar,
+.phone-screen .android-recents::-webkit-scrollbar {display:none;}
+.phone-screen .android-system-shade {
+  padding:28px 15px 22px;
+  color:#f5f7ff;
+  background:linear-gradient(145deg,#152137 0%,#1e2c42 54%,#263148 100%);
+  animation:educaShadeReveal .2s cubic-bezier(.2,.8,.2,1) both;
+}
+.phone-screen .system-shade-head {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:5px 1px 12px;}
+.phone-screen .system-shade-head>div {display:flex;flex-direction:column;gap:4px;}
+.phone-screen .system-shade-head span {font-size:32px;line-height:1;font-weight:550;letter-spacing:-.055em;}
+.phone-screen .system-shade-head small {font-size:12px;opacity:.84;font-weight:500;}
+.phone-screen .system-shade-head button {width:39px;height:39px;border:0;border-radius:50%;background:#34435b;color:#fff;display:grid;place-items:center;cursor:pointer;}
+.phone-screen .system-shade-head svg,.phone-screen .system-quick-tile svg,.phone-screen .system-brightness svg {width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none;}
+.phone-screen .system-shade-guide {padding:0 2px 14px;font-size:10px;line-height:1.3;color:#c9d4e6;}
+.phone-screen .system-quick-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+.phone-screen .system-quick-tile {min-height:67px;display:flex;align-items:center;gap:10px;text-align:left;padding:11px 10px;border-radius:20px;border:1px solid #516075;background:#34435a;color:#e6edf9;cursor:pointer;transition:background-color .18s ease;}
+.phone-screen .system-quick-tile.is-on {background:#dbe6ff;color:#20365e;border-color:#dbe6ff;}
+.phone-screen .system-quick-tile span {font-size:12px;font-weight:700;white-space:normal;line-height:1.2;}
+.phone-screen .system-quick-tile small {display:block;font-size:9px;line-height:1.2;margin-top:3px;font-weight:500;opacity:.82;}
+.phone-screen .system-brightness {padding:15px 2px 17px;}
+.phone-screen .system-brightness label {display:flex;align-items:center;gap:9px;font-size:12px;font-weight:650;margin-bottom:10px;}
+.phone-screen .system-brightness input {display:block;width:100%;height:30px;accent-color:#c6dbff;cursor:pointer;}
+.phone-screen .system-notifications {border-top:1px solid #516078;padding:16px 0 0;}
+.phone-screen .system-notification-heading {display:flex;align-items:center;justify-content:space-between;gap:5px;padding:0 1px 10px;}
+.phone-screen .system-notification-heading strong {font-size:13px;font-weight:650;}
+.phone-screen .system-notification-heading span {font-size:9px;color:#d0dbeb;}
+.phone-screen .system-notice {display:grid;grid-template-columns:33px 1fr;gap:9px;padding:12px;border-radius:18px;margin-bottom:8px;background:#eff3fa;color:#213653;}
+.phone-screen .system-notice-icon {display:grid;place-items:center;width:33px;height:33px;border-radius:12px;background:#2356bf;color:#fff;font-size:11px;font-weight:800;}
+.phone-screen .system-notice-icon.blue {background:#e4efff;color:#2356bf;}
+.phone-screen .system-notice strong {display:block;font-size:12px;line-height:1.25;}
+.phone-screen .system-notice p {font-size:11px!important;margin:3px 0 0!important;line-height:1.45!important;color:#53647b!important;}
+.phone-screen .system-shade-footer {margin-top:auto;padding:7px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:9px;}
+.phone-screen .system-shade-footer button {height:36px;border:1px solid #8799b8;background:#32435e;color:#f8fbff;border-radius:999px;padding:0 15px;font-size:12px;font-weight:700;cursor:pointer;}
+.phone-screen .system-shade-footer span {font-size:9px;line-height:1.45;text-align:center;color:#bdcbe0;}
+.phone-screen .android-recents {padding:56px 18px 35px;background:radial-gradient(circle at 16% 18%,#d3ddff,transparent 44%),linear-gradient(160deg,#e9f3ff,#eef0fb 56%,#e1ebf7);color:#172d4c;animation:educaShadeReveal .2s ease-out both;}
+.phone-screen .android-recents>header {display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.phone-screen .android-recents>header strong {font-size:21px;line-height:1.1;letter-spacing:-.03em;}
+.phone-screen .android-recents>header button {border:1px solid #b6c9df;background:#fff;border-radius:18px;padding:9px 11px;font-weight:650;color:#21436d;font-size:11px;}
+.phone-screen .android-recents>p {font-size:12px!important;line-height:1.5!important;color:#556b89!important;margin:12px 0 25px!important;}
+.phone-screen .recent-card {display:grid;grid-template-columns:50px 1fr;align-items:center;gap:13px;width:100%;padding:14px;background:#fff;border:1px solid #dbe6f3;border-radius:21px;box-shadow:0 12px 25px #16386613;margin:0 0 12px;text-align:left;color:#1a3457;cursor:pointer;}
+.phone-screen .recent-icon {display:grid;place-items:center;width:50px;height:50px;border-radius:16px;background:#2166ea;color:#fff;font-weight:800;font-size:17px;}
+.phone-screen .recent-icon.pale {background:#e4edff;color:#315ea5;font-size:28px;}
+.phone-screen .recent-card strong {display:block;font-size:14px;}
+.phone-screen .recent-card small {display:block;margin-top:4px;font-size:11px;color:#647b98;}
+.phone-screen .recent-note {display:block;margin-top:auto;font-size:10px;line-height:1.5;color:#61758e;text-align:center;}
+.phone-screen .android-display-dimmer {position:absolute;inset:0;z-index:169;background:#050e1c;opacity:0;pointer-events:none;transition:opacity .18s ease;}
+.phone-screen .launcher-search-mic,.phone-screen .launcher-search-lens {width:20px;height:20px;fill:none;stroke:#526882;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+/* Papel de parede com formas mais suaves, inspirado na abordagem Material You, sem imagem externa. */
+.phone-screen #homeView .wallpaper {
+  background:
+    radial-gradient(ellipse 56% 46% at 71% 42%,#aec6ee 0%,#c2d6fb 44%,transparent 76%),
+    radial-gradient(ellipse 60% 38% at 17% 72%,#a7d9d2 0%,#c3e4e2 55%,transparent 84%),
+    radial-gradient(ellipse 90% 45% at 48% 94%,#e5d2ef 0%,#ebe1f7 60%,transparent 95%),
+    linear-gradient(157deg,#e9f1ff,#dfeafa 56%,#e3e8f8);
+}
+.phone-screen #homeView .launcher-grid .app-tile .adaptive-icon {
+  filter:drop-shadow(0 3px 5px rgba(23,43,70,.13));
+}
+.phone-screen #homeView .google-search {background:rgba(250,252,255,.94);border:1px solid rgba(255,255,255,.75);box-shadow:0 4px 14px rgba(23,51,88,.11);}
+@keyframes educaShadeReveal {from{opacity:.65;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce) {
+  .phone-screen .android-system-shade,.phone-screen .android-recents {animation:none;}
+  .phone-screen .android-display-dimmer {transition:none;}
+}

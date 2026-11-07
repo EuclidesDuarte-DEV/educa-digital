@@ -1,0 +1,102 @@
+/* Educa+ Digital V106 — Modo Livre na tela Android ORIGINAL.
+   Escopos locais, sem afetar as 22 atividades guiadas. */
+.free-mode-entry{box-sizing:border-box!important;display:flex!important;align-items:center!important;gap:12px!important;width:100%!important;max-width:100%;min-height:90px!important;padding:14px!important;margin:15px 0 9px!important;border:1px solid #bdd3f0!important;border-radius:17px!important;background:linear-gradient(116deg,#103f85,#1d6cc8)!important;color:#fff!important;text-align:left!important;cursor:pointer;box-shadow:0 10px 24px rgba(17,75,143,.15)}
+.free-mode-entry .free-entry-icon{width:42px;height:42px;min-width:42px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.16)}
+.free-mode-entry .free-entry-icon svg{width:25px;height:25px;display:block}
+.free-mode-entry .free-entry-copy{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;line-height:1.25}
+.free-mode-entry .free-entry-copy small{font-size:9px!important;letter-spacing:.03em;color:#d6e9ff!important;font-style:normal!important;font-weight:700!important}
+.free-mode-entry .free-entry-copy strong{font-size:17px!important;color:#fff!important;font-weight:800!important;line-height:1.25!important}
+.free-mode-entry .free-entry-copy em{font-size:11px!important;color:#eef6ff!important;font-style:normal!important;line-height:1.42!important;font-weight:450!important}
+.free-entry-chevron{font-size:27px;flex:none}
+.free-home-tools[hidden],.free-event-notice[hidden],.free-floating-home[hidden],.v106-chat-feedback[hidden],.v106-call-compose[hidden],.v106-call-buttons button[hidden],.v106-voice-actions [hidden]{display:none!important}
+.free-home-tools{position:absolute;z-index:36;right:10px;top:65px;display:flex;gap:5px}
+.free-micro-control{border:1px solid rgba(15,66,122,.22);background:rgba(255,255,255,.95);color:#174c8c;border-radius:30px;padding:6px 8px;min-height:31px;font-size:10px;font-weight:750;box-shadow:0 2px 12px rgba(0,0,0,.1);cursor:pointer}
+.free-event-notice{position:absolute;z-index:86;top:40px;left:9px;right:9px;max-width:calc(100% - 18px);display:flex;align-items:center;gap:7px;background:#fff;color:#1c3554;padding:11px 9px;border:1px solid #8aaddb;border-radius:16px;box-shadow:0 10px 26px #0e274e5c;box-sizing:border-box}
+.free-event-copy{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;line-height:1.25}.free-event-copy strong{font-size:12px;color:#1e446d}.free-event-copy small{font-size:10px;color:#536981;overflow-wrap:anywhere}
+.v106-alert-icon{width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:#dcebfd;color:#0c569e;font-size:19px;flex:none}
+.free-event-notice button{border:0;border-radius:8px;background:#1768c7;color:#fff;padding:9px;font-size:10px;font-weight:750;min-height:34px;cursor:pointer}.free-event-notice button:last-child{background:#f0f5fb;color:#2c527a;min-width:28px}
+.free-floating-home{position:absolute;z-index:48;left:11px;right:11px;bottom:31px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.free-floating-home button{pointer-events:auto;border:1px solid #c2d8f4;background:#fff;border-radius:99px;padding:9px 13px;color:#14518e;font-size:11px;font-weight:850;box-shadow:0 4px 16px #0b315544}
+.free-floating-home span{pointer-events:none;border-radius:99px;background:#f6faff;color:#34618e;font-size:10px;padding:8px 10px;box-shadow:0 4px 12px #0b315522}
+.android-view .v106-app-screen,.android-view .v106-call-screen{box-sizing:border-box;position:absolute;inset:0;overflow:hidden;min-height:0}
+.v106-app-screen{background:#f5f8fc;color:#1b334a;padding-top:31px;font-family:Inter,Arial,sans-serif}
+.v106-header{box-sizing:border-box;display:flex;align-items:center;gap:8px;min-height:58px;padding:8px 11px;background:white;border-bottom:1px solid #dde6f0;width:100%}
+.v106-header>button{min-width:32px;height:36px;border:0;border-radius:9px;background:transparent;color:#1b5fa5;font-size:26px;cursor:pointer;flex:none}
+.v106-header>div{display:flex;flex-direction:column;min-width:0;flex:1;gap:3px}.v106-header strong{font-size:14px;line-height:1.24;color:#143c65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v106-header small{font-size:10px;color:#698298;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.v106-header .v106-header-icon{font-size:18px;min-width:34px;background:#edf5fe}
+.v106-inbox-search{margin:11px 12px;padding:12px;border-radius:19px;background:#e9f0f8;font-size:12px;color:#687d91}
+.v106-inbox-list{position:absolute;top:160px;left:0;right:0;bottom:49px;overflow-y:auto}
+.v106-inbox-item{display:flex;align-items:center;gap:11px;padding:13px 14px;background:#fff;border:0;border-bottom:1px solid #e3eaf3;width:100%;text-align:left;color:#233e58;cursor:pointer;min-height:70px}
+.v106-inbox-item div{flex:1;min-width:0}.v106-inbox-item strong{font-size:13px;display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.v106-inbox-item small{display:block;font-size:11px;color:#718397;margin-top:5px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.v106-avatar{display:grid;place-items:center;min-width:37px;width:37px;height:37px;border-radius:50%;background:#1e70b8;color:#fff;font-size:16px;font-weight:850;flex:none}.v106-inbox-item .v106-avatar{width:43px;height:43px}
+.v106-unread{width:10px;height:10px;border-radius:50%;background:#1d75d1}
+.v106-app-note{position:absolute;bottom:12px;left:12px;right:12px;color:#6c7e90;font-size:9px!important;line-height:1.4;text-align:center}
+.v106-chat{background:#e8eef0}.v106-chat .v106-header{background:#fff}.v106-chat-title{flex:1}
+.v106-conversation{position:absolute;top:90px;bottom:112px;left:0;right:0;overflow-y:auto;overscroll-behavior:contain;padding:13px;background-color:#eaf0ec;background-image:radial-gradient(#ced9d6 .65px,transparent .65px);background-size:17px 17px}
+.v106-bubble{width:max-content;max-width:86%;box-sizing:border-box;border-radius:12px 12px 12px 3px;padding:10px 12px;margin-bottom:9px;background:#fff;color:#294155;box-shadow:0 1px 4px #20364e15;font-size:12px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}.v106-bubble.out{border-radius:12px 12px 3px 12px;margin-left:auto;background:#d7ebff}.v106-bubble small{display:block;margin-top:5px;color:#71859b;font-size:9px;text-align:right}
+.v106-compose{position:absolute;left:9px;right:9px;bottom:67px;display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:7px;align-items:center}.v106-compose input{width:100%;box-sizing:border-box;border:1px solid #c5d5e4;background:#fff;color:#25455d;border-radius:23px;height:41px;padding:9px 13px;min-width:0;font-size:13px}.v106-compose button{width:42px;height:42px;border:0;border-radius:50%;background:#1b6dc9;color:white;font-size:20px;cursor:pointer}
+.v106-chat-actions{position:absolute;left:7px;right:7px;bottom:28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.v106-chat-actions button{box-sizing:border-box;border:1px solid #c8dbec;background:#fff;color:#17518d;border-radius:10px;padding:8px 2px;min-height:34px;font-size:10px;font-weight:750;cursor:pointer}
+.v106-chat-feedback{position:absolute;bottom:118px;left:8px;right:8px;background:#e4f1ff;color:#194c7b;font-size:11px;line-height:1.4;border:1px solid #b6d4f1;border-radius:10px;padding:8px;z-index:2}
+.v106-call-screen{padding:67px 17px 27px;overflow-y:auto;background:linear-gradient(145deg,#0c315d,#102f4f);color:#fff;text-align:center;font-family:Inter,Arial,sans-serif}
+.v106-sim-tag{display:inline-block;font-size:10px;letter-spacing:.04em;border:1px solid #537ea9;border-radius:30px;padding:6px 10px;color:#d4e8fc}
+.v106-caller-avatar{width:72px;height:72px;display:grid;place-items:center;margin:23px auto 13px;border-radius:50%;background:#215b98;color:#fff;font-size:34px}
+.v106-call-screen h2{color:#fff;margin:0;font-size:20px}.v106-call-screen>p{color:#cfe1f7;font-size:12px;line-height:1.5;margin:10px 0}
+.v106-call-transcript{max-height:153px;min-height:65px;overflow-y:auto;text-align:left;margin:18px 0 13px;padding:9px;background:#ffffff17;border:1px solid #ffffff22;border-radius:12px;font-size:12px;line-height:1.45}.v106-call-transcript p{margin:0 0 9px;overflow-wrap:anywhere}
+.v106-call-compose{margin:10px 0}.v106-call-compose label{display:block;text-align:left;font-size:11px;margin-bottom:5px}.v106-call-compose div{display:flex;gap:5px}.v106-call-compose input{min-width:0;width:100%;border:0;border-radius:12px;padding:10px;font-size:12px}.v106-call-compose button{border:0;border-radius:12px;background:#93c5ff;color:#133f73;font-weight:700;padding:8px}
+.v106-call-buttons{display:flex;justify-content:space-around;gap:8px}.v106-call-buttons button{border:0;border-radius:12px;padding:12px;color:#fff;font-size:12px;flex:1;min-height:42px;font-weight:750}.v106-call-buttons .answer{background:#168c65}.v106-call-buttons .hangup{background:#c43e51}
+.v106-voice-actions{display:flex;gap:5px;margin-top:9px}.v106-voice-actions button{flex:1;border:1px solid #8caccd;border-radius:9px;background:#123f6e;color:#fff;font-size:10px;min-height:36px}
+.v106-verify{width:100%;margin-top:10px;background:transparent;border:1px solid #99b8da;color:#e8f3ff;border-radius:10px;padding:10px;font-size:11px}
+.v106-call-screen .v106-app-note{position:static;color:#bed2e7;margin:11px 0 0}
+.v106-contacts{padding-left:0;padding-right:0}.v106-contacts h3{margin:24px 16px 16px;color:#2b5275;font-size:15px;line-height:1.4}.v106-contacts>button{display:block;width:calc(100% - 28px);margin:11px 14px;padding:14px;border:1px solid #ccdcf0;border-radius:13px;background:white;text-align:left;color:#245887;font-size:12px;min-height:51px}
+.v106-pix-content{padding:20px 16px;overflow-y:auto;max-height:calc(100% - 100px)}.v106-bank-banner{display:flex;flex-direction:column;gap:7px;padding:17px;border-radius:16px;background:linear-gradient(135deg,#164e93,#2675bc);color:white;margin-bottom:17px}.v106-bank-banner small{font-size:10px;color:#daedff}.v106-bank-banner strong{font-size:18px}.v106-bank-banner span{font-size:11px;color:#e6f3ff}.v106-pix-content label{display:block;font-size:11px;font-weight:750;color:#395a79;margin:11px 0 5px}.v106-pix-content>input{box-sizing:border-box;width:100%;border:1px solid #bed3e8;border-radius:10px;background:#fff;padding:12px;font-size:13px;color:#203b56}
+.v106-pix-receiver{display:flex;flex-direction:column;gap:5px;background:white;border:1px solid #c7d9ee;border-radius:12px;padding:13px;margin-top:17px}.v106-pix-receiver small{font-size:10px;color:#6c849c}.v106-pix-receiver strong{font-size:13px;color:#1e4770}.v106-pix-receiver span{font-size:10px;color:#6c8197}.v106-pix-warning{background:#fff4da;border-radius:10px;padding:10px;font-size:11px;line-height:1.4;color:#6e4b0d}.v106-pix-buttons{display:flex;gap:7px;margin-top:14px}.v106-pix-buttons button{flex:1;border:1px solid #b5c8e0;border-radius:10px;background:white;color:#1d538c;min-height:49px;padding:9px 6px;font-size:11px;font-weight:750}.v106-pix-buttons button:last-child{background:#1767c3;color:#fff;border-color:#1767c3}
+.v106-summary{padding:70px 20px 30px;text-align:center;overflow-y:auto}.v106-summary-icon{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;background:#dcecff;color:#1761b1;font-size:35px;margin:12px auto}.v106-summary h2{font-size:22px;color:#174a80;margin:16px 0}.v106-summary>p{color:#465e79;font-size:13px;line-height:1.6}.v106-summary-detail{background:#e9f2fb;border-radius:14px;padding:14px;text-align:left;margin:21px 0}.v106-summary-detail strong{font-size:13px;color:#1b538a}.v106-summary-detail p{font-size:12px;color:#47657e;line-height:1.55}.v106-summary>button{display:block;width:100%;border:0;border-radius:12px;background:#1b6dcc;color:#fff;min-height:44px;margin:10px 0;font-size:12px;font-weight:750}.v106-summary>button:last-child{background:#edf3f9;color:#21598d;border:1px solid #bed4ed}
+.free-mode-entry:focus-visible,.free-micro-control:focus-visible,.free-event-notice button:focus-visible,.v106-app-screen button:focus-visible,.v106-call-screen button:focus-visible{outline:3px solid #1472d4;outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media (prefers-reduced-motion:reduce){.free-event-notice{transition:none!important}}
+/* Evita que a confirmação Pix fique atrás da barra inferior do telefone. */
+.android-view .v106-pix{overflow:hidden}
+.v106-pix-content{box-sizing:border-box;height:calc(100% - 90px);max-height:none;overflow-y:auto;overscroll-behavior:contain;padding-bottom:46px}
+.v106-pix-buttons{padding-bottom:10px}
+@media(max-width:440px){.v106-chat .v106-header strong{font-size:13px}.free-home-tools{right:8px;top:67px}.free-event-notice{top:42px}}
+
+/* V107: sem botão para antecipar cenários; os eventos surgem automaticamente. */
+.free-home-tools{right:10px;top:67px}
+#homeView .app-tile.free-has-unread{position:relative}
+#homeView .app-tile.free-has-unread::after{content:"";position:absolute;top:4px;right:10px;background:#d52e49;width:11px;height:11px;border-radius:100%;border:2px solid white;box-shadow:0 1px 4px #0003}
+.v107-typing{position:absolute;bottom:117px;left:14px;z-index:3;border-radius:14px;background:white;color:#4a6a86;box-shadow:0 2px 8px #0002;padding:8px 12px;font-size:11px;max-width:55%}
+.v107-typing[hidden]{display:none!important}
+.free-event-notice{animation:v107-notice .28s ease-out}
+@keyframes v107-notice{from{transform:translateY(-8px);opacity:.65}to{transform:translateY(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.free-event-notice{animation:none}}
+
+.free-home-tools .free-micro-control{min-height:36px;padding-inline:12px}
+
+/* V108: somente o WhatsApp ORIGINAL. O layout padrão permanece intocado fora do Modo Livre. */
+#phoneScreen.free-active #chatView .chat-wallpaper{bottom:75px;scrollbar-width:thin}
+#phoneScreen.free-active #chatView .chat-composer,#phoneScreen.free-active #chatView .decision-sheet{display:none!important}
+.free-original-compose{position:absolute;z-index:35;bottom:16px;left:9px;right:9px;display:flex;align-items:center;gap:7px;min-height:49px}
+.free-original-compose[hidden],.free-original-ai-status[hidden],.free-original-typing[hidden]{display:none!important}
+.free-original-compose input{min-width:0;flex:1;height:43px;box-sizing:border-box;border:1px solid #d4ddda;border-radius:23px;background:white;color:#24332b;padding:8px 15px;font-size:14px;box-shadow:0 1px 4px #0001}
+.free-original-compose button{border:0;background:#087f54;color:white;border-radius:50%;width:43px;height:43px;flex:none;font-size:18px;cursor:pointer;display:grid;place-items:center}
+.free-original-compose button:disabled{opacity:.5;cursor:wait}
+.free-original-ai-status{position:absolute;z-index:38;left:12px;right:12px;bottom:78px;background:#fff4e5;color:#75460b;border:1px solid #e9c79b;box-shadow:0 2px 10px #0002;border-radius:12px;padding:11px 13px;font-size:12px;line-height:1.4}
+.free-original-typing{position:absolute;z-index:37;left:14px;bottom:80px;background:#fff;color:#667b72;border-radius:13px;padding:8px 12px;font-size:12px;box-shadow:0 1px 6px #0002}
+#phoneScreen.free-active #chatView .chat-header .chat-header-actions button{cursor:pointer}
+#phoneScreen.free-active #whatsappView .chat-row.free-unread .chat-meta b{display:grid}
+#phoneScreen.free-active #whatsappView .wa-chat-list{overflow:auto;max-height:calc(100% - 290px)}
+@media(max-width:440px){.free-original-compose input{font-size:13px}.free-original-ai-status{font-size:11px}}
+
+/* V111.10 — finalização acessível do golpe no WhatsApp, sem alterar outras trilhas. */
+.free-family-actions[hidden],.v106-summary #freeSummaryNext[hidden]{display:none!important}
+#phoneScreen.free-family-chat #chatView .chat-wallpaper{bottom:135px}
+.free-family-actions{position:absolute;z-index:36;bottom:70px;left:9px;right:9px;display:grid;grid-template-columns:1.35fr 1fr;gap:7px}
+.free-family-actions button{min-width:0;min-height:44px;border:1px solid #a3bee0;background:#f4f9ff;color:#164c80;border-radius:10px;font-size:12px;line-height:1.25;font-weight:760;cursor:pointer;padding:6px}
+#phoneScreen.free-family-chat #freeOriginalAiStatus,#phoneScreen.free-family-chat #freeOriginalTyping{bottom:128px}
+.free-family-actions button:last-child{border-color:#c5d5e3;background:#fff;color:#2d516f}
+.v106-summary #freeSummaryNext:not([hidden]){background:#1769c5;color:white;box-shadow:0 3px 9px rgba(22,95,170,.18)}
+@media(max-width:420px){.free-family-actions{gap:4px}.free-family-actions button{font-size:11px;padding:5px 3px}}
+
+/* V111.12: progresso automático sinalizado de forma não intrusiva. */
+#freeSummaryView .v112-summary-auto{display:block}
+#freeSummaryView .v112-summary-auto[hidden]{display:none!important}

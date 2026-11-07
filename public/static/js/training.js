@@ -172,6 +172,7 @@
   const videoLessonSummary = $('#videoLessonSummary');
   const videoLessonBack = $('#videoLessonBack');
   const videoPracticeBtn = $('#videoPracticeBtn');
+  const videoFullscreenBtn = $('#videoFullscreenBtn');
   const videoLessonKicker = $('#videoLessonKicker');
   const modulePathView = $('#modulePathView');
   const modulePathBack = $('#modulePathBack');
@@ -312,7 +313,7 @@
     'pix-recipient': {
       title: 'Pix com segurança',
       summary: 'Antes de começar, veja o que conferir antes de tocar em confirmar.',
-      src: '/static/videos/pix_seguranca.mp4'
+      src: '/static/videos/pix_seguranca.mp4?v=1041'
     },
     'pix-scam': {
       title: 'Pedido urgente? Pare e confirme',
@@ -336,87 +337,87 @@
     },
     'family': {
       title: "Golpe do falso familiar",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/family.mp4?v=71'
     },
     'bank': {
       title: "Link falso do banco",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/bank.mp4?v=71'
     },
     'code': {
       title: "Código recebido por SMS",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/code.mp4?v=71'
     },
     'fake-bank-call': {
       title: "Falsa central bancária",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/fake-bank-call.mp4?v=71'
     },
     'wa-list': {
       title: "Encontrar uma conversa",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/wa-list.mp4?v=71'
     },
     'wa-message': {
       title: "Enviar uma mensagem",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/wa-message.mp4?v=71'
     },
     'wa-call': {
       title: "Fazer uma ligação",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/wa-call.mp4?v=71'
     },
     'pix-key': {
       title: "Entender as chaves Pix",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
-      src: '/static/videos/pix-key.mp4?v=71'
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
+      src: 'https://d2ol7oe51mr4n9.cloudfront.net/user_3L7kVPrU6jkavZYl2V0lQ2eS9ko/5cb5c6b1-5c6b-4776-b950-b64a51c2b376.mp4'
     },
     'settings-font': {
       title: "Aumentar as letras",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/settings-font.mp4?v=71'
     },
     'settings-volume': {
       title: "Ajustar o volume",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/settings-volume.mp4?v=71'
     },
     'settings-wifi': {
       title: "Conectar ao Wi-Fi",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/settings-wifi.mp4?v=71'
     },
     'gov-service': {
       title: "Encontrar um serviço público",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/gov-service.mp4?v=71'
     },
     'gov-logout': {
       title: "Sair da conta com segurança",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/gov-logout.mp4?v=71'
     },
     'play-find': {
       title: "Encontrar um aplicativo oficial",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/play-find.mp4?v=71'
     },
     'play-developer': {
       title: "Conferir o desenvolvedor",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/play-developer.mp4?v=71'
     },
     'play-protect': {
       title: "Usar o Play Protect",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/play-protect.mp4?v=71'
     },
     'play-permissions': {
       title: "Revisar permissões dos aplicativos",
-      summary: "Vídeo explicativo com narração em português brasileiro e cinco etapas práticas.",
+      summary: "Veja a explicação e depois pratique a atividade com dados fictícios.",
       src: '/static/videos/play-permissions.mp4?v=71'
     }
   };
@@ -570,6 +571,9 @@
     views.forEach(view => view.classList.toggle('is-active', view.dataset.view === safeName));
     phoneScreen?.setAttribute('data-current-view', safeName);
   }
+
+  // Ponte opcional: o modo livre navega sem alterar as atividades guiadas.
+  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted };
 
   function clearGuide({ keepState = false } = {}) {
     guideEpoch += 1;
@@ -965,14 +969,14 @@
     if (moduleLessonList) {
       moduleLessonList.innerHTML = topic.lessons.map((lesson, index) => {
         const [title, summary, action] = lesson;
-        const chapterTitle = topic.chapters?.[index] || `Capítulo ${index + 1}`;
         const video = lessonVideos[action];
         const complete = isLessonComplete(topicId, index);
-        // Todas as atividades ficam acessíveis, inclusive as últimas de cada módulo.
+        // Cada atividade tem um único título visível e um botão com alvo de toque amplo.
+        // O nome do capítulo permanece no catálogo, mas não duplica o título no card.
         const current = index === firstIncompleteLesson(topicId);
-        const badge = video ? '<em class="video">VÍDEO + PRÁTICA</em>' : '<em>PRÁTICA</em>';
-        const state = complete ? '✓' : '›';
-        return `<section class="module-chapter"><header class="module-chapter-heading"><span>ATIVIDADE ${index + 1}</span><strong>${chapterTitle}</strong></header><button class="module-lesson-card${complete ? ' is-complete' : ''}${current ? ' is-current' : ''}" type="button" data-module-lesson="${index}"><span class="module-lesson-number">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy"><span>${badge}</span><strong>${title}</strong><small>${summary}</small></span><b class="module-lesson-state" aria-hidden="true">${state}</b></button></section>`;
+        const lessonType = video ? 'VÍDEO E PRÁTICA' : 'PRÁTICA';
+        const state = complete ? 'Concluída' : 'Abrir atividade';
+        return `<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${current ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy"><span class="module-lesson-eyebrow">ATIVIDADE ${index + 1} · ${lessonType}</span><strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
       }).join('');
     }
     setView('module-path');
@@ -2262,6 +2266,26 @@
     startLessonFlow(currentLearningTopic, index);
   });
 
+  videoFullscreenBtn?.addEventListener('click', () => {
+    if (!lessonVideo?.currentSrc) return;
+    // No Safari/iPhone, webkitEnterFullscreen abre o player nativo.
+    // Em outros navegadores usamos Fullscreen API; se não suportada,
+    // abrimos o vídeo numa nova aba para leitura com maior área útil.
+    try {
+      if (typeof lessonVideo.webkitEnterFullscreen === 'function') {
+        lessonVideo.webkitEnterFullscreen();
+      } else if (typeof lessonVideo.requestFullscreen === 'function') {
+        lessonVideo.requestFullscreen().catch(() => {
+          window.open(lessonVideo.currentSrc, '_blank', 'noopener,noreferrer');
+        });
+      } else {
+        window.open(lessonVideo.currentSrc, '_blank', 'noopener,noreferrer');
+      }
+    } catch (_) {
+      window.open(lessonVideo.currentSrc, '_blank', 'noopener,noreferrer');
+    }
+  });
+
   videoLessonBack?.addEventListener('click', () => {
     lessonVideo?.pause();
     openModulePath(currentVideoTopic || currentLearningTopic);
@@ -2704,6 +2728,19 @@
   window.addEventListener('resize', scheduleGuidePositionUpdate, { passive: true });
 
   $$('.android-back').forEach(btn => btn.addEventListener('click', () => { clearGuide(); setView(btn.dataset.backHome || 'home'); }));
+  // A camada Android V103 utiliza eventos explícitos para não duplicar o fluxo das aulas.
+  window.addEventListener('educa:system-learning', () => { if (trainingStarted) openLearningHub(); else setView('home'); });
+  window.addEventListener('educa:system-home', () => { clearGuide(); setView('home'); });
+  window.addEventListener('educa:system-back', () => {
+    const active = $('.android-view.is-active');
+    if (!active || active.dataset.view === 'home') return;
+    const back = $('.android-back, [aria-label="Voltar"]', active);
+    if (back && !back.disabled) back.click();
+    else if (active.dataset.view === 'module-path' && modulePathBack) modulePathBack.click();
+    else if (active.dataset.view === 'video-lesson' && videoLessonBack) videoLessonBack.click();
+    else if (trainingStarted) openLearningHub();
+    else setView('home');
+  });
   $('#gestureHome')?.addEventListener('click', () => {
     nativeHaptic('tap');
     if (trainingStarted) openLearningHub();

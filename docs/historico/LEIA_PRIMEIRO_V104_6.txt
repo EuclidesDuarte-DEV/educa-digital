@@ -1,0 +1,14 @@
+EDUCA+ DIGITAL — V104.6
+
+Aula: Pix > Entender as chaves Pix (capítulo 2/3)
+
+✅ MP4 final existe e já tem exclusivamente a nova voz Archie brasileira.
+✅ Duração 17,875 segundos; imagem H.264 original, áudio AAC novo.
+✅ No site: só um player normal; sem botão extra, sem escolha de idioma, sem narração de Portugal.
+✅ Outros vídeos e atividades mantidos.
+
+O vídeo é reproduzido diretamente do MP4 final remoto para que o protótipo funcione sem etapas de montagem. Depende de acesso à internet; não está empacotado no ZIP. Para funcionar offline, baixe o MP4 pelo endereço abaixo e siga o README.
+
+MP4 final: https://d2ol7oe51mr4n9.cloudfront.net/user_3L7kVPrU6jkavZYl2V0lQ2eS9ko/5cb5c6b1-5c6b-4776-b950-b64a51c2b376.mp4
+
+Nenhuma publicação foi feita na Cloudflare.

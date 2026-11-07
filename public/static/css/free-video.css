@@ -1,0 +1,60 @@
+/* V110 — vídeo/voz fictícios integrados à moldura Android existente */
+#freeVideoView{overflow:hidden!important;background:#12223c;color:white}
+.v110-video{position:absolute;inset:0;overflow:hidden;background:#132034;color:#fff;font-family:Inter,Arial,sans-serif}
+.v110-video-photo{position:absolute;inset:0;overflow:hidden;background:linear-gradient(135deg,#334155,#64748b)}
+.v110-video-photo>img{width:100%;height:100%;object-fit:cover;object-position:center 34%;transform:scale(1.15);filter:saturate(.94);transition:transform 1s ease}
+.v110-video-photo.v110-speaking>img{animation:v110-speak-image 1.2s ease-in-out infinite}
+.v110-video-photo:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,26,46,.62) 0,rgba(12,26,46,.02) 30%,rgba(12,26,46,.03) 48%,rgba(12,20,35,.83) 100%);pointer-events:none}
+.v110-video-photo.v110-speaking>img{animation:v110-natural-head 2.8s ease-in-out infinite;transform-origin:50% 47%}
+@keyframes v110-natural-head{0%,100%{transform:scale(1.15) translateY(0)}50%{transform:scale(1.157) translateY(-1.5px)}}
+.v110-video-top{position:absolute;z-index:3;top:38px;left:13px;right:13px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.v110-video-top>div:first-child{min-width:0;display:flex;flex-direction:column;gap:6px;text-shadow:0 1px 4px #0009}
+.v110-training-mark{display:block;padding:5px 8px;border:1px solid #ffd9bf;border-radius:9px;background:#15324ad9;color:#fff3e5;font-size:8px;font-weight:800;letter-spacing:.025em;line-height:1.45}
+.v110-video-top strong{font-size:17px;font-weight:700}.v110-video-top #freeVideoDuration{font-size:11px;color:#f2f8ff}
+.v110-selfie{width:65px;height:94px;flex:none;border:2px solid #d7e8fa;border-radius:12px;background:linear-gradient(135deg,#475569,#96a4b8);display:flex;flex-direction:column;justify-content:space-between;align-items:center;overflow:hidden;box-shadow:0 2px 10px #0005;position:relative;padding:3px;box-sizing:border-box;font-size:11px}
+.v110-self-silhouette{font-size:48px;line-height:65px;color:#c8d4e6}.v110-selfie video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.v110-selfie span:first-child{position:relative;z-index:2;order:2;align-self:flex-start;padding:2px 3px;text-shadow:0 1px 4px #000}
+.v110-video-bottom{position:absolute;z-index:4;left:11px;right:11px;bottom:43px;display:flex;flex-direction:column;gap:10px}
+.v110-video-subtitle{font-size:14px;line-height:1.42;background:#0e1f34df;color:#fff;border-radius:14px;padding:12px 13px;min-height:30px;max-height:105px;overflow-y:auto;text-align:left;box-shadow:0 3px 12px #0004}
+.v110-video-state{font-size:10px;line-height:1.4;text-align:center;color:#e7f1fc;background:#1a344bc9;border-radius:9px;padding:5px}
+.v110-video-toolbar{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}
+.v110-tool{color:#fff;background:#26384cea;border:1px solid #71869ca3;border-radius:12px;min-width:53px;min-height:55px;padding:6px;display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer}
+.v110-tool span{font-size:19px}.v110-tool.v110-hangup{background:#c5314a;border-color:#c5314a}.v110-tool.v110-accept{background:#148866;border-color:#148866}
+.v110-tool[hidden],.v110-video-actions[hidden],.v110-video-chat[hidden],.v110-selfie video[hidden]{display:none!important}
+.v110-video-chat{display:flex;align-items:center;gap:4px}.v110-video-chat input{background:#fff;color:#183d59;border:1px solid #d1e2f4;border-radius:14px;padding:11px;font-size:12px;min-width:0;flex:1;max-width:100%;box-sizing:border-box}
+.v110-video-chat button{border:0;border-radius:50%;background:#2274d1;color:#fff;width:39px;height:39px;flex:none;font-size:18px;cursor:pointer}
+.v110-video-actions{display:flex;gap:6px}.v110-video-actions button{flex:1;min-height:39px;border-radius:11px;border:1px solid #aac4db;background:#f3faff;color:#134b7c;font-size:10px;font-weight:800;cursor:pointer;padding:6px}
+#freeVideoView button:focus-visible,#freeVideoView input:focus-visible{outline:3px solid #ffde97;outline-offset:2px}
+@media (max-height:690px){.v110-video-top{top:29px}.v110-video-bottom{bottom:25px;gap:6px}.v110-video-subtitle{font-size:12px;max-height:70px}.v110-tool{min-height:47px}}
+@media(prefers-reduced-motion:reduce){.v110-video-photo.v110-speaking>img,.v110-video-photo.v110-speaking>img{animation:none!important}}
+
+/* V110.3 — camadas consistentes, piscada curta e respiração sutil */
+#freeVideoPortrait>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 34%;transform:scale(1.15);pointer-events:none;}
+#freeVideoNextFrame{opacity:0;transition:opacity 85ms linear;}
+#freeVideoEyes{opacity:0;transition:opacity 55ms ease-out;}
+#freeVideoEyes.v110-eyes-closed{opacity:1;}
+.v110-video-photo.v110-speaking.v110-emotion-urgent>img{animation:v110-urgent-head 2.9s ease-in-out infinite;}
+.v110-video-photo.v110-speaking.v110-emotion-warm>img{animation:v110-warm-head 3.4s ease-in-out infinite;}
+@keyframes v110-urgent-head{0%,100%{transform:scale(1.15) translateY(0)}45%{transform:scale(1.16) translateY(-2px)}75%{transform:scale(1.154) translateX(.5px)}}
+@keyframes v110-warm-head{0%,100%{transform:scale(1.15)}60%{transform:scale(1.155) translateY(-1px)}}
+#freeVideoMic[aria-pressed="true"]{background:#1f7a73;border-color:#81eed7;}
+#freeVideoMic .v110-mic-label{font-size:9px;line-height:1.1;}
+#freeVideoView .v110-tool{min-height:55px;touch-action:manipulation;}
+@media(prefers-reduced-motion:reduce){#freeVideoPortrait>img{animation:none!important;transition:none!important;}#freeVideoNextFrame,#freeVideoEyes{opacity:0!important}}
+
+/* V110.5: o vídeo neural SUBSTITUI inteiramente os quadros de boca/olhos. */
+#freeVideoPortrait .v1105-neural-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;transform:none!important;animation:none!important}
+#freeVideoPortrait.v1105-neural-active>img{opacity:0!important;animation:none!important;transition:none!important}
+#freeVideoPortrait.v1105-neural-active .v1105-neural-video{display:block!important;opacity:1}
+#freeVideoPortrait .v1105-neural-video[hidden]{display:none!important}
+
+/* V110.8 — vídeo verdadeiro de inferência OU placeholder. Sem fantoche fotográfico. */
+#freeVideoPortrait.v1108-video-only{background:radial-gradient(circle at 50% 42%,#2b4967,#0b182b 78%)}
+#freeVideoPortrait.v1108-video-only>img,
+#freeVideoPortrait.v1108-video-only>#freeVideoEyes,
+#freeVideoPortrait.v1108-video-only>#freeVideoNextFrame{display:none!important;opacity:0!important;animation:none!important}
+#freeVideoPortrait.v1108-video-only:not(.v1105-neural-active)::before{
+ content:'Aguardando vídeo da IA';position:absolute;top:43%;left:10%;right:10%;text-align:center;
+ color:#fff;font-size:14px;line-height:1.5;font-weight:600;z-index:1;pointer-events:none
+}
+#freeVideoPortrait.v1108-video-only.v1105-neural-active::before{content:none}

@@ -15,7 +15,7 @@ import sqlite3
 import time
 from pathlib import Path
 
-from flask import Flask, g, jsonify, redirect, render_template, request
+from flask import Flask, g, jsonify, redirect, render_template, request, send_from_directory
 from werkzeug.exceptions import BadRequest, RequestEntityTooLarge
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -35,6 +35,8 @@ app = Flask(
     static_folder=str(BASE_DIR / "public" / "static"),
     static_url_path="/static",
 )
+from lia_educa_local import API as LIA_EDUCA_API
+app.register_blueprint(LIA_EDUCA_API)
 app.json.ensure_ascii = False
 app.config.update(
     MAX_CONTENT_LENGTH=8192,
@@ -124,9 +126,38 @@ def home():
     return render_template("index.html")
 
 
+@app.get("/lia-realista.html")
+def lia_realista():
+    """Lia realista: prévia gravada e integração opcional MuseTalk da equipe."""
+    return send_from_directory(BASE_DIR / "public", "lia-realista.html")
+
+
+@app.get("/lia-ao-vivo.html")
+def lia_ao_vivo():
+    """Teste do avatar 3D original. Conversação de IA depende do Worker Cloudflare."""
+    return send_from_directory(BASE_DIR / "public", "lia-ao-vivo.html")
+
+
+@app.get("/lia-3d")
+@app.get("/lab-lia-3d.html")
+def laboratorio_lia_3d():
+    """Laboratório separado; não altera a videochamada do treino."""
+    return send_from_directory(BASE_DIR / "public", "lab-lia-3d.html")
+
+
 @app.get("/treino")
 def treino():
     return redirect("/", code=302)
+
+
+@app.post("/api/modo-livre/conversar")
+def conversa_modo_livre():
+    # IA real local; o frontend exige mode=ia e não aceita mensagens de roteiro.
+    # O Worker Cloudflare segue com seu próprio binding de IA.
+    from lia_educa_local import responder
+    payload = read_body()
+    content, code = responder(payload)
+    return result(content, code)
 
 
 @app.get("/api/saude")

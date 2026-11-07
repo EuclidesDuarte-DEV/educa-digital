@@ -1,0 +1,17 @@
+/* Educa+ Digital V111.3 — modelo 3D genuíno, sem imagens estáticas. */
+#freeVideoPortrait.lia3d-call-photo{background:radial-gradient(ellipse at 40% 24%,#516e99 0%,#283e63 35%,#08162e 85%)}
+#freeVideoPortrait.lia3d-call-photo::before{content:'';position:absolute;inset:8% 4% 27%;border:1px solid #b7d7ff19;border-radius:48%;pointer-events:none;z-index:0}
+#freeVideoPortrait.lia3d-call-photo::after{z-index:2;background:linear-gradient(180deg,#0d213c4a,transparent 27%,transparent 45%,#07182a98 98%);pointer-events:none}
+#lia3dCallStage{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+#lia3dCallStage canvas{width:100%;height:100%;display:block;object-fit:cover}
+#lia3dFallback{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:30px 25px 105px;text-align:center;color:#fff;background:radial-gradient(ellipse at 50% 35%,#344f78,#09172c 80%);font-size:13px}
+#lia3dFallback[hidden]{display:none!important}
+.lia3d-call-avatar-icon{font-size:52px;color:#d7e7ff;line-height:1}
+#lia3dFallback small{max-width:240px;font-size:12px;line-height:1.5;color:#e0eafa}
+.lia3d-call-controls{position:absolute;z-index:5;top:138px;left:12px;right:87px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;pointer-events:none}
+#lia3dCallModelLabel{display:block;background:#0b2136a8;color:#ecf6ff;font-size:10px;padding:5px 8px;border-radius:8px;line-height:1.45;pointer-events:auto;max-width:240px}
+.lia3d-voice-setting{pointer-events:auto;background:#0b2745db;color:#fff;border:1px solid #6e92b2;border-radius:9px;padding:8px 9px;font-size:10px;font-weight:700;cursor:pointer}
+#lia3dKokoroSetup:focus-visible{outline:2px solid #ffe6a9;outline-offset:2px}
+@media(max-height:700px){.lia3d-call-controls{top:120px}}
+@media(max-width:410px){.lia3d-call-controls{top:123px;right:83px}#lia3dCallModelLabel{font-size:9px;max-width:180px}}
+@media(prefers-reduced-motion:reduce){#lia3dCallStage{animation:none!important}}

@@ -9,18 +9,101 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/app.css?v=102">
-</head>
+  <link rel="stylesheet" href="/static/css/app.css?v=106">
+  <link rel="stylesheet" href="/static/css/accessibility.css?v=11140">
+  <link rel="stylesheet" href="/static/css/onboarding.css?v=11134">
+  <link rel="stylesheet" href="/static/css/android-system.css?v=104">
+  <link rel="stylesheet" href="/static/css/free-mode.css?v=11112">
+  <link rel="stylesheet" href="/static/css/web-real.css?v=109">
+  <link rel="stylesheet" href="/static/css/free-video.css?v=11112">
+  <link rel="stylesheet" href="/static/css/lia-fotorreal.css?v=11131">
+  <!-- Módulos usados somente quando a chamada de treinamento é atendida. -->
+
+<link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111"></head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
     <a class="brand" href="/" aria-label="Educa+ Digital — início">
       <img src="/static/img/logo.png" alt="Educa+ Digital">
     </a>
     <div class="header-actions">
+  <!-- V111.39: atalho no cabeçalho; abaixo da saída só no modo tela cheia. -->
+  <aside class="educa-external-access" aria-label="Ferramentas de acessibilidade do Educa+ Digital">
+    <button id="openAccessibilitySettings" class="a11y-header-button" type="button" aria-haspopup="dialog" aria-controls="accessibilityDialog" aria-label="Abrir ajustes de acessibilidade"><span class="a11y-icon-bubble" aria-hidden="true"><svg class="a11y-icon-figure" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13.7" stroke="currentColor" stroke-width="1.35"/><circle cx="16" cy="8.6" r="2.05" fill="currentColor"/><path d="m8.2 13.7 7.8 1.55 7.8-1.55M16 15.25v5.55m0 0-4.85 5.45M16 20.8l4.85 5.45" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="a11y-header-word">Acessibilidade</span></button>
+  </aside>
+
+      <button id="openGuidedTour" class="educa-tour-replay" type="button" aria-label="Ver tutorial de primeiros passos" title="Ver tutorial de primeiros passos">? <span>Como usar</span></button>
       <span class="header-trust" id="headerTrust">Pré-teste gratuito</span>
       <button class="header-logout" id="logoutBtn" type="button" hidden>Sair</button>
     </div>
   </header>
+
+
+  <!-- V111.40: painel lateral sob demanda, com ações claras e sem pop-up central. -->
+  <dialog id="accessibilityDialog" class="a11y-dialog" aria-labelledby="a11yTitle" aria-describedby="a11yIntro">
+    <div class="a11y-dialog-header">
+      <div class="a11y-dialog-titlebar">
+        <span class="a11y-panel-emblem" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13.5" stroke="currentColor" stroke-width="1.35"/><circle cx="16" cy="8.2" r="2" fill="currentColor"/><path d="m8.2 13.7 7.8 1.55 7.8-1.55M16 15.25v5.5m0 0-4.8 5.3M16 20.75l4.8 5.3" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
+        </span>
+        <div class="a11y-panel-heading">
+          <p class="a11y-eyebrow">SEU EDUCA+ DO SEU JEITO</p>
+          <h2 id="a11yTitle">Acessibilidade</h2>
+        </div>
+        <button id="a11ySkip" class="a11y-dialog-close" type="button" aria-label="Fechar painel de acessibilidade" title="Fechar painel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <p class="a11y-intro" id="a11yIntro">Escolha o que facilita seu aprendizado. As mudanças acontecem na hora e você pode alterar quando quiser.</p>
+    </div>
+    <div class="a11y-options">
+      <section class="a11y-option" aria-labelledby="a11yFontLabel">
+        <div class="a11y-option-heading" id="a11yFontLabel">
+          <span class="a11y-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m3 19 5-13 5 13M5 15h6M15 9h6M18 6v13M15 19h6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><strong>Letras maiores</strong><span>Leia com mais conforto.</span></div>
+        </div>
+        <label for="a11yFontSize" class="a11y-select-label">Tamanho do texto</label>
+        <select id="a11yFontSize"><option value="normal">Tamanho padrão</option><option value="large">Letras grandes</option><option value="extra">Letras muito grandes</option></select>
+      </section>
+      <section class="a11y-option" aria-label="Cores mais fáceis de distinguir">
+        <label class="a11y-switch-row" for="a11yColors">
+          <span class="a11y-option-icon a11y-option-icon-contrast" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.3"/><path d="M12 3.7A8.3 8.3 0 0 0 12 20.3Z" fill="currentColor" stroke="none"/></svg></span>
+          <span class="a11y-switch-copy"><strong>Mais contraste</strong><span>Realça cores e contornos.</span></span>
+          <input type="checkbox" id="a11yColors" class="a11y-toggle" aria-label="Ativar contraste reforçado">
+        </label>
+      </section>
+      <section class="a11y-option" aria-label="Leitura de texto em voz alta">
+        <label class="a11y-switch-row" for="a11yReading">
+          <span class="a11y-option-icon a11y-option-icon-audio" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l4 3.4V6.6L7 10H4ZM15 9a4 4 0 0 1 0 6m2.6-8.5a8 8 0 0 1 0 11"/></svg></span>
+          <span class="a11y-switch-copy"><strong>Leitura em voz alta</strong><span>Ouça orientações em português.</span></span>
+          <input type="checkbox" id="a11yReading" class="a11y-toggle" aria-label="Ativar botão de leitura em voz alta">
+        </label>
+        <button id="a11yExample" class="a11y-example" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z" stroke-linecap="round" stroke-linejoin="round"/></svg> Ouvir exemplo</button>
+      </section>
+      <p class="a11y-privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5 20 6v6c0 5-3 8-8 10-5-2-8-5-8-10V6l8-3.5Z"/><path d="m8.7 12 2.3 2.3 4.5-4.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Suas escolhas ficam salvas neste navegador. Não é necessário cadastro.</p>
+    </div>
+    <div class="a11y-dialog-footer">
+      <div class="a11y-footer-autosave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" stroke-linecap="round"/></svg> Ajustes aplicados automaticamente</div>
+      <div class="a11y-footer-actions">
+        <button id="a11yReset" class="a11y-secondary" type="button">Restaurar padrão</button>
+        <button id="a11yFinish" class="a11y-primary" type="button">Concluir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <p id="a11yFeedback" class="a11y-feedback" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+  <!-- Guia de primeiros passos: ilumina o alvo real da tela. -->
+  <div id="educaTour" class="educa-tour" hidden>
+    <div class="educa-tour-scrim" aria-hidden="true"></div>
+    <div id="educaTourSpotlight" class="educa-tour-spotlight" aria-hidden="true"></div>
+    <button id="educaTourHotspot" class="educa-tour-hotspot" type="button" aria-label="Tocar no item destacado"></button>
+    <section id="educaTourCard" class="educa-tour-card" role="dialog" aria-modal="true" aria-labelledby="educaTourTitle" aria-describedby="educaTourText" tabindex="-1">
+      <div class="educa-tour-top"><span id="educaTourProgress" class="educa-tour-progress">PASSO 1 DE 3</span><button id="educaTourClose" type="button" class="educa-tour-close" aria-label="Fechar tutorial">×</button></div>
+      <h2 id="educaTourTitle">Vamos começar?</h2>
+      <p id="educaTourText">Siga o destaque para conhecer o Educa+ Digital.</p>
+      <div class="educa-tour-controls"><button id="educaTourSkip" class="educa-tour-skip" type="button">Pular guia</button><button id="educaTourNext" class="educa-tour-next" type="button">Próximo <span aria-hidden="true">→</span></button></div>
+    </section>
+  </div>
+  <button id="a11yReadNow" class="a11y-read-button" type="button" hidden>🔊 Ouvir esta tela</button>
+  <span id="a11yReadStatus" class="a11y-read-status" role="status" aria-live="polite"></span>
 
   <div class="browser-fullscreen-gate" id="browserFullscreenGate" hidden>
     <div class="browser-fullscreen-gate-card">
@@ -94,6 +177,56 @@
                 </div>
               </div>
               <span class="camera-hole" aria-hidden="true"></span>
+              <!-- V103: recursos do sistema Android simulado. Não alteram Wi-Fi ou dados reais. -->
+              <button class="android-shade-trigger" id="androidShadeTrigger" type="button"
+                aria-label="Abrir notificações e ajustes rápidos" aria-controls="androidShade" aria-expanded="false"></button>
+              <section class="android-system-shade" id="androidShade" aria-label="Central de notificações e ajustes rápidos"
+                role="dialog" aria-modal="false" hidden>
+                <header class="system-shade-head">
+                  <div><span id="androidShadeClock">15:18</span><small id="androidShadeDate">Segunda-feira</small></div>
+                  <button type="button" id="closeAndroidShade" aria-label="Fechar notificações">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                  </button>
+                </header>
+                <div class="system-shade-guide">Arraste para baixo para abrir · para cima para fechar</div>
+                <div class="system-quick-grid" aria-label="Controles simulados do Android">
+                  <button class="system-quick-tile is-on" type="button" data-system-toggle="wifi" aria-pressed="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 8.9a14 14 0 0 1 18.4 0M6 12a9.1 9.1 0 0 1 12 0M9.4 15.3a4.1 4.1 0 0 1 5.2 0M12 19h.01"/></svg>
+                    <span>Internet<small id="systemWifiState">Conectado (simulado)</small></span>
+                  </button>
+                  <button class="system-quick-tile" type="button" data-system-toggle="bluetooth" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10-5 4V3l5 4L7 17"/></svg>
+                    <span>Bluetooth<small id="systemBluetoothState">Desligado</small></span>
+                  </button>
+                  <button class="system-quick-tile" type="button" data-system-toggle="silent" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6m-3 3v-3M5 10c0-4 2-6 7-6s7 2 7 6v5l2 3H3l2-3v-5Z"/></svg>
+                    <span>Silencioso<small id="systemSilentState">Desligado</small></span>
+                  </button>
+                  <button class="system-quick-tile" type="button" data-system-toggle="airplane" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 8 2V4a1 1 0 0 1 2 0v9l8-2v3l-8 4v3l-2-1-2 1v-3l-6-4v-3Z"/></svg>
+                    <span>Modo avião<small id="systemAirplaneState">Desligado</small></span>
+                  </button>
+                </div>
+                <div class="system-brightness">
+                  <label for="androidBrightness"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg> Brilho da tela</label>
+                  <input id="androidBrightness" type="range" min="40" max="100" value="100" step="5" aria-label="Brilho da tela simulada">
+                </div>
+                <section class="system-notifications" aria-label="Notificações de exemplo">
+                  <div class="system-notification-heading"><strong>Notificações</strong><span>Ambiente de treino</span></div>
+                  <article class="system-notice"><span class="system-notice-icon">E+</span><div><strong>Educa+ Digital</strong><p>Pratique com calma. Nenhuma operação real será realizada.</p></div></article>
+                  <article class="system-notice"><span class="system-notice-icon blue">✓</span><div><strong>Dica de segurança</strong><p>Desconfie de links e pedidos urgentes de Pix.</p></div></article>
+                </section>
+                <footer class="system-shade-footer"><button id="androidOpenSettings" type="button">Ajustes do celular</button><span>Controles ilustrativos, sem alterar o aparelho real</span></footer>
+              </section>
+              <section class="android-recents" id="androidRecents" role="dialog" aria-modal="false" aria-label="Aplicativos recentes" hidden>
+                <header><strong>Aplicativos recentes</strong><button id="closeAndroidRecents" type="button" aria-label="Fechar aplicativos recentes">Fechar</button></header>
+                <p>Seu treino continua salvo. Escolha para onde voltar.</p>
+                <button type="button" id="androidReturnTraining" class="recent-card"><span class="recent-icon">E+</span><span><strong>Educa+ Digital</strong><small>Voltar às atividades</small></span></button>
+                <button type="button" id="androidReturnHome" class="recent-card"><span class="recent-icon pale">⌂</span><span><strong>Tela inicial</strong><small>Ver os aplicativos do Android</small></span></button>
+                <small class="recent-note">Esta área simula a navegação do Android. Nenhum app real é aberto.</small>
+              </section>
+              <div class="android-display-dimmer" id="androidDisplayDimmer" aria-hidden="true"></div>
+
 
               <div class="android-view is-active" data-view="home" id="homeView">
                 <div class="wallpaper"></div>
@@ -124,17 +257,26 @@
                     <button data-open-app="chrome" aria-label="Chrome"><img src="/static/icons/chrome.svg" alt=""></button>
                     <button data-open-app="camera" aria-label="Câmera"><img src="/static/icons/camera.svg" alt=""></button>
                   </div>
-                  <button class="google-search" type="button" aria-label="Pesquisar no Google"><img src="/static/icons/google.svg" alt=""><span>Pesquisar</span><b aria-hidden="true">🎙</b><b aria-hidden="true">◉</b></button>
+                  <button class="google-search" type="button" aria-label="Pesquisar no Google"><img src="/static/icons/google.svg" alt=""><span>Pesquisar</span><svg class="launcher-search-mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4m-4 0h8"/></svg><svg class="launcher-search-lens" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/><path d="m12 5 2 4m-8 5 4 3"/></svg></button>
                 </div>
+              </div>
+
+              <!-- V109: recursos REAIS permitidos na web. Sem fingir que o site controla o Android. -->
+              <div class="android-view webreal-app" data-view="webreal" id="webRealView" aria-label="Aplicativo com recursos do aparelho">
+                <header class="webreal-header">
+                  <button type="button" id="webRealBack" aria-label="Voltar à tela inicial">‹</button>
+                  <img id="webRealIcon" src="/static/icons/camera.svg" alt="">
+                  <div><strong id="webRealTitle">Aplicativo</strong><small id="webRealSubtitle">Recursos do aparelho, com permissão</small></div>
+                </header>
+                <div class="webreal-scroll" id="webRealBody"></div>
+                <div class="webreal-status" id="webRealStatus" role="status" aria-live="polite" hidden></div>
               </div>
 
               <div class="android-view" data-view="learning" id="learningView">
                 <div class="learning-surface">
                   <header class="learning-header">
-                    <div>
-                      <small>EDUCA+ DIGITAL</small>
-                      <strong id="learningGreeting">O que você quer aprender hoje?</strong>
-                    </div>
+                    <small>EDUCA+ DIGITAL</small>
+                    <strong id="learningGreeting">O que você quer aprender hoje?</strong>
                   </header>
 <button class="learning-featured" type="button" data-learning-topic="pix">
                     <span class="learning-featured-icon" aria-hidden="true">
@@ -172,6 +314,11 @@
                       <small>Serviços públicos com mais segurança.</small>
                     </button>
                   </div>
+                  <button class="free-mode-entry" id="freeModeEntry" type="button">
+                    <span class="free-entry-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 17h4M10 7h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                    <span class="free-entry-copy"><small>NOVA EXPERIÊNCIA · TREINO INTERATIVO</small><strong>Modo Livre</strong><em>Comece pelo golpe no WhatsApp, depois experimente a videochamada com IA. A ligação por voz vem em seguida.</em></span>
+                    <span class="free-entry-chevron" aria-hidden="true">›</span>
+                  </button>
                   <div class="learning-account-options" id="learningAccountOptions">
                     <button id="learningSaveProgressBtn" type="button" class="learning-save-optional">Criar conta · Salvar meu progresso</button>
                   </div>
@@ -179,6 +326,96 @@
                 </div>
               </div>
 
+              <!-- V106: o Modo Livre usa a tela Android ORIGINAL (homeView). -->
+              <div id="freeHomeTools" class="free-home-tools" hidden>
+                <button id="freeExitBtn" class="free-micro-control" type="button">Sair</button>
+              </div>
+              <div class="android-view" data-view="free-call" id="freeCallView">
+                <section class="v106-call-screen">
+                  <span class="v106-sim-tag">LIGAÇÃO DE TREINAMENTO</span><div class="v106-caller-avatar">☎</div>
+                  <h2 id="freeCallName">Número desconhecido</h2><p id="freeCallLine">Chamada recebida</p>
+                  <div id="freeCallTranscript" class="v106-call-transcript" aria-live="polite"></div>
+                  <form id="freeCallForm" class="v106-call-compose" hidden><label for="freeCallInput">Sua resposta na ligação</label><div><input id="freeCallInput" maxlength="350" autocomplete="off" placeholder="Fale por texto..."/><button type="submit">Enviar</button></div></form>
+                  <div class="v106-call-buttons"><button id="freeCallAnswer" type="button" class="answer">Atender</button><button id="freeCallHangup" type="button" class="hangup">Recusar / encerrar</button></div>
+                  <div class="v106-voice-actions"><button id="freeCallSpeak" type="button">🔊 Ouvir personagem</button><button id="freeCallMic" type="button">🎙 Responder por voz</button></div>
+                  <button id="freeCallVerify" type="button" class="v106-verify">Conferir pelo canal oficial</button>
+                  <p class="v106-app-note">Sem ligação real. Voz disponível conforme o navegador.</p>
+                </section>
+              </div>
+              <!-- V110: videochamada educativa com pessoa fictícia e diálogo real da IA. -->
+              <div class="android-view" data-view="free-video" id="freeVideoView">
+                <section class="v110-video" aria-label="Videochamada de simulação com avatar de inteligência artificial">
+                  <!-- V111.5: o próprio rosto realista do vídeo Lovable, NUNCA o avatar 3D antigo. -->
+                  <div class="v110-video-photo lia-photo-real" id="freeVideoPortrait" aria-label="Lia realista, personagem fictícia da simulação">
+                    <img id="liaPhotoPoster" src="/static/img/lia-lovable-poster.jpg" alt="Retrato realista da personagem fictícia Lia">
+                    <video id="liaPhotoIdle" class="lia-photo-idle" src="/static/videos/lia-ouvindo.mp4" playsinline muted preload="metadata" hidden aria-label="Lia ouvindo em silêncio"></video>
+                    <video id="liaPhotoIdleNext" class="lia-photo-idle lia-photo-idle-next" playsinline muted preload="metadata" hidden aria-hidden="true"></video>
+                    <video id="liaPhotoSpeech" class="lia-photo-video" playsinline muted preload="auto" hidden aria-label="Lia gesticulando enquanto fala"></video>
+                    <video id="liaPhotoSpeechNext" class="lia-photo-video" playsinline muted preload="auto" hidden aria-hidden="true"></video>
+                    <div class="lia-photo-indicator" id="liaPhotoIndicator">Rosto realista • aguardando fala</div>
+                    <button type="button" id="liaPhotoPlay" hidden class="lia-photo-play">▶ Reproduzir resposta gerada</button>
+                    
+                  </div>
+                  <!-- V111.14 — chamada imersiva inspirada na organização do WhatsApp, sem marca ou alegações de E2EE. -->
+                  <header class="v110-video-top">
+                    <button type="button" id="freeVideoExpand" class="wa-top-button" aria-label="Expandir videochamada" title="Expandir videochamada"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v4m12 12h4a2 2 0 0 0 2-2v-4M3 9l6-6m12 12-6 6"/></svg></button>
+                    <div class="wa-contact-info">
+                      <strong id="freeVideoName">Lia</strong>
+                      <span class="v110-training-mark">SIMULAÇÃO COM IA · PERSONAGEM FICTÍCIA</span>
+                      <span id="freeVideoDuration">Videochamada recebida</span>
+                      <span id="freeVideoVoiceProgress" role="status" aria-live="polite" hidden></span>
+                    </div>
+                    <button id="freeVideoText" type="button" class="wa-top-button" hidden aria-label="Abrir conversa escrita" aria-expanded="false" aria-controls="freeVideoForm" title="Abrir conversa escrita"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                  </header>
+                  <div class="v110-selfie" id="freeVideoSelfie" aria-label="Prévia da sua câmera"><span>Você</span><span id="freeVideoSelfPlaceholder" class="v110-self-silhouette" aria-hidden="true"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-3v10l-4-3z"/></svg></span><video id="freeVideoCamera" playsinline autoplay muted hidden></video></div>
+                  <div class="v110-video-bottom">
+                    <div class="v112-caption-box" id="freeVideoCaptionBox"><div id="freeVideoSubtitle" class="v110-video-subtitle" aria-live="polite">Uma pessoa desconhecida está chamando por vídeo.</div><button id="freeVideoCaptionToggle" type="button" aria-controls="freeVideoSubtitle" aria-expanded="false" hidden>Ler tudo</button></div>
+                    <form id="freeVideoForm" class="v110-video-chat" hidden autocomplete="off"><label class="sr-only" for="freeVideoInput">Sua resposta por texto</label><input id="freeVideoInput" maxlength="350" placeholder="Escreva sua resposta…"><button id="freeVideoSend" type="submit" aria-label="Enviar mensagem à personagem">➤</button></form>
+                    <div class="v110-video-toolbar" aria-label="Controles da chamada">
+                      <details class="v112-video-more" id="freeVideoMore"><summary aria-label="Mais opções da chamada" title="Mais opções"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></summary>
+                        <div class="v112-video-more-content">
+                          <div id="freeVideoState" class="v110-video-state" role="status" aria-live="polite">Videochamada educativa · IA fictícia · nenhum Pix real</div>
+                          <button type="button" id="freeVideoCaptionsSwitch" aria-pressed="false">Ativar legendas</button>
+                          <div class="v110-video-actions" id="freeVideoActions" hidden><button type="button" id="freeVideoVerify">Conferir identidade</button></div>
+                          <div class="v113-extra-actions">
+                            <button id="freeVideoRepeat" type="button" hidden>Ouvir novamente</button>
+                            <button type="button" id="freeVideoPix">Pix de treino</button>
+                          </div>
+                          <button type="button" id="liaPhotoConfigure" class="lia-photo-configure">Verificar avatar com IA</button>
+                          <label class="lia-voice-style-label" for="freeVideoVoiceEngine">Voz da Lia
+                            <select id="freeVideoVoiceEngine" aria-label="Escolher voz da Lia">
+                              <option value="feminina" selected>Kokoro pf_dora no navegador (experimental)</option>
+                              <option value="padrao">Voz alternativa (se Kokoro falhar)</option>
+                            </select>
+                          </label>
+                          <label class="lia-voice-style-label" for="freeVideoVoiceStyle">Jeito de falar da Lia
+                            <select id="freeVideoVoiceStyle" aria-label="Jeito de falar da Lia">
+                              <option value="natural" selected>Natural · conversa</option>
+                              <option value="calma">Calma · pausas suaves</option>
+                              <option value="clara">Clara · articulação</option>
+                            </select>
+                          </label><label class="lia-voice-style-label" for="freeVideoLatencyMode">Prioridade da chamada
+<select id="freeVideoLatencyMode" aria-label="Preferência de rapidez ou sincronismo labial">
+<option value="rapida">Resposta rápida (voz primeiro)</option>
+<option value="sinc">Sincronizar a boca (aguardar vídeo até 16 s)</option>
+</select></label>
+                          <button type="button" id="freeVideoVoiceSettings">Escolher voz feminina</button>
+                        </div>
+                      </details>
+                      <button id="freeVideoCameraToggle" type="button" class="v110-tool" hidden aria-label="Ligar câmera" aria-pressed="false" title="Ligar câmera"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-3v10l-4-3z"/></svg></button>
+                      <button id="freeVideoSpeaker" type="button" class="v110-tool" hidden aria-label="Silenciar som da Lia" aria-pressed="false" title="Silenciar som da Lia"><svg class="wa-icon wa-speaker-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg><svg class="wa-icon wa-speaker-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m16 9 5 6m0-6-5 6"/></svg></button>
+                      <button id="freeVideoMic" type="button" class="v110-tool" hidden aria-label="Ativar microfone para conversar" aria-pressed="false" title="Ativar microfone para conversar"><svg class="wa-icon wa-mic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/></svg><svg class="wa-icon wa-mic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9v2a3 3 0 0 0 5.1 2.1M15 9V5a3 3 0 0 0-5.7-1.3M5 10a7 7 0 0 0 12 4.7M19 10v2m-7 5v5m-4 0h8M2 2l20 20"/></svg><span class="sr-only v110-mic-label">Conversar</span></button>
+                      <button id="freeVideoAnswer" type="button" class="v110-tool v110-accept" aria-label="Atender chamada" title="Atender chamada"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3c-.8 0-1.5.5-1.7 1.3-1.4 6.6 6.8 15 13.5 16.4.8.2 1.6-.2 1.9-.9l1.5-3.1-4.7-3.4-2.2 2.1a13 13 0 0 1-4.7-4.7l2.1-2.2L7.3 3.8 5 3Z"/></svg></button>
+                      <button id="freeVideoHangup" type="button" class="v110-tool v110-hangup" aria-label="Encerrar chamada" title="Encerrar chamada"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.1 12.2c5-4.2 12.8-4.2 17.8 0l.7.6a2 2 0 0 1 .1 2.9l-1.7 1.7a2 2 0 0 1-2.5.3l-2.5-1.4a2 2 0 0 1-.9-1.7v-1.4a14.3 14.3 0 0 0-4.2 0v1.4a2 2 0 0 1-.9 1.7l-2.5 1.4a2 2 0 0 1-2.5-.3L2.3 15.7a2 2 0 0 1 .1-2.9Z"/></svg></button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="android-view" data-view="free-contacts" id="freeContactsView"><section class="v106-app-screen v106-contacts"><header class="v106-header"><button id="freeContactsBack" type="button" aria-label="Voltar">‹</button><div><strong>Contatos</strong><small>Agenda fictícia</small></div></header><h3>Confirme por um contato que você já conhece</h3><button id="freeContactKnown" type="button">☎ Rafael · contato antigo (treino)</button><button id="freeContactBank" type="button">☎ Banco · central oficial (treino)</button><p class="v106-app-note">A verificação é simulada e não liga para números reais.</p></section></div>
+              <div class="android-view" data-view="free-pix" id="freePixView"><section class="v106-app-screen v106-pix"><header class="v106-header"><button id="freePixBack" type="button" aria-label="Voltar ao banco">‹</button><div><strong>Banco Educa · Pix</strong><small>Somente valores fictícios</small></div></header><div class="v106-pix-content"><div class="v106-bank-banner"><small>CONTA DE TREINO</small><strong>Transferência simulada</strong><span>Nenhum dinheiro de verdade sai da sua conta.</span></div><label for="freePixKey">Chave fictícia recebida</label><input id="freePixKey" value="CHAVE-TREINO-RAFAEL" readonly><label for="freePixAmount">Valor (R$ fictícios)</label><input id="freePixAmount" value="350,00" readonly><div class="v106-pix-receiver"><small>Nome que aparece no banco</small><strong id="freePixReceiver">Lucas Almeida · pessoa desconhecida</strong><span>A chave e o nome são apenas exemplos de treinamento.</span></div><p id="freePixContext" class="v106-pix-warning">A pessoa da conversa dizia ser Rafael. O nome no banco é diferente.</p><div class="v106-pix-buttons"><button type="button" id="freePixCancel">Cancelar e verificar</button><button type="button" id="freePixConfirm">Confirmar Pix fictício</button></div></div></section></div>
+              <div class="android-view" data-view="free-summary" id="freeSummaryView"><section class="v106-app-screen v106-summary"><div class="v106-summary-icon" id="freeSummaryIcon">✓</div><h2 id="freeSummaryTitle">Situação concluída</h2><p id="freeSummaryText">Veja o que podemos aprender.</p><p id="freeSummaryAuto" class="v112-summary-auto" role="status" aria-live="polite" hidden>Avançando automaticamente…</p><div class="v106-summary-detail"><strong>O que você aprendeu</strong><p id="freeSummaryDetail"></p></div><button type="button" id="freeSummaryNext" hidden>Próximo: videochamada com IA</button><button type="button" id="freeSummaryHome">Voltar ao celular</button><button type="button" id="freeSummaryExit">Sair do Modo Livre</button></section></div>
+              <div id="freeEventNotice" class="free-event-notice" hidden role="status" aria-live="polite"><span id="freeEventIcon" class="v106-alert-icon" aria-hidden="true">✉</span><span class="free-event-copy"><strong id="freeEventTitle">Nova mensagem</strong><small id="freeEventText">Chegou uma mensagem</small></span><button id="freeEventOpen" type="button">Abrir</button><button id="freeEventDismiss" type="button" aria-label="Dispensar notificação">×</button></div>
+              <div id="freeFloatingHome" class="free-floating-home" hidden><button id="freeFloatingBack" type="button">⌂ Início</button><span id="freeSolved">0 situações</span></div>
               <div class="android-view" data-view="module-path" id="modulePathView">
                 <div class="app-surface module-path-surface">
                   <header class="module-path-header">
@@ -211,7 +448,8 @@
                 <div class="app-surface video-lesson-surface">
                   <header class="video-lesson-header"><button id="videoLessonBack" type="button" aria-label="Voltar às atividades"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small id="videoLessonKicker">ANTES DA ATIVIDADE</small><strong id="videoLessonTitle">Aprenda antes de praticar</strong></div></header>
                   <main class="video-lesson-content">
-                    <div class="video-frame-shell"><video id="lessonVideo" controls playsinline preload="metadata"></video></div>
+                    <div class="video-frame-shell"><video id="lessonVideo" controls playsinline preload="metadata" aria-label="Vídeo educativo da atividade"></video></div>
+                    <button id="videoFullscreenBtn" class="video-enlarge-btn" type="button" aria-label="Ampliar vídeo educativo para facilitar a leitura"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar vídeo</button>
                     <p id="videoLessonSummary">Veja a explicação e depois pratique no celular de treino.</p>
                     <div class="video-safe-note"><span>✓</span><div><strong>Treino seguro</strong><small>O vídeo usa situações simuladas e não pede dados pessoais.</small></div></div>
                     <button id="videoPracticeBtn" class="video-practice-btn" type="button">Agora quero praticar</button>
@@ -495,6 +733,18 @@
                   </header>
                   <div class="chat-wallpaper" id="chatWallpaper"></div>
                   <div class="chat-composer"><button>☺</button><span>Mensagem</span><button>⌕</button><button>◉</button><button class="mic">●</button></div>
+                  <!-- V111.10: ações educativas no WhatsApp original para concluir o primeiro desafio. -->
+                  <div id="freeFamilyActions" class="free-family-actions" hidden aria-label="Opções seguras para esta mensagem suspeita">
+                    <button type="button" id="freeFamilyVerify">Conferir por outro canal</button>
+                    <button type="button" id="freeFamilyBlock">Bloquear contato</button>
+                  </div>
+                  <!-- V108: conversa de IA SOBRE o WhatsApp original, sem criar outro aplicativo. -->
+                  <form id="freeOriginalComposer" class="free-original-compose" hidden autocomplete="off">
+                    <input id="freeOriginalInput" type="text" maxlength="350" aria-label="Mensagem no WhatsApp simulado" placeholder="Mensagem" spellcheck="true" />
+                    <button id="freeOriginalSend" type="submit" aria-label="Enviar mensagem">➤</button>
+                  </form>
+                  <div id="freeOriginalAiStatus" class="free-original-ai-status" role="status" aria-live="polite" hidden></div>
+                  <span id="freeOriginalTyping" class="free-original-typing" hidden aria-live="polite">digitando…</span>
                   <div class="decision-sheet" id="decisionSheet"><strong>O que é mais seguro fazer?</strong><div id="decisionOptions"></div><p class="scenario-answer-feedback" id="scenarioAnswerFeedback" hidden></p></div>
                 </div>
               </div>
@@ -632,6 +882,7 @@
                     <button class="settings-row" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Tela Simplificada</strong><small>Facilita a leitura e o uso do celular</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
                     <button class="settings-row" type="button"><span class="settings-row-icon violet"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16ZM17 17l4 4M11 7v8M7 11h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Ampliação</strong><small>Amplie temporariamente o conteúdo</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
                     <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 7v10M19 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Selecionar para ouvir</strong><small>Ouça o conteúdo da tela</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" data-open-educa-accessibility type="button"><span class="settings-row-icon blue">Aa</span><span><strong>Personalizar o Educa+</strong><small>Tamanho do texto, cores e leitura em voz alta</small></span><b>›</b></button>
                   </section>
                 </div>
               </div>
@@ -955,7 +1206,7 @@
                 </div>
               </div>
 
-              <button class="gesture-pill" id="gestureHome" aria-label="Voltar para a tela inicial"></button>
+              <button class="gesture-pill" id="gestureHome" aria-label="Navegar: toque para voltar aos treinos ou segure para ver os aplicativos recentes" title="Toque para navegar; segure para ver aplicativos recentes"></button>
             </div>
           </div>
           <button class="exit-fullscreen" id="exitFullscreen" type="button" hidden>Sair da tela cheia</button>
@@ -1078,14 +1329,24 @@
     </section>
   </main>
 
+  <script src="/static/js/accessibility.js?v=11140"></script>
+  <script src="/static/js/accessibility-external.js?v=11139"></script>
   <script src="/static/js/android-bridge.js"></script>
-  <script src="/static/js/training.js?v=102"></script>
+  <script src="/static/js/training.js?v=106"></script>
+  <script src="/static/js/onboarding.js?v=11143"></script>
+  <script src="/static/js/free-mode.js?v=11132"></script>
+  
+  <script src="/static/js/lia-female-voice.js?v=11111"></script>
+  <script src="/static/js/lia-kokoro-browser.js?v=11132"></script>
+  <script src="/static/js/free-video.js?v=11132"></script>
+  <script src="/static/js/web-real.js?v=109"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=102').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11140').catch(() => {});
       });
     }
   </script>
+  <script src="/static/js/android-system.js?v=104" defer></script>
 </body>
 </html>

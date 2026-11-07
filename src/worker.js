@@ -7,6 +7,7 @@
  * A interface estática é a mesma servida pelo app.py (pasta public).
  */
 import { MODULOS } from './catalogo.js';
+import { responderModoLivre } from './free-chat.js';
 
 const CODIGOS_ATIVIDADES = new Set(
   MODULOS.flatMap(modulo =>
@@ -362,10 +363,169 @@ async function salvarAcessibilidade(request, env) {
   return responder({ ok: true });
 }
 
+// V110.7 — Acesso PRIVADO ao motor próprio Kokoro/MuseTalk.
+// O navegador só fala com o Worker. O secret do servidor NÃO é enviado ao cliente.
+const liaRequestHits=new Map();
+const liaStatusHits=new Map();
+// A hospedagem nunca inicia um processo no computador do visitante. Por padrão
+// o Modo Livre responde com Workers AI e a voz Web Speech local do navegador.
+// Se a equipe hospedar o Kokoro separadamente, a voz pode ser liberada online
+// sem expor o token do motor. O modo público é opt-in, não o padrão.
+function liaPublicVoice(env){
+ if(env.LIA_PUBLIC_VOICE_ENABLED!=='true')return false;
+ if(env.LIA_CONTAINER_ENABLED==='true'&&env.LIA_KOKORO)return true;
+ try{return new URL(env.LIA_BACKEND_URL).protocol==='https:';}catch(_){return false;}
+}
+// Public neural video is a separate, explicit GPU-intensive opt-in. Keep OFF
+// until the operator adds persistent Cloudflare WAF limits and spend controls.
+function liaPublicVideo(env){
+ return liaPublicVoice(env)&&env.LIA_PUBLIC_VIDEO_ENABLED==='true';
+}
+function liaConfigured(env){
+ if(env.LIA_ENABLED!=='true'||!env.LIA_BACKEND_TOKEN||(!env.LIA_STAFF_CODE&&!liaPublicVoice(env)))return false;
+ // Container binding never exposes an HTTP endpoint to the public internet.
+ if(env.LIA_CONTAINER_ENABLED==='true')return !!env.LIA_KOKORO;
+ if(!env.LIA_BACKEND_URL)return false;
+ try{
+  const u=new URL(env.LIA_BACKEND_URL);
+  return (u.protocol==='https:' || (u.protocol==='http:'&&['localhost','127.0.0.1'].includes(u.hostname)))&&!u.username&&!u.password&&!u.search&&!u.hash;
+ }catch(_){return false;}
+}
+function liaAuthorized(request,env){
+ const origin=request.headers.get('Origin');
+ if(origin&&origin!==new URL(request.url).origin)return false;
+ const code=request.headers.get('X-Educa-Lia-Code')||'';
+ return !!env.LIA_STAFF_CODE&&code.length>=8&&code.length<=150&&code===env.LIA_STAFF_CODE;
+}
+function liaRateLimit(request,readOnly=false){
+ const now=Date.now(),ip=(request.headers.get('CF-Connecting-IP')||'local').slice(0,90);
+ const bucket=readOnly?liaStatusHits:liaRequestHits;
+ const hits=(bucket.get(ip)||[]).filter(ts=>ts>now-600000);
+ if(bucket.size>1500)bucket.clear();
+ if(hits.length>=(readOnly?600:50))return false;hits.push(now);bucket.set(ip,hits);return true;
+}
+async function liaUpstream(env,path,method='GET',data=undefined,timeout=30000){
+ const options={
+  method,headers:{Authorization:'Bearer '+env.LIA_BACKEND_TOKEN,...(data?{'Content-Type':'application/json'}:{})},
+  body:data?JSON.stringify(data):undefined,signal:AbortSignal.timeout(timeout)
+ };
+ // A rota é construída internamente e autenticada pelo Worker.
+ if(env.LIA_CONTAINER_ENABLED==='true'&&env.LIA_KOKORO){
+  return env.LIA_KOKORO.getByName('lia-kokoro-main').fetch(new Request('http://localhost:7860'+path,options));
+ }
+ const base=String(env.LIA_BACKEND_URL||'').replace(/\/+$/,'');
+ return fetch(base+path,options);
+}
+async function liaGateway(request,env,route){
+ if(!liaConfigured(env))return route==='health'?responder({ok:true,enabled:false,public_voice:false,provider:'voz-do-navegador',video_reason:'Voz neural online não configurada; IA do Educa+ funciona normalmente'}):erro(503,'Motor neural online não configurado.');
+ const staff=liaAuthorized(request,env);
+ const publico=liaPublicVoice(env);
+ const videoPublico=liaPublicVideo(env);
+ const origin=request.headers.get('Origin');
+ if(origin&&origin!==new URL(request.url).origin)return erro(403,'Origem não autorizada.');
+ const rotaVozPublica=(route==='preload'||route==='speak'||/^media:[a-f0-9]{32}\.wav$/.test(route));
+ const rotaVideoPublico=videoPublico&&(route==='render'||route.startsWith('render-status:')||/^media:[a-f0-9]{32}\.mp4$/.test(route));
+ const isPublicRequest=!staff&&publico&&(rotaVozPublica||rotaVideoPublico);
+ if(route==='check'){
+  if(!liaAuthorized(request,env))return erro(403,'Código da equipe incorreto.');
+  if(!liaRateLimit(request,true))return erro(429,'Limite de consultas atingido.');
+  return responder({ok:true,authorized:true});
+ }
+ if(route==='health'){
+  try{
+   const response=await liaUpstream(env,'/health','GET',undefined,4500);
+   if(!response.ok)return responder({ok:true,enabled:false,provider:null});
+   const data=await response.json();
+   return responder({ok:true,enabled:!!data.ok,provider:'kokoro-remoto',public_voice:publico,staff_preview:!!env.LIA_STAFF_CODE&&!publico,
+    voice_engine:String(data.voice_engine||'kokoro').slice(0,25),
+    voice_ready:!!(data.female_voice_ready||data.voice_installed),
+    video_enabled:!!data.video_enabled&&(videoPublico||!publico),public_video:videoPublico,
+    video_reason:String(data.video_reason||'nao configurado').slice(0,170),voice_installed:!!(data.female_voice_ready||data.voice_installed)});
+  }catch(_){return responder({ok:true,enabled:false,provider:null});}
+ }
+ if(!staff&&!isPublicRequest)return erro(403,'Acesso reservado a testes da equipe.');
+ // Limite por instância: complementar com WAF/rate limiting da Cloudflare na
+ // publicação pública; nunca confie só neste mapa em memória.
+ if(!liaRateLimit(request,staff&&route.startsWith('render-status:')))return erro(429,'Limite temporário de chamadas atingido.');
+ if(isPublicRequest&&route==='preload')return responder({ok:true,voice_loaded:true});
+ let path='',method='GET',payload;
+ if(route==='preload'){
+  const data=await lerDados(request);
+  const engine=String(data.engine||'feminina');
+  if(!['feminina','padrao'].includes(engine))return erro(400,'Voz inválida.');
+  path='/v1/lia/preload?engine='+engine;method='POST';
+ }else if(route==='speak'){
+  const data=await lerDados(request);const t=String(data.text||'').trim();
+  if(!t||t.length>(isPublicRequest?300:450)||/[<>]/.test(t))return erro(400,'Texto de voz inválido.');
+  const style=String(data.style||'natural');
+  if(!['natural','calma','clara'].includes(style))return erro(400,'Estilo de voz inválido.');
+  const engine=isPublicRequest?'feminina':String(data.engine||'feminina');
+  if(!['feminina','padrao'].includes(engine))return erro(400,'Voz inválida.');
+  path='/v1/lia/speak';method='POST';payload={text:t,style,engine};
+ }else if(route==='render'){
+  const data=await lerDados(request);
+  if(!/^[a-f0-9]{32}$/.test(String(data.job_id||'')))return erro(400,'Identificador inválido.');
+  path='/v1/lia/render/'+data.job_id;method='POST';
+ }else if(route.startsWith('render-status:')){
+  const id=route.slice('render-status:'.length);
+  if(!/^[a-f0-9]{32}$/.test(id))return erro(400,'Identificador inválido.');
+  path='/v1/lia/render-status/'+id;
+ }else if(route.startsWith('media:')){
+  const filename=route.slice(6);
+  if(!/^[a-f0-9]{32}\.(wav|mp4)$/.test(filename))return erro(400,'Mídia inválida.');
+  path='/v1/media/'+filename;
+ }else{return erro(404,'Recurso inexistente.');}
+ try{
+  const upstream=await liaUpstream(env,path,method,payload,route==='render'?15000:route==='speak'?45000:30000);
+  if(!upstream.ok){
+   return erro(upstream.status===404?404:upstream.status===401?502:upstream.status===503?503:502,'Motor de voz/vídeo temporariamente indisponível.');
+  }
+  if(route.startsWith('media:')){
+   if(isPublicRequest&&path.endsWith('.wav')){
+    const bytes=await upstream.arrayBuffer();
+    if(bytes.byteLength>8000000)return erro(413,'Áudio excede limite permitido.');
+    return new Response(bytes,{status:200,headers:{'Content-Type':'audio/wav','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
+   }
+   return new Response(upstream.body,{status:200,headers:{
+    'Content-Type':path.endsWith('.mp4')?'video/mp4':'audio/wav',
+    'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'
+   }});
+  }
+  const result=await upstream.json();
+  // Não repassar URLs remotas: somente caminhos relativos de mídia validados no cliente.
+  const id=String(result.job_id||'');
+  if(route==='preload'){return responder({ok:!!result.ok,voice_loaded:!!result.voice_loaded});}
+  if(route==='speak'){
+   if(!/^[a-f0-9]{32}$/.test(id))return erro(502,'Resposta de áudio inválida.');
+   const cues=Array.isArray(result.viseme_cues)?result.viseme_cues.filter(c=>Number.isInteger(c?.at_ms)&&c.at_ms>=0&&c.at_ms<=60000&&['rest','m','fv','ah','ee','oh','oo','wide'].includes(c.shape)).slice(0,160).map(c=>({at_ms:c.at_ms,shape:c.shape})):[];
+   return responder({ok:true,job_id:id,audio_url:'/api/avatar/media/'+id+'.wav',video_enabled:(staff||videoPublico)&&!!result.video_enabled,viseme_cues:cues,viseme_precision:cues.length?'approximate':'unavailable'});
+  }
+  const status=String(result.status||'');
+  if(!['queued','rendering','ready','failed'].includes(status))return erro(502,'Resposta de renderização inválida.');
+  if(status!=='ready')return responder({ok:true,status});
+  const match=/^\/v1\/media\/([a-f0-9]{32})\.mp4$/.exec(String(result.video_url||''));
+  if(!match)return erro(502,'Resposta de vídeo inválida.');
+  return responder({ok:true,status:'ready',video_url:'/api/avatar/media/'+match[1]+'.mp4'});
+ }catch(e){console.warn('Lia adapter:',String(e?.name||'connection'));return erro(503,'Servidor de vídeo/voz offline ou demorou a responder.');}
+}
+
 async function rotearApi(request, env, url) {
   const rota = url.pathname;
   const metodo = request.method.toUpperCase();
 
+  if (metodo === 'GET' && rota === '/api/avatar/health') return liaGateway(request,env,'health');
+  if (metodo === 'GET' && rota === '/api/avatar/check') return liaGateway(request,env,'check');
+  if (metodo === 'POST' && rota === '/api/avatar/preload') return liaGateway(request,env,'preload');
+  if (metodo === 'POST' && rota === '/api/avatar/speak') return liaGateway(request,env,'speak');
+  if (metodo === 'POST' && rota === '/api/avatar/render') return liaGateway(request,env,'render');
+  if (metodo === 'GET' && /^\/api\/avatar\/render-status\/[a-f0-9]{32}$/.test(rota)) return liaGateway(request,env,'render-status:'+rota.split('/').at(-1));
+  if (metodo === 'GET' && rota.startsWith('/api/avatar/media/')) return liaGateway(request,env,'media:'+rota.split('/').at(-1));
+  if (metodo === 'POST' && rota === '/api/modo-livre/conversar') {
+    return responderModoLivre(request, env);
+  }
+  if (metodo === 'GET' && rota === '/api/modo-livre/capacidades') {
+    return responder({ok:true,projeto:'Educa+ Digital',conversa:env?.AI?.run?'workers-ai':'aguardando-binding-ai',voz_neural_online:liaConfigured(env)&&liaPublicVoice(env),voz_alternativa:'voz-feminina-pt-br-do-navegador',precisa_cmd:false});
+  }
   if (metodo === 'GET' && rota === '/api/saude') {
     return responder({ ok: true, servico: 'Educa+ Digital Cloudflare' });
   }
@@ -413,7 +573,7 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    const rotaPublica = ['/api/saude', '/api/estrutura'].includes(url.pathname);
+    const rotaPublica = ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (url.pathname === '/api/modo-livre/conversar' && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
     if (!env.DB && !rotaPublica) {
       return erro(503, 'Banco D1 não configurado. Consulte as instruções de publicação.');
     }
