@@ -548,22 +548,50 @@ async function rotearApi(request, env, url) {
   return erro(404, 'Recurso não encontrado.');
 }
 
-// Inicializacao idempotente apenas em Workers Previews.
-// A configuracao de producao nao define PREVIEW_DB_BOOTSTRAP.
+// Inicializacao exclusiva dos Workers Previews. O D1 oficial nao recebe esse sinalizador.
+// D1.exec interpreta quebras de linha como comandos separados. Executamos uma
+// instrucao preparada de cada vez, inclusive o corpo inteiro do CREATE TRIGGER.
 const bancoPreviewInicializacoes = new WeakMap();
+
+function separarComandosPreview(sql) {
+  const comandos = [];
+  let linhas = [];
+  let gatilho = false;
+  for (const original of sql.split(/\r?\n/)) {
+    const linha = original.trim();
+    if (!linha || linha.startsWith('--')) continue;
+    if (/^PRAGMA foreign_keys\s*=/i.test(linha)) continue;
+    if (/^CREATE TRIGGER\b/i.test(linha)) gatilho = true;
+    linhas.push(linha);
+    const fim = gatilho ? /^END;$/i.test(linha) : /;\s*$/.test(linha);
+    if (fim) {
+      comandos.push(linhas.join(' '));
+      linhas = [];
+      gatilho = false;
+    }
+  }
+  if (linhas.length) throw new Error('Esquema incompleto no Preview.');
+  return comandos;
+}
+
 async function garantirBancoDeTeste(env) {
   if (env.PREVIEW_DB_BOOTSTRAP !== 'true' || !env.DB) return;
   let tarefa = bancoPreviewInicializacoes.get(env.DB);
   if (!tarefa) {
     tarefa = (async () => {
-      const usuario = await env.DB.prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='usuarios'"
+      const controle = await env.DB.prepare(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='preview_bootstrap'"
       ).first();
-      if (!usuario) {
-        // Carregar somente se o banco de testes estiver vazio.
-        const { PREVIEW_SCHEMA_SQL } = await import('./preview-schema.js');
-        await env.DB.exec(PREVIEW_SCHEMA_SQL);
+      if (controle) {
+        const pronto = await env.DB.prepare('SELECT concluido FROM preview_bootstrap WHERE id = 1').first();
+        if (pronto?.concluido === 1) return;
       }
+      const { PREVIEW_SCHEMA_SQL } = await import('./preview-schema.js');
+      for (const comando of separarComandosPreview(PREVIEW_SCHEMA_SQL)) {
+        await env.DB.prepare(comando).run();
+      }
+      await env.DB.prepare('CREATE TABLE IF NOT EXISTS preview_bootstrap (id INTEGER PRIMARY KEY, concluido INTEGER NOT NULL)').run();
+      await env.DB.prepare('INSERT OR REPLACE INTO preview_bootstrap (id, concluido) VALUES (1, 1)').run();
     })().catch(erro => {
       bancoPreviewInicializacoes.delete(env.DB);
       throw erro;
