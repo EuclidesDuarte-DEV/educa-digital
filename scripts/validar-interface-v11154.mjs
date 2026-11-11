@@ -14,6 +14,7 @@ await mkdir('artifacts/layout-v11154',{recursive:true});
 try{
  for(const c of cases){
   const page=await browser.newPage({viewport:{width:c.w,height:c.h},deviceScaleFactor:1});
+  const pageErrors=[];page.on('pageerror',err=>pageErrors.push(String(err.stack||err.message).slice(0,700)));
   try{
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>Boolean(window.EducaFreeView && window.EducaAccessibility),{timeout:20000});
@@ -24,7 +25,7 @@ try{
        bank:bank?.outerHTML.slice(0,480),cueCount:document.querySelectorAll('.bank-start-cue').length,
        isTraining:window.EducaFreeView?.isTraining?.()};
    });
-   console.log('V11154 DOM inicial '+c.w,JSON.stringify(boot));
+   console.log('V11154 DOM inicial '+c.w,JSON.stringify({...boot,pageErrors}));
    assert.ok(boot.cueCount>0,c.w+': banco sem balão inicial: '+JSON.stringify(boot));
    const home=await page.evaluate(()=>{
     const r=el=>{if(!el)return null;const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
