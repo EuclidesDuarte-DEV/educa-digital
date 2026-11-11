@@ -42,7 +42,7 @@ test('V111.48: interfaces compactas e texto ampliado sem zoom de pagina', () => 
   assert.match(css, /\.a11y-distinct-colors/);
   assert.doesNotMatch(css, /transform\s*:\s*scale\(|\bzoom\s*:/);
   assert.match(html, /responsive-v11148\.css\?v=11148/);
-  assert.match(sw, /educa-cf11148-mobile-pretest-a11y|(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry)/);
+  assert.match(sw, /educa-cf11148-mobile-pretest-a11y|(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida)/);
   assert.match(sw, /responsive-v11148\.css/);
 });
 
