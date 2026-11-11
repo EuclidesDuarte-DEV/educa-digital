@@ -90,7 +90,7 @@
       activeUtterance = null;
     }
     reading = false;
-    if (readButton) { readButton.textContent = '🔊 Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
+    if (readButton) { readButton.textContent = 'Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
     if (readStatus) readStatus.textContent = '';
   }
   function visibleText() {
@@ -98,9 +98,11 @@
     if (selection) return selection.slice(0, 1200);
     const activePhone = $('.android-view.is-active');
     const coach = $('#coachCard:not([hidden])');
-    const roots = activePhone && getComputedStyle(activePhone).display !== 'none'
-      ? [coach, activePhone].filter(Boolean)
-      : [$('.hero-copy'), $('.how-it-works')].filter(Boolean);
+    const roots = dialog?.open
+      ? [dialog.querySelector('.a11y-dialog-header'), dialog.querySelector('.a11y-options')].filter(Boolean)
+      : activePhone && getComputedStyle(activePhone).display !== 'none'
+        ? [coach, activePhone].filter(Boolean)
+        : [$('.hero-copy'), $('.how-it-works')].filter(Boolean);
     const text = roots.map(root => {
       const copy = root.cloneNode(true);
       copy.querySelectorAll('script,style,svg,button,input,textarea,select,[hidden],[aria-hidden="true"],.guide-overlay').forEach(el => el.remove());
@@ -127,13 +129,13 @@
     if (ptBR) utterance.voice = ptBR;
     activeUtterance = utterance;
     reading = true;
-    if (readButton) { readButton.textContent = '⏹ Parar leitura'; readButton.classList.add('is-speaking'); readButton.setAttribute('aria-label','Parar leitura'); }
+    if (readButton) { readButton.textContent = 'Parar leitura'; readButton.classList.add('is-speaking'); readButton.setAttribute('aria-label','Parar leitura'); }
     if (readStatus) readStatus.textContent = 'Lendo o texto da tela.';
     utterance.onend = utterance.onerror = () => {
       if (activeUtterance === utterance) {
         activeUtterance = null;
         reading = false;
-        if (readButton) { readButton.textContent = '🔊 Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
+        if (readButton) { readButton.textContent = 'Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
         if (readStatus) readStatus.textContent = '';
       }
     };
