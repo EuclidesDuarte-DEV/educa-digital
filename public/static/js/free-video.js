@@ -12,7 +12,7 @@ const ui={view:$('freeVideoView'),portrait:$('freeVideoPortrait'),portraitStill:
 // O tamanho relevante é o retângulo do Android simulado, não window.innerWidth.
 // Isso corrige notebook de 1920px com telefone de 300px e rotação no iPhone.
 function syncLiaCallLayout(){
- if(!ui.view)return;
+ if(!ui.view||typeof ui.view.getBoundingClientRect!=='function')return;
  const rect=ui.view.getBoundingClientRect();
  if(rect.width<120||rect.height<180)return;
  ui.view.dataset.liaLayout=rect.width<=330?'compact':rect.width<=430?'regular':'wide';
@@ -23,9 +23,11 @@ if(ui.view){
   const liaCallResizeObserver=new ResizeObserver(syncLiaCallLayout);
   liaCallResizeObserver.observe(ui.view);
  }
- window.addEventListener('resize',syncLiaCallLayout,{passive:true});
- window.addEventListener('orientationchange',syncLiaCallLayout,{passive:true});
- window.requestAnimationFrame(syncLiaCallLayout);
+ if(typeof window.addEventListener==='function'){
+  window.addEventListener('resize',syncLiaCallLayout,{passive:true});
+  window.addEventListener('orientationchange',syncLiaCallLayout,{passive:true});
+ }
+ if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
 const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null};
 const free=()=>window.EducaFreeMode;
@@ -592,7 +594,7 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  // O aquecimento local acontece após o gesto do aluno; o Worker continua disponível para fallback.
 
  if(/^(localhost|127\.0\.0\.1)$/.test(window.location?.hostname||''))void fetch('/api/modo-livre/preload',{method:'POST',credentials:'same-origin'}).catch(()=>{});
- ui.answer.hidden=false;ui.mic.hidden=true;if(speaker)speaker.hidden=true;ui.repeat.hidden=true;ui.camera.hidden=true;ui.form.hidden=true;ui.actions.hidden=true;window.EducaFreeView?.setView('free-video');window.requestAnimationFrame(syncLiaCallLayout);}
+ ui.answer.hidden=false;ui.mic.hidden=true;if(speaker)speaker.hidden=true;ui.repeat.hidden=true;ui.camera.hidden=true;ui.form.hidden=true;ui.actions.hidden=true;window.EducaFreeView?.setView('free-video');if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);}
 async function answer(){if(!session.active||session.connected)return;syncLiaCallLayout();primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
