@@ -17,7 +17,15 @@ try{
   try{
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>Boolean(window.EducaFreeView && window.EducaAccessibility),{timeout:20000});
-   await page.waitForFunction(()=>Boolean(document.querySelector('[data-open-app="bank"] .bank-start-cue')),{timeout:7000});
+   await page.waitForTimeout(650);
+   const boot=await page.evaluate(()=>{
+     const bank=document.querySelector('[data-open-app="bank"]');
+     return {classes:document.body.className,phoneView:document.querySelector('#phoneScreen')?.dataset.currentView,
+       bank:bank?.outerHTML.slice(0,480),cueCount:document.querySelectorAll('.bank-start-cue').length,
+       isTraining:window.EducaFreeView?.isTraining?.()};
+   });
+   console.log('V11154 DOM inicial '+c.w,JSON.stringify(boot));
+   assert.ok(boot.cueCount>0,c.w+': banco sem balão inicial: '+JSON.stringify(boot));
    const home=await page.evaluate(()=>{
     const r=el=>{if(!el)return null;const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
     const cue=document.querySelector('.bank-start-cue'),bank=document.querySelector('[data-open-app="bank"]');
