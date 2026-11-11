@@ -35,5 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: educa-v11149-multidevice
-          path: |\n            artifacts/layout-v11148/\n            artifacts/layout-v11149/
+          path: |
+            artifacts/layout-v11148/
+            artifacts/layout-v11149/
           if-no-files-found: ignore
