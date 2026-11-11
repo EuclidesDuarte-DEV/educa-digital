@@ -1,0 +1,24 @@
+name: LIA V111.52 — testes focados da voz e do Modo Livre
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lia-voice-sanity:
+    name: Kokoro pf_dora e IA contextual (Node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Validar voz feminina, timeout e roteiro educativo
+        run: node --test --test-concurrency=1 tests/lia-v11152-fast-voice.test.js tests/lia-v11132-runtime.test.js tests/lia-v11130-watchdog.test.js tests/lia-v11129-diagnostico.test.js tests/free-mode.test.js
