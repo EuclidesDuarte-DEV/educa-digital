@@ -534,7 +534,7 @@ function speak(text){
  session.lastSpoken=whole;
  const chunks=speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
- subtitle('Lia vai falar agora…');
+ subtitle('Lia está preparando a fala…');
  startSpeechChunk(first,serial);
 }
 
