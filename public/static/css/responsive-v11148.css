@@ -39,6 +39,8 @@ html, body { max-width:100%; overflow-x:clip; }
 }
 .pretest-step-bar strong { font:800 11px/1.25 Inter,system-ui,sans-serif; letter-spacing:.02em; color:#185799; }
 .pretest-step-bar span { font:700 14px/1.35 Inter,system-ui,sans-serif; overflow-wrap:anywhere; }
+/* Supera os estilos legados da .phone-preview-wrap com !important no mobile. */
+html:not(.educa-fullscreen-active) body.pretest-in-progress:not(.prototype-focus) .phone-preview-wrap .preview-badge.training-badge,
 body.pretest-in-progress .preview-badge.training-badge { display:none!important; }
 body.pretest-in-progress.guide-focus-active .pretest-step-bar { opacity:1!important; filter:none!important; }
 body.pretest-in-progress .guide-spotlight {
