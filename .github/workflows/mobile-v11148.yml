@@ -1,4 +1,4 @@
-name: V111.48 — layout mobile e acessibilidade
+name: Layout responsivo e acessibilidade V111.49
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   viewport-smoke:
-    name: Layout real 320–768px no Chromium
+    name: Responsividade 320–1920px no Chromium
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -28,10 +28,12 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-http.log 2>&1 &
           node scripts/validar-mobile-v11148.mjs
+      - name: Validar 11 larguras, cabecalho, login e acessibilidade
+        run: node scripts/validar-layout-v11149.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: educa-v11148-mobile
-          path: artifacts/layout-v11148/
+          name: educa-v11149-multidevice
+          path: |\n            artifacts/layout-v11148/\n            artifacts/layout-v11149/
           if-no-files-found: ignore
