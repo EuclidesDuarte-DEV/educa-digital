@@ -319,13 +319,13 @@ function completed(){
 function audioOnly(text,serial){
  if(serial!==session.serial||!session.active)return;
  clearMedia();indicator('Lia falando · vídeo realista controlado pela voz');
- if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){session.utterance=null;stopVoiceProgress();subtitle(text);status('Voz não disponível neste navegador. Leia as legendas ou tente Kokoro novamente.');scheduleListen(600);return;}
+ if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){session.utterance=null;stopVoiceProgress();subtitle(text);status('Voz não disponível neste navegador. Leia as legendas ou tente Kokoro novamente.');if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}scheduleListen(600);return;}
  // Uma voz pt-BR sem nome feminino reconhecido NÃO é usada automaticamente.
  const startFemale=voice=>{
   if(serial!==session.serial||!session.active||!session.connected)return;
   if(!voice||!/^pt[-_]BR$/i.test(voice.lang)){
    stopVoiceProgress();session.utterance=null;toListening();subtitle(text);indicator('Lia · voz feminina indisponível neste aparelho');
-   status('Não há voz feminina pt-BR disponível. Abra “Escolher voz feminina” ou ative o Kokoro (pf_dora).');scheduleListen(600);return;
+   status('Não há voz feminina pt-BR neste aparelho. O Kokoro pode continuar carregando; toque em Tentar voz oficial.');if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}scheduleListen(600);return;
   }
   const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';
   u.rate=selectedStyle()==='calma'?.95:selectedStyle()==='clara'?1.02:1.05;
