@@ -1,4 +1,4 @@
-name: Layout responsivo e acessibilidade V111.51
+name: Layout responsivo, LIA e pre-teste V111.54
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   viewport-smoke:
-    name: Layout completo e entrada por telefone 320–1920px
+    name: Interface completa 320–1920px e video Lia
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -36,15 +36,18 @@ jobs:
         run: node scripts/validar-entrada-v11151.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
         run: node scripts/validar-modo-livre-v11153.mjs
+      - name: V111.54 — cabeçalho desktop, destaque Banco e video da LIA sem cortes
+        run: node scripts/validar-interface-v11154.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: educa-v11151-entrada-unica
+          name: educa-v11154-ui-auditoria
           path: |
             artifacts/layout-v11148/
             artifacts/layout-v11149/
             artifacts/fullscreen-v11150/
             artifacts/entrada-v11151/
             artifacts/modo-livre-v11153/
+            artifacts/layout-v11154/
           if-no-files-found: ignore
