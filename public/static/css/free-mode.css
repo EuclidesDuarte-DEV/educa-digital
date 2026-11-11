@@ -100,3 +100,26 @@
 /* V111.12: progresso automático sinalizado de forma não intrusiva. */
 #freeSummaryView .v112-summary-auto{display:block}
 #freeSummaryView .v112-summary-auto[hidden]{display:none!important}
+
+/* V111.53 — SMS acessível, somente dentro da tela Android simulada */
+#freeSmsView .v11153-sms{position:absolute;inset:0;display:flex;flex-direction:column;min-width:0;min-height:0;background:#f4f7fb;color:#193a5d;font-family:Inter,Arial,sans-serif;overflow:hidden}
+.v11153-sms-header{display:flex;align-items:center;gap:9px;padding:15px 12px 12px;background:#fff;border-bottom:1px solid #d9e4f2;min-height:72px;box-sizing:border-box}
+.v11153-sms-header button{width:45px;height:48px;flex:none;border:0;border-radius:10px;background:#edf5ff;color:#174d8a;font-size:30px}
+.v11153-sms-header div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.v11153-sms-header strong{font-size:15px;line-height:1.3;overflow-wrap:anywhere}
+.v11153-sms-header small{font-size:10px;font-weight:750;letter-spacing:.04em;color:#3d6d99}
+.v11153-sms-messages{flex:1;min-height:100px;overflow-y:auto;overscroll-behavior:contain;padding:16px 11px;scrollbar-width:thin}
+.v11153-sms-bubble{max-width:85%;width:max-content;box-sizing:border-box;padding:12px 13px;margin:0 0 12px;border-radius:15px 15px 15px 4px;background:#fff;color:#1d3d59;box-shadow:0 1px 4px #0f2c5018;font-size:clamp(13px,1rem,17px);line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap}
+.v11153-sms-bubble.sent{margin-left:auto;background:#d5e8ff;border-radius:15px 15px 4px 15px}
+.v11153-sms-bubble small{display:block;text-align:right;margin-top:6px;color:#4c7190;font-size:10px}
+.v11153-sms-status{flex:none;margin:0;padding:5px 12px 8px;font-size:11px;line-height:1.35;color:#416484;min-height:19px}
+.v11153-sms-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 9px}
+.v11153-sms-actions button{min-width:0;min-height:49px;padding:7px;border:1px solid #b8cdea;border-radius:13px;background:#fff;color:#164b80;font-size:12px;font-weight:750;line-height:1.3}
+.v11153-sms-actions button:last-child{background:#e9f3ff}
+.v11153-sms-compose{display:flex;flex:none;gap:7px;padding:8px 10px max(12px,env(safe-area-inset-bottom));background:#fff;border-top:1px solid #dfe8f2}
+.v11153-sms-compose input{flex:1;min-width:0;height:48px;box-sizing:border-box;border:1px solid #a9c5e4;border-radius:24px;padding:9px 13px;font-size:15px;color:#173954;background:#fff}
+.v11153-sms-compose button{flex:none;border:0;border-radius:15px;background:#1768c7;color:#fff;min-width:64px;min-height:48px;padding:8px;font-size:13px;font-weight:750}
+.v11153-sms-compose button:disabled{opacity:.65}
+.v11153-sms-actions button:focus-visible,.v11153-sms-compose button:focus-visible,.v11153-sms-compose input:focus-visible,.v11153-sms-header button:focus-visible{outline:3px solid #206bd5;outline-offset:2px}
+@media(max-width:359px){.v11153-sms-actions button{font-size:11px;padding:6px 3px}.v11153-sms-messages{padding:11px 8px}}
+@media(prefers-reduced-motion:reduce){.v11153-sms-bubble{animation:none!important}}
