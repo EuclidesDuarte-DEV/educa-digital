@@ -29,8 +29,8 @@ test('V111.54: chamada usa tamanho do mockup e não largura do notebook',()=>{
  assert.match(video,/new ResizeObserver\(syncLiaCallLayout\)/);
  assert.match(video,/requestAnimationFrame\(syncLiaCallLayout\)/);
  assert.match(css,/#freeVideoView\{min-width:0;max-width:100%;overflow:hidden;container-type:inline-size/);
- assert.match(css,/\bcqw\b/);
- assert.match(css,/\.v110-video-toolbar>/);
+ assert.match(css,/cqw/);
+ assert.match(css,/\.v110-video-toolbar\s*>/);
  assert.match(css,/#phoneHardware #freeVideoView\[data-lia-layout="compact"\]/);
  assert.match(css,/#freeVideoView:not\(:fullscreen\)/);
 });
