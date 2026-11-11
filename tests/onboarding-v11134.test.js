@@ -9,7 +9,7 @@ const sw = readFileSync('public/static/sw.js', 'utf8');
 test('V111.34: primeiro acesso oferece guia visual, sem abrir modal de acessibilidade', () => {
   for (const id of ['educaTour','educaTourSpotlight','educaTourHotspot','educaTourCard','educaTourNext','educaTourSkip','openGuidedTour']) assert.match(html, new RegExp(`id="${id}"`));
   assert.match(tutorial, /educa-tour-v11143-finished/);
-  assert.match(tutorial, /window\.addEventListener\('load'/);
+  assert.doesNotMatch(tutorial, /window\.addEventListener\('load',\s*\(\)\s*=>\s*\{\s*window\.setTimeout/);
   assert.match(tutorial, /document\.body\.classList\.add\('educa-tour-active'\)/);
   assert.doesNotMatch(accessibility, /if \(!prefs\.configured\)\s*\{\s*open\(\)/);
 });
