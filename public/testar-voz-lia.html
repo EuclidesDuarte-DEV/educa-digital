@@ -7,7 +7,7 @@
 <output id="status" role="status" aria-live="polite">Aguardando teste.</output><audio id="player" controls preload="none"></audio>
 <p class="note">Se aparecer 'Executando inferência' por muito tempo, o processo está lento ou travado; após 90 segundos será mostrado um erro. Comece com a frase curta e CPU q8. O diagnóstico contém modo e etapa, não dados privados.</p><p class="note">Movimentos labiais do MP4 não são renderizados nesta página. A videochamada usa gestos ilustrativos, ainda sem MuseTalk/neural no vídeo. Se der erro, copie a mensagem exibida e envie no chat.</p>
 <a href="/">Voltar ao Educa+ Digital</a></main>
-<script src="/static/js/lia-kokoro-browser.js?v=11132"></script><script>
+<script src="/static/js/lia-kokoro-browser.js?v=11152"></script><script>
 const motor=document.querySelector('#motor'),status=document.querySelector('#status'),prepare=document.querySelector('#prepare'),speak=document.querySelector('#speak'),player=document.querySelector('#player'),copy=document.querySelector('#copy');let media=null;motor.value=window.EducaLiaBrowserKokoro?.getDiagnostics()?.device||'wasm';
 player.addEventListener('play',()=>{window.EducaLiaBrowserKokoro.confirmDevice();status.textContent='Reprodução iniciada! Modo '+motor.value+' selecionado para a videochamada.';});
 copy.addEventListener('click',async()=>{const msg=['Educa V11132',navigator.userAgent,status.textContent,JSON.stringify(window.EducaLiaBrowserKokoro?.getDiagnostics?.()||{})].join('\n');try{await navigator.clipboard.writeText(msg);copy.textContent='Diagnóstico copiado!';}catch(_){status.textContent+='\nCopie esta mensagem manualmente: ' +msg;}});
