@@ -29,14 +29,15 @@ function speechSegments(text){
  const parts=(String(text||'').match(/[^.!?]+[.!?]?/g)||[]).map(t=>t.trim()).filter(Boolean);
  const out=[];let buffer='';
  const flush=()=>{if(buffer){out.push(buffer);buffer='';}};
+ // O início deve ser curto; depois usamos frases inteiras para reduzir inferências.
  for(const part of parts){
-  if(buffer&&buffer.length+part.length+1<=32){buffer+=' '+part;continue;}
+  const limit=out.length===0?70:105;
+  if(buffer&&buffer.length+part.length+1<=limit){buffer+=' '+part;continue;}
   flush();
-  if(part.length<=65){buffer=part;continue;}
   let rest=part;
-  while(rest.length>65){
-   let split=rest.lastIndexOf(' ',65);
-   if(split<22)split=65;
+  while(rest.length>limit){
+   let split=rest.lastIndexOf(' ',limit);
+   if(split<25)split=limit;
    out.push(rest.slice(0,split).trim());rest=rest.slice(split).trim();
   }
   buffer=rest;
@@ -82,6 +83,8 @@ const motion={talkActive:null,idleActive:null,lastTalk:-1,lastIdle:-1,talking:fa
 const CROSSFADE_MS=420; // A/B dissolve: the old frame stays until the next video is playing.
 const PRELOAD_BEFORE_END_SECONDS=0.72;
 const VOICE_COMMIT_MS=450; // resposta mais rápida após a última frase final
+const BROWSER_KOKORO_READY_BUDGET_MS=7000;
+const BROWSER_KOKORO_WARM_BUDGET_MS=9000;
 const TTS_FIRST_RESPONSE_TIMEOUT_MS=25000; // tolera Kokoro remoto em CPU, sem espera infinita
 const MOTOR_CHECK_TIMEOUT_MS=2200; // não trocar prematuramente a voz neural pelo Chrome
 // Escolha não repetitiva entre N clipes: N>1 garante que o consecutivo difere.
@@ -258,7 +261,7 @@ function startSpeechMotion(audio,cues=[]){
     // so never claim this animates exact phonemes on the existing MP4 avatar.
     const elapsed=Math.round((audio.currentTime||0)*1000);
     while(speechMotion.cueIndex+1<speechMotion.cues.length&&speechMotion.cues[speechMotion.cueIndex+1].at_ms<=elapsed)speechMotion.cueIndex++;
-    if(ui.portrait?.dataset&&speechMotion.cues.length)ui.portrait.dataset.viseme=speechMotion.cues[speechMotion.cueIndex].shape;
+    if(ui.portrait?.dataset&&speechMotion.cues.length)ui.portrait.dataset.viseme=rms<.008?'rest':speechMotion.cues[speechMotion.cueIndex].shape;
     const energy=Math.max(0,Math.min(1,(rms-.012)*10));
     speechMotion.level+=((energy>speechMotion.level)?.36:.18)*(energy-speechMotion.level);
     // Voice activity from actual Kokoro audio: during a sustained silence,
@@ -266,10 +269,10 @@ function startSpeechMotion(audio,cues=[]){
     // This is NOT phoneme-accurate animation of the pre-recorded clip.
     if(rms<.008){
      if(speechMotion.silentSince===null)speechMotion.silentSince=now;
-     if(now-speechMotion.silentSince>320&&motion.talking)toListening();
+     if(now-speechMotion.silentSince>230&&motion.talking)toListening();
     }else{
      speechMotion.silentSince=null;
-     if(rms>.018&&!motion.talking&&session.utterance===audio)referenceMotion();
+     if(rms>.015&&!motion.talking&&session.utterance===audio)referenceMotion();
     }
     // Modulação discreta: nunca alterar o áudio nem acelerar o MP4 neural.
     for(const player of talkPlayers){if(player!==session.utterance)player.playbackRate=.88+speechMotion.level*.28;}
@@ -301,7 +304,7 @@ function completed(){
  // A próxima frase começa automaticamente, sem pedir outra interação do aluno.
  if(session.active&&session.connected&&session.speechQueue.length){
   const next=session.speechQueue.shift(),serial=session.serial;
-  showVoiceProgress('LIA: preparando a próxima frase…');
+  showVoiceProgress('LIA: iniciando a próxima frase…');
   toListening();
   void Promise.resolve().then(()=>{
    if(serial===session.serial&&session.active&&session.connected)startSpeechChunk(next,serial);
@@ -397,7 +400,19 @@ async function playBrowserKokoro(text,serial){
   },650);
   const ahead=session.prefetched?.serial===serial&&session.prefetched.text===text?session.prefetched.promise:null;
   if(ahead)session.prefetched=null;
-  const result=await (ahead||browser.synthesize(text,selectedStyle()));
+  // O primeiro download Kokoro é pesado no iPhone. Não segurar a conversa:
+  // após o orçamento de tempo, usar uma voz FEMININA instalada se existir.
+  // A inferência continua em segundo plano para o turno seguinte.
+  const pending=ahead||browser.synthesize(text,selectedStyle());
+  pending.catch(()=>{});
+  let budgetTimer;
+  let result;
+  try {
+   result=await Promise.race([
+    pending,
+    new Promise((_,reject)=>{budgetTimer=setTimeout(()=>reject(Object.assign(new Error('Aquecimento Kokoro ainda em andamento'),{code:'KOKORO_WARMING'})),browser.isReady?.()?BROWSER_KOKORO_WARM_BUDGET_MS:BROWSER_KOKORO_READY_BUDGET_MS);})
+   ]);
+  }finally{clearTimeout(budgetTimer);}
   clearInterval(session.voiceProgressTimer);session.voiceProgressTimer=null;
   if(serial!==session.serial||!session.active||!session.connected)return true;
   if(result.voice!=='pf_dora'||result.blob.size<1024)throw Error('Arquivo da voz oficial inválido');
@@ -421,10 +436,12 @@ async function playBrowserKokoro(text,serial){
   if(serial!==session.serial)return true;
   clearInterval(session.voiceProgressTimer);session.voiceProgressTimer=null;
   const message=String(e?.message||e).slice(0,115);
-  status('Kokoro pf_dora não carregou: '+message+'. Abra /testar-voz-lia.html para diagnóstico.');
-  showVoiceProgress('Falha na voz neural. Toque em Tentar novamente.');
-  if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}
-  return false;
+  if(e?.code==='KOKORO_WARMING'){
+   status('Kokoro pf_dora ainda carrega neste aparelho. Tentando voz feminina pt-BR enquanto o modelo fica pronto.');
+  }else status('Kokoro pf_dora indisponível: '+message+'. Tentando voz feminina pt-BR do dispositivo.');
+  showVoiceProgress('Selecionando voz feminina disponível…');
+  audioOnly(text,serial);
+  return true;
  }
 }
 async function playVideo(url,signal,serial,text){
@@ -517,7 +534,7 @@ function speak(text){
  session.lastSpoken=whole;
  const chunks=speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
- subtitle('Lia está preparando a fala…');
+ subtitle('Lia vai falar agora…');
  startSpeechChunk(first,serial);
 }
 
@@ -559,8 +576,8 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  if(/^(localhost|127\.0\.0\.1)$/.test(window.location?.hostname||''))void fetch('/api/modo-livre/preload',{method:'POST',credentials:'same-origin'}).catch(()=>{});
  ui.answer.hidden=false;ui.mic.hidden=true;if(speaker)speaker.hidden=true;ui.repeat.hidden=true;ui.camera.hidden=true;ui.form.hidden=true;ui.actions.hidden=true;window.EducaFreeView?.setView('free-video');}
 async function answer(){if(!session.active||session.connected)return;primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
- session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · em andamento';},1000);
- ui.duration.textContent='00:00 · em andamento';idleMotion();
+ session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
+ ui.duration.textContent='00:00 · chamada educativa';idleMotion();
  const intro='Oi! Sou a Lia. Estou em outro celular. Preciso de ajuda com um Pix fictício de R$ 350. Você pode me ajudar?';free()?.videoAccepted?.();speak(intro);}
 function listen(){
  if(!session.active||!session.connected||session.waiting||session.rec||session.utterance||document.hidden)return;
