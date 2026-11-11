@@ -24,6 +24,8 @@ jobs:
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
+      - name: V111.54 — cabeçalho desktop, destaque Banco e video da LIA sem cortes
+        run: node scripts/validar-interface-v11154.mjs
       - name: Testar sete resolucoes sem banco remoto
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-http.log 2>&1 &
@@ -36,8 +38,6 @@ jobs:
         run: node scripts/validar-entrada-v11151.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
         run: node scripts/validar-modo-livre-v11153.mjs
-      - name: V111.54 — cabeçalho desktop, destaque Banco e video da LIA sem cortes
-        run: node scripts/validar-interface-v11154.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
