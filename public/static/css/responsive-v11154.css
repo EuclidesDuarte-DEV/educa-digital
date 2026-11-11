@@ -1,0 +1,181 @@
+/* Educa+ Digital V111.54 — medidas baseadas no CELULAR SIMULADO, não no viewport.
+   Corrige vídeo em modo normal, cabeçalho desktop e pista inicial do Banco. */
+
+/* O layout da chamada mede #freeVideoView (área útil do mockup). */
+#freeVideoView{min-width:0;max-width:100%;overflow:hidden;container-type:inline-size;container-name:lia-call}
+#freeVideoView .v110-video{position:absolute;inset:0;width:100%;height:100%;min-width:0;overflow:hidden}
+#freeVideoView .v110-video-top,
+#freeVideoView .v110-video-bottom,
+#freeVideoView .v110-video-toolbar{box-sizing:border-box;max-width:100%}
+
+/* Aplicado somente ao modo NORMAL da moldura. Não reduzir botões do fullscreen. */
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-top{
+  display:grid!important;grid-template-columns:40px minmax(0,1fr) 40px!important;
+  gap:4px!important;align-items:start!important;
+  top:clamp(28px,9cqw,38px)!important;left:8px!important;right:8px!important;
+  width:auto!important;max-width:calc(100% - 16px)!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .wa-contact-info{
+  min-width:0!important;max-width:100%!important;
+  align-items:center!important;gap:3px!important;padding:0!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .wa-contact-info strong{
+  font-size:clamp(16px,6cqw,20px)!important;line-height:1.16!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-training-mark{
+  max-width:100%!important;font-size:clamp(8px,2.6cqw,10px)!important;
+  line-height:1.2!important;overflow-wrap:break-word!important;text-wrap:balance;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) #freeVideoDuration{
+  font-size:clamp(9px,2.7cqw,11px)!important;
+  max-width:100%!important;white-space:normal!important;overflow-wrap:break-word;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .wa-top-button{
+  box-sizing:border-box!important;width:40px!important;min-width:40px!important;
+  height:42px!important;min-height:42px!important;padding:0!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .wa-top-button .wa-icon{
+  width:21px!important;height:21px!important;
+}
+
+/* Miniatura local: fica ACIMA dos controles, mesmo em largura pequena. */
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-selfie{
+  box-sizing:border-box!important;position:absolute!important;
+  left:auto!important;right:clamp(8px,3cqw,14px)!important;top:auto!important;
+  width:clamp(65px,26cqw,95px)!important;
+  height:auto!important;aspect-ratio:3/4!important;max-height:26%!important;
+  bottom:clamp(94px,31cqw,112px)!important;
+  border-radius:clamp(10px,3cqw,15px)!important;
+}
+
+/* Dock: sempre 100% contido no celular — nada de botão vermelho cortado. */
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-bottom{
+  display:flex!important;flex-direction:column!important;
+  left:6px!important;right:6px!important;bottom:clamp(6px,2cqw,11px)!important;
+  width:auto!important;gap:5px!important;max-height:min(50%,250px)!important;
+  overflow:visible!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar{
+  display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+  justify-content:space-between!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  gap:clamp(2px,.8cqw,6px)!important;
+  padding:clamp(5px,1.7cqw,8px)!important;
+  min-height:0!important;margin:0!important;border-radius:999px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v112-video-more{
+  box-sizing:border-box!important;flex:1 1 0!important;
+  min-width:0!important;max-width:none!important;width:auto!important;
+  align-self:stretch!important;display:grid!important;place-items:center!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v112-video-more summary,
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v110-tool:not([hidden]){
+  box-sizing:border-box!important;flex:1 1 0!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:clamp(42px,14cqw,52px)!important;min-height:42px!important;
+  padding:0!important;margin:0!important;border-radius:50%!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v112-video-more summary{
+  display:grid!important;place-items:center!important;
+  max-width:52px!important;aspect-ratio:1!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v110-tool:not([hidden]){
+  max-width:52px!important;aspect-ratio:1!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar .wa-icon{
+  width:clamp(19px,6cqw,23px)!important;height:clamp(19px,6cqw,23px)!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v112-video-more-content{
+  box-sizing:border-box!important;width:min(100%,320px)!important;max-width:100%!important;
+  max-height:min(47cqh,260px)!important;left:0!important;right:auto!important;
+  transform:none!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  overflow-y:auto!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-chat:not([hidden]){
+  box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-chat input{
+  min-width:0!important;font-size:16px!important;
+}
+
+/* Para dispositivos muito estreitos e modo miniatura dentro de notebook. */
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) .v110-video-top{
+  grid-template-columns:36px minmax(0,1fr) 36px!important;top:30px!important;gap:2px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) .wa-top-button{
+  width:36px!important;min-width:36px!important;height:40px!important;min-height:40px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) .v110-selfie{
+  width:clamp(62px,25cqw,78px)!important;bottom:87px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) .v110-video-toolbar{
+  gap:2px!important;padding:5px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) .v110-video-toolbar > .v110-tool:not([hidden]),
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) .v112-video-more summary{
+  height:42px!important;min-height:42px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) .v110-video-top{
+  top:24px!important;
+}
+html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) .v110-selfie{
+  bottom:88px!important;max-height:20%!important;
+}
+
+/* A homepage desktop não precisa de cabeçalho alto e um grande vazio acima do conteúdo. */
+@media(min-width:1100px){
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .site-header.home-simple-header{
+    box-sizing:border-box!important;height:72px!important;min-height:72px!important;
+    max-height:72px!important;padding:0 clamp(24px,3vw,50px)!important;
+    display:flex!important;align-items:center!important;
+  }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .home-simple-header .brand img{
+    width:clamp(140px,9vw,165px)!important;max-height:55px!important;
+  }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .hero-experience{
+    box-sizing:border-box!important;align-items:start!important;
+    min-height:0!important;height:auto!important;
+    padding-top:clamp(12px,2vw,24px)!important;
+  }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .hero-experience .hero-copy{
+    padding-top:clamp(6px,1vw,18px)!important;align-self:start!important;
+    margin-top:0!important;
+  }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .hero-experience .phone-preview-wrap{
+    align-self:start!important;margin-top:0!important;padding-top:0!important;gap:8px!important;
+  }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .hero-copy h1{
+    margin-top:12px!important;font-size:clamp(48px,4.8vw,72px)!important;
+  }
+}
+
+/* O Banco é a PRIMEIRA atividade. Apontar sem bloquear outras áreas da tela. */
+body.landing-pretest-active:not(.prototype-focus) #phoneScreen [data-open-app="bank"].landing-pretest-target{
+  position:relative;z-index:18;overflow:visible!important;
+}
+body.landing-pretest-active:not(.prototype-focus) #phoneScreen [data-open-app="bank"].landing-pretest-target .adaptive-icon{
+  outline:3px solid #f8a529!important;outline-offset:4px!important;
+  border-radius:15px!important;box-shadow:0 0 0 7px #fff8!important;
+  filter:drop-shadow(0 1px 5px #2563eb33)!important;
+}
+#phoneScreen .bank-start-cue{display:none}
+body.landing-pretest-active:not(.prototype-focus) #phoneScreen .bank-start-cue{
+  box-sizing:border-box;display:block;position:absolute;
+  top:-49px;left:0;z-index:80;
+  min-width:94px;max-width:136px;padding:8px 9px;
+  border-radius:12px;background:#246de6;color:white;
+  font:800 clamp(11px,3cqw,13px)/1.2 Inter,system-ui,sans-serif;
+  text-align:center;white-space:normal;
+  pointer-events:none;box-shadow:0 6px 14px #103a7d50;
+}
+body.landing-pretest-active:not(.prototype-focus) #phoneScreen .bank-start-cue::after{
+  content:'';position:absolute;top:100%;left:24px;
+  border-left:7px solid transparent;border-right:7px solid transparent;
+  border-top:9px solid #246de6;
+}
+@media(prefers-reduced-motion:reduce){
+  body.landing-pretest-active #phoneScreen [data-open-app="bank"] .adaptive-icon,
+  body.landing-pretest-active #phoneScreen [data-open-app="bank"] .adaptive-icon img{
+    animation:none!important;transform:none!important;
+  }
+}
