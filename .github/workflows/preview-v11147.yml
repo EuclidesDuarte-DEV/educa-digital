@@ -1,0 +1,93 @@
+name: Validar V111.47 (Preview isolado)
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  testes:
+    name: Testes locais Node.js e schema Preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  smoke-preview:
+    name: API publica do Preview (nunca producao)
+    runs-on: ubuntu-latest
+    env:
+      PREVIEW_URL: https://atualizacao-v11147-educa-digital.educamaisdigital.workers.dev
+    steps:
+      - name: Aguardar o build Cloudflare do commit correto
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for tentativa in $(seq 1 30); do
+            dados=$(curl --fail --silent --show-error --max-time 15 \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs")
+            status=$(printf '%s' "$dados" | node -e '
+              let s = ""; process.stdin.on("data", c => s += c);
+              process.stdin.on("end", () => {
+                const checks = JSON.parse(s).check_runs || [];
+                const build = checks.find(c => c.name === "Workers Builds: educa-digital");
+                process.stdout.write(build ? build.status + "/" + build.conclusion : "aguardando");
+              });')
+            echo "Cloudflare $HEAD_SHA: $status"
+            if [ "$status" = "completed/success" ]; then exit 0; fi
+            if [ "$status" = "completed/failure" ]; then exit 1; fi
+            sleep 10
+          done
+          exit 1
+      - name: Confirmar /api/saude no Preview
+        run: |
+          for tentativa in $(seq 1 6); do
+            status=$(curl --silent --show-error --max-time 12 -o /tmp/resposta-saude -w '%{http_code}' "$PREVIEW_URL/api/saude" || true)
+            echo "Preview GET /api/saude: HTTP $status (tentativa $tentativa)"
+            if [ "$status" = "200" ]; then
+              head -c 400 /tmp/resposta-saude || true
+              exit 0
+            fi
+            head -c 300 /tmp/resposta-saude || true
+            echo ""
+            sleep 8
+          done
+          exit 1
+      - name: Cadastro demonstrativo e banco de Preview
+        run: |
+          node --input-type=module <<'NODE'
+          const root = process.env.PREVIEW_URL;
+          const response = await fetch(root + '/api/conta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: '6500000000' })
+          });
+          const data = await response.json();
+          if (![201, 409].includes(response.status) || (response.status === 201 && data.ok !== true) || (response.status === 409 && data.needs_login !== true)) {
+            throw new Error('Cadastro do Preview falhou: HTTP ' + response.status + ': ' + JSON.stringify(data));
+          }
+          console.log('Cadastro no banco isolado: OK (' + response.status + ')');
+          const second = await fetch(root + '/api/conta', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone: '6500000000' })
+          });
+          const again = await second.json();
+          if (second.status !== 409 || again.needs_login !== true) {
+            throw new Error('Conta existente nao protegida: HTTP ' + second.status);
+          }
+          console.log('Retorno de conta existente: OK');
+          NODE

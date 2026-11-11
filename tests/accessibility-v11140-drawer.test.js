@@ -24,5 +24,5 @@ test('V111.40 preserva persistência, fechamento e cache atualizado',()=>{
   assert.match(js,/dialog\.showModal\(\)/);
   assert.match(js,/event\.target !== dialog/);
   assert.match(js,/dialog\?\.addEventListener\('cancel'/);
-  assert.match(sw,/educa-cf11140-access-drawer|educa-cf11143-guide-start-train/);
+  assert.match(sw,/educa-cf11140-access-drawer|educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y/);
 });

@@ -27,3 +27,20 @@ LIA_ENABLED = "false"
 # Voice stays STAFF ONLY by default. Enable publicly only after load/security tests.
 LIA_PUBLIC_VOICE_ENABLED = "false"
 LIA_PUBLIC_VIDEO_ENABLED = "false"
+
+# Ambiente isolado para Pull Requests / Workers Previews.
+# Nao usar o banco D1 de producao nos previews.
+[[previews.d1_databases]]
+binding = "DB"
+database_name = "educa-digital-preview"
+database_id = "5a3484de-9457-4343-89ff-1b7f455815c4"
+
+[previews.ai]
+binding = "AI"
+
+[previews.vars]
+PREVIEW_DB_BOOTSTRAP = "true"
+LIA_CONTAINER_ENABLED = "false"
+LIA_ENABLED = "false"
+LIA_PUBLIC_VOICE_ENABLED = "false"
+LIA_PUBLIC_VIDEO_ENABLED = "false"

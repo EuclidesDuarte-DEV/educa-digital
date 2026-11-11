@@ -41,8 +41,8 @@ test('demo account, saved progress, code login, and accessibility',async()=>{
  const {api}=setup();
  let [status,r]=await api('/api/conta','POST',{name:'Maria Exemplo',phone:'(65) 99999-0000'});
  assert.equal(status,201);assert.equal(r.existing,false);
- [status,r]=await api('/api/conta','POST',{name:'Maria Exemplo',phone:'65999990000'});
- assert.equal(status,200);assert.equal(r.existing,true);
+ [status,r]=await api('/api/conta','POST',{phone:'65999990000'});
+ assert.equal(status,409);assert.equal(r.existing,true);assert.equal(r.needs_login,true);
  [status,r]=await api('/api/progresso','POST',{phone:'65999990000',activity_code:'pix-key',event:'attempt'});
  assert.equal(status,200);assert.equal(r.tentativas,1);assert.equal(r.concluido,0);
  [status,r]=await api('/api/progresso','POST',{phone:'65999990000',activity_code:'pix-key',event:'complete'});

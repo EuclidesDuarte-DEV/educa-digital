@@ -18,6 +18,6 @@ test('V111.43: tocar alvo ativa a ação original, sem abrir acessibilidade auto
   assert.match(js, /target\.click\(\)/);
   assert.match(js, /if \(!force && finishedBefore\(\)\) return/);
   assert.match(js, /const KEY = 'educa-tour-v11143-finished'/);
-  assert.match(html, /onboarding\.js\?v=11143/);
-  assert.match(sw, /educa-cf11143-guide-start-train/);
+  assert.match(html, /onboarding\.js\?v=1114(?:3|4|7)/);
+  assert.match(sw, /educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y/);
 });

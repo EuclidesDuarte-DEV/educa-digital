@@ -955,9 +955,18 @@
     currentLessonIndex = firstIncompleteLesson(topicId);
     currentTopicAction = topic.lessons[currentLessonIndex]?.[2] || '';
     if (modulePathTitle) modulePathTitle.textContent = topic.title;
-    if (modulePathHeadline) modulePathHeadline.textContent = `Aprenda ${topic.title} passo a passo`;
-    if (modulePathIntro) modulePathIntro.textContent = `${topic.intro} Cada capítulo tem uma atividade. Algumas começam com um vídeo curto e depois seguem para a prática.`;
-    if (modulePathEyebrow) modulePathEyebrow.textContent = topicId === 'pix' ? 'COMECE COM SEGURANÇA' : 'APRENDA NO SEU RITMO';
+    // V111.46: um objetivo por tela; o método de treino não se repete nos cartões.
+    const topicObjectives = {
+      pix: 'Confira os dados antes de pagar',
+      security: 'Aprenda a reconhecer golpes',
+      whatsapp: 'Use o WhatsApp com confiança',
+      settings: 'Ajuste seu celular com facilidade',
+      govbr: 'Acesse serviços com segurança',
+      playstore: 'Escolha aplicativos com segurança'
+    };
+    if (modulePathHeadline) modulePathHeadline.textContent = topicObjectives[topicId] || `Aprenda ${topic.title}`;
+    if (modulePathIntro) modulePathIntro.textContent = 'Veja a orientação e depois pratique. Faça uma etapa de cada vez.';
+    if (modulePathEyebrow) modulePathEyebrow.textContent = `${topic.lessons.length} PASSOS SIMPLES`;
     if (modulePathIcon) modulePathIcon.textContent = topicId === 'pix' ? 'PIX' : topic.title.slice(0,2).toUpperCase();
 
     const completedCount = topic.lessons.filter((_, i) => isLessonComplete(topicId, i)).length;
@@ -968,22 +977,23 @@
 
     if (moduleLessonList) {
       moduleLessonList.innerHTML = topic.lessons.map((lesson, index) => {
-        const [title, summary, action] = lesson;
-        const video = lessonVideos[action];
+        const [title, summary] = lesson;
         const complete = isLessonComplete(topicId, index);
         // Cada atividade tem um único título visível e um botão com alvo de toque amplo.
         // O nome do capítulo permanece no catálogo, mas não duplica o título no card.
         const current = index === firstIncompleteLesson(topicId);
-        const lessonType = video ? 'VÍDEO E PRÁTICA' : 'PRÁTICA';
         const state = complete ? 'Concluída' : 'Abrir atividade';
-        return `<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${current ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy"><span class="module-lesson-eyebrow">ATIVIDADE ${index + 1} · ${lessonType}</span><strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
+        const nextStep = current && !complete;
+        const stepLabel = complete ? '<span class="module-lesson-eyebrow is-done">CONCLUÍDA</span>'
+          : nextStep ? '<span class="module-lesson-eyebrow is-next">COMECE AQUI</span>' : '';
+        return `<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${nextStep ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy">${stepLabel}<strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
       }).join('');
     }
     setView('module-path');
     window.requestAnimationFrame(() => { if (modulePathView) modulePathView.scrollTop = 0; });
     if (miniCoachKicker) miniCoachKicker.textContent = topic.title.toUpperCase();
     if (miniCoachTitle) miniCoachTitle.textContent = 'Escolha qualquer atividade';
-    if (miniCoachText) miniCoachText.textContent = 'Quando houver vídeo, assista primeiro e depois pratique.';
+    if (miniCoachText) miniCoachText.textContent = 'Escolha uma etapa e pratique no seu ritmo.';
   }
 
   function openLessonVideo(topicId, lessonIndex) {
@@ -1023,7 +1033,7 @@
     if (focusExpandBtn) focusExpandBtn.hidden = isPhoneExpanded();
     window.scrollTo({ top: 0, behavior: 'auto' });
     if (boot && prototypeBoot) {
-      const firstName = participantName ? participantName.trim().split(/\s+/)[0] : '';
+      const firstName = participantName && participantName !== 'Participante' ? participantName.trim().split(/\s+/)[0] : '';
       if (prototypeBootTitle) prototypeBootTitle.textContent = firstName ? `Olá, ${firstName}` : 'Preparando seu treino';
       if (prototypeBootText) prototypeBootText.textContent = 'Preparando sua central de aprendizagem...';
       prototypeBoot.hidden = false;
@@ -1205,8 +1215,8 @@
       ? 'Muito bem! Vamos criar sua conta?'
       : (entry ? 'Comece seu treino no Educa+' : 'Quer salvar seu progresso?');
     if (startModalIntro) startModalIntro.textContent = fromPretest
-      ? 'Você terminou o pré-teste do Pix. Informe seu nome e celular para continuar aprendendo no seu ritmo.'
-      : (entry ? 'Para entrar no protótipo, informe seu nome e celular. Se já tiver conta, escolha “Já tenho conta”.' : 'Digite só seu nome e seu celular.');
+      ? 'Você terminou o pré-teste. Para continuar, digite somente seu celular com DDD.'
+      : 'Informe seu celular com DDD. O Educa+ encontrará seu treino ou criará um novo.';
     const kicker = $('#startModalKicker');
     if (kicker) kicker.textContent = fromPretest ? 'PRÉ-TESTE CONCLUÍDO' : (entry ? 'COMEÇAR MEU TREINO' : 'SALVAR MEU PROGRESSO');
     if (quickSaveBtn) {
@@ -1228,7 +1238,7 @@
     startModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
     if (quickStartMessage) quickStartMessage.hidden = true;
-    window.setTimeout(() => quickName?.focus(), 120);
+    window.setTimeout(() => quickPhone?.focus(), 120);
   }
 
   function closeStartModal() {
@@ -1271,7 +1281,7 @@
 
   function updateLearningGreeting() {
     if (!learningGreeting) return;
-    const firstName = participantName ? participantName.trim().split(/\s+/)[0] : '';
+    const firstName = participantName && participantName !== 'Participante' ? participantName.trim().split(/\s+/)[0] : '';
     learningGreeting.textContent = firstName ? `${firstName}, o que você quer aprender hoje?` : 'O que você quer aprender hoje?';
   }
 
@@ -1605,7 +1615,7 @@
 
     if (firstActivity) {
       startGuidedTopic('pix');
-      const firstName = participantName ? participantName.split(/\s+/)[0] : '';
+      const firstName = participantName && participantName !== 'Participante' ? participantName.split(/\s+/)[0] : '';
       announce(firstName ? `${firstName}, vamos começar pelo banco e praticar Pix com segurança.` : 'Vamos começar pelo banco e praticar Pix com segurança.', true);
     } else {
       openLearningHub();
@@ -1622,11 +1632,25 @@
         window.requestAnimationFrame(resetLearningScroll);
         window.setTimeout(resetLearningScroll, 140);
       }
-      const welcome = participantName ? `Tudo certo, ${participantName.split(/\s+/)[0]}! Escolha o que você quer aprender hoje.` : 'Escolha um assunto para começar. Você pode fazer uma atividade de cada vez.';
+      const welcome = participantName && participantName !== 'Participante' ? `Tudo certo, ${participantName.split(/\s+/)[0]}! Escolha o que você quer aprender hoje.` : 'Escolha um assunto para começar. Você pode fazer uma atividade de cada vez.';
       announce(welcome, true);
     }
 
     if (fullscreen) window.setTimeout(openPhoneFullscreen, 500);
+
+    // V111.44: o tour da conta começa quando a central termina de abrir.
+    // Respeita a tela de carregamento (~1,5s) e não aparece nos pré-testes anônimos.
+    if (!firstActivity && accessMode === 'registered') {
+      const user = getRememberedUser();
+      window.setTimeout(() => {
+        if (user?.phone === getRememberedUser()?.phone &&
+            document.body.classList.contains('prototype-focus') &&
+            $('#learningView')?.classList.contains('is-active') &&
+            $('#prototypeBoot')?.hidden !== false) {
+          window.EducaGuidedTour?.startAuthenticated?.(user);
+        }
+      }, 1850);
+    }
   }
 
   function renderScenario(id) {
@@ -1666,7 +1690,7 @@
 
   function showAccountPrompt() {
     if (progressSaved) {
-      const firstName = participantName ? participantName.split(/\s+/)[0] : 'você';
+      const firstName = participantName && participantName !== 'Participante' ? participantName.split(/\s+/)[0] : 'você';
       announce(`Muito bem, ${firstName}! Seu progresso desta experiência já ficou salvo.`, true);
       if (document.fullscreenElement) document.exitFullscreen?.();
       setView('home');
@@ -1789,11 +1813,8 @@
   });
   quickStartForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const name = (quickName?.value || '').trim();
     const phone = formatPhone(quickPhone?.value || '');
     const digits = phone.replace(/\D/g, '');
-    participantName = name;
-    if (name.length < 2) return showQuickStartMessage('Digite seu nome para salvar o progresso.', 'error');
     if (digits.length < 10) return showQuickStartMessage('Digite seu celular com DDD para salvar o progresso.', 'error');
     if (quickPhone) quickPhone.value = phone;
     // Solicitar tela cheia no clique de cadastro, ANTES da requisição assíncrona.
@@ -1804,13 +1825,20 @@
       const response = await fetch('/api/conta', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, phone })
+        body: JSON.stringify({ phone })
       });
       const data = await response.json();
+      if (!response.ok && data.needs_login) {
+        closeStartModal();
+        openReturnModal();
+        if (returnPhone) returnPhone.value = formatPhone(digits);
+        showReturnMessage(returnPhoneMessage, 'Este número já foi usado. Toque em “Mostrar código de treino” para continuar.', 'neutral');
+        return;
+      }
       if (!response.ok) {
         return showQuickStartMessage(data.message || 'Não foi possível salvar agora.', 'error');
       }
-      saveRememberedUser(data.name || name, data.phone || digits);
+      saveRememberedUser(data.name || 'Participante', data.phone || digits);
       isGuestPretest = false;
       await loadServerProgress(data.phone || digits);
       showQuickStartMessage(data.message || 'Seu progresso foi salvo.', 'success');
@@ -1819,7 +1847,7 @@
         startTraining({ focus: true, boot: true });
       }, 500);
     } catch (_) {
-      showQuickStartMessage('Não foi possível salvar. Verifique se o servidor do Educa+ está ativo; abra o site pelo Flask ou PythonAnywhere.', 'error');
+      showQuickStartMessage('Não foi possível salvar. Verifique se o servidor do Educa+ está ativo; abra o site pelo servidor do Educa+ Digital.', 'error');
     } finally {
       if (quickSaveBtn) {
         quickSaveBtn.disabled = false;
@@ -2922,23 +2950,28 @@
 
   accountForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const name = $('#accountName').value.trim();
-    const phone = $('#accountPhone').value.trim();
-    const pin = $('#accountPin').value.trim();
+    const phone = ($('#accountPhone')?.value || '').trim();
+    const digits = phone.replace(/\D/g, '');
     const submit = $('.create-account-btn', accountForm);
     const show = (message, cls) => { accountMessage.hidden = false; accountMessage.className = `account-message ${cls}`; accountMessage.textContent = message; };
-    if (name.length < 2) return show('Digite seu nome.', 'error');
-    if (phone.replace(/\D/g, '').length < 10) return show('Digite seu celular com DDD.', 'error');
-    if (!/^\d{4}$/.test(pin)) return show('O PIN precisa ter 4 números.', 'error');
-    submit.disabled = true; submit.textContent = 'Salvando...';
+    if (digits.length < 10 || digits.length > 11) return show('Digite seu celular com DDD.', 'error');
+    submit.disabled = true; submit.textContent = 'Verificando...';
     try {
-      const response = await fetch('/api/conta', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,phone,pin}) });
+      const response = await fetch('/api/conta', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:digits}) });
       const data = await response.json();
-      accountMessage.hidden = false;
-      accountMessage.className = `account-message ${response.ok ? 'success' : 'error'}`;
-      accountMessage.textContent = data.message || 'Não foi possível criar a conta.';
-      if (response.ok) accountForm.hidden = true;
-    } catch (_) { show('Não foi possível salvar agora. Você pode continuar sem conta.', 'error'); }
+      if (!response.ok && data.needs_login) {
+        accountCard.hidden = true;
+        openReturnModal();
+        if (returnPhone) returnPhone.value = formatPhone(digits);
+        showReturnMessage(returnPhoneMessage, 'Este celular já tem um treino. Receba seu código demonstrativo para continuar.', 'neutral');
+        return;
+      }
+      if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
+      saveRememberedUser(data.name || 'Participante', data.phone || digits);
+      accountCard.hidden = true;
+      await loadServerProgress(data.phone || digits);
+      startTraining({ focus: true, boot: true });
+    } catch (_) { show('Não foi possível salvar agora. Verifique sua conexão.', 'error'); }
     finally { submit.disabled = false; submit.textContent = 'Quero continuar aprendendo'; }
   });
 

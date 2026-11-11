@@ -1,0 +1,122 @@
+/* Educa+ Digital V111.47 — reflow e responsividade (WCAG 2.2).
+   Não usa zoom nem transform scale; amplia textos sem distorcer a interface. */
+html { --ed-font-factor:1; }
+html.a11y-text-large { --ed-font-factor:1.28; }
+html.a11y-text-extra { --ed-font-factor:1.55; }
+html,body,main,.hero-experience,.phone-stage,.phone-hardware,.phone-screen{max-width:100%}
+button,input,select,textarea{font-family:Inter,system-ui,sans-serif}
+button, .learning-card, .module-lesson-card {touch-action:manipulation}
+:where(button,a,input,select,textarea):focus-visible{outline:3px solid #e9a300;outline-offset:3px}
+/* Botões de ajuda alinhados ao Design System. Não tapam o foco ou o conteúdo. */
+#learningView .learning-help-actions{
+  display:flex!important;flex-direction:row!important;flex-wrap:wrap;
+  gap:10px!important;margin:28px 0 40px!important;padding:12px 0 0!important;
+  border-top:1px solid #dce7f4!important;background:transparent!important;
+  box-shadow:none!important;position:static!important;order:5!important;
+  width:100%;z-index:auto!important;border-radius:0!important;
+}
+#learningView .learning-help-actions button{
+  flex:1 1 135px;display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;min-width:0;min-height:48px;padding:10px 12px!important;
+  border:1px solid #b8d2f0!important;border-radius:16px!important;
+  color:#124778!important;background:#fff!important;
+  font-size:12px!important;font-weight:800!important;
+  box-shadow:0 3px 9px #0b36600d!important;white-space:normal;text-align:center;
+}
+#learningView .learning-help-actions button:hover{background:#eaf3ff!important;border-color:#2c77c9!important}
+#learningView .learning-help-actions button svg{width:21px;height:21px;flex:0 0 21px;color:#176ac6}
+#learningView .learning-account-options{order:6!important}
+#learningView .learning-featured{order:2!important}
+#learningView .learning-grid{order:3!important}
+#learningView .free-mode-entry{order:4!important}
+#learningView .learning-header{order:0!important;position:relative;min-width:0!important;}
+.learning-a11y-quick{display:none;position:absolute;right:4px;top:3px;
+  width:46px;height:46px;place-items:center;background:#e7f2ff;color:#0f5bae;
+  border:1px solid #9fc7ee;border-radius:15px;cursor:pointer;z-index:5;
+}
+.learning-a11y-quick svg{width:28px;height:28px}
+/* Utilidade do acesso mobile continua perto do título; os atalhos grandes ficam depois dos cartões. */
+@media(max-width:600px), (hover:none) and (pointer:coarse) and (max-width:1024px){
+  #learningView .learning-surface{display:flex!important;flex-direction:column;align-items:stretch;padding-bottom:calc(30px + env(safe-area-inset-bottom))!important}
+  #learningView .learning-header{padding-right:52px!important;margin:0 0 10px!important}
+  #learningView .learning-help-actions{margin:30px 0 38px!important;}
+  #learningView .learning-help-actions button{font-size:11.5px!important}
+  #learningView .learning-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .learning-a11y-quick{display:grid}
+}
+/* Telas estreitas e zoom 200%: os controles se reorganizam sem rolagem horizontal. */
+@media(max-width:380px){
+  #learningView .learning-help-actions button{flex-basis:100%;}
+  .start-dialog,.return-dialog,.info-dialog{width:calc(100vw - 22px)!important;max-height:calc(100dvh - 22px);overflow-y:auto}
+}
+/* Crescimento de conteúdo: remover alturas rígidas das áreas de texto. */
+html:is(.a11y-text-large,.a11y-text-extra) :is(.start-dialog,.return-dialog,.info-dialog,.a11y-dialog) {overflow-wrap:anywhere;}
+html:is(.a11y-text-large,.a11y-text-extra) :is(.quick-start-form input,.return-form input,.quick-start-primary,.return-primary){font-size:clamp(16px,calc(16px * var(--ed-font-factor)),26px)!important;min-height:52px!important}
+html:is(.a11y-text-large,.a11y-text-extra) :is(.start-dialog h2,.return-dialog h2,.info-dialog h2){font-size:calc(24px * var(--ed-font-factor))!important;line-height:1.22!important}
+html:is(.a11y-text-large,.a11y-text-extra) :is(.start-modal-intro,.return-dialog section>p,.quick-start-trust,.quick-start-form label){font-size:calc(14px * var(--ed-font-factor))!important;line-height:1.48!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-header strong{font-size:calc(23px * var(--ed-font-factor))!important;line-height:1.25!important;overflow-wrap:break-word!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured{height:auto!important;min-height:0!important;grid-template-columns:44px minmax(0,1fr) 18px!important;align-items:center}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured-copy strong{font-size:calc(20px * var(--ed-font-factor))!important;line-height:1.2!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured-copy span{font-size:calc(12px * var(--ed-font-factor))!important;line-height:1.48!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured-copy small{font-size:calc(10px * var(--ed-font-factor))!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-card {height:auto!important;min-height:0!important;overflow:visible!important;display:flex!important;flex-direction:column;align-items:flex-start}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-card strong{font-size:calc(15px * var(--ed-font-factor))!important;line-height:1.3!important;overflow-wrap:anywhere!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-card small{font-size:calc(11px * var(--ed-font-factor))!important;line-height:1.48!important;overflow-wrap:anywhere!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .free-mode-entry {height:auto!important;min-height:0!important;grid-template-columns:44px minmax(0,1fr) 18px!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .free-entry-copy strong{font-size:calc(18px * var(--ed-font-factor))!important;line-height:1.25!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .free-entry-copy em{font-size:calc(11px * var(--ed-font-factor))!important;line-height:1.5!important;white-space:normal!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-help-actions button{font-size:calc(12px * var(--ed-font-factor))!important;height:auto;min-height:48px;overflow-wrap:anywhere}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-path-header{height:auto!important;min-height:92px!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-path-header strong{font-size:calc(18px * var(--ed-font-factor))!important;line-height:1.25!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-path-intro {height:auto!important;min-height:0!important;align-items:start}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-path-intro strong{font-size:calc(15px * var(--ed-font-factor))!important;line-height:1.3!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-path-intro p{font-size:calc(11.5px * var(--ed-font-factor))!important;line-height:1.48!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-lesson-card{height:auto!important;min-height:0!important;grid-template-columns:40px minmax(0,1fr) 18px!important;align-items:start!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-lesson-card-copy strong{font-size:calc(15px * var(--ed-font-factor))!important;line-height:1.34!important;overflow-wrap:anywhere!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-lesson-card-copy small{font-size:calc(11px * var(--ed-font-factor))!important;line-height:1.5!important;overflow-wrap:anywhere!important}
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-lesson-eyebrow{font-size:calc(10px * var(--ed-font-factor))!important;white-space:normal!important}
+html:is(.a11y-text-large,.a11y-text-extra) :is(#learningView .learning-surface,#modulePathView .module-path-content){overflow-y:auto!important;overflow-x:hidden!important;scrollbar-gutter:stable;}
+/* Extra grande: cartões em uma coluna — texto nunca esbarra no ícone vizinho. */
+html.a11y-text-extra #learningView .learning-grid{grid-template-columns:minmax(0,1fr)!important}
+html.a11y-text-extra #learningView .learning-card{padding:16px!important}
+/* Painel de preferências com texto dimensionável e rolagem independente do rodapé. */
+html:is(.a11y-text-large,.a11y-text-extra) .a11y-dialog{width:min(530px,100vw)!important}
+html:is(.a11y-text-large,.a11y-text-extra) .a11y-dialog h2{font-size:calc(25px * var(--ed-font-factor))!important;line-height:1.2!important}
+html:is(.a11y-text-large,.a11y-text-extra) :is(.a11y-intro,.a11y-option-heading strong,.a11y-switch-copy strong,.a11y-option select){font-size:calc(14px * var(--ed-font-factor))!important;line-height:1.4!important}
+html:is(.a11y-text-large,.a11y-text-extra) :is(.a11y-option-heading div>span,.a11y-switch-copy>span,.a11y-privacy){font-size:calc(12px * var(--ed-font-factor))!important;line-height:1.5!important}
+html:is(.a11y-text-large,.a11y-text-extra) .a11y-options {overscroll-behavior:contain;overflow-y:auto;min-height:0}
+html:is(.a11y-text-large,.a11y-text-extra) .a11y-dialog-footer button{height:auto;min-height:48px;white-space:normal;font-size:calc(13px * var(--ed-font-factor))!important}
+html:is(.a11y-text-large,.a11y-text-extra) .a11y-dialog-header{padding:16px!important}
+@media(max-width:600px){html:is(.a11y-text-large,.a11y-text-extra) .a11y-dialog{width:100vw!important;border-radius:0!important}}
+/* Contraste extra real nas superfícies principais; sem filtros globais que deformam vídeos. */
+html.a11y-distinct-colors{--ink:#081b35;--muted:#254567;--bg:#fff}
+html.a11y-distinct-colors #learningView .learning-surface,
+html.a11y-distinct-colors #modulePathView .module-path-content {background:#fff!important;color:#071e3c!important}
+html.a11y-distinct-colors #learningView :is(.learning-card,.learning-featured,.free-mode-entry),
+html.a11y-distinct-colors #modulePathView :is(.module-lesson-card,.module-path-intro){border:2px solid #163d72!important}
+html.a11y-distinct-colors #learningView :is(.learning-featured,.free-mode-entry){background:#06418d!important;color:#fff!important}
+html.a11y-distinct-colors #learningView .learning-featured-copy * ,
+html.a11y-distinct-colors #learningView .free-entry-copy * {color:#fff!important;opacity:1!important}
+html.a11y-distinct-colors #learningView .learning-card small,
+html.a11y-distinct-colors #modulePathView .module-lesson-card-copy small{color:#223d5c!important}
+html.a11y-distinct-colors :is(.a11y-dialog,.a11y-option){color:#0e2847!important;background:#fff!important}
+html.a11y-distinct-colors .a11y-options .a11y-option{border:2px solid #385b87!important}
+html.a11y-distinct-colors :is(input,select,button):focus-visible {outline:3px solid #f0a400!important;outline-offset:3px}
+/* Não ocultar leitura em voz alta atrás de controles do Android e respeitar área segura. */
+.a11y-read-button{bottom:max(20px,env(safe-area-inset-bottom))!important;max-width:calc(100vw - 32px)!important;min-height:48px;border-radius:16px!important}
+.a11y-read-status{bottom:calc(80px + env(safe-area-inset-bottom))!important}
+@media(prefers-reduced-motion:reduce){.learning-a11y-quick,#learningView .learning-help-actions button{transition:none!important}}
+/* Flex vertical nunca deve esmagar um card quando a pessoa aumenta o texto.
+   A rolagem pertence à superfície do telefone. */
+#learningView .learning-surface > * {flex-shrink:0!important;min-height:fit-content;}
+#learningView .learning-featured,#learningView .free-mode-entry {flex-shrink:0!important;align-self:stretch}
+#learningView .learning-surface{min-height:100%;height:auto!important;overflow-y:visible!important}
+#learningView{overflow-y:auto!important;overscroll-behavior:contain}
+#learningView .free-entry-icon svg{display:block;width:23px!important;height:23px!important;max-width:100%}
+/* Leitor fica pequeno e acessível, sem uma faixa cobrindo o conteúdo. */
+.a11y-read-button{left:auto!important;right:14px!important;width:54px!important;height:54px!important;padding:0!important;font-size:0!important;display:grid;place-items:center}
+.a11y-read-button::before{content:"🔊";font-size:24px;line-height:1}
+.a11y-read-button.is-speaking::before{content:"⏹"}
+/* O ícone do Pix nunca ultrapassa sua coluna quando o texto aumenta. */
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured-icon{width:44px!important;height:44px!important;min-width:0!important}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured-icon img{width:36px!important;height:36px!important;max-width:100%!important;object-fit:contain}

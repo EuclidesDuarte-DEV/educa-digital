@@ -22,6 +22,6 @@ test('Kokoro ou voz do navegador não se passam por vídeo sincronizado',()=>{
 test('Rota antiga redireciona para a Lia realista e o motor antigo fica em laboratório',()=>{
  assert.match(d,/lia-realista\.html/);
  assert.match(old,/class LiaRender3D/);
- assert.match(sw,/(?:educa-cf111(?:21-lia-voz-escuta|23-lia-modo-livre|28-kokoro-browser|29-kokoro-diagnostico|30-inferencia-watchdog|31-lia-video-tts-progress|32-lia-video-prefetch-gpu|33-lia-acessibilidade|34-tutorial-sob-demanda|35-access-inside-phone|36-access-home-icon|37-access-external|38-access-fullscreen|39-access-position)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train)/);
+ assert.match(sw,/(?:educa-cf111(?:21-lia-voz-escuta|23-lia-modo-livre|28-kokoro-browser|29-kokoro-diagnostico|30-inferencia-watchdog|31-lia-video-tts-progress|32-lia-video-prefetch-gpu|33-lia-acessibilidade|34-tutorial-sob-demanda|35-access-inside-phone|36-access-home-icon|37-access-external|38-access-fullscreen|39-access-position)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y)/);
  assert.ok(existsSync('public/static/css/lia-fotorreal.css'));
 });

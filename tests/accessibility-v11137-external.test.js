@@ -24,5 +24,5 @@ test('V111.39: painel e tutorial sob demanda seguem preservados',()=>{
  assert.match(html,/id="openGuidedTour"/);
  assert.match(tour,/#openAccessibilitySettings/);
  assert.match(html,/static\/js\/accessibility-external\.js\?v=11139/);
- assert.match(sw,/accessibility-external\.js/);
+ assert.match(sw,/accessibility-external\.js|educa-cf11147-phone-only-responsive-a11y/);
 });

@@ -5,7 +5,7 @@
 (() => {
   'use strict';
   const STORAGE = 'educa-accessibility-v1';
-  const DEFAULTS = Object.freeze({ text: 'normal', colors: false, reading: false, configured: false });
+  const DEFAULTS = Object.freeze({ text: 'normal', colors: false, reading: true, configured: false });
   const allowedText = new Set(['normal', 'large', 'extra']);
   const $ = (selector) => document.querySelector(selector);
 
@@ -14,7 +14,7 @@
     return {
       text: allowedText.has(data.text) ? data.text : DEFAULTS.text,
       colors: data.colors === true,
-      reading: data.reading === true,
+      reading: data.reading !== false,
       configured: data.configured === true
     };
   }
@@ -30,6 +30,8 @@
   let prefs = load();
   let activeUtterance = null;
   let reading = false;
+  let voiceReady = false;
+  let pendingGuide = null;
   const dialog = $('#accessibilityDialog');
   const status = $('#a11yFeedback');
   const readButton = $('#a11yReadNow');
@@ -51,7 +53,7 @@
     if (fontSelect) fontSelect.value = prefs.text;
     if (colorInput) colorInput.checked = prefs.colors;
     if (readingInput) readingInput.checked = prefs.reading;
-    if (!prefs.reading) stopReading();
+    if (!prefs.reading) { pendingGuide = null; stopReading(); }
     window.dispatchEvent(new CustomEvent('educa:accessibility-change', { detail: { ...prefs } }));
   }
   function update(next) {
@@ -59,6 +61,11 @@
     apply();
     save(prefs);
     report('Preferência aplicada. Você pode mudar novamente quando quiser.');
+    if (prefs.reading && next.reading === true) {
+      const t = document.querySelector('#educaTourTitle')?.textContent?.trim();
+      const d = document.querySelector('#educaTourText')?.textContent?.trim();
+      if (t && document.querySelector('#educaTour')?.hidden === false) pendingGuide = `${t}. ${d || ''}`;
+    }
   }
   function open() {
     if (!dialog || dialog.open) return;
@@ -83,7 +90,7 @@
       activeUtterance = null;
     }
     reading = false;
-    if (readButton) readButton.textContent = '🔊 Ouvir esta tela';
+    if (readButton) { readButton.textContent = '🔊 Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
     if (readStatus) readStatus.textContent = '';
   }
   function visibleText() {
@@ -120,13 +127,13 @@
     if (ptBR) utterance.voice = ptBR;
     activeUtterance = utterance;
     reading = true;
-    if (readButton) readButton.textContent = '⏹ Parar leitura';
+    if (readButton) { readButton.textContent = '⏹ Parar leitura'; readButton.classList.add('is-speaking'); readButton.setAttribute('aria-label','Parar leitura'); }
     if (readStatus) readStatus.textContent = 'Lendo o texto da tela.';
     utterance.onend = utterance.onerror = () => {
       if (activeUtterance === utterance) {
         activeUtterance = null;
         reading = false;
-        if (readButton) readButton.textContent = '🔊 Ouvir esta tela';
+        if (readButton) { readButton.textContent = '🔊 Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
         if (readStatus) readStatus.textContent = '';
       }
     };
@@ -139,6 +146,28 @@
     }
   }
 
+  // Navegadores exigem interação da pessoa para liberar síntese de voz.
+  // Depois do primeiro toque, cada passo do guia será lido automaticamente,
+  // exceto quando a preferência estiver desligada.
+  const unlockVoice = () => {
+    voiceReady = true;
+    if (!prefs.reading || !pendingGuide) return;
+    const message = pendingGuide;
+    pendingGuide = null;
+    // Executa diretamente no gesto para respeitar as políticas de autoplay.
+    speak(message);
+  };
+  document.addEventListener('pointerdown', unlockVoice, { once: true, capture: true });
+  document.addEventListener('keydown', unlockVoice, { once: true, capture: true });
+  window.addEventListener('educa:guide-step', ({ detail }) => {
+    if (!prefs.reading) return;
+    const text = `${detail?.title || ''}. ${detail?.description || ''}`.trim();
+    if (!text) return;
+    if (!voiceReady) { pendingGuide = text; return; }
+    // Não falar por cima da LIA em chamadas nem de outra mídia em execução.
+    if (document.querySelector('#freeCallView.is-active, #liaCallView.is-active')) return;
+    speak(text);
+  });
   // A tela continua disponível mesmo que o visitante decida não configurar nada.
   $('#openAccessibilitySettings')?.addEventListener('click', open);
   $('#a11yFinish')?.addEventListener('click', close);

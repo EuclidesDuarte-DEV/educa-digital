@@ -75,7 +75,7 @@ async function buscarUsuario(env, telefone) {
 
 async function cadastrarConta(request, env) {
   const dados = await lerDados(request);
-  const nome = limparNome(dados.name);
+  const nome = limparNome(dados.name) || 'Participante';
   const telefone = somenteNumeros(dados.phone);
 
   if (nome.length < 2) {
@@ -87,19 +87,10 @@ async function cadastrarConta(request, env) {
 
   const existente = await buscarUsuario(env, telefone);
   if (existente) {
-    await consulta(
-      env,
-      'UPDATE usuarios SET ultimo_login=CURRENT_TIMESTAMP, atualizado_em=CURRENT_TIMESTAMP WHERE id=?',
-      existente.id
-    ).run();
-
-    return responder({
-      ok: true,
-      existing: true,
-      name: existente.nome,
-      phone: telefone,
-      message: `Bem-vindo de volta, ${existente.nome.split(' ')[0]}! Seu progresso continua salvo.`
-    });
+    // Não autorizar a entrada só porque alguém conhece o número.
+    // Protótipo: login com código demonstrativo exibido na tela (não é SMS real).
+    return responder({ ok: false, existing: true, needs_login: true,
+      message: 'Este celular já tem um treino salvo. Continue pela confirmação demonstrativa.' }, 409);
   }
 
   await consulta(
@@ -121,7 +112,7 @@ async function cadastrarConta(request, env) {
     existing: false,
     name: nome,
     phone: telefone,
-    message: `Pronto, ${nome.split(' ')[0]}! Seus treinos foram liberados e seu progresso poderá ser salvo.`
+    message: 'Tudo pronto! Seu treino foi criado e o progresso poderá ser salvo.' 
   }, 201);
 }
 
@@ -557,6 +548,59 @@ async function rotearApi(request, env, url) {
   return erro(404, 'Recurso não encontrado.');
 }
 
+// Inicializacao exclusiva dos Workers Previews. O D1 oficial nao recebe esse sinalizador.
+// D1.exec interpreta quebras de linha como comandos separados. Executamos uma
+// instrucao preparada de cada vez, inclusive o corpo inteiro do CREATE TRIGGER.
+const bancoPreviewInicializacoes = new WeakMap();
+
+function separarComandosPreview(sql) {
+  const comandos = [];
+  let linhas = [];
+  let gatilho = false;
+  for (const original of sql.split(/\r?\n/)) {
+    const linha = original.trim();
+    if (!linha || linha.startsWith('--')) continue;
+    if (/^PRAGMA foreign_keys\s*=/i.test(linha)) continue;
+    if (/^CREATE TRIGGER\b/i.test(linha)) gatilho = true;
+    linhas.push(linha);
+    const fim = gatilho ? /^END;$/i.test(linha) : /;\s*$/.test(linha);
+    if (fim) {
+      comandos.push(linhas.join(' '));
+      linhas = [];
+      gatilho = false;
+    }
+  }
+  if (linhas.length) throw new Error('Esquema incompleto no Preview.');
+  return comandos;
+}
+
+async function garantirBancoDeTeste(env) {
+  if (env.PREVIEW_DB_BOOTSTRAP !== 'true' || !env.DB) return;
+  let tarefa = bancoPreviewInicializacoes.get(env.DB);
+  if (!tarefa) {
+    tarefa = (async () => {
+      const controle = await env.DB.prepare(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='preview_bootstrap'"
+      ).first();
+      if (controle) {
+        const pronto = await env.DB.prepare('SELECT concluido FROM preview_bootstrap WHERE id = 1').first();
+        if (pronto?.concluido === 1) return;
+      }
+      const { PREVIEW_SCHEMA_SQL } = await import('./preview-schema.js');
+      for (const comando of separarComandosPreview(PREVIEW_SCHEMA_SQL)) {
+        await env.DB.prepare(comando).run();
+      }
+      await env.DB.prepare('CREATE TABLE IF NOT EXISTS preview_bootstrap (id INTEGER PRIMARY KEY, concluido INTEGER NOT NULL)').run();
+      await env.DB.prepare('INSERT OR REPLACE INTO preview_bootstrap (id, concluido) VALUES (1, 1)').run();
+    })().catch(erro => {
+      bancoPreviewInicializacoes.delete(env.DB);
+      throw erro;
+    });
+    bancoPreviewInicializacoes.set(env.DB, tarefa);
+  }
+  await tarefa;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -579,6 +623,7 @@ export default {
     }
 
     try {
+      if (!rotaPublica) await garantirBancoDeTeste(env);
       return await rotearApi(request, env, url);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');

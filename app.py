@@ -173,7 +173,7 @@ def estrutura():
 @app.post("/api/conta")
 def conta():
     data = read_body()
-    name = " ".join(str(data.get("name") or "").strip().split())[:80]
+    name = " ".join(str(data.get("name") or "Participante").strip().split())[:80]
     phone = digits(data.get("phone"))
     if len(name) < 2:
         return fail(400, "Digite seu nome.")
@@ -181,16 +181,15 @@ def conta():
         return fail(400, "Digite um número de celular válido com DDD.")
     user = user_from_phone(phone)
     if user:
-        db().execute("UPDATE usuarios SET ultimo_login=CURRENT_TIMESTAMP,atualizado_em=CURRENT_TIMESTAMP WHERE id=?", (user["id"],))
-        db().commit()
-        return result({"ok": True, "existing": True, "name": user["nome"], "phone": phone,
-                       "message": f"Bem-vindo de volta, {user['nome'].split()[0]}! Seu progresso continua salvo."})
+        # Não liberar progresso por mero conhecimento de telefone.
+        return result({"ok": False, "existing": True, "needs_login": True,
+                       "message": "Este celular já tem um treino salvo. Continue pela confirmação demonstrativa."}, 409)
     db().execute("INSERT INTO usuarios(nome,numero,ultimo_login) VALUES(?,?,CURRENT_TIMESTAMP)", (name, phone))
     user = user_from_phone(phone)
     db().execute("INSERT OR IGNORE INTO perfil_acessibilidade(usuario_id) VALUES(?)", (user["id"],))
     db().commit()
     return result({"ok": True, "existing": False, "name": name, "phone": phone,
-                   "message": f"Pronto, {name.split()[0]}! Seus treinos foram liberados e seu progresso poderá ser salvo."}, 201)
+                   "message": "Tudo pronto! Seu treino foi criado e o progresso poderá ser salvo."}, 201)
 
 
 @app.post("/api/login/codigo")
