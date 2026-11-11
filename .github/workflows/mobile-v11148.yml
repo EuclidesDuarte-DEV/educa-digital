@@ -1,4 +1,4 @@
-name: Layout responsivo e acessibilidade V111.49
+name: Layout responsivo e acessibilidade V111.50
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   viewport-smoke:
-    name: Responsividade 320–1920px no Chromium
+    name: Responsividade e fullscreen 320–1920px
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -30,12 +30,15 @@ jobs:
           node scripts/validar-mobile-v11148.mjs
       - name: Validar 11 larguras, cabecalho, login e acessibilidade
         run: node scripts/validar-layout-v11149.mjs
+      - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
+        run: node scripts/validar-fullscreen-v11150.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: educa-v11149-multidevice
+          name: educa-v11150-fullscreen-multidevice
           path: |
             artifacts/layout-v11148/
             artifacts/layout-v11149/
+            artifacts/fullscreen-v11150/
           if-no-files-found: ignore
