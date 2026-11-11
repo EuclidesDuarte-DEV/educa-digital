@@ -37,44 +37,20 @@
       targetLabel: 'Abrir opções de acessibilidade'
     }
   ];
-  // O guia da conta aparece somente após entrar e chegar à central de aprendizagem.
-  // A interface e os exemplos continuam simulados: não solicitam dados de bancos reais.
+  // A versão logada é enxuta e só aparece se a pessoa pedir ajuda.
+  // Nenhum tour automático ocupa a tela durante o primeiro acesso.
   const accountSteps = [
     {
-      selector: '#learningGreeting',
-      title: 'Bem-vindo ao Educa+ Digital!',
-      description: 'Aqui você aprende a usar o celular com mais segurança, no seu ritmo. Vou mostrar onde começar.',
-      targetLabel: 'Bem-vindo à central de aprendizagem'
-    },
-    {
       selector: '#learningView .learning-featured',
-      title: 'Escolha o que quer aprender',
-      description: 'O Pix fica em destaque. Você também encontra Segurança, WhatsApp, Ajustes e GOV.BR. Pode escolher sem pressa.',
-      targetLabel: 'Escolher atividade de Pix'
-    },
-    {
-      selector: '#learningAccessibilityBtn',
-      title: 'Deixe a tela mais confortável',
-      description: 'Toque em Acessibilidade para aumentar as letras, ajustar o contraste e ouvir as orientações em voz alta.',
-      targetLabel: 'Abrir acessibilidade'
-    },
-    {
-      selector: '#learningView [data-learning-topic="security"]',
-      title: 'Comece por Segurança',
-      description: 'Recomendamos começar por aqui. Você assiste a vídeos curtos e depois pratica situações comuns sem usar dinheiro real.',
-      targetLabel: 'Abrir atividades de Segurança'
+      title: 'Escolha um assunto',
+      description: 'Toque no assunto que quer praticar. Comece por Pix, se preferir.',
+      targetLabel: 'Abrir atividades de Pix'
     },
     {
       selector: '#freeModeEntry',
-      title: 'Conheça o Modo Livre',
-      description: 'Aqui você pode treinar mensagens suspeitas no WhatsApp e conhecer a simulação de videochamada com a LIA AI.',
-      targetLabel: 'Explorar o Modo Livre'
-    },
-    {
-      selector: '#learningView [data-learning-topic="security"]',
-      title: 'Pronto para começar!',
-      description: 'Você já conhece o caminho. Escolha uma atividade e pratique com calma. Se precisar, toque em “Ver guia novamente”.',
-      targetLabel: 'Começar pela área de Segurança'
+      title: 'Treine com segurança',
+      description: 'O Modo Livre oferece simulações educativas de mensagens e chamadas.',
+      targetLabel: 'Conhecer o Modo Livre'
     }
   ];
   let steps = landingSteps;
@@ -243,9 +219,6 @@
   $('#educaTourSkip')?.addEventListener('click', stop);
   $('#educaTourClose')?.addEventListener('click', stop);
   replay?.addEventListener('click', () => start({ force: true }));
-  $('#learningReplayGuideBtn')?.addEventListener('click', () => start({ force: true, authenticated: true, user: rememberedAccount() }));
-  $('#learningAccessibilityBtn')?.addEventListener('click', () => $('#openAccessibilitySettings')?.click());
-  $('#learningAccessibilityQuickBtn')?.addEventListener('click', () => $('#openAccessibilitySettings')?.click());
   // Nunca disputar espaço com o painel acessível; clicar nele encerra o tutorial.
   window.addEventListener('educa:accessibility-open', stop);
   window.addEventListener('resize', reposition, { passive: true });
@@ -265,10 +238,8 @@
       }
     }
   });
-  // Aguarda o layout e o guia do Banco serem inicializados.
-  window.addEventListener('load', () => { window.setTimeout(() => {
-    if (!rememberedAccount()?.phone) start();
-  }, 600); }, { once: true });
+  // V111.49: guia somente por escolha explícita em "Como usar".
+  // Nenhuma chamada de start() no carregamento da página ou após o login.
   window.EducaGuidedTour = Object.freeze({
     start: () => start({ force: true }),
     startAuthenticated: (user, force = false) => start({ authenticated: true, user, force }),
