@@ -8,7 +8,6 @@
  */
 import { MODULOS } from './catalogo.js';
 import { responderModoLivre } from './free-chat.js';
-import { PREVIEW_SCHEMA_SQL } from './preview-schema.js';
 
 const CODIGOS_ATIVIDADES = new Set(
   MODULOS.flatMap(modulo =>
@@ -561,6 +560,8 @@ async function garantirBancoDeTeste(env) {
         "SELECT name FROM sqlite_master WHERE type='table' AND name='usuarios'"
       ).first();
       if (!usuario) {
+        // Carregar somente se o banco de testes estiver vazio.
+        const { PREVIEW_SCHEMA_SQL } = await import('./preview-schema.js');
         await env.DB.exec(PREVIEW_SCHEMA_SQL);
       }
     })().catch(erro => {
