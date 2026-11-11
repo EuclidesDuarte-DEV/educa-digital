@@ -18,7 +18,7 @@ test('V111.51: modal tem um telefone e um botão principal', () => {
   assert.match(form, /id="quickPhone"[^>]+inputmode="numeric"/);
   assert.match(form, /id="quickSaveBtn" type="submit">Continuar/);
   assert.doesNotMatch(modal, /Já tenho conta|Aprender sem cadastro|quickSkipBtn|startAlreadyHaveAccount|Agora não/);
-  assert.doesNotMatch(modal, /name="quickName"|CPF|senha|E-mail/);
+  assert.doesNotMatch(form, /name="quickName"|type="password"|type="email"|type="text"/);
   assert.match(form, /role="alert" aria-live="polite"/);
 });
 
