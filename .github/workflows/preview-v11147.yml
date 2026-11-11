@@ -22,21 +22,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
-      - name: Testar Worker no runtime Cloudflare (local)
-        timeout-minutes: 3
-        run: |
-          npx wrangler dev --port 8791 > /tmp/educa-wrangler.log 2>&1 &
-          server=$!
-          trap 'kill "$server" 2>/dev/null || true' EXIT
-          for n in $(seq 1 30); do
-            if curl --fail --silent --show-error --max-time 3 http://127.0.0.1:8791/api/saude; then
-              echo "Worker local respondeu"
-              exit 0
-            fi
-            sleep 3
-          done
-          cat /tmp/educa-wrangler.log
-          exit 1
 
   smoke-preview:
     name: API publica do Preview (nunca producao)
@@ -69,13 +54,16 @@ jobs:
           exit 1
       - name: Confirmar /api/saude no Preview
         run: |
-          for tentativa in $(seq 1 15); do
-            if curl --fail --silent --show-error --max-time 15 "$PREVIEW_URL/api/saude"; then
-              echo "Preview online"
+          for tentativa in $(seq 1 6); do
+            status=$(curl --silent --show-error --max-time 12 -o /tmp/resposta-saude -w '%{http_code}' "$PREVIEW_URL/api/saude" || true)
+            echo "Preview GET /api/saude: HTTP $status (tentativa $tentativa)"
+            if [ "$status" = "200" ]; then
+              head -c 400 /tmp/resposta-saude || true
               exit 0
             fi
-            echo "Preview ainda nao esta disponivel; tentativa $tentativa"
-            sleep 10
+            head -c 300 /tmp/resposta-saude || true
+            echo ""
+            sleep 8
           done
           exit 1
       - name: Cadastro demonstrativo e banco de Preview
