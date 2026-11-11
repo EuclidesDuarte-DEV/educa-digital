@@ -9,6 +9,24 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const ui={view:$('freeVideoView'),portrait:$('freeVideoPortrait'),portraitStill:$('liaPhotoPoster'),portraitVideo:$('liaPhotoSpeech'),portraitIdle:$('liaPhotoIdle'),portraitIdleNext:$('liaPhotoIdleNext'),portraitVideoNext:$('liaPhotoSpeechNext'),indicator:$('liaPhotoIndicator'),play:$('liaPhotoPlay'),setup:$('liaPhotoConfigure'),subtitle:$('freeVideoSubtitle'),state:$('freeVideoState'),name:$('freeVideoName'),duration:$('freeVideoDuration'),answer:$('freeVideoAnswer'),hang:$('freeVideoHangup'),mic:$('freeVideoMic'),text:$('freeVideoText'),repeat:$('freeVideoRepeat'),camera:$('freeVideoCameraToggle'),video:$('freeVideoCamera'),selfPlaceholder:$('freeVideoSelfPlaceholder'),form:$('freeVideoForm'),input:$('freeVideoInput'),send:$('freeVideoSend'),actions:$('freeVideoActions')};
+// O tamanho relevante é o retângulo do Android simulado, não window.innerWidth.
+// Isso corrige notebook de 1920px com telefone de 300px e rotação no iPhone.
+function syncLiaCallLayout(){
+ if(!ui.view)return;
+ const rect=ui.view.getBoundingClientRect();
+ if(rect.width<120||rect.height<180)return;
+ ui.view.dataset.liaLayout=rect.width<=330?'compact':rect.width<=430?'regular':'wide';
+ ui.view.dataset.liaShort=String(rect.height<620);
+}
+if(ui.view){
+ if(typeof ResizeObserver==='function'){
+  const liaCallResizeObserver=new ResizeObserver(syncLiaCallLayout);
+  liaCallResizeObserver.observe(ui.view);
+ }
+ window.addEventListener('resize',syncLiaCallLayout,{passive:true});
+ window.addEventListener('orientationchange',syncLiaCallLayout,{passive:true});
+ window.requestAnimationFrame(syncLiaCallLayout);
+}
 const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null};
 const free=()=>window.EducaFreeMode;
 const status=t=>{if(ui.state)ui.state.textContent=t;};
@@ -574,8 +592,8 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  // O aquecimento local acontece após o gesto do aluno; o Worker continua disponível para fallback.
 
  if(/^(localhost|127\.0\.0\.1)$/.test(window.location?.hostname||''))void fetch('/api/modo-livre/preload',{method:'POST',credentials:'same-origin'}).catch(()=>{});
- ui.answer.hidden=false;ui.mic.hidden=true;if(speaker)speaker.hidden=true;ui.repeat.hidden=true;ui.camera.hidden=true;ui.form.hidden=true;ui.actions.hidden=true;window.EducaFreeView?.setView('free-video');}
-async function answer(){if(!session.active||session.connected)return;primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
+ ui.answer.hidden=false;ui.mic.hidden=true;if(speaker)speaker.hidden=true;ui.repeat.hidden=true;ui.camera.hidden=true;ui.form.hidden=true;ui.actions.hidden=true;window.EducaFreeView?.setView('free-video');window.requestAnimationFrame(syncLiaCallLayout);}
+async function answer(){if(!session.active||session.connected)return;syncLiaCallLayout();primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
  const intro='Oi! Sou a Lia. Estou em outro celular. Preciso de ajuda com um Pix fictício de R$ 350. Você pode me ajudar?';free()?.videoAccepted?.();speak(intro);}
