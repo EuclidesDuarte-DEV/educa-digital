@@ -10,6 +10,7 @@ function bancoVazio() {
     prepare(sql) {
       return {
         first: async () => sqlite.prepare(sql).get() || null,
+        run: async () => { execucoes++; return sqlite.prepare(sql).run(); },
         bind(...args) {
           return {
             first: async () => sqlite.prepare(sql).get(...args) || null,
@@ -37,7 +38,10 @@ test('Preview D1 inicializa tabelas e permite cadastro por telefone', async () =
     assert.equal(primeiro.status, 201, await primeiro.text());
     const segundo = await cadastrar();
     assert.equal(segundo.status, 409);
-    assert.equal(banco.contarExecucoes(), 1);
+    const instrucoes = banco.contarExecucoes();
+    assert.ok(instrucoes >= 30, 'O esquema deve ser criado e populado');
+    assert.equal(banco.sqlite.prepare('SELECT concluido FROM preview_bootstrap WHERE id=1').get().concluido, 1);
+    assert.equal(banco.contarExecucoes(), instrucoes);
     assert.ok(banco.sqlite.prepare("SELECT name FROM sqlite_master WHERE name='progresso'").get());
     assert.ok(banco.sqlite.prepare("SELECT name FROM sqlite_master WHERE name='perfil_acessibilidade'").get());
     assert.equal(banco.sqlite.prepare('SELECT COUNT(*) AS total FROM atividades').get().total, 22);
