@@ -1,5 +1,5 @@
-/* V111.39 — Atalho da página inicial NO CABEÇALHO; tela cheia abaixo da saída.
- * Não depende da posição do aparelho nem segue a rolagem. */
+/* V111.50 — Um único atalho de acessibilidade na barra superior.
+ * Em tela cheia, alinha AO LADO do botão de sair — nunca sobre a bateria. */
 (() => {
   'use strict';
   const wrapper = document.querySelector('.educa-external-access');
@@ -20,9 +20,12 @@
       // temporariamente para o body garante que permaneça visível fora do telefone.
       if (wrapper.parentElement !== document.body) document.body.appendChild(wrapper);
       wrapper.classList.add('a11y-below-exit');
+      // O botão fica à ESQUERDA de "Sair da tela cheia", na mesma faixa.
+      // Posicionar abaixo encobria a bateria do Android simulado no iPhone.
       const r = exitButton.getBoundingClientRect();
-      wrapper.style.setProperty('--a11y-fullscreen-top', `${Math.round(r.bottom + 10)}px`);
-      wrapper.style.setProperty('--a11y-fullscreen-right', `${Math.max(12, Math.round(window.innerWidth - r.right))}px`);
+      const h = 44;
+      wrapper.style.setProperty('--a11y-fullscreen-top', `${Math.round(r.top + (r.height - h) / 2)}px`);
+      wrapper.style.setProperty('--a11y-fullscreen-right', `${Math.max(12, Math.round(window.innerWidth - r.left + 10))}px`);
     } else if (focusMode) {
       // A área logada não mostra o cabeçalho. Mantemos UM único atalho
       // fora do Android simulado, ao lado do botão Sair, sem cobrir conteúdos.
