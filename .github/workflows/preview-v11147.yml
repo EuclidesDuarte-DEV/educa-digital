@@ -22,6 +22,21 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Testar Worker no runtime Cloudflare (local)
+        timeout-minutes: 3
+        run: |
+          npx wrangler dev --port 8791 > /tmp/educa-wrangler.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for n in $(seq 1 30); do
+            if curl --fail --silent --show-error --max-time 3 http://127.0.0.1:8791/api/saude; then
+              echo "Worker local respondeu"
+              exit 0
+            fi
+            sleep 3
+          done
+          cat /tmp/educa-wrangler.log
+          exit 1
 
   smoke-preview:
     name: API publica do Preview (nunca producao)
