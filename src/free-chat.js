@@ -62,9 +62,9 @@ export async function responderModoLivre(request,env){
   // Orientação situacional para o modelo de menor latência. Impede a troca de
   // personagem e falas desconexas como "Qual é sua função aqui?" após "Olá".
   const normalized=parsed.message.toLocaleLowerCase('pt-BR').trim();
-  const greeting=/^(oi+|ol[aá]+|bom dia|boa tarde|boa noite|al[oô])([!?.\\s]*)$/iu.test(normalized);
-  const identity=/\\b(quem (?:é|e) voc[eê]|qual seu nome|quem est[aá] falando|sua (?:fun[cç][aã]o|identidade))\\b/iu.test(normalized);
-  const refusing=/\\b(n[aã]o vou|n[aã]o quero|n[aã]o tenho|golpe|desconfio|vou bloquear|canal oficial|confirmar por outro|desligar)\\b/iu.test(normalized);
+  const greeting=/^(oi+|ol[aá]+|bom dia|boa tarde|boa noite|al[oô])([!?.\s]*)$/iu.test(normalized);
+  const identity=/\b(quem (?:é|e) voc[eê]|qual seu nome|quem est[aá] falando|sua (?:fun[cç][aã]o|identidade))\b/iu.test(normalized);
+  const refusing=/\b(n[aã]o vou|n[aã]o quero|n[aã]o tenho|golpe|desconfio|vou bloquear|canal oficial|confirmar por outro|desligar)\b/iu.test(normalized);
   const contextualCue=greeting?'A pessoa apenas cumprimentou: devolva a saudação em uma frase e continue a história JÁ iniciada, sem perguntar a profissão/função da pessoa.'
     :identity?'A pessoa perguntou identidade: diga quem o personagem ALEGA ser e admita que ainda não há comprovação; não pergunte a profissão da pessoa.'
     :refusing?'A pessoa recusou ou demonstrou desconfiança: reconheça imediatamente, respeite e oriente a verificação independente. Não insista em Pix.'
@@ -77,7 +77,7 @@ export async function responderModoLivre(request,env){
     const options={messages,max_tokens:130,temperature:0.54,repetition_penalty:1.12};
     const generate=async opts=>{
       const result=await env.AI.run(escolherModelo(env),opts);
-      return String(result?.response||'').trim().replace(/https?:\\/\\/\\S+|www\\.\\S+/gi,'[link removido]').slice(0,330);
+      return String(result?.response||'').trim().replace(/https?:\/\/\S+|www\.\S+/gi,'[link removido]').slice(0,330);
     };
     let generated=await generate(options);
     // Reconsulta pontual apenas quando a primeira resposta violou o contexto.
