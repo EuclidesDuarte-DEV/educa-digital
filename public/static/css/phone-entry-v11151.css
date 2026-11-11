@@ -1,0 +1,86 @@
+/* Educa+ Digital V111.51 — entrada sem escolhas paralelas.
+   Um campo de telefone, um botão e textos objetivos para pessoas idosas. */
+.start-modal {
+  padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px))!important;
+  overflow-y:auto!important; overscroll-behavior:contain;
+}
+.start-modal .start-dialog.start-dialog-simple {
+  box-sizing:border-box!important;
+  width:min(100%,440px)!important;
+  max-width:440px!important;
+  max-height:calc(100dvh - 32px)!important;
+  margin:auto!important;
+  padding:clamp(22px,4vw,32px)!important;
+  border-radius:24px!important;
+  overflow-y:auto!important;
+  text-align:left!important;
+}
+.start-dialog-simple #startModalKicker {
+  display:block; margin:0 48px 8px 0!important;
+  font-size:clamp(11px,2.7vw,13px)!important;
+  letter-spacing:.08em!important;
+}
+.start-dialog-simple #startModalTitle {
+  margin:0 44px 8px 0!important; max-width:unset!important;
+  font-size:clamp(24px,5.4vw,30px)!important;
+  line-height:1.18!important; text-wrap:balance;
+}
+.start-dialog-simple #startModalIntro {
+  margin:0 0 21px!important; color:#536987!important;
+  font-size:clamp(15px,3.6vw,17px)!important; line-height:1.5!important;
+}
+.start-dialog-simple .quick-start-form { gap:13px!important; }
+.start-dialog-simple .quick-start-form label { gap:7px!important; }
+.start-dialog-simple .quick-start-form label>span {
+  font-size:16px!important; color:#17365f!important; line-height:1.4!important;
+}
+.start-dialog-simple #quickPhone {
+  min-width:0!important; width:100%!important;
+  min-height:56px!important; height:56px!important;
+  font-size:18px!important; font-weight:600!important;
+  padding:10px 15px!important; border:1.5px solid #acc7e9!important;
+  border-radius:14px!important; background:#fff!important; color:#172e54!important;
+  box-sizing:border-box!important;
+}
+.start-dialog-simple #quickPhone::placeholder { color:#778ba2!important; opacity:1!important; }
+.start-dialog-simple #quickPhone:focus-visible {
+  outline:3px solid #1373eb!important; outline-offset:2px!important; box-shadow:none!important;
+}
+.start-dialog-simple #phoneOnlyNotice {
+  margin:0!important; padding:0!important; border:0!important;
+  background:transparent!important; color:#5c7087!important;
+  font-size:13px!important; line-height:1.4!important; font-weight:500!important;
+}
+.start-dialog-simple #quickStartMessage:not([hidden]) {
+  margin:0!important; font-size:14px!important; line-height:1.45!important;
+  overflow-wrap:break-word!important;
+}
+.start-dialog-simple #quickSaveBtn {
+  width:100%!important; max-width:100%!important;
+  min-height:54px!important; height:auto!important;
+  margin:8px 0 0!important;
+  padding:12px 18px!important;
+  border-radius:14px!important; border:0!important;
+  font-size:18px!important; line-height:1.35!important; font-weight:800!important;
+  background:#216ff0!important; color:#fff!important;
+  box-shadow:none!important; cursor:pointer;
+}
+.start-dialog-simple #quickSaveBtn[disabled] { opacity:.72!important; cursor:progress!important; }
+.start-dialog-simple .start-close {
+  width:44px!important; height:44px!important;
+  min-width:44px!important; min-height:44px!important;
+  top:14px!important; right:14px!important;
+  border-radius:50%!important;
+}
+@media(max-width:359px) {
+  .start-modal { padding:12px!important; }
+  .start-modal .start-dialog.start-dialog-simple { padding:21px 18px!important; }
+  .start-dialog-simple #startModalTitle { font-size:24px!important; }
+}
+@media(max-height:580px) {
+  .start-modal { align-items:start!important; }
+  .start-modal .start-dialog.start-dialog-simple { max-height:none!important; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .start-dialog-simple, .start-dialog-simple button { animation:none!important; transition:none!important; }
+}
