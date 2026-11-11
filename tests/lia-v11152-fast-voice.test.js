@@ -77,13 +77,14 @@ test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>
   assert.equal(response.mode,'ia');
   assert.match(instructions,/português brasileiro/);
   assert.match(instructions,/Pix de treinamento|Pix FICTÍCIO|Pix fictício/);
-  assert.match(instructions,/NÃO peça CPF/);
+  assert.match(instructions,/Não solicite CPF/);
   assert.match(instructions,/Se a pessoa desconfiar/);
 });
 
 test('V111.52: publica apenas scripts e mantém os bancos D1',()=>{
-  for(const asset of ['lia-kokoro-browser.js','free-video.js','free-mode.js'])
+  for(const asset of ['lia-kokoro-browser.js','free-video.js'])
     assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=11152'));
+  assert.match(html,/free-mode\.js\?v=11153/);
   assert.match(kokoro,/lia-kokoro-worker\.js\?v=11152/);
   assert.match(sw,/educa-cf11152-lia-kokoro-fluida/);
   assert.doesNotMatch(sw,/\/api\/.*cache\.put/);
