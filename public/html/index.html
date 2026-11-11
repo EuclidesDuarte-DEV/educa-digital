@@ -405,8 +405,8 @@
                           <button type="button" id="liaPhotoConfigure" class="lia-photo-configure">Verificar avatar com IA</button>
                           <label class="lia-voice-style-label" for="freeVideoVoiceEngine">Voz da Lia
                             <select id="freeVideoVoiceEngine" aria-label="Escolher voz da Lia">
-                              <option value="feminina" selected>Kokoro pf_dora no navegador (experimental)</option>
-                              <option value="padrao">Voz alternativa (se Kokoro falhar)</option>
+                              <option value="feminina" selected>Kokoro pf_dora · voz feminina neural</option>
+                              <option value="padrao">Voz feminina do aparelho (alternativa)</option>
                             </select>
                           </label>
                           <label class="lia-voice-style-label" for="freeVideoVoiceStyle">Jeito de falar da Lia
@@ -1344,16 +1344,16 @@
   <script src="/static/js/android-bridge.js"></script>
   <script src="/static/js/training.js?v=11151"></script>
   <script src="/static/js/onboarding.js?v=11149"></script>
-  <script src="/static/js/free-mode.js?v=11132"></script>
+  <script src="/static/js/free-mode.js?v=11152"></script>
   
   <script src="/static/js/lia-female-voice.js?v=11111"></script>
-  <script src="/static/js/lia-kokoro-browser.js?v=11132"></script>
-  <script src="/static/js/free-video.js?v=11132"></script>
+  <script src="/static/js/lia-kokoro-browser.js?v=11152"></script>
+  <script src="/static/js/free-video.js?v=11152"></script>
   <script src="/static/js/web-real.js?v=109"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11151').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11152').catch(() => {});
       });
     }
   </script>
