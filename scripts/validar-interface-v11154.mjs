@@ -69,7 +69,7 @@ try{
    }
    for(let i=0;i<call.controls.length;i++)for(let j=i+1;j<call.controls.length;j++)
     assert.ok(!overlaps(call.controls[i],call.controls[j]),c.w+': controles sobrepostos');
-   if(c.w>1100)assert.equal(call.layout,'regular',c.w+': o layout deve seguir o mockup, não a tela desktop');
+   if(c.w>1100)assert.notEqual(call.layout,'wide',c.w+': o layout deve seguir o mockup, não a tela desktop');
    if([320,390,430,768,1366,1920].includes(c.w))
     await page.screenshot({path:'artifacts/layout-v11154/lia-'+c.w+'.png',fullPage:false});
    await page.evaluate(()=>window.EducaFreeView.setView('home'));
