@@ -179,3 +179,7 @@ body.landing-pretest-active:not(.prototype-focus) #phoneScreen .bank-start-cue::
     animation:none!important;transform:none!important;
   }
 }
+
+/* Etapa dentro do Banco: nunca repetir o cartão externo do pré-teste. */
+html:not(.educa-fullscreen-active) body.pretest-in-progress .phone-preview-wrap .preview-badge.training-badge,
+body.pretest-in-progress .phone-preview-wrap > .preview-badge.training-badge{display:none!important;}
