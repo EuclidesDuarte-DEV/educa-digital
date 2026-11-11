@@ -25,11 +25,11 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
       - name: V111.54 — cabeçalho desktop, destaque Banco e video da LIA sem cortes
-        run: node scripts/validar-interface-v11154.mjs
-      - name: Testar sete resolucoes sem banco remoto
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-http.log 2>&1 &
-          node scripts/validar-mobile-v11148.mjs
+          node scripts/validar-interface-v11154.mjs
+      - name: Testar sete resolucoes sem banco remoto
+        run: node scripts/validar-mobile-v11148.mjs
       - name: Validar 11 larguras, cabecalho, login e acessibilidade
         run: node scripts/validar-layout-v11149.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
