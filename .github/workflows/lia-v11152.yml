@@ -42,12 +42,12 @@ jobs:
         run: |
           case "${{ matrix.area }}" in
             frontend)
-              node --test --test-concurrency=1 tests/accessibility-*.test.js tests/android-system.test.js tests/onboarding-*.test.js tests/v111*.test.js tests/visual-hierarchy-v11146.test.js
+              node --test --test-concurrency=4 tests/accessibility-*.test.js tests/android-system.test.js tests/onboarding-*.test.js tests/v111*.test.js tests/visual-hierarchy-v11146.test.js
               ;;
             lia)
-              node --test --test-concurrency=1 tests/lia-*.test.js tests/lia3d*.test.js
+              node --test --test-concurrency=4 tests/lia-*.test.js tests/lia3d*.test.js
               ;;
             backend)
-              node --test --test-concurrency=1 tests/free-*.test.js tests/local-db-init.test.js tests/web-real.test.js tests/worker.test.js
+              node --test --test-concurrency=4 tests/free-*.test.js tests/local-db-init.test.js tests/web-real.test.js tests/worker.test.js
               ;;
           esac
