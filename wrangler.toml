@@ -39,6 +39,7 @@ database_id = "5a3484de-9457-4343-89ff-1b7f455815c4"
 binding = "AI"
 
 [previews.vars]
+PREVIEW_DB_BOOTSTRAP = "true"
 LIA_CONTAINER_ENABLED = "false"
 LIA_ENABLED = "false"
 LIA_PUBLIC_VOICE_ENABLED = "false"
