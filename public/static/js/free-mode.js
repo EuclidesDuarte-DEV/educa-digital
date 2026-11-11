@@ -95,7 +95,7 @@ function openSms(s){
 function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,48000);clearRequest();state.scenario=s;state.blocked=false;state.unread.delete(s.id);state.pending=null;els.notice.hidden=true;updateUnread();$('#scenarioTitle').textContent=s.name;$('#scenarioAvatar').textContent=s.icon;$('#scenarioAvatar').className='avatar blue small';$('#scenarioSubtitle').textContent='Contato fictício · simulação';els.wallpaper.replaceChildren();const badge=document.createElement('span');badge.className='chat-day';badge.textContent='Hoje · Ambiente de treinamento';els.wallpaper.append(badge);let hist=state.conversations.get(s.id);
  if(!hist?.length){hist=[{role:'assistant',content:s.intro}];state.conversations.set(s.id,hist);}
  show('chat');for(const row of hist)renderBubble(row.role,row.content);setStatus('');}
-function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
+function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;state.callHandsFree=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){setStatus('Não digite CPF, telefones, códigos, senhas ou links reais. Use apenas textos fictícios.');if(visible()==='free-call')els.callLine.textContent='Não informe dados reais.';return;}
  const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
@@ -138,8 +138,53 @@ function continueTraining(){
  show('home');schedule(900,1500);
 }
 function openPix(){if(!state.active)return;video()?.close?.();const s=state.scenario||state.pending||byId.family;state.scenario=s;$('#freePixKey').value='CHAVE-TREINO-'+(s.id==='delivery'?'ENTREGA':s.id==='bank'?'CENTRAL':s.id==='video'?'LIA':'RAFAEL');$('#freePixAmount').value=s.id==='delivery'?'12,00':'350,00';$('#freePixReceiver').textContent=s.id==='delivery'?'Equipe Entrega · não verificada':'Lucas Almeida · pessoa desconhecida';$('#freePixContext').textContent='Confira quem está recebendo antes de confirmar. Esta transferência é 100% fictícia.';show('free-pix');}
-function speak(){if(!('speechSynthesis' in window)){els.callLine.textContent='Voz indisponível neste navegador. Responda por texto.';return;}try{window.speechSynthesis.cancel();}catch(_){}const voice=new SpeechSynthesisUtterance(state.lastSpoken||state.scenario?.intro||'Olá');voice.lang='pt-BR';voice.rate=.94;const v=window.speechSynthesis.getVoices().find(x=>x.lang.toLowerCase()==='pt-br');if(v)voice.voice=v;window.speechSynthesis.speak(voice);}
-function listen(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){els.callLine.textContent='Reconhecimento de voz indisponível. Digite sua resposta.';return;}try{const r=new SR();r.lang='pt-BR';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';if(t)send(t);};r.onerror=()=>{els.callLine.textContent='Não foi possível reconhecer sua fala. Use o teclado.';};r.start();state.recognizer=r;}catch(_){els.callLine.textContent='Microfone indisponível. Use o teclado.';}}
+// Chamada REALISTA dentro do protótipo: fala pt-BR e escuta somente com gesto
+// explícito. Não origina ligação telefônica, não usa número real.
+function speak(){
+ if(!state.active||!state.callAccepted||visible()!=='free-call')return;
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){els.callLine.textContent='Voz indisponível neste navegador. Responda por texto.';return;}
+ try{state.recognizer?.abort?.();}catch(_){}
+ state.recognizer=null;
+ try{window.speechSynthesis.cancel();}catch(_){}
+ const utterance=new window.SpeechSynthesisUtterance(state.lastSpoken||state.scenario?.intro||'Olá');
+ utterance.lang='pt-BR';utterance.rate=1.02;utterance.pitch=1;utterance.volume=1;
+ const voices=window.speechSynthesis.getVoices?.()||[];
+ const candidate=window.EducaLiaVoice?.choose?.()||voices.find(v=>/^pt[-_]BR$/i.test(v.lang||''));
+ if(candidate)utterance.voice=candidate;
+ utterance.onstart=()=>{if(state.callUtterance===utterance)els.callLine.textContent='Personagem fictício falando…';};
+ utterance.onend=()=>{
+  if(state.callUtterance!==utterance)return;
+  state.callUtterance=null;els.callLine.textContent='Sua vez de falar ou digitar.';
+  if(state.callHandsFree&&state.active&&visible()==='free-call'&&state.callAccepted)listen();
+ };
+ utterance.onerror=()=>{
+  if(state.callUtterance!==utterance)return;
+  state.callUtterance=null;els.callLine.textContent='Áudio indisponível. Continue por texto.';
+ };
+ state.callUtterance=utterance;
+ try{window.speechSynthesis.resume?.();window.speechSynthesis.speak(utterance);}
+ catch(_){state.callUtterance=null;els.callLine.textContent='Não foi possível reproduzir voz. Continue por texto.';}
+}
+function listen(){
+ if(!state.active||!state.callAccepted||visible()!=='free-call')return;
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){state.callHandsFree=false;els.callLine.textContent='Reconhecimento de voz indisponível. Digite sua resposta.';return;}
+ if(state.recognizer)return;
+ try{
+  const r=new SR();state.recognizer=r;r.lang='pt-BR';r.interimResults=false;r.maxAlternatives=1;
+  els.callLine.textContent='Ouvindo sua resposta em português…';
+  r.onresult=e=>{
+   if(state.recognizer!==r)return;
+   const phrase=String(e.results?.[0]?.[0]?.transcript||'').trim().slice(0,350);
+   state.recognizer=null;
+   try{r.stop?.();}catch(_){}
+   if(phrase){els.callLine.textContent='Personagem preparando resposta…';void send(phrase);}
+  };
+  r.onerror=()=>{if(state.recognizer!==r)return;state.recognizer=null;els.callLine.textContent='Microfone indisponível. Continue pelo teclado.';};
+  r.onend=()=>{if(state.recognizer===r){state.recognizer=null;els.callLine.textContent='Toque em Responder por voz ou escreva sua resposta.';}};
+  r.start();
+ }catch(_){state.recognizer=null;els.callLine.textContent='Falha ao abrir microfone. Continue por texto.';}
+}
 // Captura apenas no Modo Livre. Fora dele, as 22 atividades e o WhatsApp permanecem intactos.
 document.addEventListener('click',e=>{if(!state.active)return;
  if(e.target.closest('#gestureHome')){e.preventDefault();e.stopImmediatePropagation();home();return;}
@@ -164,7 +209,7 @@ els.smsForm?.addEventListener('submit',e=>{e.preventDefault();const text=els.sms
  $('#freeSmsBack')?.addEventListener('click',home);
  $('#freeCallAnswer')?.addEventListener('click',()=>{if(!state.scenario)return;state.callAccepted=true;els.answer.hidden=true;els.callForm.hidden=false;els.callLine.textContent='Chamada fictícia conectada';if(!state.conversations.get(state.scenario.id)?.length)append('assistant',state.scenario.intro);else {const t=state.conversations.get(state.scenario.id).at(-1)?.content||state.scenario.intro;const p=document.createElement('p');p.textContent=t;els.callLog.append(p);state.lastSpoken=t;}speak();});
 $('#freeCallHangup')?.addEventListener('click',()=>finish('safe','Você encerrou a ligação sem passar informações.'));$('#freeCallVerify')?.addEventListener('click',()=>finish('safe','Você preferiu o canal oficial.'));
-$('#freeCallSpeak')?.addEventListener('click',speak);$('#freeCallMic')?.addEventListener('click',listen);$('#freeCallForm')?.addEventListener('submit',e=>{e.preventDefault();const t=els.callInput.value;els.callInput.value='';send(t);});
+$('#freeCallSpeak')?.addEventListener('click',speak);$('#freeCallMic')?.addEventListener('click',()=>{state.callHandsFree=true;listen();});$('#freeCallForm')?.addEventListener('submit',e=>{e.preventDefault();const t=els.callInput.value;els.callInput.value='';send(t);});
 $('#freeContactsBack')?.addEventListener('click',home);$('#freeContactKnown')?.addEventListener('click',()=>finish('safe','Você confirmou pelo número conhecido.'));$('#freeContactBank')?.addEventListener('click',()=>finish('safe','Você consultou um canal oficial.'));
 $('#freePixBack')?.addEventListener('click',()=>show('bank-pix'));$('#freePixCancel')?.addEventListener('click',()=>finish('safe','Você cancelou o Pix sem confirmar o destinatário.'));$('#freePixConfirm')?.addEventListener('click',()=>finish('unsafe','A pessoa que pediu o dinheiro não era o destinatário mostrado.'));
 $('#logoutBtn')?.addEventListener('click',stop);$('#focusLogoutBtn')?.addEventListener('click',stop);
