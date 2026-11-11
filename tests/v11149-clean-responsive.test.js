@@ -41,6 +41,8 @@ test('V111.49: zero tutoriais automáticos, pré-teste continua por toque',()=>{
   assert.match(training,/bankTile\.classList\.add\('landing-pretest-target'\)/);
   assert.match(training,/pretestStepBar\.hidden = !showStep/);
   assert.match(training,/function guideBankPixAction/);
+  assert.doesNotMatch(training,/requestSessionFullscreenFromGesture/);
+  assert.match(training,/fullscreenBtn\?\.addEventListener\('click'/);
 });
 
 test('V111.49: cache atualizado e mesmos D1 de produção e Preview',()=>{
