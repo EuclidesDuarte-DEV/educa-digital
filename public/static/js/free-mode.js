@@ -109,7 +109,7 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
 function finish(kind='safe',reason=''){
  if(!state.active)return;const s=state.scenario||state.pending;if(!s){home();return;}
  clearRequest();video()?.close?.();stopVoice();const safe=kind!=='unsafe';if(safe)state.finished++;
- if(SCRIPTED_ORDER.includes(s.id))state.completedSteps.add(s.id);
+ if(SCRIPTED_ORDER.includes(s.id)||BONUS_ORDER.includes(s.id))state.completedSteps.add(s.id);
  state.blocked=true;state.pending=null;clearTimeout(state.timer);els.notice.hidden=true;
  $('#freeSummaryIcon').textContent=safe?'✓':'!';$('#freeSummaryTitle').textContent=safe?'Situação concluída':'Atenção à decisão';
  const message=safe?'Você concluiu esta situação do treino.':'Você confirmou um Pix FICTÍCIO. Nenhum dinheiro verdadeiro foi enviado.';
