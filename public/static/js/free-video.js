@@ -343,6 +343,9 @@ function recoverVoice(serial,text,message){
  session.utterance=null;session.speechQueue=[];session.prefetched=null;
  try{window.speechSynthesis?.cancel();}catch(_){}
  stopVoiceProgress();toListening();subtitle(text);
+ // Se não há áudio, a mensagem fictícia deve permanecer legível para o aluno.
+ if(ui.view?.dataset)ui.view.dataset.captions='on';
+ if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
  status(message+' Você ainda pode responder por texto ou tentar a voz novamente.');
  if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}
  scheduleListen(400);
