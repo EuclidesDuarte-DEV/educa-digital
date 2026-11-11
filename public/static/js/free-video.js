@@ -342,7 +342,7 @@ function recoverVoice(serial,text,message){
  clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
  session.utterance=null;session.speechQueue=[];session.prefetched=null;
  try{window.speechSynthesis?.cancel();}catch(_){}
- stopVoiceProgress();toListening();subtitle(text);
+ stopVoiceProgress();toListening();subtitle(session.lastSpoken||text);
  // Se não há áudio, a mensagem fictícia deve permanecer legível para o aluno.
  if(ui.view?.dataset)ui.view.dataset.captions='on';
  if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
