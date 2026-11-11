@@ -21,7 +21,8 @@
 
 <link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111">
 <link rel="stylesheet" href="/static/css/hierarchy-v11146.css?v=11146">
-<link rel="stylesheet" href="/static/css/responsive-v11147.css?v=11147"></head>
+<link rel="stylesheet" href="/static/css/responsive-v11147.css?v=11147">
+<link rel="stylesheet" href="/static/css/responsive-v11148.css?v=11148"></head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
     <a class="brand" href="/" aria-label="Educa+ Digital — início">
@@ -80,6 +81,10 @@
           <input type="checkbox" id="a11yReading" class="a11y-toggle" aria-label="Ler automaticamente as orientações do guia após o primeiro toque">
         </label>
         <button id="a11yExample" class="a11y-example" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z" stroke-linecap="round" stroke-linejoin="round"/></svg> Ouvir exemplo</button>
+        <div class="a11y-inline-reader" aria-label="Controles de leitura desta tela">
+          <button id="a11yReadNow" class="a11y-read-button" type="button" hidden>Ouvir esta tela</button>
+          <span id="a11yReadStatus" class="a11y-read-status" role="status" aria-live="polite"></span>
+        </div>
       </section>
       <p class="a11y-privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5 20 6v6c0 5-3 8-8 10-5-2-8-5-8-10V6l8-3.5Z"/><path d="m8.7 12 2.3 2.3 4.5-4.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Suas escolhas ficam salvas neste navegador. Não é necessário cadastro.</p>
     </div>
@@ -110,8 +115,7 @@
       </div>
     </section>
   </div>
-  <button id="a11yReadNow" class="a11y-read-button" type="button" hidden>🔊 Ouvir esta tela</button>
-  <span id="a11yReadStatus" class="a11y-read-status" role="status" aria-live="polite"></span>
+
 
   <div class="browser-fullscreen-gate" id="browserFullscreenGate" hidden>
     <div class="browser-fullscreen-gate-card">
@@ -157,6 +161,10 @@
           <span class="badge-kicker" id="miniCoachKicker">PRIMEIRA ATIVIDADE · PIX</span>
           <strong id="miniCoachTitle">Abra o Banco</strong>
           <small id="miniCoachText">Toque no Banco para experimentar o Pix.</small>
+        </div>
+        <div id="pretestStepBar" class="pretest-step-bar" hidden role="status" aria-live="polite">
+          <strong id="pretestStepLabel">PRÉ-TESTE DE PIX</strong>
+          <span id="pretestStepHint">Abra o Banco para começar.</span>
         </div>
         <div class="phone-tools">
           <button class="phone-fullscreen-launch" id="fullscreenBtn" type="button" aria-label="Ampliar celular" title="Ampliar celular">
@@ -1336,10 +1344,10 @@
     </section>
   </main>
 
-  <script src="/static/js/accessibility.js?v=11147"></script>
+  <script src="/static/js/accessibility.js?v=11148"></script>
   <script src="/static/js/accessibility-external.js?v=11139"></script>
   <script src="/static/js/android-bridge.js"></script>
-  <script src="/static/js/training.js?v=11147"></script>
+  <script src="/static/js/training.js?v=11148"></script>
   <script src="/static/js/onboarding.js?v=11147"></script>
   <script src="/static/js/free-mode.js?v=11132"></script>
   
@@ -1350,7 +1358,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11140').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11148').catch(() => {});
       });
     }
   </script>
