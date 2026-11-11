@@ -595,7 +595,7 @@ export default {
     }
 
     try {
-      await garantirBancoDeTeste(env);
+      if (!rotaPublica) await garantirBancoDeTeste(env);
       return await rotearApi(request, env, url);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');
@@ -604,6 +604,9 @@ export default {
       }
       if (falha?.message?.includes('dados grandes')) {
         return erro(413, 'Dados enviados excedem o limite.');
+      }
+      if (env.PREVIEW_DB_BOOTSTRAP === 'true' && !rotaPublica) {
+        return responder({ ok: false, message: 'Falha no banco de testes.', diagnostico_preview: String(falha?.message || 'erro desconhecido').slice(0, 180) }, 500);
       }
       return erro(500, 'Falha temporária ao acessar o banco de dados.');
     }
