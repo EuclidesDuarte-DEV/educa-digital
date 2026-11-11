@@ -14,6 +14,7 @@ jobs:
   testes:
     name: Testes locais Node.js e schema Preview
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,7 +22,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: npm test
+      - run: node --test --test-concurrency=4 tests/*.test.js
 
   smoke-preview:
     name: API publica do Preview (nunca producao)
