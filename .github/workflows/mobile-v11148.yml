@@ -1,4 +1,4 @@
-name: Layout responsivo e acessibilidade V111.50
+name: Layout responsivo e acessibilidade V111.51
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   viewport-smoke:
-    name: Responsividade e fullscreen 320–1920px
+    name: Layout completo e entrada por telefone 320–1920px
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -32,13 +32,16 @@ jobs:
         run: node scripts/validar-layout-v11149.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
         run: node scripts/validar-fullscreen-v11150.mjs
+      - name: Entrada de telefone unica — conta nova e existente
+        run: node scripts/validar-entrada-v11151.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: educa-v11150-fullscreen-multidevice
+          name: educa-v11151-entrada-unica
           path: |
             artifacts/layout-v11148/
             artifacts/layout-v11149/
             artifacts/fullscreen-v11150/
+            artifacts/entrada-v11151/
           if-no-files-found: ignore
