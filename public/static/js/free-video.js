@@ -319,22 +319,22 @@ function completed(){
 function audioOnly(text,serial){
  if(serial!==session.serial||!session.active)return;
  clearMedia();indicator('Lia falando · vídeo realista controlado pela voz');
- if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){session.utterance=null;subtitle(text);status('Seu navegador não oferece voz. Configure uma voz pt-BR ou o Kokoro.');scheduleListen(600);return;}
+ if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){session.utterance=null;stopVoiceProgress();subtitle(text);status('Voz não disponível neste navegador. Leia as legendas ou tente Kokoro novamente.');scheduleListen(600);return;}
  // Uma voz pt-BR sem nome feminino reconhecido NÃO é usada automaticamente.
  const startFemale=voice=>{
   if(serial!==session.serial||!session.active||!session.connected)return;
   if(!voice||!/^pt[-_]BR$/i.test(voice.lang)){
-   session.utterance=null;toListening();subtitle(text);indicator('Lia · voz feminina indisponível neste aparelho');
+   stopVoiceProgress();session.utterance=null;toListening();subtitle(text);indicator('Lia · voz feminina indisponível neste aparelho');
    status('Não há voz feminina pt-BR disponível. Abra “Escolher voz feminina” ou ative o Kokoro (pf_dora).');scheduleListen(600);return;
   }
   const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';
-  u.rate=selectedStyle()==='calma'?.92:selectedStyle()==='clara'?.97:1.0;
+  u.rate=selectedStyle()==='calma'?.95:selectedStyle()==='clara'?1.02:1.05;
   u.pitch=1;u.volume=outputMuted?0:1;u.voice=voice;
   startUtterance(u);
  };
  function startUtterance(u){
  session.utterance=u;let started=false;
- u.onstart=()=>{if(serial!==session.serial)return;started=true;clearTimeout(session.voiceStartTimer);
+ u.onstart=()=>{if(serial!==session.serial)return;started=true;stopVoiceProgress();clearTimeout(session.voiceStartTimer);
     referenceMotion();subtitle(text);status('Lia falando. Os vídeos ilustrativos acompanham a voz: os fonemas são aproximados, com o movimento mais natural disponível neste aparelho.');};
  u.onpause=()=>{if(serial===session.serial)toListening();};
  u.onresume=()=>{if(serial===session.serial)referenceMotion();};
