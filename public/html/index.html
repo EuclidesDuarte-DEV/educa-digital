@@ -363,6 +363,26 @@
                   <p class="v106-app-note">Sem ligação real. Voz disponível conforme o navegador.</p>
                 </section>
               </div>
+              <!-- V111.53: caixa de SMS inteiramente fictícia, sem envio a terceiros. -->
+              <div class="android-view" data-view="free-sms" id="freeSmsView">
+                <section class="free-sms-screen" aria-label="Mensagens SMS de treinamento">
+                  <header class="free-sms-header">
+                    <button id="freeSmsBack" type="button" aria-label="Voltar ao celular">‹</button>
+                    <div><strong id="freeSmsTitle">Mensagem desconhecida</strong><small>SMS fictício · ambiente de treinamento</small></div>
+                  </header>
+                  <div class="free-sms-hint">Treinamento: nenhuma mensagem é enviada para números reais. Não compartilhe dados pessoais.</div>
+                  <div class="free-sms-messages" id="freeSmsMessages" aria-live="polite"></div>
+                  <div class="free-sms-controls">
+                    <button type="button" id="freeSmsVerify">Conferir no canal oficial</button>
+                    <button type="button" id="freeSmsIgnore">Ignorar SMS</button>
+                  </div>
+                  <form id="freeSmsForm" class="free-sms-form" autocomplete="off">
+                    <label class="sr-only" for="freeSmsInput">Responder ao SMS fictício</label>
+                    <input id="freeSmsInput" maxlength="350" placeholder="Escreva sua resposta…"/>
+                    <button type="submit">Enviar</button>
+                  </form>
+                </section>
+              </div>
               <!-- V110: videochamada educativa com pessoa fictícia e diálogo real da IA. -->
               <div class="android-view" data-view="free-video" id="freeVideoView">
                 <section class="v110-video" aria-label="Videochamada de simulação com avatar de inteligência artificial">
@@ -1344,7 +1364,7 @@
   <script src="/static/js/android-bridge.js"></script>
   <script src="/static/js/training.js?v=11151"></script>
   <script src="/static/js/onboarding.js?v=11149"></script>
-  <script src="/static/js/free-mode.js?v=11152"></script>
+  <script src="/static/js/free-mode.js?v=11153"></script>
   
   <script src="/static/js/lia-female-voice.js?v=11111"></script>
   <script src="/static/js/lia-kokoro-browser.js?v=11152"></script>
