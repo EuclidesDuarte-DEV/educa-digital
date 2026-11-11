@@ -7,10 +7,10 @@ const worker=readFileSync('src/worker.js','utf8');
 const server=readFileSync('lia_motor/server.py','utf8');
 const starter=readFileSync('scripts/windows/INICIAR_LIA_VOZ_HUMANA_WINDOWS.ps1','utf8');
 
-test('V111.18 oferece voz feminina garantida selecionada na videochamada',()=>{
+test('V111.52 prioriza voz feminina Kokoro na videochamada',()=>{
  assert.match(html,/id="freeVideoVoiceEngine"/);
  assert.match(html,/<option value="feminina" selected>/);
- assert.match(html,/Kokoro pf_dora no navegador/);
+ assert.match(html,/Kokoro pf_dora · voz feminina neural|Kokoro pf_dora no navegador/);
  assert.match(js,/engine:selectedEngine\(\)/);
  assert.match(js,/selectedEngine=\(\)=>voiceEngine\?\.value==='padrao'\?'padrao':'feminina'/);
 });

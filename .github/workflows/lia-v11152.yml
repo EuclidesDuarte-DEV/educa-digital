@@ -1,0 +1,53 @@
+name: LIA V111.52 — testes focados da voz e do Modo Livre
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lia-voice-sanity:
+    name: Kokoro pf_dora e IA contextual (Node)
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Validar voz feminina, timeout e roteiro educativo
+        run: node --test --test-concurrency=1 tests/lia-v11152-fast-voice.test.js tests/lia-v11132-runtime.test.js tests/lia-v11130-watchdog.test.js tests/lia-v11129-diagnostico.test.js tests/free-mode.test.js
+
+  regressao-por-area:
+    name: Regressão ${{ matrix.area }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        area: [frontend, lia, backend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Verificar todas as áreas em execuções independentes
+        run: |
+          case "${{ matrix.area }}" in
+            frontend)
+              node --test --test-concurrency=4 tests/accessibility-*.test.js tests/android-system.test.js tests/onboarding-*.test.js tests/v111*.test.js tests/visual-hierarchy-v11146.test.js
+              ;;
+            lia)
+              node --test --test-concurrency=4 tests/lia-*.test.js tests/lia3d*.test.js
+              ;;
+            backend)
+              node --test --test-concurrency=4 tests/free-*.test.js tests/local-db-init.test.js tests/web-real.test.js tests/worker.test.js
+              ;;
+          esac

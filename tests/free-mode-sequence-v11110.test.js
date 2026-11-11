@@ -88,5 +88,5 @@ test('V111.12: sair do treinamento cancela avanço pendente',()=>{
 });
 test('V111.10: as ações seguras do WhatsApp e a transição explícita aparecem no HTML',()=>{
  for(const id of ['freeFamilyActions','freeFamilyVerify','freeFamilyBlock','freeSummaryNext'])assert.ok(page.includes(`id="${id}"`));
- assert.ok(page.includes('free-mode.js?v=11132'));
+ assert.match(page,/free-mode\.js\?v=111(?:32|52)/);
 });

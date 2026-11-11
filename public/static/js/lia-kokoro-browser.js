@@ -33,8 +33,8 @@
  function confirmDevice(){try{localStorage.setItem(PREF_KEY,device);}catch(_){}return device;}
 
  const requests=new Map();
- const PREPARE_LIMIT_MS=180000; // download inicial pode demorar
- const SPEAK_LIMIT_MS=90000;  // evita spinner infinito se WebGPU/WASM travar
+ const PREPARE_LIMIT_MS=120000; // download inicial pode demorar
+ const SPEAK_LIMIT_MS=45000;  // evita spinner infinito se WebGPU/WASM travar
  function fail(message){
   const error=Error(message);lastError=message;progress='Falha: '+message;
   if(bootTimer){clearTimeout(bootTimer);bootTimer=null;}
@@ -46,7 +46,7 @@
  }
  function ensure(){
   if(worker)return worker;
-  worker=new Worker('/static/js/lia-kokoro-worker.js?v=11132',{type:'module'});
+  worker=new Worker('/static/js/lia-kokoro-worker.js?v=11152',{type:'module'});
   worker.onmessage=({data})=>{
    if(data.type==='progress'){
     progress=data.stage||progress;
@@ -85,7 +85,7 @@
   if(ready)return ready;
   lastError='';progress='Inicializando motor Kokoro…';
   ready=new Promise((resolve,reject)=>{readyResolve=resolve;readyReject=reject;});
-  bootTimer=setTimeout(()=>fail('Preparação excedeu 180 segundos. Verifique downloads/CDN, memória e Console.'),PREPARE_LIMIT_MS);
+  bootTimer=setTimeout(()=>fail('Preparação excedeu 120 segundos. Confira conexão, memória e CDN.'),PREPARE_LIMIT_MS);
   try{ensure().postMessage({type:'prepare',mode:device});}catch(err){fail('Não foi possível iniciar Worker: '+err.message);}
   return ready;
  }
@@ -101,7 +101,7 @@
    await prepare();
    const id=++seq;
    return new Promise((resolve,reject)=>{
-    const timer=setTimeout(()=>fail('Síntese excedeu 90 segundos em '+device+'. Tente uma frase menor ou outro modo. Isso indica que a inferência travou ou está lenta, não que a voz foi reproduzida.'),SPEAK_LIMIT_MS);
+    const timer=setTimeout(()=>fail('Síntese excedeu 45 segundos em '+device+'. Tente uma frase menor ou outro modo. Isso indica que a inferência travou ou está lenta, não que a voz foi reproduzida.'),SPEAK_LIMIT_MS);
     requests.set(id,{resolve,reject,timer,phrase,style});
     try{ensure().postMessage({type:'speak',id,text:phrase,style,mode:device});}
     catch(err){fail('Não foi possível solicitar síntese: '+err.message);}
@@ -112,13 +112,9 @@
  }
  function prewarmIntro(){
   if(introPending)return introPending;
-  // Durante o WhatsApp, preparar 2 trechos CURTOS e reutilizá-los ao atender.
-  introPending=(async()=>{
-   await prepare();
-   await synthesize('Oi! Sou a Lia.');
-   await synthesize('Estou em outro celular.');
-   return true;
-  })().catch(error=>{introPending=null;throw error;});
+  // Pré-aquece somente o motor: as duas falas antigas ocupavam a fila
+  // do Worker e impediam a primeira resposta ao atender a chamada.
+  introPending=prepare().then(()=>true).catch(error=>{introPending=null;throw error;});
   return introPending;
  }
  function setDevice(value){
@@ -130,7 +126,8 @@
  }
  window.EducaLiaBrowserKokoro=Object.freeze({
   prepare,synthesize,prewarmIntro,setDevice,confirmDevice,getStatus:()=>progress,getLastError:()=>lastError,
-  getDiagnostics:()=>({version:'11132',device,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
-  voice:'pf_dora',version:'11132'
+  isReady:()=>Boolean(ready&&readyResolve===null&&worker&&lastError===''),
+  getDiagnostics:()=>({version:'11152',device,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
+  voice:'pf_dora',version:'11152'
  });
 })();
