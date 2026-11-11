@@ -66,7 +66,7 @@ function updatePreview(s){const row=$(`#whatsappView [data-scenario="${s.id}"],#
 function nextScriptedScenario(){return byId[SCRIPTED_ORDER.find(id=>!state.completedSteps.has(id))]||null;}
 function chooseScenario(){let s=nextScriptedScenario();if(!s)s=byId[EXTRA_ORDER.find(id=>!state.completedSteps.has(id))];if(!s){const pool=[...EXTRA_ORDER,'friend','daughter','family-group','bank','video'].filter(id=>!state.seen.slice(-3).includes(id)).map(id=>byId[id]);s=pool[Math.floor(Math.random()*pool.length)]||byId.delivery;}state.delivered++;state.seen.push(s.id);return s;}
 function triggerEvent(){if(!state.active)return;if(state.blocked||visible()==='free-pix'||visible()==='free-call'||visible()==='free-video'||visible()==='free-sms'||visible()==='chat'){schedule(12000,22000);return;}const s=chooseScenario();state.pending=s;
- if(s.channel!=='call'&&s.channel!=='video'){const list=state.conversations.get(s.id)||[];if(!list.length)list.push({role:'assistant',content:s.intro});state.conversations.set(s.id,list.slice(-14));state.unread.add(s.id);updatePreview(s);}
+ if(s.channel!=='call'&&s.channel!=='video'){const list=state.conversations.get(s.id)||[];if(!list.length)list.push({role:'assistant',content:s.intro});state.conversations.set(s.id,list.slice(-14));if(s.channel==='whatsapp'){state.unread.add(s.id);updatePreview(s);}}
  els.noticeIcon.textContent=s.channel==='call'?'☎':s.channel==='video'?'▣':s.channel==='sms'?'✉':'●';els.noticeTitle.textContent=s.notification;els.noticeText.textContent=s.name+': '+s.intro.slice(0,82);els.notice.hidden=false;updateUnread();clearTimeout(state.timer);state.timer=null;
  if(s.channel==='call')showIncomingCall(s);else if(s.channel==='video')video()?.incoming(s);
 }
@@ -101,7 +101,7 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  catch(ex){err=timedOut?'A IA demorou para responder. Tente novamente com uma frase curta.':ex.name==='AbortError'?'A conexão com a IA foi interrompida.':/Failed to fetch|Failed to execute|NetworkError|fetch failed/i.test(String(ex.message))?'Não foi possível conectar à IA. Confira Ollama no Educa+ local ou o Workers AI na Cloudflare.':String(ex.message||'Não foi possível falar com a IA.');}
  finally{clearTimeout(responseTimer);if(state.request===abort)state.request=null;state.replying=false;els.send.disabled=false;els.typing.hidden=true;}
  if(!state.active||state.scenario?.id!==current||(abort.signal.aborted&&!timedOut))return;
- if(err){if(visible()==='chat')setStatus(err);else if(visible()==='free-sms'&&els.smsLog)smsBubble('assistant','A IA não respondeu agora. Tente novamente.');else if(visible()==='free-video')video()?.error(err);else els.callLine.textContent=err;return;}
+ if(err){if(visible()==='chat')setStatus(err);else if(visible()==='free-sms'&&els.smsLog)smsBubble('status',err);else if(visible()==='free-video')video()?.error(err);else els.callLine.textContent=err;return;}
  append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();}
 function finish(kind='safe',reason=''){
  if(!state.active)return;const s=state.scenario||state.pending;if(!s){home();return;}
