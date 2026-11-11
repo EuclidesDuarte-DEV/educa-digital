@@ -55,7 +55,7 @@ function exit(){stop();bridge()?.openLearningHub();}
 function home(){if(!state.active)return;clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
 function makeContactRows(){const list=$('#whatsappView .wa-chat-list');if(!list)return;
   for(const old of list.querySelectorAll('[data-free-scenario]'))old.remove();
-  for(const s of [byId.delivery,byId.friend]){
+  for(const s of [byId.delivery,byId.code,byId.marketplace,byId.support,byId.relative,byId.friend]){
     const btn=document.createElement('button');btn.type='button';btn.className='chat-row training-chat';btn.dataset.freeScenario=s.id;
     const avatar=document.createElement('span');avatar.className='avatar wa-avatar green';avatar.textContent=s.icon;
     const copy=document.createElement('span');copy.className='chat-copy';const strong=document.createElement('strong');strong.textContent=s.name;const small=document.createElement('small');small.textContent='Toque para conversar';copy.append(strong,small);
