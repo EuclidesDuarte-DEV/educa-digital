@@ -70,6 +70,9 @@
   const miniCoachTitle = $('#miniCoachTitle');
   const miniCoachText = $('#miniCoachText');
   const trainingBadge = $('.training-badge');
+  const pretestStepBar = $('#pretestStepBar');
+  const pretestStepLabel = $('#pretestStepLabel');
+  const pretestStepHint = $('#pretestStepHint');
   const learningGreeting = $('#learningGreeting');
   const guidedKicker = $('#guidedKicker');
   const guidedTitle = $('#guidedTitle');
@@ -570,6 +573,23 @@
     const safeName = exists ? name : 'learning';
     views.forEach(view => view.classList.toggle('is-active', view.dataset.view === safeName));
     phoneScreen?.setAttribute('data-current-view', safeName);
+    syncPretestStepUI(safeName);
+  }
+
+  // O pré-teste não cria uma segunda atividade fora do celular.
+  // O resumo compacto acompanha o aplicativo ativo e continua visível na rolagem.
+  function syncPretestStepUI(viewName = phoneScreen?.dataset.currentView || 'home') {
+    const steps = { 'bank-home': 1, 'bank-pix': 2, 'bank-send': 3, 'bank-review': 4 };
+    const step = steps[viewName];
+    const showStep = Boolean(isGuestPretest && accessMode !== 'registered' && trainingStarted && step);
+    document.body.classList.toggle('pretest-in-progress', showStep);
+    document.body.classList.toggle('educa-session-active', trainingStarted);
+    if (pretestStepBar) pretestStepBar.hidden = !showStep;
+    if (!showStep) return;
+    if (pretestStepLabel) pretestStepLabel.textContent = `PRÉ-TESTE DE PIX · ETAPA ${step} DE 4`;
+    if (pretestStepHint) {
+      pretestStepHint.textContent = miniCoachTitle?.textContent?.trim() || 'Siga a orientação destacada no celular.';
+    }
   }
 
   // Ponte opcional: o modo livre navega sem alterar as atividades guiadas.
@@ -1290,6 +1310,7 @@
     if (miniCoachKicker) miniCoachKicker.textContent = kicker;
     if (miniCoachTitle) miniCoachTitle.textContent = title;
     if (miniCoachText) miniCoachText.textContent = text;
+    syncPretestStepUI();
   }
 
   function openSettingsView(view = 'settings-main') {
@@ -1505,7 +1526,7 @@
     clearGuide();
     if (action === 'pix-recipient') {
       openBankView('bank-home');
-      setCoachMessage('PASSO 2 DE 4 · PIX', 'Encontre o Pix no banco', 'Dentro do banco, toque no botão Pix.');
+      setCoachMessage('ETAPA 1 DE 4 · PIX', 'Encontre o Pix no banco', 'Dentro do banco, toque no botão Pix.');
       announce('Você abriu o banco. Agora toque no botão Pix.', true);
       scheduleGuide(bankPixBtn, { label: 'Pix' }, 120);
       return;
@@ -2007,7 +2028,7 @@
     nativeHaptic('tap');
     openBankView('bank-pix');
     if (currentLearningTopic === 'pix' && currentTopicAction === 'pix-recipient') {
-      setCoachMessage('PASSO 3 DE 4 · PIX', 'Escolha Enviar Pix', 'Agora toque em Enviar Pix.');
+      setCoachMessage('ETAPA 2 DE 4 · PIX', 'Escolha Enviar Pix', 'Agora toque em Enviar Pix.');
       announce('Agora toque em Enviar Pix.', true);
       scheduleGuide(bankSendPixBtn, { label: 'Enviar Pix' }, 120);
     }
@@ -2120,7 +2141,7 @@
     resetPixForm();
     openBankView('bank-send');
     if (currentLearningTopic === 'pix' && currentTopicAction === 'pix-recipient') {
-      setCoachMessage('PASSO 4 DE 7 · PIX', 'Escolha uma chave de exemplo', 'Pode ser E-mail, Celular ou CPF. As três têm exemplos fictícios prontos.');
+      setCoachMessage('ETAPA 3 DE 4 · PIX', 'Escolha uma chave de exemplo', 'Pode ser E-mail, Celular ou CPF. As três têm exemplos fictícios prontos.');
       announce('Escolha o tipo de chave, toque no exemplo pronto e selecione um valor.', true);
       scheduleGuide($('#pixTypeGrid'), { label: 'Escolha uma opção' }, 120);
     }
@@ -2150,7 +2171,7 @@
     if (reviewAmount) reviewAmount.textContent = Number(pixChosenAmount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     clearGuide();
     openBankView('bank-review');
-    setCoachMessage('PIX · CONFERÊNCIA', 'Confira com atenção', 'Você esperava João, mas apareceu Carlos. Escolha a atitude mais segura.');
+    setCoachMessage('ETAPA 4 DE 4 · PIX', 'Confira com atenção', 'Você esperava João, mas apareceu Carlos. Escolha a atitude mais segura.');
     announce('Atenção! Você esperava João Pereira, mas apareceu Carlos Almeida. O que é mais seguro fazer?', true);
     scheduleGuide(bankReviewOptions, { label: 'O que você faria?' }, 130);
   });
