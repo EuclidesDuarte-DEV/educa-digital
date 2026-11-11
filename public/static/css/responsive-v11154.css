@@ -149,30 +149,28 @@ html:not(.educa-fullscreen-active) #phoneHardware #freeVideoView[data-lia-short=
   }
 }
 
-/* O Banco é a PRIMEIRA atividade. Apontar sem bloquear outras áreas da tela. */
-body.landing-pretest-active:not(.prototype-focus) #phoneScreen [data-open-app="bank"].landing-pretest-target{
-  position:relative;z-index:18;overflow:visible!important;
+/* V111.55: foco visual anterior exclusivamente no Banco.
+   O escurecimento é limitado ao interior do celular, e o balão
+   acompanha o aplicativo mesmo com telas e textos de tamanhos distintos. */
+body.landing-pretest-active .phone-preview-wrap > .preview-badge.training-badge {
+  display:none!important;
 }
-body.landing-pretest-active:not(.prototype-focus) #phoneScreen [data-open-app="bank"].landing-pretest-target .adaptive-icon{
-  outline:3px solid #f8a529!important;outline-offset:4px!important;
-  border-radius:15px!important;box-shadow:0 0 0 7px #fff8!important;
-  filter:drop-shadow(0 1px 5px #2563eb33)!important;
+body.landing-pretest-active.guide-focus-active #phoneScreen .guide-spotlight {
+  border:3px solid rgba(255,255,255,.98)!important;
+  box-shadow:0 0 0 9999px rgba(6,15,29,.70),0 0 18px 6px rgba(255,255,255,.60),0 0 0 4px rgba(255,221,146,.95)!important;
 }
-#phoneScreen .bank-start-cue{display:none}
-body.landing-pretest-active:not(.prototype-focus) #phoneScreen .bank-start-cue{
-  box-sizing:border-box;display:block;position:absolute;
-  top:-49px;left:0;z-index:80;
-  min-width:94px;max-width:136px;padding:8px 9px;
-  border-radius:12px;background:#246de6;color:white;
-  font:800 clamp(11px,3cqw,13px)/1.2 Inter,system-ui,sans-serif;
-  text-align:center;white-space:normal;
-  pointer-events:none;box-shadow:0 6px 14px #103a7d50;
+body.landing-pretest-active.guide-focus-active #phoneScreen .guide-pointer {
+  box-sizing:border-box;
+  max-width:min(200px,calc(100% - 16px));
+  font-size:clamp(12px,3cqw,14px);
+  line-height:1.25;
 }
-body.landing-pretest-active:not(.prototype-focus) #phoneScreen .bank-start-cue::after{
-  content:'';position:absolute;top:100%;left:24px;
-  border-left:7px solid transparent;border-right:7px solid transparent;
-  border-top:9px solid #246de6;
+body.landing-pretest-active.guide-focus-active #phoneScreen [data-open-app="bank"].landing-pretest-target .adaptive-icon {
+  outline:none!important;
+  box-shadow:none!important;
+  filter:none!important;
 }
+#phoneScreen .bank-start-cue{display:none!important}
 @media(prefers-reduced-motion:reduce){
   body.landing-pretest-active #phoneScreen [data-open-app="bank"] .adaptive-icon,
   body.landing-pretest-active #phoneScreen [data-open-app="bank"] .adaptive-icon img{

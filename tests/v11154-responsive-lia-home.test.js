@@ -9,16 +9,14 @@ const css=read('public/static/css/responsive-v11154.css');
 const sw=read('public/static/sw.js');
 const db=read('wrangler.toml');
 
-test('V111.54: dica de primeira atividade sobre Banco sem tour automático',()=>{
+test('V111.55: holofote inicial destaca Banco sem duplicações',()=>{
  assert.match(training,/function applyLandingPretest\(\)/);
- assert.match(training,/hint\.className = 'bank-start-cue'/);
- assert.match(training,/hint\.textContent = 'Toque aqui'/);
- assert.match(training,/bankTile\.appendChild\(hint\)/);
- assert.match(training,/el\.querySelector\('\.bank-start-cue'\)\?\.remove\(\)/);
- assert.match(training,/primeira atividade: toque aqui/i);
- assert.doesNotMatch(training,/scheduleGuide\(bankTile,\s*\{ label:/);
- assert.match(css,/body\.landing-pretest-active:not\(\.prototype-focus\)/);
- assert.match(css,/bank-start-cue::after/);
+ assert.match(training,/scheduleGuide\(bankTile,\s*\{\s*label:\s*'Faça o pré-teste'\s*\},\s*220\)/);
+ assert.match(training,/bankTile\.classList\.add\('landing-pretest-target'\)/);
+ assert.doesNotMatch(training,/bankTile\.appendChild\(hint\)/);
+ assert.match(css,/body\.landing-pretest-active\.guide-focus-active #phoneScreen \.guide-spotlight/);
+ assert.match(css,/body\.landing-pretest-active \.phone-preview-wrap > \.preview-badge\.training-badge/);
+ assert.match(css,/rgba\(6,15,29,\.70\)/);
  assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
 });
 
@@ -39,10 +37,10 @@ test('V111.54: home desktop compacta, mobile pré-existente intacta',()=>{
  assert.match(css,/@media\(min-width:1100px\)/);
  assert.match(css,/height:72px!important/);
  assert.match(css,/padding-top:clamp\(12px,2vw,24px\)/);
- assert.match(html,/responsive-v11154\.css\?v=11154/);
- assert.match(html,/training\.js\?v=11154/);
+ assert.match(html,/responsive-v11154\.css\?v=11155/);
+ assert.match(html,/training\.js\?v=11155/);
  assert.match(html,/free-video\.js\?v=11154/);
- assert.match(sw,/educa-cf11154-home-video-cue/);
+ assert.match(sw,/educa-cf11155-bank-spotlight/);
  assert.match(sw,/responsive-v11154\.css/);
 });
 

@@ -1,6 +1,6 @@
 /* V110.3: cache de frontend atualizado. Não guarda respostas de APIs ou dados privados. */
 // V111.47: educa-cf11147-phone-only-responsive-a11y (cache anterior).
-const CACHE = 'educa-cf11154-home-video-cue';
+const CACHE = 'educa-cf11155-bank-spotlight';
 const SHELL = ['/', '/static/css/app.css', '/static/css/accessibility.css', '/static/css/responsive-v11147.css', '/static/css/responsive-v11148.css', '/static/css/responsive-v11149.css', '/static/css/fullscreen-v11150.css', '/static/css/phone-entry-v11151.css', '/static/css/responsive-v11154.css', '/static/js/accessibility.js', '/static/js/accessibility-external.js', '/static/css/onboarding.css', '/static/js/onboarding.js', '/static/css/android-system.css', '/static/js/training.js', '/static/js/android-system.js', '/static/js/free-mode.js', '/static/css/free-mode.css', '/static/css/web-real.css', '/static/js/web-real.js', '/static/img/logo.png', '/static/js/free-video.js', '/static/js/lia-kokoro-browser.js', '/static/js/lia-kokoro-worker.js', '/static/js/lia-female-voice.js', '/static/css/lia-female-voice.css', '/static/css/lia-fotorreal.css', '/static/img/lia-lovable-poster.jpg', '/static/css/free-video.css', '/lia-ao-vivo.html', '/static/js/lia-ao-vivo.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).catch(() => {}));

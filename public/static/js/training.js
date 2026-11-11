@@ -652,18 +652,12 @@
     document.body.classList.add('landing-pretest-active');
     bankTile.classList.add('landing-pretest-target');
     bankTile.setAttribute('aria-label', 'Banco Educa. Primeira atividade: toque aqui para começar o pré-teste de Pix.');
-    // Pista curta sobre o ícone, sem escurecer o celular nem abrir o tutorial.
-    // O balão desaparece quando o primeiro aplicativo é aberto.
-    const hint = document.createElement('span');
-    hint.className = 'bank-start-cue';
-    hint.setAttribute('aria-hidden', 'true');
-    hint.textContent = 'Toque aqui';
-    bankTile.appendChild(hint);
+    // V111.55: destaque original só no aplicativo Banco, dentro do celular.
+    // O nome do aplicativo também permanece iluminado; sem dica duplicada.
     if (miniCoachKicker) miniCoachKicker.textContent = 'PRÉ-TESTE · PIX';
     if (miniCoachTitle) miniCoachTitle.textContent = 'Experimente pelo Banco';
     if (miniCoachText) miniCoachText.textContent = 'Toque no Banco para experimentar uma atividade de Pix.';
-    // V111.49: na tela inicial, destacar o Banco sem escurecer o celular.
-    // O guia passo a passo começa somente quando a pessoa abre a atividade.
+    scheduleGuide(bankTile, { label: 'Faça o pré-teste' }, 220);
   }
 
   function scheduleGuide(target, options = {}, delay = 100) {

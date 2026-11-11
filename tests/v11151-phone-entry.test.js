@@ -42,7 +42,7 @@ test('V111.51: visual conciso, responsivo e cache atualizado', () => {
   assert.match(css, /@media\(max-width:359px\)/);
   assert.match(html, /phone-entry-v11151\.css\?v=11151/);
   assert.match(html, /training\.js\?v=111(?:51|54)/);
-  assert.match(sw, /(?:educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue)/);
+  assert.match(sw, /(?:educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight)/);
   assert.match(sw, /phone-entry-v11151\.css/);
 });
 

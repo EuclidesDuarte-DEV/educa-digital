@@ -36,7 +36,7 @@ test('V111.49: cabeçalho alinhado e botão secundário discreto',()=>{
 test('V111.49: zero tutoriais automáticos, pré-teste continua por toque',()=>{
   assert.doesNotMatch(onboarding,/if \(!rememberedAccount\(\)\?\.phone\) start\(\)/);
   assert.doesNotMatch(training,/window\.EducaGuidedTour\?\.startAuthenticated\?\.\(user\)/);
-  assert.doesNotMatch(training,/scheduleGuide\(bankTile,\s*\{\s*label:\s*'Faça o pré-teste'/);
+  assert.match(training,/scheduleGuide\(bankTile,\s*\{\s*label:\s*'Faça o pré-teste'/);
   assert.match(onboarding,/replay\?\.addEventListener\('click'/);
   assert.match(training,/bankTile\.classList\.add\('landing-pretest-target'\)/);
   assert.match(training,/pretestStepBar\.hidden = !showStep/);
@@ -46,7 +46,7 @@ test('V111.49: zero tutoriais automáticos, pré-teste continua por toque',()=>{
 });
 
 test('V111.49: cache atualizado e mesmos D1 de produção e Preview',()=>{
-  assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue)/);
+  assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight)/);
   assert.match(sw,/responsive-v11149\.css/);
   assert.match(html,/responsive-v11149\.css\?v=11149/);
   assert.match(html,/accessibility-external\.js\?v=111(?:49|50)/);
