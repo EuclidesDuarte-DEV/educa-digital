@@ -340,8 +340,8 @@ function completed(){
 function recoverVoice(serial,text,message){
  if(serial!==session.serial||!session.active||!session.connected)return;
  clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
- try{window.speechSynthesis?.cancel();}catch(_){}
  session.utterance=null;session.speechQueue=[];session.prefetched=null;
+ try{window.speechSynthesis?.cancel();}catch(_){}
  stopVoiceProgress();toListening();subtitle(text);
  status(message+' Você ainda pode responder por texto ou tentar a voz novamente.');
  if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}
@@ -365,7 +365,7 @@ function audioOnly(text,serial){
   u.onstart=()=>{if(serial!==session.serial||session.utterance!==u)return;
    started=true;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
    ui.play.hidden=true;referenceMotion();subtitle(text);
-   status('Lia falando. A boca acompanha a fala de forma aproximada neste navegador.');
+   status('Lia falando. Os fonemas são aproximados nos clipes ilustrativos deste navegador.');
   };
   u.onpause=()=>{if(serial===session.serial&&session.utterance===u)toListening();};
   u.onresume=()=>{if(serial===session.serial&&session.utterance===u)referenceMotion();};
