@@ -1,0 +1,133 @@
+/* Educa+ Digital V111.46 — hierarquia de leitura, sem modificar os fluxos. */
+/* 1) HOME — só o objetivo e a ação principal recebem a cor mais forte. */
+#learningView .learning-header { margin-bottom: 11px !important; }
+#learningView .learning-header strong {
+  color:#142f54 !important;
+  font-size:clamp(21px,6cqw,26px) !important;
+  line-height:1.19 !important;
+  font-weight:800 !important;
+  letter-spacing:-.025em;
+}
+#learningView .learning-header small {color:#59708b!important; font-size:10px!important;}
+#learningView .learning-featured {
+  min-height:105px!important;
+  margin:5px 0 12px!important;
+  padding:14px!important;
+  gap:11px!important;
+  background:linear-gradient(118deg,#155dc6 0%,#146ccf 100%)!important;
+  border:1px solid #1250a8!important;
+  border-radius:19px!important;
+  box-shadow:0 6px 17px rgba(20,76,155,.12)!important;
+}
+#learningView .learning-featured-copy small {font-size:10px!important;color:#e7f1ff!important;opacity:1!important;letter-spacing:.025em!important;}
+#learningView .learning-featured-copy strong {font-size:22px!important;line-height:1.13!important;font-weight:850!important;color:#fff!important;}
+#learningView .learning-featured-copy span {font-size:12.5px!important;line-height:1.37!important;color:#fff!important;opacity:1!important;}
+#learningView .learning-featured-copy em {display:none!important;}
+#learningView .learning-grid{gap:10px!important;}
+#learningView .learning-card{
+  min-height:116px!important;
+  padding:12px!important;
+  border-radius:18px!important;
+  box-shadow:0 3px 10px rgba(24,56,105,.035)!important;
+  background:#fff!important;
+  border:1px solid #d7e2ef!important;
+}
+#learningView .learning-card-icon{margin-bottom:7px!important;width:37px!important;height:37px!important;}
+#learningView .learning-card-icon img{width:37px!important;height:37px!important;}
+#learningView .learning-card-shield svg{width:29px!important;height:29px!important;}
+#learningView .learning-card strong{font-size:15.5px!important;line-height:1.17!important;margin-bottom:4px!important;color:#17365d!important;}
+#learningView .learning-card small{font-size:11.4px!important;line-height:1.38!important;color:#4c617d!important;}
+#learningView .free-mode-entry {
+  margin-top:12px!important;
+  min-height:96px!important;
+  padding:13px!important;
+  border-radius:17px!important;
+  background:linear-gradient(120deg,#174578,#1c548d)!important;
+  box-shadow:0 4px 13px rgba(23,55,101,.07)!important;
+}
+#learningView .free-entry-copy small {font-size:10px!important;color:#e0eafa!important;opacity:1!important;}
+#learningView .free-entry-copy strong {font-size:18px!important;color:#fff!important;}
+#learningView .free-entry-copy em {font-size:11.8px!important;color:#fff!important;line-height:1.4!important;opacity:.94!important;}
+/* Preservar destaque de acessibilidade e guia no topo do celular, feito na V111.45. */
+#learningView :is(.learning-featured,.learning-card,.free-mode-entry):focus-visible {
+  outline:3px solid #f1b625!important;
+  outline-offset:3px!important;
+}
+
+/* 2) TRILHAS — ordem: título > etapa recomendada > etapas seguintes > progresso. */
+#modulePathView .module-path-header {min-height:86px!important;padding:32px 16px 10px!important;}
+#modulePathView .module-path-header small {font-size:10px!important;color:#64768c!important;}
+#modulePathView .module-path-header strong {font-size:22px!important;color:#15345b!important;}
+#modulePathView .module-path-content{padding:13px 16px 80px!important;}
+#modulePathView .module-path-intro {
+  grid-template-columns:45px minmax(0,1fr)!important;
+  gap:11px!important;
+  padding:12px 13px!important;
+  border-radius:16px!important;
+  border:1px solid #dee7f3!important;
+  box-shadow:none!important;
+}
+#modulePathView .module-path-icon {
+  width:44px!important;height:44px!important;border-radius:13px!important;
+  background:#eaf1fc!important;color:#1c5eb4!important;font-size:16px!important;
+}
+#modulePathView .module-path-intro small {font-size:9.5px!important;color:#3565a1!important;letter-spacing:.045em!important;margin:0 0 2px!important;}
+#modulePathView .module-path-intro strong {font-size:15.5px!important;line-height:1.28!important;color:#18375e!important;}
+#modulePathView .module-path-intro p {font-size:11.6px!important;line-height:1.38!important;color:#536981!important;margin:3px 0 0!important;}
+#modulePathView .module-path-progress{margin:11px 3px 13px!important;}
+#modulePathView .module-path-progress strong{font-size:11.5px!important;color:#4b617b!important;font-weight:700!important;}
+#modulePathView .module-path-progress span{font-size:11px!important;color:#60748d!important;}
+#modulePathView .module-path-progress i{height:6px!important;background:#e3ebf5!important;}
+#modulePathView .module-lesson-list{gap:10px!important;}
+#modulePathView .module-lesson-card {
+  min-height:86px!important;
+  grid-template-columns:42px minmax(0,1fr) 21px!important;
+  gap:11px!important;
+  padding:12px!important;
+  border:1px solid #dce5f1!important;
+  border-radius:17px!important;
+  box-shadow:none!important;
+  background:#fff!important;
+}
+#modulePathView .module-lesson-number{
+  width:42px!important;height:42px!important;
+  background:#edf3fc!important;color:#205cac!important;
+  border-radius:12px!important;
+  font-size:17px!important;font-weight:800!important;
+}
+#modulePathView .module-lesson-card-copy strong{
+  font-size:15.4px!important;line-height:1.28!important;
+  font-weight:800!important;color:#17365b!important;
+}
+#modulePathView .module-lesson-card-copy small{
+  font-size:11.6px!important;line-height:1.4!important;
+  margin-top:4px!important;color:#4c617b!important;
+}
+#modulePathView .module-lesson-eyebrow {display:block!important;font-size:10px!important;line-height:1.25!important;margin-bottom:4px!important;font-weight:800!important;letter-spacing:.02em!important;}
+#modulePathView .module-lesson-eyebrow.is-next {color:#155ab8!important;}
+#modulePathView .module-lesson-eyebrow.is-done {color:#22714f!important;}
+#modulePathView .module-lesson-card.is-current {
+  border:2px solid #1c65d1!important;
+  padding:11px!important;
+  background:#f4f9ff!important;
+  box-shadow:0 3px 10px rgba(29,94,185,.08)!important;
+}
+#modulePathView .module-lesson-card.is-complete .module-lesson-number {background:#e8f6ee!important;color:#237f59!important;}
+#modulePathView .module-lesson-state {color:#305f96!important;}
+#modulePathView .module-path-note{
+  margin-top:12px!important;padding:10px 12px!important;border-radius:13px!important;
+  background:#f5f8fc!important;border:1px solid #e4eaf1!important;
+}
+#modulePathView .module-path-note span {width:30px!important;height:30px!important;border-radius:50%!important;background:#e3f2e9!important;color:#23754e!important;font-size:14px!important;}
+#modulePathView .module-path-note p {color:#51677f!important;font-size:11.5px!important;line-height:1.4!important;}
+@media (max-width:360px){
+  #learningView .learning-header strong{font-size:21px!important;}
+  #learningView .learning-card{padding:10px!important;min-height:110px!important;}
+  #learningView .learning-card strong{font-size:14px!important;}
+  #learningView .learning-card small{font-size:10.5px!important;}
+  #modulePathView .module-lesson-card-copy strong{font-size:14.3px!important;}
+  #modulePathView .module-lesson-card-copy small{font-size:11px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ #learningView .learning-featured,#learningView .learning-card,#learningView .free-mode-entry{transition:none!important;}
+}

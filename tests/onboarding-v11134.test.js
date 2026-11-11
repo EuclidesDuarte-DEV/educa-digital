@@ -26,7 +26,7 @@ test('V111.34: tour reutilizável, acessível e preserva assets existentes', () 
   assert.match(tutorial, /event\.key === 'Tab'/);
   assert.match(tutorial, /window\.EducaGuidedTour/);
   assert.match(html, /aria-modal="true"/);
-  assert.match(sw, /(?:educa-cf1113(?:5|6|7|8|9)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train)/);
+  assert.match(sw, /(?:educa-cf1113(?:5|6|7|8|9)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y)/);
   assert.match(sw, /onboarding\.js/);
   assert.match(html, /lia-kokoro-browser\.js/);
 });

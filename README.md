@@ -1,3 +1,15 @@
+# V111.45 — atalho de acessibilidade responsivo na central do aluno
+
+Para celular/tablet, **Acessibilidade** e **Ver guia novamente** ficam visíveis na parte superior da central após login; no computador continuam no rodapé. Leia `LEIA_PRIMEIRO_V11145.md`.
+
+---
+
+# V111.44 — Guia automático no primeiro cadastro/login
+
+Após a primeira entrada na conta, a tela de aprendizagem oferece **6 passos guiados**, com destaque nos elementos reais, opção de voltar/pular e botão para rever. A conclusão é guardada localmente por conta. Leia `LEIA_PRIMEIRO_V11144.md`.
+
+---
+
 # Educa+ Digital — V111.42 (inicialização única da LIA)
 
 Projeto de **educação e segurança digital** com interface web responsiva e celular Android simulado. Este pacote é uma **reorganização da V111.40**, sem alteração intencional nas funcionalidades, no banco de dados, no conteúdo dos treinos ou no código da LIA AI.
@@ -74,3 +86,9 @@ EDUCA_DIGITAL_V111_41_PROJETO_ORGANIZADO/
 ## V111.43 — Guia de primeiros passos
 
 O tour agora apresenta **Começar meu treino → Banco (pré-teste) → Acessibilidade**; pressione **Como usar** para rever. Detalhes em `docs/GUIA_VISUAL_V11143.md`. Não houve publicação no GitHub ou Cloudflare.
+
+### V111.47 — Acesso simples e acessibilidade responsiva
+- Campo inicial de telefone com DDD, com identificação de conta pré-existente e confirmação **demonstrativa**.
+- Layout que aumenta textos sem `zoom` global, controles padronizados e atalhos de acessibilidade no celular.
+- Guia com leitura em voz alta ativada por padrão em novas preferências, depois do primeiro toque permitido pelo navegador.
+- Detalhes, testes e limitações em `LEIA_PRIMEIRO_V11147.md`.

@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/app.css?v=106">
   <link rel="stylesheet" href="/static/css/accessibility.css?v=11140">
-  <link rel="stylesheet" href="/static/css/onboarding.css?v=11134">
+  <link rel="stylesheet" href="/static/css/onboarding.css?v=11145">
   <link rel="stylesheet" href="/static/css/android-system.css?v=104">
   <link rel="stylesheet" href="/static/css/free-mode.css?v=11112">
   <link rel="stylesheet" href="/static/css/web-real.css?v=109">
@@ -19,7 +19,9 @@
   <link rel="stylesheet" href="/static/css/lia-fotorreal.css?v=11131">
   <!-- Módulos usados somente quando a chamada de treinamento é atendida. -->
 
-<link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111"></head>
+<link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111">
+<link rel="stylesheet" href="/static/css/hierarchy-v11146.css?v=11146">
+<link rel="stylesheet" href="/static/css/responsive-v11147.css?v=11147"></head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
     <a class="brand" href="/" aria-label="Educa+ Digital — início">
@@ -74,8 +76,8 @@
       <section class="a11y-option" aria-label="Leitura de texto em voz alta">
         <label class="a11y-switch-row" for="a11yReading">
           <span class="a11y-option-icon a11y-option-icon-audio" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l4 3.4V6.6L7 10H4ZM15 9a4 4 0 0 1 0 6m2.6-8.5a8 8 0 0 1 0 11"/></svg></span>
-          <span class="a11y-switch-copy"><strong>Leitura em voz alta</strong><span>Ouça orientações em português.</span></span>
-          <input type="checkbox" id="a11yReading" class="a11y-toggle" aria-label="Ativar botão de leitura em voz alta">
+          <span class="a11y-switch-copy"><strong>Leitura em voz alta</strong><span>O guia fala depois do primeiro toque. Desative quando quiser.</span></span>
+          <input type="checkbox" id="a11yReading" class="a11y-toggle" aria-label="Ler automaticamente as orientações do guia após o primeiro toque">
         </label>
         <button id="a11yExample" class="a11y-example" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z" stroke-linecap="round" stroke-linejoin="round"/></svg> Ouvir exemplo</button>
       </section>
@@ -99,7 +101,13 @@
       <div class="educa-tour-top"><span id="educaTourProgress" class="educa-tour-progress">PASSO 1 DE 3</span><button id="educaTourClose" type="button" class="educa-tour-close" aria-label="Fechar tutorial">×</button></div>
       <h2 id="educaTourTitle">Vamos começar?</h2>
       <p id="educaTourText">Siga o destaque para conhecer o Educa+ Digital.</p>
-      <div class="educa-tour-controls"><button id="educaTourSkip" class="educa-tour-skip" type="button">Pular guia</button><button id="educaTourNext" class="educa-tour-next" type="button">Próximo <span aria-hidden="true">→</span></button></div>
+      <div class="educa-tour-controls">
+        <button id="educaTourSkip" class="educa-tour-skip" type="button">Pular guia</button>
+        <div class="educa-tour-nav">
+          <button id="educaTourBack" class="educa-tour-back" type="button" disabled>Voltar</button>
+          <button id="educaTourNext" class="educa-tour-next" type="button">Próximo <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
     </section>
   </div>
   <button id="a11yReadNow" class="a11y-read-button" type="button" hidden>🔊 Ouvir esta tela</button>
@@ -277,15 +285,16 @@
                   <header class="learning-header">
                     <small>EDUCA+ DIGITAL</small>
                     <strong id="learningGreeting">O que você quer aprender hoje?</strong>
+                    <button id="learningAccessibilityQuickBtn" class="learning-a11y-quick" type="button" aria-label="Acessibilidade: aumentar letras, contraste e leitura em voz alta" title="Acessibilidade"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="6.7" r="1.5" fill="currentColor"/><path d="M6.6 10.2 12 11.5l5.4-1.3M12 11.5v4m0 0-3.5 4M12 15.5l3.5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
                   </header>
 <button class="learning-featured" type="button" data-learning-topic="pix">
                     <span class="learning-featured-icon" aria-hidden="true">
                       <img src="/static/icons/pix.svg" alt="">
                     </span>
                     <span class="learning-featured-copy">
-                      <small>ESCOLHA SE QUISER</small>
+                      <small>COMECE POR AQUI</small>
                       <strong>PIX</strong>
-                      <span>Aprenda a conferir nome e valor antes de pagar.</span><em id="featuredAccessNote">Escolha qualquer atividade do Pix</em>
+                      <span>Confira os dados antes de pagar.</span>
                     </span>
                     <span class="learning-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                   </button>
@@ -296,29 +305,33 @@
                         <svg viewBox="0 0 24 24"><path d="M12 2.5 20 5.7v5.6c0 4.9-3.2 8.8-8 10.2-4.8-1.4-8-5.3-8-10.2V5.7L12 2.5Zm0 4.1-4.3 1.7v3c0 3.1 1.7 5.7 4.3 6.9 2.6-1.2 4.3-3.8 4.3-6.9v-3L12 6.6Z"/></svg>
                       </span>
                       <strong>Segurança</strong>
-                      <small>Golpes, links e códigos suspeitos.</small>
+                      <small>Reconheça golpes e links falsos.</small>
                     </button>
                     <button class="learning-card" type="button" data-learning-topic="whatsapp">
                       <span class="learning-card-icon"><img src="/static/icons/whatsapp.svg" alt=""></span>
                       <strong>WhatsApp</strong>
-                      <small>Mensagens, áudios e chamadas.</small>
+                      <small>Envie mensagens e faça chamadas.</small>
                     </button>
                     <button class="learning-card" type="button" data-learning-topic="settings">
                       <span class="learning-card-icon"><img src="/static/icons/settings.svg" alt=""></span>
                       <strong>Ajustes</strong>
-                      <small>Letra, volume, brilho e Wi‑Fi.</small>
+                      <small>Ajuste letras, som e Wi-Fi.</small>
                     </button>
                     <button class="learning-card" type="button" data-learning-topic="govbr">
                       <span class="learning-card-icon"><img src="/static/icons/govbr.svg" alt=""></span>
                       <strong>GOV.BR</strong>
-                      <small>Serviços públicos com mais segurança.</small>
+                      <small>Acesse serviços com segurança.</small>
                     </button>
                   </div>
                   <button class="free-mode-entry" id="freeModeEntry" type="button">
                     <span class="free-entry-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 17h4M10 7h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-                    <span class="free-entry-copy"><small>NOVA EXPERIÊNCIA · TREINO INTERATIVO</small><strong>Modo Livre</strong><em>Comece pelo golpe no WhatsApp, depois experimente a videochamada com IA. A ligação por voz vem em seguida.</em></span>
+                    <span class="free-entry-copy"><small>SIMULAÇÕES DE GOLPES</small><strong>Modo Livre</strong><em>Treine mensagens e videochamadas com IA.</em></span>
                     <span class="free-entry-chevron" aria-hidden="true">›</span>
                   </button>
+                  <div class="learning-help-actions" id="learningHelpActions" aria-label="Ajuda para seu primeiro acesso">
+                    <button id="learningAccessibilityBtn" type="button" aria-label="Abrir ajustes de acessibilidade"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="6.7" r="1.5" fill="currentColor"/><path d="M6.6 10.2 12 11.5l5.4-1.3M12 11.5v4m0 0-3.5 4M12 15.5l3.5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Acessibilidade</span></button>
+                    <button id="learningReplayGuideBtn" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.2 9.1a3 3 0 1 1 5.4 2c-.8 1-2.6 1.2-2.6 2.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.5" r="1" fill="currentColor"/></svg><span>Ver guia novamente</span></button>
+                  </div>
                   <div class="learning-account-options" id="learningAccountOptions">
                     <button id="learningSaveProgressBtn" type="button" class="learning-save-optional">Criar conta · Salvar meu progresso</button>
                   </div>
@@ -429,9 +442,9 @@
                     <section class="module-path-intro">
                       <span class="module-path-icon" id="modulePathIcon" aria-hidden="true">+</span>
                       <div>
-                        <small id="modulePathEyebrow">APRENDA NO SEU RITMO</small>
-                        <strong id="modulePathHeadline">Pratique uma etapa de cada vez</strong>
-                        <p id="modulePathIntro">Algumas atividades começam com um vídeo curto. Depois, você pratica no celular de treino.</p>
+                        <small id="modulePathEyebrow">PASSO A PASSO</small>
+                        <strong id="modulePathHeadline">Aprenda com segurança</strong>
+                        <p id="modulePathIntro">Veja a orientação e pratique com calma.</p>
                       </div>
                     </section>
                     <div class="module-path-progress" aria-label="Progresso do assunto">
@@ -439,7 +452,7 @@
                       <i><b id="modulePathProgressFill"></b></i>
                     </div>
                     <section class="module-lesson-list" id="moduleLessonList" aria-label="Atividades do assunto"></section>
-                    <div class="module-path-note"><span>✓</span><p>Você não precisa terminar tudo de uma vez. Continue quando se sentir confortável.</p></div>
+                    <div class="module-path-note"><span aria-hidden="true">✓</span><p>Faça uma etapa por vez. Continue quando quiser.</p></div>
                   </main>
                 </div>
               </div>
@@ -1224,18 +1237,14 @@
         <button class="start-close" id="closeStartModal" type="button" aria-label="Fechar">×</button>
         <span class="modal-kicker" id="startModalKicker">COMEÇAR MEU TREINO</span>
         <h2 id="startModalTitle">Quer salvar seu progresso?</h2>
-        <p class="start-modal-intro" id="startModalIntro">Digite só seu nome e seu celular.</p>
+        <p class="start-modal-intro" id="startModalIntro">Informe apenas seu celular com DDD para começar.</p>
         <form id="quickStartForm" class="quick-start-form" novalidate>
           <label>
-            <span>Seu nome</span>
-            <input id="quickName" name="quickName" type="text" maxlength="60" autocomplete="name" placeholder="Ex.: Maria">
-          </label>
-          <label>
             <span>Seu celular</span>
-            <input id="quickPhone" name="quickPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(63) 99999-9999">
+            <input id="quickPhone" name="quickPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" required placeholder="(65) 99999-9999" aria-describedby="phoneOnlyNotice">
           </label>
-          <p class="quick-start-trust">🔒 Não pedimos CPF, senha ou dados bancários.</p>
-          <button id="startAlreadyHaveAccount" class="quick-start-existing" type="button">Já tenho conta · Entrar com meu celular</button>
+          <p class="quick-start-trust" id="phoneOnlyNotice">Este é um ambiente de treinamento. Se já usou o Educa+, mostraremos como continuar.</p>
+          <button id="startAlreadyHaveAccount" class="quick-start-existing" type="button" hidden>Já tenho conta · Entrar com meu celular</button>
           <p class="quick-start-message" id="quickStartMessage" hidden></p>
           <div class="quick-start-actions">
             <button class="quick-start-secondary" id="quickSkipBtn" type="button">Agora não</button>
@@ -1261,14 +1270,14 @@
               <input id="returnPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(63) 99999-9999">
             </label>
             <p class="return-message" id="returnPhoneMessage" hidden></p>
-            <button class="return-primary" type="submit">Receber meu código</button>
+            <button class="return-primary" type="submit">Mostrar código de treino</button>
           </form>
         </section>
 
         <section id="returnCodeStep" hidden>
           <span class="modal-kicker">SÓ MAIS UM PASSO</span>
           <h2>Digite o código de demonstração.</h2>
-          <p>Este protótipo mostra o código na própria tela, para você praticar. Nenhum SMS será enviado.</p>
+          <p>Para esta demonstração, o código aparece na própria tela. Não é uma verificação real de telefone e nenhum SMS será enviado.</p>
           <div class="demo-code" id="demoCodeBox" hidden>
             <small>Código mostrado somente neste treino:</small>
             <strong id="demoCodeValue">000000</strong>
@@ -1292,10 +1301,10 @@
         <button class="info-close" id="closeInfoModal" type="button" aria-label="Fechar">×</button>
         <span class="modal-kicker">COMO FUNCIONA</span>
         <h2 id="infoModalTitle">Primeiro você experimenta.</h2>
-        <p>Você pode experimentar primeiro. Se quiser, pode salvar seu progresso com nome e celular para continuar depois do mesmo ponto.</p>
+        <p>Experimente as atividades. Para guardar seu progresso, basta informar um celular com DDD neste protótipo.</p>
         <ul class="info-steps">
           <li><b>1</b><span>Toque em <strong>Começar agora</strong>.</span></li>
-          <li><b>2</b><span>Se quiser, informe apenas <strong>nome</strong> e <strong>celular</strong>.</span></li>
+          <li><b>2</b><span>Informe apenas <strong>seu celular com DDD</strong>.</span></li>
           <li><b>3</b><span>Pratique no celular de treino e volte depois do mesmo ponto.</span></li>
         </ul>
         <button class="info-confirm" id="infoConfirmBtn" type="button">Entendi</button>
@@ -1316,24 +1325,22 @@
     <section class="account-card" id="accountCard" hidden aria-live="polite">
       <span class="coach-kicker">VOCÊ EXPERIMENTOU O EDUCA+</span>
       <h2>Gostou? Quer continuar aprendendo?</h2>
-      <p>Crie uma conta simples somente agora para salvar seu progresso e continuar de onde parou.</p>
+      <p>Digite só seu celular com DDD para guardar seu progresso e continuar depois.</p>
       <form id="accountForm" class="basic-account-form" novalidate>
-        <label><span>Como podemos chamar você?</span><input id="accountName" name="name" type="text" maxlength="80" autocomplete="name" placeholder="Ex.: Maria" required></label>
-        <label><span>Seu número de celular</span><input id="accountPhone" name="phone" type="tel" inputmode="tel" maxlength="16" autocomplete="tel" placeholder="(63) 99999-9999" required><small>Será usado para identificar sua conta depois.</small></label>
-        <label><span>Crie um PIN de 4 números</span><input id="accountPin" name="pin" class="pin-input" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="••••" required><small>Mais simples do que uma senha longa.</small></label>
+        <label><span>Seu celular com DDD</span><input id="accountPhone" name="phone" type="tel" inputmode="numeric" maxlength="16" autocomplete="tel-national" placeholder="(65) 99999-9999" required><small>Neste protótipo, você pode continuar com um código demonstrativo.</small></label>
         <button class="create-account-btn" type="submit">Quero continuar aprendendo</button>
         <button class="skip-account-btn" id="skipAccount" type="button">Continuar sem conta</button>
       </form>
       <div class="account-message" id="accountMessage" hidden></div>
-      <p class="privacy-note">Nesta demonstração, os dados ficam somente neste computador.</p>
+      <p class="privacy-note">Este é um protótipo educativo: o código demonstrativo não comprova quem possui o telefone.</p>
     </section>
   </main>
 
-  <script src="/static/js/accessibility.js?v=11140"></script>
+  <script src="/static/js/accessibility.js?v=11147"></script>
   <script src="/static/js/accessibility-external.js?v=11139"></script>
   <script src="/static/js/android-bridge.js"></script>
-  <script src="/static/js/training.js?v=106"></script>
-  <script src="/static/js/onboarding.js?v=11143"></script>
+  <script src="/static/js/training.js?v=11147"></script>
+  <script src="/static/js/onboarding.js?v=11147"></script>
   <script src="/static/js/free-mode.js?v=11132"></script>
   
   <script src="/static/js/lia-female-voice.js?v=11111"></script>

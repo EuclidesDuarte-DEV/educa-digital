@@ -1,10 +1,11 @@
-/* Educa+ Digital V111.43 — guia de entrada, pré-teste e acessibilidade.
+/* Educa+ Digital V111.44 — guia da entrada e primeira sessão autenticada.
  * Destaque real nos elementos relevantes, sem questionário e sem abrir automaticamente
  * o painel de acessibilidade. O guia do pré-teste existente continua após a conclusão.
  */
 (() => {
   'use strict';
   const KEY = 'educa-tour-v11143-finished';
+  const ACCOUNT_KEY_PREFIX = 'educa-tour-first-login-v11144';
   const $ = (selector) => document.querySelector(selector);
   const tour = $('#educaTour');
   const spotlight = $('#educaTourSpotlight');
@@ -14,8 +15,9 @@
   const description = $('#educaTourText');
   const progress = $('#educaTourProgress');
   const next = $('#educaTourNext');
+  const back = $('#educaTourBack');
   const replay = $('#openGuidedTour');
-  const steps = [
+  const landingSteps = [
     {
       selector: '#startNowBtn',
       title: 'Comece seu treino aqui',
@@ -35,16 +37,76 @@
       targetLabel: 'Abrir opções de acessibilidade'
     }
   ];
+  // O guia da conta aparece somente após entrar e chegar à central de aprendizagem.
+  // A interface e os exemplos continuam simulados: não solicitam dados de bancos reais.
+  const accountSteps = [
+    {
+      selector: '#learningGreeting',
+      title: 'Bem-vindo ao Educa+ Digital!',
+      description: 'Aqui você aprende a usar o celular com mais segurança, no seu ritmo. Vou mostrar onde começar.',
+      targetLabel: 'Bem-vindo à central de aprendizagem'
+    },
+    {
+      selector: '#learningView .learning-featured',
+      title: 'Escolha o que quer aprender',
+      description: 'O Pix fica em destaque. Você também encontra Segurança, WhatsApp, Ajustes e GOV.BR. Pode escolher sem pressa.',
+      targetLabel: 'Escolher atividade de Pix'
+    },
+    {
+      selector: '#learningAccessibilityBtn',
+      title: 'Deixe a tela mais confortável',
+      description: 'Toque em Acessibilidade para aumentar as letras, ajustar o contraste e ouvir as orientações em voz alta.',
+      targetLabel: 'Abrir acessibilidade'
+    },
+    {
+      selector: '#learningView [data-learning-topic="security"]',
+      title: 'Comece por Segurança',
+      description: 'Recomendamos começar por aqui. Você assiste a vídeos curtos e depois pratica situações comuns sem usar dinheiro real.',
+      targetLabel: 'Abrir atividades de Segurança'
+    },
+    {
+      selector: '#freeModeEntry',
+      title: 'Conheça o Modo Livre',
+      description: 'Aqui você pode treinar mensagens suspeitas no WhatsApp e conhecer a simulação de videochamada com a LIA AI.',
+      targetLabel: 'Explorar o Modo Livre'
+    },
+    {
+      selector: '#learningView [data-learning-topic="security"]',
+      title: 'Pronto para começar!',
+      description: 'Você já conhece o caminho. Escolha uma atividade e pratique com calma. Se precisar, toque em “Ver guia novamente”.',
+      targetLabel: 'Começar pela área de Segurança'
+    }
+  ];
+  let steps = landingSteps;
+  let mode = 'landing';
+  let keyToSave = KEY;
   let current = -1;
   let activeTarget = null;
   let previousFocus = null;
   let scheduled = 0;
 
+  // Identifica a conclusão por conta sem gravar o número do celular na chave.
+  // Não é um identificador de autenticação: serve apenas à preferência local do guia.
+  function accountGuideKey(phone) {
+    const digits = String(phone || '').replace(/\D/g, '');
+    if (digits.length < 10) return null;
+    let hash = 2166136261;
+    for (const code of digits) {
+      hash ^= code.charCodeAt(0);
+      hash = Math.imul(hash, 16777619);
+    }
+    return `${ACCOUNT_KEY_PREFIX}-${(hash >>> 0).toString(36)}`;
+  }
+  function rememberedAccount() {
+    try { return JSON.parse(localStorage.getItem('educaRememberedUser') || 'null'); }
+    catch (_) { return null; }
+  }
+
   function finishedBefore() {
-    try { return localStorage.getItem(KEY) === '1'; } catch (_) { return false; }
+    try { return localStorage.getItem(keyToSave) === '1'; } catch (_) { return false; }
   }
   function saveFinished() {
-    try { localStorage.setItem(KEY, '1'); } catch (_) { /* Opera também sem armazenamento. */ }
+    try { localStorage.setItem(keyToSave, '1'); } catch (_) { /* Opera também sem armazenamento. */ }
   }
   function isDisplayed(element) {
     if (!element?.isConnected) return false;
@@ -111,7 +173,11 @@
     progress.textContent = `PASSO ${index + 1} DE ${steps.length}`;
     title.textContent = step.title;
     description.textContent = step.description;
+    window.dispatchEvent(new CustomEvent('educa:guide-step', {
+      detail: { title: step.title, description: step.description, step: index + 1, total: steps.length }
+    }));
     next.innerHTML = index === steps.length - 1 ? 'Concluir <span aria-hidden="true">✓</span>' : 'Próximo <span aria-hidden="true">→</span>';
+    if (back) back.disabled = index === 0;
     // Reposiciona após rolar se o ícone-alvo estiver fora da área visível.
     const rect = target.getBoundingClientRect();
     if (rect.bottom < 90 || rect.top > window.innerHeight - 100) {
@@ -119,17 +185,34 @@
     }
     requestAnimationFrame(() => { position(); card.focus({ preventScroll: true }); });
   }
-  function start({ force = false } = {}) {
+  function start({ force = false, authenticated = false, user = null } = {}) {
+    if (!tour) return;
+    // Não reinicia uma orientação que já está ativa.
+    if (!tour.hidden) {
+      if (!force) return;
+      stop({ markComplete: false });
+    }
+    const candidateKey = authenticated ? accountGuideKey(user?.phone) : KEY;
+    if (authenticated && (!candidateKey || !document.body.classList.contains('prototype-focus')
+      || !$('#learningView')?.classList.contains('is-active'))) return;
+    if (!authenticated && document.body.classList.contains('prototype-focus')) return;
+    mode = authenticated ? 'account' : 'landing';
+    steps = authenticated ? accountSteps : landingSteps;
+    keyToSave = candidateKey;
     if (!force && finishedBefore()) return;
-    if (tour?.hidden === false || !isDisplayed(pickTarget(steps[0]))) return;
+    if (!isDisplayed(pickTarget(steps[0]))) return;
     if ($('#accessibilityDialog')?.open) return;
-    if (document.body.classList.contains('prototype-focus')) return;
+    // Evita sobrepor mensagens e formulários de cadastro.
+    if (['#startModal', '#returnModal', '#infoModal'].some(selector => {
+      const modal = $(selector);
+      return modal && !modal.hidden;
+    })) return;
     previousFocus = document.activeElement;
     tour.hidden = false;
     document.body.classList.add('educa-tour-active');
     show(0);
   }
-  function stop() {
+  function stop({ markComplete = true } = {}) {
     if (!tour || tour.hidden) return;
     current = -1;
     activeTarget = null;
@@ -137,9 +220,12 @@
     scheduled = 0;
     tour.hidden = true;
     document.body.classList.remove('educa-tour-active');
-    saveFinished();
+    if (markComplete) saveFinished();
     if (previousFocus?.isConnected && previousFocus !== document.body) previousFocus.focus({ preventScroll: true });
     previousFocus = null;
+    mode = 'landing';
+    steps = landingSteps;
+    keyToSave = KEY;
   }
   function advance() {
     if (current + 1 < steps.length) show(current + 1);
@@ -153,9 +239,13 @@
   // O elemento apontado é realmente tocável: clicar no destaque ativa a função correta.
   hotspot?.addEventListener('click', actOnTarget);
   next?.addEventListener('click', advance);
+  back?.addEventListener('click', () => { if (current > 0) show(current - 1); });
   $('#educaTourSkip')?.addEventListener('click', stop);
   $('#educaTourClose')?.addEventListener('click', stop);
   replay?.addEventListener('click', () => start({ force: true }));
+  $('#learningReplayGuideBtn')?.addEventListener('click', () => start({ force: true, authenticated: true, user: rememberedAccount() }));
+  $('#learningAccessibilityBtn')?.addEventListener('click', () => $('#openAccessibilitySettings')?.click());
+  $('#learningAccessibilityQuickBtn')?.addEventListener('click', () => $('#openAccessibilitySettings')?.click());
   // Nunca disputar espaço com o painel acessível; clicar nele encerra o tutorial.
   window.addEventListener('educa:accessibility-open', stop);
   window.addEventListener('resize', reposition, { passive: true });
@@ -176,6 +266,12 @@
     }
   });
   // Aguarda o layout e o guia do Banco serem inicializados.
-  window.addEventListener('load', () => { window.setTimeout(() => start(), 600); }, { once: true });
-  window.EducaGuidedTour = Object.freeze({ start: () => start({ force: true }), stop });
+  window.addEventListener('load', () => { window.setTimeout(() => {
+    if (!rememberedAccount()?.phone) start();
+  }, 600); }, { once: true });
+  window.EducaGuidedTour = Object.freeze({
+    start: () => start({ force: true }),
+    startAuthenticated: (user, force = false) => start({ authenticated: true, user, force }),
+    stop
+  });
 })();

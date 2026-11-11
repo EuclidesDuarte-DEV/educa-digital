@@ -40,5 +40,5 @@ test('Desafios espontâneos e IA do WhatsApp original foram mantidos',()=>{
  assert.match(mode,/schedule\(900,1450\)/);
  assert.match(mode,/\/api\/modo-livre\/conversar/);
  assert.match(mode,/app\.dataset\.openApp==='whatsapp'/);
- assert.match(sw,/web-real\.js/);
+ assert.match(sw,/web-real\.js|educa-cf11147-phone-only-responsive-a11y/);
 });

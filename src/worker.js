@@ -75,7 +75,7 @@ async function buscarUsuario(env, telefone) {
 
 async function cadastrarConta(request, env) {
   const dados = await lerDados(request);
-  const nome = limparNome(dados.name);
+  const nome = limparNome(dados.name) || 'Participante';
   const telefone = somenteNumeros(dados.phone);
 
   if (nome.length < 2) {
@@ -87,19 +87,10 @@ async function cadastrarConta(request, env) {
 
   const existente = await buscarUsuario(env, telefone);
   if (existente) {
-    await consulta(
-      env,
-      'UPDATE usuarios SET ultimo_login=CURRENT_TIMESTAMP, atualizado_em=CURRENT_TIMESTAMP WHERE id=?',
-      existente.id
-    ).run();
-
-    return responder({
-      ok: true,
-      existing: true,
-      name: existente.nome,
-      phone: telefone,
-      message: `Bem-vindo de volta, ${existente.nome.split(' ')[0]}! Seu progresso continua salvo.`
-    });
+    // Não autorizar a entrada só porque alguém conhece o número.
+    // Protótipo: login com código demonstrativo exibido na tela (não é SMS real).
+    return responder({ ok: false, existing: true, needs_login: true,
+      message: 'Este celular já tem um treino salvo. Continue pela confirmação demonstrativa.' }, 409);
   }
 
   await consulta(
@@ -121,7 +112,7 @@ async function cadastrarConta(request, env) {
     existing: false,
     name: nome,
     phone: telefone,
-    message: `Pronto, ${nome.split(' ')[0]}! Seus treinos foram liberados e seu progresso poderá ser salvo.`
+    message: 'Tudo pronto! Seu treino foi criado e o progresso poderá ser salvo.' 
   }, 201);
 }
 
