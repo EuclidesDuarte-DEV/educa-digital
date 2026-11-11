@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  checks: read
 
 jobs:
   testes:
@@ -28,6 +29,29 @@ jobs:
     env:
       PREVIEW_URL: https://atualizacao-v11147-educa-digital.educamaisdigital.workers.dev
     steps:
+      - name: Aguardar o build Cloudflare do commit correto
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for tentativa in $(seq 1 30); do
+            dados=$(curl --fail --silent --show-error --max-time 15 \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs")
+            status=$(printf '%s' "$dados" | node -e '
+              let s = ""; process.stdin.on("data", c => s += c);
+              process.stdin.on("end", () => {
+                const checks = JSON.parse(s).check_runs || [];
+                const build = checks.find(c => c.name === "Workers Builds: educa-digital");
+                process.stdout.write(build ? build.status + "/" + build.conclusion : "aguardando");
+              });')
+            echo "Cloudflare $HEAD_SHA: $status"
+            if [ "$status" = "completed/success" ]; then exit 0; fi
+            if [ "$status" = "completed/failure" ]; then exit 1; fi
+            sleep 10
+          done
+          exit 1
       - name: Confirmar /api/saude no Preview
         run: |
           for tentativa in $(seq 1 15); do
