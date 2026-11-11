@@ -40,7 +40,7 @@ try{
       bankName:bank.getAttribute('aria-label')};
    });
    assert.ok(home.activated&&home.hintVisible&&home.guideHidden&&home.tourHidden,c.w+': guia deve apontar para Banco sem escurecer');
-   assert.ok(home.bankName.includes('primeira atividade'),c.w+': aria-label do Banco');
+   assert.ok(/primeira atividade/i.test(home.bankName),c.w+': aria-label do Banco');
    assert.ok(home.cue.top>=home.phone.top-2&&home.cue.bottom<home.bank.top+3,c.w+': apontador fora do alvo');
    assert.ok(home.cue.left>=home.phone.left-2&&home.cue.right<=home.phone.right+3,c.w+': balão cortado no celular');
    if(c.w>=1100){
