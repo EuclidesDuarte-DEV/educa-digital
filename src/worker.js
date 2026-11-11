@@ -8,6 +8,7 @@
  */
 import { MODULOS } from './catalogo.js';
 import { responderModoLivre } from './free-chat.js';
+import { PREVIEW_SCHEMA_SQL } from './preview-schema.js';
 
 const CODIGOS_ATIVIDADES = new Set(
   MODULOS.flatMap(modulo =>
@@ -548,6 +549,29 @@ async function rotearApi(request, env, url) {
   return erro(404, 'Recurso não encontrado.');
 }
 
+// Inicializacao idempotente apenas em Workers Previews.
+// A configuracao de producao nao define PREVIEW_DB_BOOTSTRAP.
+const bancoPreviewInicializacoes = new WeakMap();
+async function garantirBancoDeTeste(env) {
+  if (env.PREVIEW_DB_BOOTSTRAP !== 'true' || !env.DB) return;
+  let tarefa = bancoPreviewInicializacoes.get(env.DB);
+  if (!tarefa) {
+    tarefa = (async () => {
+      const usuario = await env.DB.prepare(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='usuarios'"
+      ).first();
+      if (!usuario) {
+        await env.DB.exec(PREVIEW_SCHEMA_SQL);
+      }
+    })().catch(erro => {
+      bancoPreviewInicializacoes.delete(env.DB);
+      throw erro;
+    });
+    bancoPreviewInicializacoes.set(env.DB, tarefa);
+  }
+  await tarefa;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -570,6 +594,7 @@ export default {
     }
 
     try {
+      await garantirBancoDeTeste(env);
       return await rotearApi(request, env, url);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');
