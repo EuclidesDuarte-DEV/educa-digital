@@ -7,7 +7,7 @@ const f=readFileSync('public/static/js/free-video.js','utf8');
 const m=readFileSync('public/static/js/free-mode.js','utf8');
 test('V110 mantém Android e WhatsApp originais e acrescenta uma tela de vídeo distinta',()=>{
  assert.match(h,/data-view="home"/); assert.match(h,/data-view="whatsapp"/); assert.match(h,/data-view="free-video"/);
- assert.match(h,/id="freeVideoInput"/); assert.match(h,/free-video\.js\?v=111(?:1[4678]|21|23|24|26|28|31|32)/);
+ assert.match(h,/id="freeVideoInput"/); assert.match(h,/free-video\.js\?v=111(?:1[4678]|21|23|24|26|28|31|32|52)/);
  assert.ok(existsSync('public/static/img/avatar-lia-v110.webp'));
  assert.ok(existsSync('public/static/img/lips/rest.webp'));
  assert.ok(existsSync('public/static/img/lips/ah.webp'));
