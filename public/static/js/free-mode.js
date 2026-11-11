@@ -41,7 +41,7 @@ function clearRequest(){state.request?.abort();state.request=null;state.replying
 function clearTransition(){clearTimeout(state.transitionTimer);state.transitionTimer=null;}
 function schedule(min=16000,max=30000){clearTimeout(state.timer);state.timer=null;if(state.active)state.timer=setTimeout(triggerEvent,min+Math.random()*(max-min));}
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
-function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&state.unread.size>0);for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
+function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
 function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
  // A pré-síntese acontece DURANTE o WhatsApp, antes da videochamada.
  // Nenhum áudio é tocado e nenhum dado pessoal é enviado ao motor.
@@ -84,7 +84,7 @@ function renderSmsBubble(role,text){
 }
 function openSms(s){
  if(!s||s.channel!=='sms'||!state.active)return;
- clearRequest();state.scenario=s;state.blocked=false;state.pending=null;els.notice.hidden=true;
+ clearRequest();state.scenario=s;state.blocked=false;state.pending=null;state.unread.delete(s.id);els.notice.hidden=true;updateUnread();
  if(els.smsSender)els.smsSender.textContent=s.name;
  if(els.smsMessages)els.smsMessages.replaceChildren();
  const history=state.conversations.get(s.id)||[{role:'assistant',content:s.intro}];
@@ -97,7 +97,7 @@ function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,
  show('chat');for(const row of hist)renderBubble(row.role,row.content);setStatus('');}
 function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;state.callHandsFree=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
- if(privateData(message)){setStatus('Não digite CPF, telefones, códigos, senhas ou links reais. Use apenas textos fictícios.');if(visible()==='free-call')els.callLine.textContent='Não informe dados reais.';return;}
+ if(privateData(message)){const warning='Não informe dados, códigos, senhas ou links reais. Use somente textos fictícios.';setStatus(warning);if(visible()==='free-call')els.callLine.textContent=warning;if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=warning;return;}
  const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},17000); // evitar "em andamento" sem fim quando Workers AI travar
  try{const response=await fetch('/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
