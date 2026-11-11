@@ -1,4 +1,4 @@
-name: Layout responsivo e acessibilidade V111.51
+name: Layout responsivo, LIA e pre-teste V111.54
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   viewport-smoke:
-    name: Layout completo e entrada por telefone 320–1920px
+    name: Interface completa 320–1920px e video Lia
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -24,10 +24,12 @@ jobs:
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
-      - name: Testar sete resolucoes sem banco remoto
+      - name: V111.54 — cabeçalho desktop, destaque Banco e video da LIA sem cortes
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-http.log 2>&1 &
-          node scripts/validar-mobile-v11148.mjs
+          node scripts/validar-interface-v11154.mjs
+      - name: Testar sete resolucoes sem banco remoto
+        run: node scripts/validar-mobile-v11148.mjs
       - name: Validar 11 larguras, cabecalho, login e acessibilidade
         run: node scripts/validar-layout-v11149.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
@@ -40,11 +42,12 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: educa-v11151-entrada-unica
+          name: educa-v11154-ui-auditoria
           path: |
             artifacts/layout-v11148/
             artifacts/layout-v11149/
             artifacts/fullscreen-v11150/
             artifacts/entrada-v11151/
             artifacts/modo-livre-v11153/
+            artifacts/layout-v11154/
           if-no-files-found: ignore

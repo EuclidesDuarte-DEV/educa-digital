@@ -625,7 +625,11 @@
   }
 
   function clearLandingPretest() {
-    $$('.landing-pretest-target').forEach(el => { el.classList.remove('landing-pretest-target'); el.classList.remove('guide-icon-motion'); });
+    document.querySelectorAll('.landing-pretest-target').forEach(el => {
+      el.classList.remove('landing-pretest-target', 'guide-icon-motion');
+      el.querySelector('.bank-start-cue')?.remove();
+      if (el.dataset.openApp === 'bank') el.setAttribute('aria-label', 'Banco Educa');
+    });
     document.body.classList.remove('landing-pretest-active');
   }
 
@@ -647,6 +651,14 @@
     if (!bankTile) return;
     document.body.classList.add('landing-pretest-active');
     bankTile.classList.add('landing-pretest-target');
+    bankTile.setAttribute('aria-label', 'Banco Educa. Primeira atividade: toque aqui para começar o pré-teste de Pix.');
+    // Pista curta sobre o ícone, sem escurecer o celular nem abrir o tutorial.
+    // O balão desaparece quando o primeiro aplicativo é aberto.
+    const hint = document.createElement('span');
+    hint.className = 'bank-start-cue';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = 'Toque aqui';
+    bankTile.appendChild(hint);
     if (miniCoachKicker) miniCoachKicker.textContent = 'PRÉ-TESTE · PIX';
     if (miniCoachTitle) miniCoachTitle.textContent = 'Experimente pelo Banco';
     if (miniCoachText) miniCoachText.textContent = 'Toque no Banco para experimentar uma atividade de Pix.';

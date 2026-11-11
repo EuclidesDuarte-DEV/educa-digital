@@ -42,6 +42,7 @@ try {
         duplicated: getComputedStyle(document.querySelector('.preview-badge.training-badge')).display !== 'none',
         etapa: document.querySelector('#pretestStepLabel')?.textContent ?? ''
       }));
+      console.log('V11154 pretest diagnostic', width, JSON.stringify(state));
       assert.ok(state.pretestActive && state.barVisible && !state.duplicated, width + ': pre-teste duplicado ou sem orientacao');
       assert.match(state.etapa, /ETAPA 1 DE 4/);
 
