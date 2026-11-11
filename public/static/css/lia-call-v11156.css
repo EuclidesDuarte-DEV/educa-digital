@@ -1,0 +1,75 @@
+/* V111.56 — videochamada contida no viewport real, sem alterar outras atividades. */
+/* A classe lia-call-visible só aparece enquanto a videochamada está aberta. */
+@media (max-width:700px){
+ html:not(.educa-fullscreen-active) body.lia-call-visible .phone-stage{
+  box-sizing:border-box!important;
+  min-height:0!important;height:auto!important;
+  width:100%!important;align-items:start!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible .phone-preview-wrap{
+  box-sizing:border-box!important;
+  min-height:0!important;
+  max-width:100%!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #phoneHardware{
+  box-sizing:border-box!important;
+  width:min(100%,calc(100vw - 18px))!important;
+  height:calc(100vh - 104px)!important;
+  height:calc(100dvh - 104px)!important;
+  max-height:850px!important;
+  min-height:360px!important;
+  aspect-ratio:auto!important;
+  padding:6px!important;
+  border-radius:24px!important;
+  margin-inline:auto!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #phoneHardware .phone-screen{
+  box-sizing:border-box!important;
+  width:100%!important;height:100%!important;
+  border-radius:19px!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #freeVideoView{
+  height:100%!important;inset:0!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #freeVideoView .v110-video-bottom{
+  bottom:max(6px,env(safe-area-inset-bottom,0px))!important;
+  left:6px!important;right:6px!important;
+  max-height:45%!important;overflow:visible!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #freeVideoView .v110-selfie{
+  bottom:clamp(85px,19cqh,130px)!important;
+  width:clamp(68px,22cqw,105px)!important;
+  max-height:22%!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #freeVideoView .v110-video-top{
+  top:clamp(22px,7cqw,34px)!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #freeVideoView .v110-video-toolbar{
+  gap:clamp(3px,1vw,7px)!important;
+  padding:6px!important;
+ }
+ html:not(.educa-fullscreen-active) body.lia-call-visible #freeVideoView .v112-video-more-content{
+  max-height:min(42dvh,260px)!important;
+  overflow-y:auto!important;
+ }
+}
+/* Em monitor horizontal, mostrar o rosto inteiro em vez de cortar boca/olhos. */
+@media (min-aspect-ratio:4/3){
+ html.educa-fullscreen-active #freeVideoView #freeVideoPortrait.lia-photo-real>img,
+ html.educa-fullscreen-active #freeVideoView #freeVideoPortrait.lia-photo-real>video,
+ #freeVideoView:fullscreen #freeVideoPortrait.lia-photo-real>img,
+ #freeVideoView:fullscreen #freeVideoPortrait.lia-photo-real>video{
+  object-fit:contain!important;
+  object-position:center center!important;
+ }
+}
+/* Feedback de voz visível, mas sem invadir o rosto ou empurrar os controles. */
+#freeVideoView #freeVideoVoiceProgress:not([hidden]){
+ max-width:100%!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+ font-size:clamp(10px,2.5cqw,13px)!important;
+ line-height:1.25!important;
+}
+@media (prefers-reduced-motion:reduce){
+ body.lia-call-visible #freeVideoView .v110-video-toolbar{transition:none!important}
+}

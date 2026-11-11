@@ -28,8 +28,12 @@ jobs:
     name: API publica do Preview (nunca producao)
     runs-on: ubuntu-latest
     env:
-      PREVIEW_URL: https://${{ github.head_ref }}-educa-digital.educamaisdigital.workers.dev
+      PREVIEW_BRANCH: ${{ github.head_ref }}
     steps:
+      - name: Construir endereço DNS válido do Preview
+        run: |
+          slug=$(printf '%s' "$PREVIEW_BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g;s/--*/-/g;s/^-//;s/-$//')
+          echo "PREVIEW_URL=https://${slug}-educa-digital.educamaisdigital.workers.dev" >> "$GITHUB_ENV"
       - name: Aguardar o build Cloudflare do commit correto
         env:
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}

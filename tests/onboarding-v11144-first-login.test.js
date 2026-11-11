@@ -40,5 +40,5 @@ test('V111.49: uma acessibilidade global, sem duplicações dentro do celular', 
   assert.match(html, /id="freeModeEntry"/);
   assert.match(html, /id="phoneStage"/);
   assert.match(html, /lia-kokoro-browser\.js/);
-  assert.match(cache, /(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue)/);
+  assert.match(cache, /(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight|educa-cf11156-lia-voice-viewport)/);
 });

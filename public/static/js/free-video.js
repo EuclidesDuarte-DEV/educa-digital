@@ -17,6 +17,7 @@ function syncLiaCallLayout(){
  if(rect.width<120||rect.height<180)return;
  ui.view.dataset.liaLayout=rect.width<=330?'compact':rect.width<=430?'regular':'wide';
  ui.view.dataset.liaShort=String(rect.height<620);
+ document.body?.classList.toggle('lia-call-visible',ui.view.classList.contains('is-active'));
 }
 if(ui.view){
  if(typeof ResizeObserver==='function'){
@@ -106,7 +107,7 @@ const VOICE_COMMIT_MS=450; // resposta mais rápida após a última frase final
 const BROWSER_KOKORO_READY_BUDGET_MS=7000;
 const BROWSER_KOKORO_WARM_BUDGET_MS=9000;
 const TTS_FIRST_RESPONSE_TIMEOUT_MS=25000; // tolera Kokoro remoto em CPU, sem espera infinita
-const MOTOR_CHECK_TIMEOUT_MS=2200; // não trocar prematuramente a voz neural pelo Chrome
+const MOTOR_CHECK_TIMEOUT_MS=900; // não trocar prematuramente a voz neural pelo Chrome
 // Escolha não repetitiva entre N clipes: N>1 garante que o consecutivo difere.
 function nextClip(clips,previous){
  if(clips.length===1)return 0;
@@ -336,44 +337,59 @@ function completed(){
  toListening();
  indicator('Lia realista • aguardando você');status('Sua vez: fale ou digite para a Lia.');scheduleListen();
 }
+function recoverVoice(serial,text,message){
+ if(serial!==session.serial||!session.active||!session.connected)return;
+ clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
+ session.utterance=null;session.speechQueue=[];session.prefetched=null;
+ try{window.speechSynthesis?.cancel();}catch(_){}
+ stopVoiceProgress();toListening();subtitle(session.lastSpoken||text);
+ // Se não há áudio, a mensagem fictícia deve permanecer legível para o aluno.
+ if(ui.view?.dataset)ui.view.dataset.captions='on';
+ if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
+ status(message+' Você ainda pode responder por texto ou tentar a voz novamente.');
+ if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}
+ scheduleListen(400);
+}
 function audioOnly(text,serial){
  if(serial!==session.serial||!session.active)return;
  clearMedia();indicator('Lia falando · vídeo realista controlado pela voz');
- if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){session.utterance=null;stopVoiceProgress();subtitle(text);status('Voz não disponível neste navegador. Leia as legendas ou tente Kokoro novamente.');if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}scheduleListen(600);return;}
- // Uma voz pt-BR sem nome feminino reconhecido NÃO é usada automaticamente.
+ if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){recoverVoice(serial,text,'A voz não está disponível neste navegador.');return;}
  const startFemale=voice=>{
   if(serial!==session.serial||!session.active||!session.connected)return;
   if(!voice||!/^pt[-_]BR$/i.test(voice.lang)){
-   stopVoiceProgress();session.utterance=null;toListening();subtitle(text);indicator('Lia · voz feminina indisponível neste aparelho');
-   status('Não há voz feminina pt-BR neste aparelho. O Kokoro pode continuar carregando; toque em Tentar voz oficial.');if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}scheduleListen(600);return;
+   indicator('Lia · voz feminina indisponível neste aparelho');
+   recoverVoice(serial,text,'Não foi encontrada uma voz feminina pt-BR. O Kokoro pode continuar carregando.');
+   return;
   }
   const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';
   u.rate=selectedStyle()==='calma'?.95:selectedStyle()==='clara'?1.02:1.05;
   u.pitch=1;u.volume=outputMuted?0:1;u.voice=voice;
-  startUtterance(u);
- };
- function startUtterance(u){
- session.utterance=u;let started=false;
- u.onstart=()=>{if(serial!==session.serial)return;started=true;stopVoiceProgress();clearTimeout(session.voiceStartTimer);
-    referenceMotion();subtitle(text);status('Lia falando. Os vídeos ilustrativos acompanham a voz: os fonemas são aproximados, com o movimento mais natural disponível neste aparelho.');};
- u.onpause=()=>{if(serial===session.serial)toListening();};
- u.onresume=()=>{if(serial===session.serial)referenceMotion();};
- u.onend=()=>{if(serial===session.serial)completed();};
- u.onerror=e=>{if(serial===session.serial){completed();status('O navegador não reproduziu a voz ('+(e.error||'erro')+'). Toque em Ouvir Lia.');}};
- try{
-   // IMPORTANTÍSSIMO: execute speak() na mesma chamada do clique em Atender ou Ouvir.
+  session.utterance=u;let started=false;
+  u.onstart=()=>{if(serial!==session.serial||session.utterance!==u)return;
+   started=true;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
+   ui.play.hidden=true;referenceMotion();subtitle(text);
+   status('Lia falando. Os fonemas são aproximados nos clipes ilustrativos deste navegador.');
+  };
+  u.onpause=()=>{if(serial===session.serial&&session.utterance===u)toListening();};
+  u.onresume=()=>{if(serial===session.serial&&session.utterance===u)referenceMotion();};
+  u.onend=()=>{if(serial===session.serial&&session.utterance===u)completed();};
+  u.onerror=e=>{if(serial===session.serial&&session.utterance===u)recoverVoice(serial,text,'O áudio do navegador falhou ('+(e.error||'erro')+').');};
+  try{
    status('Iniciando voz da Lia…');
-   session.voiceStartTimer=setTimeout(()=>{if(serial===session.serial&&!started){status('O áudio não iniciou. Toque em 🔊 Ouvir Lia ou confira som/voz do navegador.');}},5500);
+   session.voiceStartTimer=setTimeout(()=>{
+    if(serial===session.serial&&!started&&session.utterance===u)
+     recoverVoice(serial,text,'A voz do navegador não começou após 4 segundos.');
+   },4200);
    window.speechSynthesis.cancel();window.speechSynthesis.resume();window.speechSynthesis.speak(u);
- }catch(_){completed();status('Não foi possível iniciar a voz feminina. Use o seletor ou ative Kokoro.');}
- }
+  }catch(_){recoverVoice(serial,text,'Não foi possível iniciar a voz feminina.');}
+ };
  const selected=window.EducaLiaVoice?.choose?.();
  if(selected){startFemale(selected);return;}
  session.utterance={kind:'voice-loading'};
  status('Procurando uma voz feminina pt-BR neste aparelho…');
  const pendingVoice=window.EducaLiaVoice?.waitForFemale?.(1200);
-   if(pendingVoice)void pendingVoice.then(startFemale).catch(()=>{if(serial===session.serial)startFemale(null);});
-   else startFemale(null);
+ if(pendingVoice)void pendingVoice.then(startFemale).catch(()=>{if(serial===session.serial)startFemale(null);});
+ else startFemale(null);
 }
 async function fetchOk(url,opts){const r=await fetch(url,{cache:'no-store',credentials:'same-origin',...opts});if(!r.ok)throw Error('Serviço indisponível (HTTP '+r.status+')');return r;}
 const headers=()=>({'X-Educa-Lia-Code':session.teamCode});
@@ -442,10 +458,10 @@ async function playBrowserKokoro(text,serial){
   indicator('Lia · Kokoro pf_dora no navegador');
   status('Voz pf_dora gerada neste dispositivo. Os movimentos de boca são estimados; o vídeo original não é neural.');
   showVoiceProgress('LIA falando · voz pf_dora');
-  audio.onplaying=()=>{if(serial===session.serial){subtitle(text);if(!startSpeechMotion(audio,result.cues))referenceMotion();prefetchNextChunk(serial);}};
+  audio.onplaying=()=>{if(serial===session.serial){stopVoiceProgress();ui.play.hidden=true;subtitle(text);if(!startSpeechMotion(audio,result.cues))referenceMotion();prefetchNextChunk(serial);}};
   audio.onpause=()=>{if(serial===session.serial&&!audio.ended)toListening();};
   audio.onended=()=>{if(serial===session.serial)completed();};
-  audio.onerror=()=>{if(serial===session.serial){completed();status('Falha ao reproduzir Kokoro no navegador.');}};
+  audio.onerror=()=>{if(serial===session.serial){recoverVoice(serial,text,'Falha ao reproduzir Kokoro no navegador.');}};
   try{await audio.play();}catch(_){
    ui.play.hidden=false;delete ui.play.dataset.retryVoice;ui.play.textContent='▶ Ouvir voz oficial da LIA';
    showVoiceProgress('Toque em Ouvir voz oficial para liberar o som.');
@@ -525,7 +541,7 @@ function startSpeechChunk(phrase,serial){
   if(serial!==session.serial||!session.active||!session.connected)return;
   if(!session.renderReady||!session.teamCode){
    if(selectedEngine()==='padrao'){showVoiceProgress('');audioOnly(phrase,serial);return;}
-   if(!window.EducaLiaBrowserKokoro){subtitle(phrase);status('Motor pf_dora indisponível. Abra /testar-voz-lia.html.');showVoiceProgress('Voz oficial indisponível.');toListening();return;}
+   if(!window.EducaLiaBrowserKokoro){audioOnly(phrase,serial);return;}
    void playBrowserKokoro(phrase,serial).then(ok=>{
     if(!ok&&serial===session.serial&&session.active){
      if(selectedEngine()==='padrao')audioOnly(phrase,serial);
@@ -586,7 +602,7 @@ async function configure(){
   status(r.video_enabled?'Motor neural autorizado.':(r.voice_engine==='chatterbox'?'Chatterbox V3 autorizado. A voz expressiva acompanha os gestos ilustrativos.':'Kokoro autorizado. A voz controla os vídeos da Lia, sem GPU.'));
  }catch(e){session.renderReady=false;status('Não foi possível ativar o motor: '+String(e.message).slice(0,110));}
 }
-function close(){stopVoiceProgress();if(ui.play)ui.play.hidden=true;if(ui.view?.dataset)ui.view.dataset.captions='off';if(captionSwitch){captionSwitch.setAttribute('aria-pressed','false');captionSwitch.textContent='Ativar legendas';}if(speaker){speaker.hidden=true;}if($('freeVideoMore'))$('freeVideoMore').open=false;session.active=false;session.connected=false;session.waiting=false;session.motorPending=null;setHandsFree(false);abortSpeech();stopRecognition();stopCamera();clearInterval(session.interval);session.interval=null;session.clock=0;stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;indicator('Lia realista • chamada encerrada');}
+function close(){document.body?.classList.remove('lia-call-visible');stopVoiceProgress();if(ui.play)ui.play.hidden=true;if(ui.view?.dataset)ui.view.dataset.captions='off';if(captionSwitch){captionSwitch.setAttribute('aria-pressed','false');captionSwitch.textContent='Ativar legendas';}if(speaker){speaker.hidden=true;}if($('freeVideoMore'))$('freeVideoMore').open=false;session.active=false;session.connected=false;session.waiting=false;session.motorPending=null;setHandsFree(false);abortSpeech();stopRecognition();stopCamera();clearInterval(session.interval);session.interval=null;session.clock=0;stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;indicator('Lia realista • chamada encerrada');}
 function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;if(ui.text){ui.text.hidden=true;ui.text.setAttribute('aria-expanded','false');}free()?.enterVideo?.();session.active=true;ui.name.textContent='Lia';ui.duration.textContent='Videochamada recebida';subtitle('Uma pessoa desconhecida está chamando por vídeo.');status('Chamada educativa com IA. A Lia responde por voz e tenta usar o melhor sincronismo disponível.');indicator('Lia realista • aguardando chamada');session.motorPending=inspectMotor().finally(()=>{session.motorPending=null;});
  // Pré-aquecimento começa antes de Atender; não depende de serviços pagos ou CMD.
  const browser=window.EducaLiaBrowserKokoro;
@@ -598,7 +614,7 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
 async function answer(){if(!session.active||session.connected)return;syncLiaCallLayout();primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
- const intro='Oi! Sou a Lia. Estou em outro celular. Preciso de ajuda com um Pix fictício de R$ 350. Você pode me ajudar?';free()?.videoAccepted?.();speak(intro);}
+ const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';free()?.videoAccepted?.();speak(intro);}
 function listen(){
  if(!session.active||!session.connected||session.waiting||session.rec||session.utterance||document.hidden)return;
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
