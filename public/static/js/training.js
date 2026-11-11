@@ -1791,7 +1791,7 @@
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
       participantName = user.name; progressSaved = true; accessMode = 'registered';
-      requestSessionFullscreenFromGesture();
+      // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
       startTraining({ focus: true, boot: true });
       updatePrototypeViewportFit();
     } else {
@@ -1831,9 +1831,7 @@
     const digits = phone.replace(/\D/g, '');
     if (digits.length < 10) return showQuickStartMessage('Digite seu celular com DDD para salvar o progresso.', 'error');
     if (quickPhone) quickPhone.value = phone;
-    // Solicitar tela cheia no clique de cadastro, ANTES da requisição assíncrona.
-    // Se o navegador bloquear, o controle "Ampliar celular" permanece disponível.
-    requestSessionFullscreenFromGesture();
+    // V111.49: finalizar cadastro não solicita fullscreen automaticamente.
     if (quickSaveBtn) { quickSaveBtn.disabled = true; quickSaveBtn.innerHTML = 'Salvando...'; }
     try {
       const response = await fetch('/api/conta', {
@@ -1908,8 +1906,7 @@
     event.preventDefault();
     const code = (returnCode?.value || '').replace(/\D/g, '');
     if (code.length !== 6) return showReturnMessage(returnCodeMessage, 'Digite os 6 números do código.');
-    // O login anterior solicitava fullscreen em uma ação direta do usuário.
-    requestSessionFullscreenFromGesture();
+    // V111.49: entrar com código não solicita fullscreen automaticamente.
     try {
       const response = await fetch('/api/login/confirmar', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:returningPhone, code}) });
       const data = await response.json();
@@ -2851,15 +2848,6 @@
       try { await document.exitFullscreen(); } catch (_) {}
     }
     syncFullscreenControls();
-  }
-
-  // V60: tenta entrar em tela cheia APENAS enquanto o navegador ainda reconhece
-  // uma ação real do usuário (clique/submit). Isso é o equivalente permitido ao F11.
-  function requestSessionFullscreenFromGesture() {
-    if (!window.matchMedia('(min-width: 601px)').matches) return;
-    if (document.fullscreenElement) return;
-    if (navigator.userActivation && !navigator.userActivation.isActive) return;
-    openPhoneFullscreen();
   }
 
   // V59: usa a área realmente visível do navegador. Isso faz o protótipo
