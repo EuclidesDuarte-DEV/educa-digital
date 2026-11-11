@@ -1,0 +1,120 @@
+/* Educa+ Digital V111.48 — mobile compacto, instrução única e acessibilidade com reflow.
+   A moldura muda de largura; nunca reduz o texto interno por transform/zoom. */
+:root { --ed-phone-compact: 336px; }
+* { -webkit-tap-highlight-color: transparent; }
+html, body { max-width:100%; overflow-x:clip; }
+.phone-preview-wrap, #phoneStage, #phoneHardware, #phoneScreen { box-sizing:border-box; min-width:0; }
+.phone-preview-wrap { --ed-phone-compact: 336px; }
+
+/* Leitura de tela disponível dentro do painel de acessibilidade, sem botão solto sobre o conteúdo. */
+.a11y-inline-reader { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin:12px 0 0 55px; min-width:0; }
+.a11y-inline-reader .a11y-read-button {
+  position:static!important; inset:auto!important; display:inline-flex!important;
+  align-items:center; justify-content:center; width:auto!important; height:auto!important;
+  min-height:44px; padding:9px 13px!important; max-width:100%!important;
+  border-radius:12px!important; background:#ecf5ff!important; border:1px solid #b5d3f6!important;
+  color:#124e92!important; font:750 14px/1.4 Inter,system-ui,sans-serif!important;
+  text-align:center; box-shadow:none!important; white-space:normal;
+}
+.a11y-inline-reader .a11y-read-button[hidden] { display:none!important; }
+.a11y-inline-reader .a11y-read-button::before,
+.a11y-inline-reader .a11y-read-button.is-speaking::before { content:none!important; }
+.a11y-inline-reader .a11y-read-status {
+  display:block; position:static!important; inset:auto!important; max-width:100%;
+  padding:0!important; background:transparent!important; color:#28527e!important;
+  font:600 12px/1.45 Inter,system-ui,sans-serif; overflow-wrap:anywhere;
+}
+.a11y-inline-reader .a11y-read-status:empty { display:none!important; }
+@media(max-width:380px) { .a11y-inline-reader { margin-left:0; } }
+
+/* Pré-teste: apenas um resumo enxuto do passo ativo; não repetir o card de atividade. */
+.pretest-step-bar[hidden] { display:none!important; }
+.pretest-step-bar {
+  width:min(100%,var(--ed-phone-compact)); box-sizing:border-box;
+  padding:10px 13px; border:1px solid #bdd6f4; border-left:4px solid #256bd3;
+  border-radius:13px; background:#f4f9ff; color:#173d70;
+  display:flex; flex-direction:column; gap:3px; min-width:0;
+  position:sticky; top:max(8px,env(safe-area-inset-top)); z-index:10;
+  box-shadow:0 3px 12px #092b4c10;
+}
+.pretest-step-bar strong { font:800 11px/1.25 Inter,system-ui,sans-serif; letter-spacing:.02em; color:#185799; }
+.pretest-step-bar span { font:700 14px/1.35 Inter,system-ui,sans-serif; overflow-wrap:anywhere; }
+body.pretest-in-progress .preview-badge.training-badge { display:none!important; }
+body.pretest-in-progress.guide-focus-active .pretest-step-bar { opacity:1!important; filter:none!important; }
+body.pretest-in-progress .guide-spotlight {
+  box-shadow:0 0 0 9999px rgba(6,17,35,.40),0 0 17px 5px rgba(255,255,255,.48),0 0 0 4px rgba(37,99,235,.15)!important;
+}
+/* Impedir que uma chamada de abertura de outra tela deixe um segundo destaque. */
+body.pretest-in-progress #educaTour:not([hidden]) + .preview-badge { display:none!important; }
+
+/* Visitantes e usuários logados: proporção do celular intacta, margens reais no Safari/Android. */
+@media (max-width:600px) {
+  :root { --ed-phone-compact: clamp(286px,calc(100vw - 64px),326px); }
+  .phone-preview-wrap { --ed-phone-compact: clamp(286px,calc(100vw - 64px),326px); }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .phone-preview-wrap #phoneHardware {
+    width:var(--ed-phone-compact)!important;
+    max-width:calc(100vw - 26px)!important; height:auto!important;
+  }
+  html:not(.educa-fullscreen-active) body.prototype-focus #phoneHardware {
+    width:min(calc(100vw - 42px),348px)!important;
+    max-width:calc(100vw - 26px)!important; height:auto!important;
+  }
+  body:not(.prototype-focus) .phone-preview-wrap .phone-tools {
+    max-width:var(--ed-phone-compact)!important;
+    min-height:44px!important; height:auto!important;
+    justify-content:flex-end!important; align-self:center;
+  }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) #fullscreenBtn:not([hidden]) { min-height:44px!important; height:auto!important; }
+  .pretest-step-bar { width:var(--ed-phone-compact); max-width:calc(100vw - 24px); }
+  .phone-preview-wrap { gap:10px!important; }
+  #phoneStage { max-width:100%; }
+}
+@media(max-width:359px) {
+  :root, .phone-preview-wrap { --ed-phone-compact: min(calc(100vw - 32px),300px); }
+  .pretest-step-bar span { font-size:13px; }
+  html:not(.educa-fullscreen-active) body.prototype-focus #phoneHardware { width:calc(100vw - 26px)!important; }
+}
+@media(min-width:360px) and (max-width:390px) {
+  :root, .phone-preview-wrap { --ed-phone-compact:min(calc(100vw - 46px),320px); }
+}
+@media(min-width:391px) and (max-width:600px) {
+  :root, .phone-preview-wrap { --ed-phone-compact:min(calc(100vw - 64px),338px); }
+}
+@media(min-width:601px) and (max-width:1024px) {
+  .phone-preview-wrap { --ed-phone-compact:352px; }
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .hero-experience .phone-hardware {
+    width:min(352px,44vw)!important; max-width:100%!important;
+  }
+}
+/* No modo ampliar, preservar a solicitação explícita de tela cheia. */
+html.educa-fullscreen-active .pretest-step-bar { display:none!important; }
+
+/* Texto ampliado exige reflow de cartões, sem cortar títulos nem controles. */
+html:is(.a11y-text-large,.a11y-text-extra) .phone-screen,
+html:is(.a11y-text-large,.a11y-text-extra) #phoneStage { min-width:0; }
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen :is(.android-view,.learning-surface,.guided-surface,.bank-surface,.module-path-content) {
+  min-width:0; max-width:100%; overflow-wrap:break-word;
+}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView :is(.learning-card,.learning-featured,.free-mode-entry),
+html:is(.a11y-text-large,.a11y-text-extra) #modulePathView .module-lesson-card {
+  box-sizing:border-box; min-width:0!important; max-width:100%!important; height:auto!important;
+  overflow-wrap:anywhere!important; white-space:normal!important;
+}
+html.a11y-text-extra #learningView .learning-grid { grid-template-columns:minmax(0,1fr)!important; }
+html.a11y-text-large #learningView .learning-grid { grid-template-columns:repeat(2,minmax(0,1fr))!important; }
+@media(max-width:380px) {
+  html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-grid { grid-template-columns:minmax(0,1fr)!important; }
+}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-card,
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured,
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .free-mode-entry { min-height:68px!important; }
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen :is(button,input,select,textarea) {
+  max-width:100%; text-overflow:clip;
+}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen :is(.learning-card,.learning-featured,.free-mode-entry,.module-lesson-card,.pix-demo-option) {
+  min-height:48px!important;
+}
+html:is(.a11y-text-large,.a11y-text-extra) .pretest-step-bar span { font-size:clamp(16px,calc(13px * var(--ed-font-factor)),21px); }
+html.a11y-distinct-colors .pretest-step-bar { background:#fff!important; border:2px solid #173b6e!important; color:#082e57!important; }
+html.a11y-distinct-colors .pretest-step-bar :is(strong,span) { color:#082e57!important; }
+@media(prefers-reduced-motion:reduce) { .pretest-step-bar { scroll-behavior:auto!important; transition:none!important; } }
