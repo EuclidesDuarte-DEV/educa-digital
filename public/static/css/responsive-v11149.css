@@ -1,0 +1,175 @@
+/* Educa+ Digital V111.49 — interface limpa, um acesso de acessibilidade.
+   Mantém a moldura e as fontes nativas, sem transform:scale nem zoom. */
+:root { --ed-header-ink:#17365e; }
+
+/* Cabeçalho sempre numa linha, sem "Sair" cair para baixo no iPhone. */
+html:not(.educa-fullscreen-active) body:not(.prototype-focus) .site-header.home-simple-header {
+  box-sizing:border-box!important; display:flex!important; flex-direction:row!important;
+  align-items:center!important; justify-content:space-between!important;
+  flex-wrap:nowrap!important; width:100%!important; max-width:100%!important;
+  min-height:66px!important; height:auto!important;
+  padding:9px clamp(10px,2.5vw,32px)!important; gap:clamp(6px,1.5vw,20px)!important;
+  background:#fff!important;
+}
+body:not(.prototype-focus) .home-simple-header .brand {
+  display:flex!important; align-items:center!important; flex:0 1 auto!important;
+  min-width:0!important; max-width:42%!important; margin:0!important;
+}
+body:not(.prototype-focus) .home-simple-header .brand img {
+  display:block!important; width:clamp(108px,18vw,183px)!important;
+  max-width:100%!important; height:auto!important; object-fit:contain!important;
+}
+body:not(.prototype-focus) .home-simple-header .header-actions {
+  display:flex!important; align-items:center!important; justify-content:flex-end!important;
+  flex-flow:row nowrap!important; flex:0 0 auto!important; min-width:0!important;
+  gap:clamp(5px,1vw,12px)!important; margin:0!important;
+}
+.home-simple-header .header-actions :is(.educa-external-access,#openGuidedTour,#headerTrust,#logoutBtn){
+  flex:0 0 auto!important; min-width:0;
+}
+.home-simple-header .header-actions .educa-external-access {
+  position:static!important; margin:0!important; padding:0!important;
+  display:flex!important; align-items:center!important;
+}
+.home-simple-header #openAccessibilitySettings {
+  display:grid!important; place-items:center!important;
+  width:44px!important; height:44px!important; min-width:44px!important; min-height:44px!important;
+  padding:5px!important; border:1px solid #bed4ee!important; border-radius:12px!important;
+  color:#16599c!important; background:#f4f9ff!important; box-shadow:none!important;
+}
+.home-simple-header #openAccessibilitySettings .a11y-icon-bubble {
+  background:transparent!important; color:#16599c!important;
+  box-shadow:none!important; width:31px!important; height:31px!important;
+}
+.home-simple-header #openAccessibilitySettings .a11y-header-word { display:none!important; }
+.home-simple-header #openGuidedTour {
+  display:grid!important; place-items:center!important; width:44px!important; height:44px!important;
+  min-width:44px!important; min-height:44px!important; padding:0!important;
+  font:800 20px/1 Inter,system-ui,sans-serif!important; border-radius:12px!important;
+  background:#fff!important; border:1px solid #d5e1f0!important; color:#365d87!important;
+  box-shadow:none!important;
+}
+.home-simple-header #openGuidedTour span { display:none!important; }
+.home-simple-header #headerTrust {
+  max-width:min(19vw,200px)!important; white-space:nowrap!important; overflow:hidden!important;
+  text-overflow:ellipsis!important; font-size:13px!important; line-height:1.25!important;
+  padding:8px 10px!important; box-sizing:border-box;
+}
+.home-simple-header #logoutBtn:not([hidden]) {
+  display:inline-flex!important; align-items:center!important; justify-content:center!important;
+  min-width:52px!important; min-height:44px!important; height:44px!important;
+  border:1px solid #efd6d8!important; border-radius:12px!important;
+  padding:8px 12px!important; background:#fff!important; box-shadow:none!important;
+  font:750 14px/1.2 Inter,system-ui,sans-serif!important; color:#95363b!important;
+  white-space:nowrap!important; transform:none!important;
+}
+@media(max-width:900px) {
+  .home-simple-header #headerTrust { display:none!important; }
+}
+@media(max-width:390px) {
+  html:not(.educa-fullscreen-active) body:not(.prototype-focus) .site-header.home-simple-header {
+    padding:8px 10px!important; gap:5px!important; min-height:64px!important;
+  }
+  body:not(.prototype-focus) .home-simple-header .brand img { width:clamp(102px,31vw,122px)!important; }
+  body:not(.prototype-focus) .home-simple-header .header-actions { gap:5px!important; }
+  .home-simple-header #openAccessibilitySettings,
+  .home-simple-header #openGuidedTour { width:42px!important; min-width:42px!important; height:44px!important; }
+  .home-simple-header #logoutBtn:not([hidden]) { min-width:48px!important; padding:7px 10px!important; }
+}
+@media(min-width:901px) {
+  .home-simple-header #openGuidedTour span { display:inline!important; font-size:13px!important; }
+  .home-simple-header #openGuidedTour { width:auto!important; min-width:44px!important; padding:0 12px!important; display:inline-flex!important; gap:6px!important; }
+  .home-simple-header #headerTrust { max-width:220px!important; }
+}
+/* Nada de duas acessibilidades dentro do celular. Há um único botão externo,
+   no cabeçalho comum ou na barra superior do modo de treino. */
+#learningView .learning-a11y-quick,
+#learningView .learning-help-actions { display:none!important; }
+#learningView .learning-header { padding-right:0!important; }
+#learningView .learning-header > strong { max-width:100%!important; overflow-wrap:break-word!important; }
+
+/* No modo logado, o cabeçalho externo some. O botão acessível migra para
+   a barra superior, sem cobrir a atividade e sem se duplicar no Android. */
+html:not(.educa-fullscreen-active) body.prototype-focus .educa-external-access.a11y-focus-toolbar {
+  position:fixed!important; top:calc(10px + env(safe-area-inset-top,0px))!important;
+  right:calc(81px + env(safe-area-inset-right,0px))!important;
+  left:auto!important; bottom:auto!important; z-index:600!important;
+  display:flex!important; width:44px!important; height:44px!important;
+  visibility:visible!important; opacity:1!important;
+  background:transparent!important; margin:0!important; padding:0!important;
+}
+html:not(.educa-fullscreen-active) body.prototype-focus .educa-external-access.a11y-focus-toolbar #openAccessibilitySettings {
+  display:grid!important; place-items:center!important; min-width:44px!important;
+  width:44px!important; height:44px!important; min-height:44px!important;
+  border-radius:12px!important; border:1px solid #cbdcf0!important;
+  background:#fff!important; padding:5px!important; color:#17548e!important; box-shadow:none!important;
+}
+html:not(.educa-fullscreen-active) body.prototype-focus .a11y-focus-toolbar .a11y-icon-bubble {
+  width:30px!important; height:30px!important; background:transparent!important;
+  box-shadow:none!important; color:#17548e!important;
+}
+html:not(.educa-fullscreen-active) body.prototype-focus .a11y-focus-toolbar .a11y-header-word {display:none!important;}
+html:not(.educa-fullscreen-active) body.prototype-focus #focusExpandBtn:not([hidden]),
+html:not(.educa-fullscreen-active) body.prototype-focus #focusLogoutBtn:not([hidden]) {
+  top:calc(10px + env(safe-area-inset-top,0px))!important;
+  height:44px!important; min-height:44px!important;
+  padding:7px 12px!important; border-radius:12px!important;
+  font:750 13px/1.2 Inter,system-ui,sans-serif!important;
+  background:#fff!important; color:#255381!important; border:1px solid #d0deef!important;
+  box-shadow:none!important; white-space:nowrap!important;
+}
+html:not(.educa-fullscreen-active) body.prototype-focus #focusExpandBtn:not([hidden]) {left:12px!important;right:auto!important;max-width:46%!important;}
+html:not(.educa-fullscreen-active) body.prototype-focus #focusLogoutBtn:not([hidden]) {
+  right:12px!important;left:auto!important;color:#90373b!important;border-color:#efd6d8!important;
+}
+
+/* Tela cheia é ação secundária: botão discreto em linha e rótulo curto. */
+html:not(.educa-fullscreen-active) body:not(.prototype-focus) .phone-preview-wrap .phone-tools {
+  display:flex!important; justify-content:flex-end!important; align-items:center!important;
+  width:100%!important; max-width:min(100%,390px)!important;
+  height:auto!important; min-height:44px!important; margin:3px 0 4px!important;
+  padding:0 3px!important; gap:0!important;
+  background:transparent!important; box-shadow:none!important; border:0!important;
+}
+html:not(.educa-fullscreen-active) body:not(.prototype-focus) .phone-preview-wrap #fullscreenBtn:not([hidden]) {
+  display:inline-flex!important; justify-content:center!important; align-items:center!important;
+  flex-direction:row!important; gap:7px!important;
+  min-height:44px!important; height:44px!important; width:auto!important;
+  border:0!important; border-radius:11px!important; padding:8px 10px!important;
+  color:#225d9f!important; background:transparent!important; box-shadow:none!important;
+  white-space:nowrap!important;
+}
+html:not(.educa-fullscreen-active) body:not(.prototype-focus) #fullscreenBtn span {
+  font:750 13px/1.2 Inter,system-ui,sans-serif!important; color:inherit!important;
+  white-space:nowrap!important;
+}
+html:not(.educa-fullscreen-active) body:not(.prototype-focus) #fullscreenBtn svg {
+  width:19px!important; height:19px!important; flex:0 0 19px!important; min-width:0!important;
+}
+html:not(.educa-fullscreen-active) #fullscreenBtn:focus-visible {outline:3px solid #f0a400!important;outline-offset:2px!important;}
+html.educa-fullscreen-active #exitFullscreen:not([hidden]) {
+  border:1px solid #ccdcec!important; border-radius:12px!important;
+  background:#fff!important; color:#214f7b!important; box-shadow:none!important;
+  min-height:44px!important;
+}
+/* Textos do Android legíveis sem apertar os cards; reflow nos modos acessíveis. */
+#learningView .learning-card strong {font-size:clamp(14px,1.05vw,16px)!important;line-height:1.3!important;}
+#learningView .learning-card small {font-size:clamp(11px,.8vw,13px)!important;line-height:1.45!important;}
+#learningView .learning-featured-copy span,
+#learningView .free-entry-copy em {font-size:clamp(11px,.8vw,13px)!important;line-height:1.42!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-card strong {font-size:clamp(17px,calc(14px * var(--ed-font-factor)),23px)!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-card small {font-size:clamp(14px,calc(11px * var(--ed-font-factor)),19px)!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-featured-copy span,
+html:is(.a11y-text-large,.a11y-text-extra) #learningView .free-entry-copy em {font-size:clamp(14px,calc(11px * var(--ed-font-factor)),19px)!important;}
+#learningView .learning-card,
+#learningView .learning-featured {min-width:0!important;max-width:100%!important;overflow-wrap:break-word!important;}
+@media(max-width:380px) {
+  #learningView .learning-grid {grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  html:is(.a11y-text-large,.a11y-text-extra) #learningView .learning-grid {grid-template-columns:minmax(0,1fr)!important;}
+}
+@media(min-width:381px) and (max-width:1024px) {
+  html.a11y-text-extra #learningView .learning-grid {grid-template-columns:minmax(0,1fr)!important;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .home-simple-header :is(button,a), #fullscreenBtn, .phone-preview-wrap {animation:none!important;transition:none!important;}
+}

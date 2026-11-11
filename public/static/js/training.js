@@ -650,7 +650,8 @@
     if (miniCoachKicker) miniCoachKicker.textContent = 'PRÉ-TESTE · PIX';
     if (miniCoachTitle) miniCoachTitle.textContent = 'Experimente pelo Banco';
     if (miniCoachText) miniCoachText.textContent = 'Toque no Banco para experimentar uma atividade de Pix.';
-    scheduleGuide(bankTile, { label: 'Faça o pré-teste' }, 220);
+    // V111.49: na tela inicial, destacar o Banco sem escurecer o celular.
+    // O guia passo a passo começa somente quando a pessoa abre a atividade.
   }
 
   function scheduleGuide(target, options = {}, delay = 100) {
@@ -1187,7 +1188,10 @@
       participantName = user.name;
       progressSaved = true;
       accessMode = 'registered';
-      if (headerTrust) headerTrust.textContent = `Olá, ${user.name.split(/\s+/)[0]} 👋`;
+      // Login apenas por telefone: "Participante" é um identificador técnico,
+      // não deve aparecer como nome pessoal no cabeçalho.
+      const firstName = user.name && user.name !== 'Participante' ? user.name.trim().split(/\s+/)[0] : '';
+      if (headerTrust) headerTrust.textContent = firstName ? `Olá, ${firstName}` : 'Meu treino';
       if (startNowLabel) startNowLabel.textContent = 'Continuar meu treino';
       if (heroActionNote) heroActionNote.textContent = 'Seu progresso está salvo neste aparelho';
       if (logoutBtn) logoutBtn.hidden = false;
@@ -1659,19 +1663,8 @@
 
     if (fullscreen) window.setTimeout(openPhoneFullscreen, 500);
 
-    // V111.44: o tour da conta começa quando a central termina de abrir.
-    // Respeita a tela de carregamento (~1,5s) e não aparece nos pré-testes anônimos.
-    if (!firstActivity && accessMode === 'registered') {
-      const user = getRememberedUser();
-      window.setTimeout(() => {
-        if (user?.phone === getRememberedUser()?.phone &&
-            document.body.classList.contains('prototype-focus') &&
-            $('#learningView')?.classList.contains('is-active') &&
-            $('#prototypeBoot')?.hidden !== false) {
-          window.EducaGuidedTour?.startAuthenticated?.(user);
-        }
-      }, 1850);
-    }
+    // V111.49: nunca iniciar tutorial longo ao entrar.
+    // Os cartões mostram as opções e a ajuda fica estritamente sob demanda.
   }
 
   function renderScenario(id) {
@@ -1798,7 +1791,7 @@
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
       participantName = user.name; progressSaved = true; accessMode = 'registered';
-      requestSessionFullscreenFromGesture();
+      // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
       startTraining({ focus: true, boot: true });
       updatePrototypeViewportFit();
     } else {
@@ -1838,9 +1831,7 @@
     const digits = phone.replace(/\D/g, '');
     if (digits.length < 10) return showQuickStartMessage('Digite seu celular com DDD para salvar o progresso.', 'error');
     if (quickPhone) quickPhone.value = phone;
-    // Solicitar tela cheia no clique de cadastro, ANTES da requisição assíncrona.
-    // Se o navegador bloquear, o controle "Ampliar celular" permanece disponível.
-    requestSessionFullscreenFromGesture();
+    // V111.49: finalizar cadastro não solicita fullscreen automaticamente.
     if (quickSaveBtn) { quickSaveBtn.disabled = true; quickSaveBtn.innerHTML = 'Salvando...'; }
     try {
       const response = await fetch('/api/conta', {
@@ -1915,8 +1906,7 @@
     event.preventDefault();
     const code = (returnCode?.value || '').replace(/\D/g, '');
     if (code.length !== 6) return showReturnMessage(returnCodeMessage, 'Digite os 6 números do código.');
-    // O login anterior solicitava fullscreen em uma ação direta do usuário.
-    requestSessionFullscreenFromGesture();
+    // V111.49: entrar com código não solicita fullscreen automaticamente.
     try {
       const response = await fetch('/api/login/confirmar', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:returningPhone, code}) });
       const data = await response.json();
@@ -2858,15 +2848,6 @@
       try { await document.exitFullscreen(); } catch (_) {}
     }
     syncFullscreenControls();
-  }
-
-  // V60: tenta entrar em tela cheia APENAS enquanto o navegador ainda reconhece
-  // uma ação real do usuário (clique/submit). Isso é o equivalente permitido ao F11.
-  function requestSessionFullscreenFromGesture() {
-    if (!window.matchMedia('(min-width: 601px)').matches) return;
-    if (document.fullscreenElement) return;
-    if (navigator.userActivation && !navigator.userActivation.isActive) return;
-    openPhoneFullscreen();
   }
 
   // V59: usa a área realmente visível do navegador. Isso faz o protótipo
