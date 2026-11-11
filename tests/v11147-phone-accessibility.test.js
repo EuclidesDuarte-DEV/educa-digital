@@ -32,7 +32,8 @@ test('V111.47: zoom antigo removido, layout e contraste preservam cartões',()=>
  assert.match(responsive,/learning-grid\{grid-template-columns:minmax\(0,1fr\)!important/);
  assert.match(responsive,/a11y-distinct-colors/);
  assert.match(responsive,/learning-a11y-quick/);
- assert.match(html,/id="learningAccessibilityQuickBtn"/);
+ assert.match(html,/id="openAccessibilitySettings"/);
+ assert.doesNotMatch(html,/id="learningAccessibilityQuickBtn"/);
  assert.match(html,/responsive-v11147\.css/);
  assert.match(content('public/static/sw.js'),/educa-cf11147-phone-only-responsive-a11y/);
 });
