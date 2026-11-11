@@ -73,21 +73,38 @@ function triggerEvent(){if(!state.active)return;if(state.blocked||visible()==='f
 function dismiss(){els.notice.hidden=true;state.pending=null;schedule(18000,28000);}
 function openPending(){const s=state.pending;state.pending=null;els.notice.hidden=true;if(!s)return;schedule(28000,48000);if(s.channel==='call')showIncomingCall(s);else if(s.channel==='video')video()?.incoming(s);else if(s.channel==='sms')openSms(s);else openChat(s);}
 function renderBubble(role,text){const div=document.createElement('div');div.className='message '+(role==='user'?'outgoing':'incoming');div.append(document.createTextNode(text));const tm=document.createElement('time');tm.textContent=now();div.append(tm);els.wallpaper.append(div);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;}
-function append(role,text){const s=state.scenario;if(!s)return;const t=String(text).slice(0,350);let hist=state.conversations.get(s.id)||[];hist.push({role,content:t});hist=hist.slice(-16);state.conversations.set(s.id,hist);updatePreview(s);if(visible()==='chat')renderBubble(role,t);else if(visible()==='free-video'){video()?.addLine(role,t);}else if(visible()==='free-call'){const p=document.createElement('p');const strong=document.createElement('strong');strong.textContent=role==='assistant'?s.name+': ':'Você: ';p.append(strong,document.createTextNode(t));els.callLog.append(p);els.callLog.scrollTop=els.callLog.scrollHeight;}if(role==='assistant')state.lastSpoken=t;}
+function append(role,text){const s=state.scenario;if(!s)return;const t=String(text).slice(0,350);let hist=state.conversations.get(s.id)||[];hist.push({role,content:t});hist=hist.slice(-16);state.conversations.set(s.id,hist);updatePreview(s);if(visible()==='chat')renderBubble(role,t);else if(visible()==='free-video'){video()?.addLine(role,t);}else if(visible()==='free-sms'){renderSmsBubble(role,t);}else if(visible()==='free-call'){const p=document.createElement('p');const strong=document.createElement('strong');strong.textContent=role==='assistant'?s.name+': ':'Você: ';p.append(strong,document.createTextNode(t));els.callLog.append(p);els.callLog.scrollTop=els.callLog.scrollHeight;}if(role==='assistant')state.lastSpoken=t;}
+function renderSmsBubble(role,text){
+ if(!els.smsMessages)return;
+ const p=document.createElement('p');p.className='v11153-sms-bubble '+(role==='user'?'sent':'received');
+ const body=document.createElement('span');body.textContent=String(text).slice(0,350);
+ const clock=document.createElement('small');clock.textContent=now();
+ p.append(body,clock);els.smsMessages.append(p);els.smsMessages.scrollTop=els.smsMessages.scrollHeight;
+}
+function openSms(s){
+ if(!s||s.channel!=='sms'||!state.active)return;
+ clearRequest();state.scenario=s;state.blocked=false;state.pending=null;els.notice.hidden=true;
+ if(els.smsSender)els.smsSender.textContent=s.name;
+ if(els.smsMessages)els.smsMessages.replaceChildren();
+ const history=state.conversations.get(s.id)||[{role:'assistant',content:s.intro}];
+ if(!state.conversations.has(s.id))state.conversations.set(s.id,history);
+ show('free-sms');for(const m of history)renderSmsBubble(m.role,m.content);
+ if(els.smsStatus){els.smsStatus.textContent='SMS fictício · nenhum link é necessário';}
+}
 function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,48000);clearRequest();state.scenario=s;state.blocked=false;state.unread.delete(s.id);state.pending=null;els.notice.hidden=true;updateUnread();$('#scenarioTitle').textContent=s.name;$('#scenarioAvatar').textContent=s.icon;$('#scenarioAvatar').className='avatar blue small';$('#scenarioSubtitle').textContent='Contato fictício · simulação';els.wallpaper.replaceChildren();const badge=document.createElement('span');badge.className='chat-day';badge.textContent='Hoje · Ambiente de treinamento';els.wallpaper.append(badge);let hist=state.conversations.get(s.id);
  if(!hist?.length){hist=[{role:'assistant',content:s.intro}];state.conversations.set(s.id,hist);}
  show('chat');for(const row of hist)renderBubble(row.role,row.content);setStatus('');}
 function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){setStatus('Não digite CPF, telefones, códigos, senhas ou links reais. Use apenas textos fictícios.');if(visible()==='free-call')els.callLine.textContent='Não informe dados reais.';return;}
- const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');state.replying=true;els.send.disabled=true;els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
+ const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},17000); // evitar "em andamento" sem fim quando Workers AI travar
  try{const response=await fetch('/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
  catch(ex){err=timedOut?'A IA demorou para responder. Tente novamente com uma frase curta.':ex.name==='AbortError'?'A conexão com a IA foi interrompida.':/Failed to fetch|Failed to execute|NetworkError|fetch failed/i.test(String(ex.message))?'Não foi possível conectar à IA. Confira Ollama no Educa+ local ou o Workers AI na Cloudflare.':String(ex.message||'Não foi possível falar com a IA.');}
- finally{clearTimeout(responseTimer);if(state.request===abort)state.request=null;state.replying=false;els.send.disabled=false;els.typing.hidden=true;}
+ finally{clearTimeout(responseTimer);if(state.request===abort)state.request=null;state.replying=false;els.send.disabled=false;if(els.smsSend)els.smsSend.disabled=false;els.typing.hidden=true;}
  if(!state.active||state.scenario?.id!==current||(abort.signal.aborted&&!timedOut))return;
- if(err){if(visible()==='chat')setStatus(err);else if(visible()==='free-video')video()?.error(err);else els.callLine.textContent=err;return;}
- append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();}
+ if(err){if(visible()==='chat')setStatus(err);else if(visible()==='free-video')video()?.error(err);else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=err;else els.callLine.textContent=err;return;}
+ append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent='SMS simulado · responda ou escolha uma ação segura';}
 function finish(kind='safe',reason=''){
  if(!state.active)return;const s=state.scenario||state.pending;if(!s){home();return;}
  clearRequest();video()?.close?.();stopVoice();const safe=kind!=='unsafe';if(safe)state.finished++;
@@ -101,7 +118,7 @@ function finish(kind='safe',reason=''){
  // A próxima etapa inicia SOZINHA; "Avançar agora" é apenas um atalho opcional.
  // Um resumo curto permite perceber o feedback sem precisar confirmar nada.
  const nextButton=$('#freeSummaryNext');if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
- const transition=$('#freeSummaryAuto');if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':'Preparando a próxima atividade automaticamente…';}
+ const transition=$('#freeSummaryAuto');if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}
  show('free-summary');
  clearTransition();
  state.transitionTimer=setTimeout(()=>{state.transitionTimer=null;continueTraining();},2800);
@@ -138,9 +155,13 @@ $('#gestureHome')?.addEventListener('click',e=>{if(!state.active)return;e.stopIm
 $('#freeModeEntry')?.addEventListener('click',start);$('#freeExitBtn')?.addEventListener('click',exit);$('#freeSummaryExit')?.addEventListener('click',exit);$('#freeSummaryHome')?.addEventListener('click',home);$('#freeSummaryNext')?.addEventListener('click',continueTraining);
 $('#freeEventOpen')?.addEventListener('click',openPending);$('#freeEventDismiss')?.addEventListener('click',dismiss);$('#freeFloatingBack')?.addEventListener('click',home);
 els.form?.addEventListener('submit',e=>{e.preventDefault();const t=els.input.value;if(!t.trim())return;els.input.value='';send(t);});
-$('#freeFamilyVerify')?.addEventListener('click',()=>{if(state.active&&state.scenario?.id==='family'&&visible()==='chat')show('free-contacts');});
-$('#freeFamilyBlock')?.addEventListener('click',()=>{if(state.active&&state.scenario?.id==='family'&&visible()==='chat')finish('safe','Você bloqueou o contato suspeito sem transferir dinheiro.');});
-$('#freeCallAnswer')?.addEventListener('click',()=>{if(!state.scenario)return;state.callAccepted=true;els.answer.hidden=true;els.callForm.hidden=false;els.callLine.textContent='Chamada fictícia conectada';if(!state.conversations.get(state.scenario.id)?.length)append('assistant',state.scenario.intro);else {const t=state.conversations.get(state.scenario.id).at(-1)?.content||state.scenario.intro;const p=document.createElement('p');p.textContent=t;els.callLog.append(p);state.lastSpoken=t;}speak();});
+$('#freeFamilyVerify')?.addEventListener('click',()=>{if(state.active&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal'&&visible()==='chat')show('free-contacts');});
+$('#freeFamilyBlock')?.addEventListener('click',()=>{if(state.active&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal'&&visible()==='chat')finish('safe','Você bloqueou o contato suspeito sem compartilhar dados nem transferir dinheiro.');});
+els.smsForm?.addEventListener('submit',e=>{e.preventDefault();const text=els.smsInput?.value||'';if(els.smsInput)els.smsInput.value='';send(text);});
+ $('#freeSmsVerify')?.addEventListener('click',()=>finish('safe','Você conferiu o SMS fora da mensagem, pelo canal oficial.'));
+ $('#freeSmsBlock')?.addEventListener('click',()=>finish('safe','Você ignorou e bloqueou a mensagem suspeita.'));
+ $('#freeSmsBack')?.addEventListener('click',home);
+ $('#freeCallAnswer')?.addEventListener('click',()=>{if(!state.scenario)return;state.callAccepted=true;els.answer.hidden=true;els.callForm.hidden=false;els.callLine.textContent='Chamada fictícia conectada';if(!state.conversations.get(state.scenario.id)?.length)append('assistant',state.scenario.intro);else {const t=state.conversations.get(state.scenario.id).at(-1)?.content||state.scenario.intro;const p=document.createElement('p');p.textContent=t;els.callLog.append(p);state.lastSpoken=t;}speak();});
 $('#freeCallHangup')?.addEventListener('click',()=>finish('safe','Você encerrou a ligação sem passar informações.'));$('#freeCallVerify')?.addEventListener('click',()=>finish('safe','Você preferiu o canal oficial.'));
 $('#freeCallSpeak')?.addEventListener('click',speak);$('#freeCallMic')?.addEventListener('click',listen);$('#freeCallForm')?.addEventListener('submit',e=>{e.preventDefault();const t=els.callInput.value;els.callInput.value='';send(t);});
 $('#freeContactsBack')?.addEventListener('click',home);$('#freeContactKnown')?.addEventListener('click',()=>finish('safe','Você confirmou pelo número conhecido.'));$('#freeContactBank')?.addEventListener('click',()=>finish('safe','Você consultou um canal oficial.'));
