@@ -34,6 +34,8 @@ jobs:
         run: node scripts/validar-fullscreen-v11150.mjs
       - name: Entrada de telefone unica — conta nova e existente
         run: node scripts/validar-entrada-v11151.mjs
+      - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
+        run: node scripts/validar-modo-livre-v11153.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
@@ -44,4 +46,5 @@ jobs:
             artifacts/layout-v11149/
             artifacts/fullscreen-v11150/
             artifacts/entrada-v11151/
+            artifacts/modo-livre-v11153/
           if-no-files-found: ignore

@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="/static/css/accessibility.css?v=11140">
   <link rel="stylesheet" href="/static/css/onboarding.css?v=11145">
   <link rel="stylesheet" href="/static/css/android-system.css?v=104">
-  <link rel="stylesheet" href="/static/css/free-mode.css?v=11112">
+  <link rel="stylesheet" href="/static/css/free-mode.css?v=11153">
   <link rel="stylesheet" href="/static/css/web-real.css?v=109">
   <link rel="stylesheet" href="/static/css/free-video.css?v=11112">
   <link rel="stylesheet" href="/static/css/lia-fotorreal.css?v=11131">
@@ -336,7 +336,7 @@
                   </div>
                   <button class="free-mode-entry" id="freeModeEntry" type="button">
                     <span class="free-entry-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 17h4M10 7h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-                    <span class="free-entry-copy"><small>SIMULAÇÕES DE GOLPES</small><strong>Modo Livre</strong><em>Treine mensagens e videochamadas com IA.</em></span>
+                    <span class="free-entry-copy"><small>SIMULAÇÕES DE GOLPES</small><strong>Modo Livre</strong><em>Treine WhatsApp, SMS e chamadas com IA.</em></span>
                     <span class="free-entry-chevron" aria-hidden="true">›</span>
                   </button>
                   
@@ -350,6 +350,26 @@
               <!-- V106: o Modo Livre usa a tela Android ORIGINAL (homeView). -->
               <div id="freeHomeTools" class="free-home-tools" hidden>
                 <button id="freeExitBtn" class="free-micro-control" type="button">Sair</button>
+              </div>
+              <!-- V111.53 — SMS fictícios recebidos automaticamente no próprio celular simulado. -->
+              <div class="android-view" data-view="free-sms" id="freeSmsView">
+                <section class="v11153-sms" aria-label="SMS de treinamento: nenhuma mensagem é enviada ao telefone real">
+                  <header class="v11153-sms-header">
+                    <button id="freeSmsBack" type="button" aria-label="Voltar à tela do celular">‹</button>
+                    <div><strong id="freeSmsSender">Remetente desconhecido</strong><small>SMS SIMULADO · TREINAMENTO</small></div>
+                  </header>
+                  <div class="v11153-sms-messages" id="freeSmsMessages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+                  <p id="freeSmsStatus" class="v11153-sms-status" role="status">SMS fictício · nenhum link é necessário</p>
+                  <div class="v11153-sms-actions" role="group" aria-label="Ações seguras para SMS suspeito">
+                    <button type="button" id="freeSmsVerify">Conferir no canal oficial</button>
+                    <button type="button" id="freeSmsBlock">Ignorar e bloquear</button>
+                  </div>
+                  <form id="freeSmsForm" class="v11153-sms-compose" autocomplete="off">
+                    <label class="sr-only" for="freeSmsInput">Responder à mensagem fictícia</label>
+                    <input id="freeSmsInput" maxlength="350" placeholder="Responder ao SMS de treino" spellcheck="true">
+                    <button id="freeSmsSend" type="submit" aria-label="Enviar resposta apenas na simulação">Enviar</button>
+                  </form>
+                </section>
               </div>
               <div class="android-view" data-view="free-call" id="freeCallView">
                 <section class="v106-call-screen">
@@ -1344,7 +1364,7 @@
   <script src="/static/js/android-bridge.js"></script>
   <script src="/static/js/training.js?v=11151"></script>
   <script src="/static/js/onboarding.js?v=11149"></script>
-  <script src="/static/js/free-mode.js?v=11152"></script>
+  <script src="/static/js/free-mode.js?v=11153"></script>
   
   <script src="/static/js/lia-female-voice.js?v=11111"></script>
   <script src="/static/js/lia-kokoro-browser.js?v=11152"></script>
@@ -1353,7 +1373,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11152').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11153').catch(() => {});
       });
     }
   </script>

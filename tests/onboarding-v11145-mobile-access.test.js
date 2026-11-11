@@ -21,5 +21,5 @@ test('V111.49: preserva a função de guia manual e atualiza assets', () => {
   assert.doesNotMatch(js, /if \(!rememberedAccount\(\)\?\.phone\) start\(\)/);
   assert.match(html, /responsive-v11149\.css\?v=11149/);
   assert.match(html, /onboarding\.js\?v=11149/);
-  assert.match(sw, /(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida)/);
+  assert.match(sw, /(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual)/);
 });
