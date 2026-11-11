@@ -25,8 +25,8 @@ test('pré-aquecimento e chamada compartilham a mesma síntese; aberturas fixas 
  const duplicate=api.synthesize('Oi! Sou a Lia.');
  const [ready,first]=await Promise.all([warm,duplicate]);
  assert.equal(ready,true);assert.equal(first.voice,'pf_dora');
- assert.equal(speakCalls,2,'cada trecho de abertura é gerado uma única vez');
+ assert.equal(speakCalls,1,'o aquecimento não deve gerar WAV e atrasar a primeira resposta');
  const again=await api.synthesize('Oi! Sou a Lia.');
- assert.equal(speakCalls,2,'áudio fixo deve ser reutilizado sem refazer inferência');
+ assert.equal(speakCalls,1,'áudio fixo deve ser reutilizado sem refazer inferência');
  assert.equal(again.voice,'pf_dora');assert.equal(terminated,0);
 });
