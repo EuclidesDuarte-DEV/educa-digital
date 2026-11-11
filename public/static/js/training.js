@@ -625,7 +625,7 @@
   }
 
   function clearLandingPretest() {
-    $('.landing-pretest-target').forEach(el => {
+    document.querySelectorAll('.landing-pretest-target').forEach(el => {
       el.classList.remove('landing-pretest-target', 'guide-icon-motion');
       el.querySelector('.bank-start-cue')?.remove();
       if (el.dataset.openApp === 'bank') el.setAttribute('aria-label', 'Banco Educa');
