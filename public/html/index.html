@@ -24,7 +24,8 @@
 <link rel="stylesheet" href="/static/css/responsive-v11147.css?v=11147">
 <link rel="stylesheet" href="/static/css/responsive-v11148.css?v=11148">
 <link rel="stylesheet" href="/static/css/responsive-v11149.css?v=11149">
-<link rel="stylesheet" href="/static/css/fullscreen-v11150.css?v=11150"></head>
+<link rel="stylesheet" href="/static/css/fullscreen-v11150.css?v=11150">
+<link rel="stylesheet" href="/static/css/phone-entry-v11151.css?v=11151"></head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
     <a class="brand" href="/" aria-label="Educa+ Digital — início">
@@ -1240,27 +1241,22 @@
 
     <div class="start-modal" id="startModal" hidden aria-hidden="true">
       <div class="start-backdrop" id="startBackdrop"></div>
-      <div class="start-dialog" role="dialog" aria-modal="true" aria-labelledby="startModalTitle">
+      <div class="start-dialog start-dialog-simple" role="dialog" aria-modal="true" aria-labelledby="startModalTitle" aria-describedby="startModalIntro">
         <button class="start-close" id="closeStartModal" type="button" aria-label="Fechar">×</button>
-        <span class="modal-kicker" id="startModalKicker">COMEÇAR MEU TREINO</span>
-        <h2 id="startModalTitle">Quer salvar seu progresso?</h2>
-        <p class="start-modal-intro" id="startModalIntro">Informe apenas seu celular com DDD para começar.</p>
+        <span class="modal-kicker" id="startModalKicker">ENTRAR NO EDUCA+</span>
+        <h2 id="startModalTitle">Digite seu celular</h2>
+        <p class="start-modal-intro" id="startModalIntro">Para começar ou continuar seu treino.</p>
         <form id="quickStartForm" class="quick-start-form" novalidate>
-          <label>
-            <span>Seu celular</span>
+          <label for="quickPhone">
+            <span>Celular com DDD</span>
             <input id="quickPhone" name="quickPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" required placeholder="(65) 99999-9999" aria-describedby="phoneOnlyNotice">
           </label>
-          <p class="quick-start-trust" id="phoneOnlyNotice">Este é um ambiente de treinamento. Se já usou o Educa+, mostraremos como continuar.</p>
-          <button id="startAlreadyHaveAccount" class="quick-start-existing" type="button" hidden>Já tenho conta · Entrar com meu celular</button>
-          <p class="quick-start-message" id="quickStartMessage" hidden></p>
-          <div class="quick-start-actions">
-            <button class="quick-start-secondary" id="quickSkipBtn" type="button">Agora não</button>
-            <button class="quick-start-primary" id="quickSaveBtn" type="submit">Salvar e começar<span aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
-          </div>
+          <p class="quick-start-trust" id="phoneOnlyNotice">Não precisa informar nome ou senha.</p>
+          <p class="quick-start-message" id="quickStartMessage" hidden role="alert" aria-live="polite"></p>
+          <button class="quick-start-primary" id="quickSaveBtn" type="submit">Continuar <span aria-hidden="true">→</span></button>
         </form>
       </div>
     </div>
-
 
     <div class="return-modal" id="returnModal" hidden aria-hidden="true">
       <div class="return-backdrop" id="returnBackdrop"></div>
@@ -1296,7 +1292,7 @@
             </label>
             <p class="return-message" id="returnCodeMessage" hidden></p>
             <button class="return-primary" type="submit">Continuar meu treino</button>
-            <button class="return-secondary" id="changePhoneBtn" type="button">Trocar celular</button>
+            <button class="return-secondary" id="changePhoneBtn" type="button">Corrigir número</button>
           </form>
         </section>
       </div>
@@ -1346,7 +1342,7 @@
   <script src="/static/js/accessibility.js?v=11148"></script>
   <script src="/static/js/accessibility-external.js?v=11150"></script>
   <script src="/static/js/android-bridge.js"></script>
-  <script src="/static/js/training.js?v=11149"></script>
+  <script src="/static/js/training.js?v=11151"></script>
   <script src="/static/js/onboarding.js?v=11149"></script>
   <script src="/static/js/free-mode.js?v=11132"></script>
   
@@ -1357,7 +1353,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11150').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11151').catch(() => {});
       });
     }
   </script>

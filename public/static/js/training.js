@@ -1233,29 +1233,40 @@
     el.textContent = message;
   }
 
+  // Conta existente: após um único número, pular a segunda tela de telefone.
+  // Mantemos o código da demonstração para não confundir login com cadastro.
+  async function openExistingAccountCode(phone) {
+    const digits = String(phone || '').replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 11) throw new Error('Digite um celular válido com DDD.');
+    const response = await fetch('/api/login/codigo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: digits })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Não foi possível encontrar seu treino.');
+    returningPhone = digits;
+    if (returnPhone) returnPhone.value = formatPhone(digits);
+    closeStartModal();
+    openReturnModal();
+    returnPhoneStep.hidden = true;
+    returnCodeStep.hidden = false;
+    if (data.demo_code && demoCodeValue && demoCodeBox) {
+      demoCodeValue.textContent = data.demo_code;
+      demoCodeBox.hidden = false;
+    }
+    window.setTimeout(() => returnCode?.focus(), 120);
+  }
+
   function openStartModal({ unlock = false, fromPretest = false, entry = false } = {}) {
     if (!startModal) return;
-    if (startModalTitle) startModalTitle.textContent = fromPretest
-      ? 'Muito bem! Vamos criar sua conta?'
-      : (entry ? 'Comece seu treino no Educa+' : 'Quer salvar seu progresso?');
-    if (startModalIntro) startModalIntro.textContent = fromPretest
-      ? 'Você terminou o pré-teste. Para continuar, digite somente seu celular com DDD.'
-      : 'Informe seu celular com DDD. O Educa+ encontrará seu treino ou criará um novo.';
+    // V111.51: mesma entrada simples para usuários novos e antigos.
+    // Apenas telefone e um botão. A identificação da conta é automática.
+    if (startModalTitle) startModalTitle.textContent = 'Digite seu celular';
+    if (startModalIntro) startModalIntro.textContent = 'Para começar ou continuar seu treino.';
     const kicker = $('#startModalKicker');
-    if (kicker) kicker.textContent = fromPretest ? 'PRÉ-TESTE CONCLUÍDO' : (entry ? 'COMEÇAR MEU TREINO' : 'SALVAR MEU PROGRESSO');
-    if (quickSaveBtn) {
-      const label = fromPretest ? 'Criar minha conta' : entry ? 'Criar conta e começar' : 'Salvar meu progresso';
-      quickSaveBtn.textContent = label;
-      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      icon.setAttribute('class', 'nav-vector'); icon.setAttribute('viewBox', '0 0 24 24');
-      icon.setAttribute('fill', 'none'); icon.setAttribute('aria-hidden', 'true');
-      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-      path.setAttribute('d', 'm9 5 7 7-7 7'); path.setAttribute('stroke','currentColor');
-      path.setAttribute('stroke-width','2.15'); path.setAttribute('stroke-linecap','round');
-      path.setAttribute('stroke-linejoin','round'); icon.appendChild(path);
-      quickSaveBtn.appendChild(icon);
-    }
-    if ($('#quickSkipBtn')) $('#quickSkipBtn').textContent = fromPretest ? 'Voltar ao início' : (entry ? 'Aprender sem cadastro' : 'Agora não');
+    if (kicker) kicker.textContent = 'ENTRAR NO EDUCA+';
+    if (quickSaveBtn) quickSaveBtn.textContent = 'Continuar';
     startModal.dataset.unlock = unlock ? '1' : '0';
     startModal.dataset.origin = fromPretest ? 'pretest' : (entry ? 'entry' : 'progress');
     startModal.hidden = false;
@@ -1795,30 +1806,9 @@
       startTraining({ focus: true, boot: true });
       updatePrototypeViewportFit();
     } else {
-      // A entrada oficial volta a ser apenas por “Começar meu treino”.
-      // O visitante pode criar conta ou escolher explicitamente acessar sem cadastro.
+      // Um único telefone para criar ou recuperar o treino.
       openStartModal({ entry: true });
     }
-  });
-  $('#quickSkipBtn')?.addEventListener('click', () => {
-    const origin = startModal?.dataset.origin;
-    closeStartModal();
-    if (origin === 'pretest') {
-      // Fechar a criação após o pré-teste NÃO revela o menu de atividades.
-      returnToLandingPretest();
-      return;
-    }
-    if (origin === 'entry') {
-      participantName = '';
-      progressSaved = false;
-      accessMode = 'guest';
-      isGuestPretest = false;
-      startTraining();
-    }
-  });
-  $('#startAlreadyHaveAccount')?.addEventListener('click', () => {
-    closeStartModal();
-    openReturnModal();
   });
   $('#closeStartModal')?.addEventListener('click', () => closeStartModal());
   $('#startBackdrop')?.addEventListener('click', () => closeStartModal());
@@ -1829,10 +1819,10 @@
     event.preventDefault();
     const phone = formatPhone(quickPhone?.value || '');
     const digits = phone.replace(/\D/g, '');
-    if (digits.length < 10) return showQuickStartMessage('Digite seu celular com DDD para salvar o progresso.', 'error');
+    if (digits.length < 10 || digits.length > 11) return showQuickStartMessage('Digite um celular válido com DDD.', 'error');
     if (quickPhone) quickPhone.value = phone;
     // V111.49: finalizar cadastro não solicita fullscreen automaticamente.
-    if (quickSaveBtn) { quickSaveBtn.disabled = true; quickSaveBtn.innerHTML = 'Salvando...'; }
+    if (quickSaveBtn) { quickSaveBtn.disabled = true; quickSaveBtn.textContent = 'Continuando...'; }
     try {
       const response = await fetch('/api/conta', {
         method: 'POST',
@@ -1841,10 +1831,9 @@
       });
       const data = await response.json();
       if (!response.ok && data.needs_login) {
-        closeStartModal();
-        openReturnModal();
-        if (returnPhone) returnPhone.value = formatPhone(digits);
-        showReturnMessage(returnPhoneMessage, 'Este número já foi usado. Toque em “Mostrar código de treino” para continuar.', 'neutral');
+        // Telefone já cadastrado: avançar direto para o código demonstrativo.
+        // Nunca exigir que a pessoa digite o número duas vezes.
+        await openExistingAccountCode(digits);
         return;
       }
       if (!response.ok) {
@@ -1858,29 +1847,22 @@
         closeStartModal();
         startTraining({ focus: true, boot: true });
       }, 500);
-    } catch (_) {
-      showQuickStartMessage('Não foi possível salvar. Verifique se o servidor do Educa+ está ativo; abra o site pelo servidor do Educa+ Digital.', 'error');
+    } catch (error) {
+      showQuickStartMessage(error?.message || 'Não foi possível continuar. Tente novamente.', 'error');
     } finally {
       if (quickSaveBtn) {
         quickSaveBtn.disabled = false;
-        quickSaveBtn.textContent = startModal?.dataset.unlock === '1'
-          ? 'Salvar meu progresso' : 'Salvar meu progresso e começar';
-        const icon = document.createElementNS('http://www.w3.org/2000/svg','svg');
-        icon.setAttribute('class','nav-vector'); icon.setAttribute('viewBox','0 0 24 24');
-        icon.setAttribute('fill','none'); icon.setAttribute('aria-hidden','true');
-        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('d','m9 5 7 7-7 7'); path.setAttribute('stroke','currentColor');
-        path.setAttribute('stroke-width','2.15'); path.setAttribute('stroke-linecap','round');
-        path.setAttribute('stroke-linejoin','round');icon.appendChild(path);quickSaveBtn.appendChild(icon);
+        quickSaveBtn.textContent = 'Continuar';
       }
     }
   });
   $('#closeReturnModal')?.addEventListener('click', closeReturnModal);
   $('#returnBackdrop')?.addEventListener('click', closeReturnModal);
   $('#changePhoneBtn')?.addEventListener('click', () => {
-    returnPhoneStep.hidden = false;
-    returnCodeStep.hidden = true;
-    window.setTimeout(() => returnPhone?.focus(), 80);
+    closeReturnModal();
+    openStartModal({ entry: true });
+    if (quickPhone) quickPhone.value = formatPhone(returningPhone);
+    window.setTimeout(() => quickPhone?.focus(), 80);
   });
   returnPhone?.addEventListener('input', () => { returnPhone.value = formatPhone(returnPhone.value); });
   returnCode?.addEventListener('input', () => { returnCode.value = returnCode.value.replace(/\D/g, '').slice(0, 6); });
@@ -2962,10 +2944,8 @@
       const response = await fetch('/api/conta', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:digits}) });
       const data = await response.json();
       if (!response.ok && data.needs_login) {
+        await openExistingAccountCode(digits);
         accountCard.hidden = true;
-        openReturnModal();
-        if (returnPhone) returnPhone.value = formatPhone(digits);
-        showReturnMessage(returnPhoneMessage, 'Este celular já tem um treino. Receba seu código demonstrativo para continuar.', 'neutral');
         return;
       }
       if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
