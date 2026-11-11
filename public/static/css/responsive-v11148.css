@@ -78,13 +78,46 @@ body.pretest-in-progress #educaTour:not([hidden]) + .preview-badge { display:non
   :root, .phone-preview-wrap { --ed-phone-compact:min(calc(100vw - 46px),320px); }
 }
 @media(min-width:391px) and (max-width:600px) {
-  :root, .phone-preview-wrap { --ed-phone-compact:min(calc(100vw - 64px),338px); }
+  :root, .phone-preview-wrap { --ed-phone-compact:min(calc(100vw - 70px),322px); }
 }
 @media(min-width:601px) and (max-width:1024px) {
   .phone-preview-wrap { --ed-phone-compact:352px; }
   html:not(.educa-fullscreen-active) body:not(.prototype-focus) .hero-experience .phone-hardware {
     width:min(352px,44vw)!important; max-width:100%!important;
   }
+}
+/* Com letras maiores, devolver um pouco de largura útil ao aparelho para evitar cortes. */
+@media(max-width:600px) {
+  html:is(.a11y-text-large,.a11y-text-extra):not(.educa-fullscreen-active) body:not(.prototype-focus) .phone-preview-wrap #phoneHardware {
+    width:min(calc(100vw - 28px),356px)!important;
+    max-width:calc(100vw - 24px)!important;
+  }
+}
+/* Os passos e valores do Pix também aumentam, não apenas a central de aprendizagem. */
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen :is(
+  .bank-training-note, .pix-practice-progress, .pix-form-checklist > p,
+  .pix-practice-feedback, .pix-demo-option, .bank-lead, .bank-help-card,
+  .bank-action-primary
+) {
+  font-size:clamp(14px,calc(12px * var(--ed-font-factor)),20px)!important;
+  line-height:1.5!important; max-width:100%; white-space:normal!important;
+  overflow-wrap:break-word;
+}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen :is(
+  .pix-type-grid,.pix-amount-grid
+) {
+  display:grid!important; grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  min-width:0; max-width:100%; gap:8px!important;
+}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen :is(
+  .pix-type-grid button,.pix-amount-grid button,.bank-main-btn
+) {
+  min-height:48px!important; height:auto!important; padding:9px 7px!important;
+  font-size:clamp(14px,calc(12px * var(--ed-font-factor)),20px)!important;
+  line-height:1.35!important; white-space:normal!important; overflow-wrap:break-word;
+}
+@media(max-width:359px){
+  html.a11y-text-extra #phoneScreen .pix-type-grid { grid-template-columns:minmax(0,1fr)!important; }
 }
 /* No modo ampliar, preservar a solicitação explícita de tela cheia. */
 html.educa-fullscreen-active .pretest-step-bar { display:none!important; }
