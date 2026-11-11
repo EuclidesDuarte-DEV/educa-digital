@@ -1,4 +1,4 @@
-name: Validar V111.47 (Preview isolado)
+name: Validar Educa+ (Preview isolado)
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ jobs:
     name: API publica do Preview (nunca producao)
     runs-on: ubuntu-latest
     env:
-      PREVIEW_URL: https://atualizacao-v11147-educa-digital.educamaisdigital.workers.dev
+      PREVIEW_URL: https://${{ github.head_ref }}-educa-digital.educamaisdigital.workers.dev
     steps:
       - name: Aguardar o build Cloudflare do commit correto
         env:
