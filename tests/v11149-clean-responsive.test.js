@@ -46,11 +46,11 @@ test('V111.49: zero tutoriais automáticos, pré-teste continua por toque',()=>{
 });
 
 test('V111.49: cache atualizado e mesmos D1 de produção e Preview',()=>{
-  assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual)/);
+  assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry|educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue)/);
   assert.match(sw,/responsive-v11149\.css/);
   assert.match(html,/responsive-v11149\.css\?v=11149/);
   assert.match(html,/accessibility-external\.js\?v=111(?:49|50)/);
-  assert.match(html,/training\.js\?v=111(?:49|51)/);
+  assert.match(html,/training\.js\?v=111(?:49|51|54)/);
   assert.match(html,/onboarding\.js\?v=11149/);
   assert.match(cfg,/database_name = "educa-digital"\s*\ndatabase_id = "25613d89-8073-40f2-af9b-91e751fb28d7"/);
   assert.match(cfg,/database_name = "educa-digital-preview"\s*\ndatabase_id = "5a3484de-9457-4343-89ff-1b7f455815c4"/);
