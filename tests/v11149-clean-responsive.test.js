@@ -49,7 +49,7 @@ test('V111.49: cache atualizado e mesmos D1 de produção e Preview',()=>{
   assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar)/);
   assert.match(sw,/responsive-v11149\.css/);
   assert.match(html,/responsive-v11149\.css\?v=11149/);
-  assert.match(html,/accessibility-external\.js\?v=11149/);
+  assert.match(html,/accessibility-external\.js\?v=111(?:49|50)/);
   assert.match(html,/training\.js\?v=11149/);
   assert.match(html,/onboarding\.js\?v=11149/);
   assert.match(cfg,/database_name = "educa-digital"\s*\ndatabase_id = "25613d89-8073-40f2-af9b-91e751fb28d7"/);
