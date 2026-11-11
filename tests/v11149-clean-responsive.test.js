@@ -46,7 +46,7 @@ test('V111.49: zero tutoriais automáticos, pré-teste continua por toque',()=>{
 });
 
 test('V111.49: cache atualizado e mesmos D1 de produção e Preview',()=>{
-  assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar)/);
+  assert.match(sw,/(?:educa-cf11149-clean-multidevice-ui|educa-cf11150-fullscreen-toolbar|educa-cf11151-phone-entry)/);
   assert.match(sw,/responsive-v11149\.css/);
   assert.match(html,/responsive-v11149\.css\?v=11149/);
   assert.match(html,/accessibility-external\.js\?v=111(?:49|50)/);
