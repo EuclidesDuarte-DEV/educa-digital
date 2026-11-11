@@ -84,9 +84,12 @@ export async function responderModoLivre(request,env){
     // Reconsulta pontual apenas quando a primeira resposta violou o contexto.
     // Não adiciona scripts falsos como se fossem saídas da IA.
     if(incoherent(generated)){
+      // Mantenha system no início e user por último: vários modelos Workers AI
+      // rejeitam um segundo system depois de uma resposta assistant.
       generated=await generate({...options,messages:[
-        ...messages,{role:'assistant',content:generated},
-        {role:'system',content:'A resposta anterior fugiu do contexto. Refaça agora: mantenha o personagem '+s.name+' e responda à última fala da pessoa de maneira curta e coerente com a história. Não faça perguntas sobre profissão, função ou objetivo da pessoa.'}
+        {role:'system',content:instruction+' A primeira resposta ficou fora do contexto. Responda de novo à última fala sem perguntar a profissão/função da pessoa, mantendo o personagem '+s.name+'.'},
+        ...parsed.history.slice(-7),
+        {role:'user',content:parsed.message}
       ]});
     }
     if(generated&&!incoherent(generated)&&!badPrivate.test(generated))return Response.json({ok:true,reply:generated,mode:'ia'});
