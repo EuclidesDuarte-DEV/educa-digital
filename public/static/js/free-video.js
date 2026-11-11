@@ -611,7 +611,7 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
 async function answer(){if(!session.active||session.connected)return;syncLiaCallLayout();primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
- const intro='Oi! Sou a Lia. Estou em outro celular. Preciso de ajuda com um Pix fictício de R$ 350. Você pode me ajudar?';free()?.videoAccepted?.();speak(intro);}
+ const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';free()?.videoAccepted?.();speak(intro);}
 function listen(){
  if(!session.active||!session.connected||session.waiting||session.rec||session.utterance||document.hidden)return;
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
