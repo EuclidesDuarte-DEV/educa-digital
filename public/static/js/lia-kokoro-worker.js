@@ -85,7 +85,7 @@ async function synthesize(text,id,style){
  const Tensor=ids.constructor;
  const tokens=Math.min(Math.max(ids.dims.at(-1)-2,0),509),offset=tokens*256;
  if(offset+256>voiceData.length)throw Error('Comprimento não suportado pela voz pf_dora');
- const speed=style==='calma'?.92:style==='clara'?.98:1.02;
+ const speed=style==='calma'?.96:style==='clara'?1.04:1.06; // pf_dora natural: leve fluidez, sem alterar timbre/pitch
  const input={input_ids:ids,style:new Tensor('float32',voiceData.slice(offset,offset+256),[1,256]),speed:new Tensor('float32',[speed],[1])};
  const started=Date.now();
  say('progress',{stage:'Executando inferência Kokoro ('+device+', '+tokens+' tokens)…',device,tokens});
