@@ -1,0 +1,12 @@
+*.xcodeproj
+DerivedData/
+build/
+dist/
+*.ipa
+*.mobileprovision
+*.p12
+*.cer
+*.xcarchive
+.DS_Store
+EducaDigital/Info.plist
+EducaDigital/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
