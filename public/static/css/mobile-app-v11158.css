@@ -1,0 +1,70 @@
+/* Educa+ V111.58 — somente instalação PWA / app Android e ?app=1.
+   O site web normal mantém sua página de apresentação e celular demonstrativo. */
+html.educa-mobile-app,html.educa-mobile-app body {
+ width:100%;height:100%;min-height:100%;margin:0!important;padding:0!important;
+ overflow:hidden!important;overscroll-behavior:none;background:#0b1525!important;
+}
+html.educa-mobile-app body .site-header,
+html.educa-mobile-app body .home-simple-header,
+html.educa-mobile-app body .hero-copy,
+html.educa-mobile-app body .phone-tools,
+html.educa-mobile-app body .preview-badge.training-badge,
+html.educa-mobile-app body .pretest-step-bar,
+html.educa-mobile-app body .hero-benefits,
+html.educa-mobile-app body .hero-trust-row,
+html.educa-mobile-app body #exitFullscreen,
+html.educa-mobile-app body #fullscreenBtn,
+html.educa-mobile-app body #focusExpandBtn,
+html.educa-mobile-app body .hardware-button,
+html.educa-mobile-app body .phone-hardware::before,
+html.educa-mobile-app body .phone-hardware::after {display:none!important;}
+html.educa-mobile-app body > main,
+html.educa-mobile-app body .hero-experience,
+html.educa-mobile-app body .phone-preview-wrap,
+html.educa-mobile-app body .phone-stage,
+html.educa-mobile-app body #phoneHardware,
+html.educa-mobile-app body #phoneScreen{
+ box-sizing:border-box!important;
+ width:100%!important;min-width:0!important;max-width:none!important;
+ height:100vh!important;height:100dvh!important;
+ min-height:0!important;max-height:none!important;
+ padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;
+ aspect-ratio:auto!important;box-shadow:none!important;
+ transform:none!important;
+}
+html.educa-mobile-app body > main,
+html.educa-mobile-app body .hero-experience,
+html.educa-mobile-app body .phone-preview-wrap,
+html.educa-mobile-app body .phone-stage{
+ position:fixed!important;inset:0!important;top:0!important;left:0!important;
+ display:block!important;overflow:hidden!important;
+ background:#0b1525!important;
+}
+html.educa-mobile-app body #phoneHardware,
+html.educa-mobile-app body #phoneScreen{
+ position:relative!important;inset:auto!important;
+ overflow:hidden!important;background:#eef4fb!important;
+}
+html.educa-mobile-app body .phone-screen .android-view {
+ max-height:100%!important;
+}
+html.educa-mobile-app body.prototype-focus #focusLogoutBtn{
+ position:fixed!important;z-index:300!important;
+ top:max(12px,env(safe-area-inset-top,0px))!important;
+ right:max(12px,env(safe-area-inset-right,0px))!important;
+ padding:7px 12px!important;min-height:40px!important;
+}
+/* O único elemento que ocupa a tela é o protótipo: não usar a faixa do
+   botão sair da tela cheia, que só tem sentido em uma aba de navegador. */
+@media(max-width:700px){
+ html.educa-mobile-app.educa-fullscreen-active body .phone-preview-wrap,
+ html.educa-mobile-app.educa-fullscreen-active body .phone-stage,
+ html.educa-mobile-app.educa-fullscreen-active body #phoneHardware,
+ html.educa-mobile-app.educa-fullscreen-active body #phoneScreen{
+  height:100dvh!important;padding:0!important;
+ }
+}
+/* Não permitir que teclado/zoom alterem a moldura. Os formulários e
+   suas áreas de rolagem continuam dentro de cada tela simulada. */
+html.educa-mobile-app body .phone-screen {contain:layout style;}
