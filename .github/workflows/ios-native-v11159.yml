@@ -1,0 +1,97 @@
+name: Educa+ Digital iOS nativo V111.59
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'ios-app/**'
+      - 'public/static/icons_pwa/**'
+      - '.github/workflows/ios-native-v11159.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-build:
+    name: Compilar app SwiftUI iOS e IPA sem assinatura
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar Xcode e XcodeGen
+        run: |
+          xcodebuild -version
+          brew install xcodegen
+          xcodegen --version
+      - name: Ícone oficial e projeto Xcode
+        run: |
+          bash ios-app/scripts/preparar-icone.sh
+          xcodegen generate --spec ios-app/project.yml --project ios-app
+          test -d ios-app/EducaDigitalIOS.xcodeproj
+      - name: Compilar versão de iPhone (sem certificado)
+        run: |
+          xcodebuild -project ios-app/EducaDigitalIOS.xcodeproj \
+            -scheme EducaDigital -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath ios-app/DerivedData \
+            CODE_SIGNING_ALLOWED=NO build > /tmp/educa-ios-device.log 2>&1 || {
+              tail -n 160 /tmp/educa-ios-device.log
+              exit 1
+            }
+          test -d ios-app/DerivedData/Build/Products/Release-iphoneos/EducaDigital.app
+      - name: Compilar versão do simulador de iPhone
+        run: |
+          xcodebuild -project ios-app/EducaDigitalIOS.xcodeproj \
+            -scheme EducaDigital -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath ios-app/DerivedData \
+            CODE_SIGNING_ALLOWED=NO build > /tmp/educa-ios-simulator.log 2>&1 || {
+              tail -n 160 /tmp/educa-ios-simulator.log
+              exit 1
+            }
+          test -d ios-app/DerivedData/Build/Products/Debug-iphonesimulator/EducaDigital.app
+      - name: Montar IPA de desenvolvimento para assinatura posterior
+        run: |
+          mkdir -p ios-app/dist/Payload
+          cp -R ios-app/DerivedData/Build/Products/Release-iphoneos/EducaDigital.app ios-app/dist/Payload/
+          cd ios-app/dist
+          zip -qry EducaMaisDigital-iOS-v11159-unsigned.ipa Payload
+          test -s EducaMaisDigital-iOS-v11159-unsigned.ipa
+          unzip -l EducaMaisDigital-iOS-v11159-unsigned.ipa | grep -F 'Payload/EducaDigital.app/Info.plist'
+          shasum -a 256 EducaMaisDigital-iOS-v11159-unsigned.ipa
+      - name: Disponibilizar IPA iOS (sem assinatura Apple)
+        uses: actions/upload-artifact@v4
+        with:
+          name: EducaMaisDigital-iOS-v11159-unsigned
+          path: ios-app/dist/EducaMaisDigital-iOS-v11159-unsigned.ipa
+          retention-days: 90
+          if-no-files-found: error
+
+  ios-release:
+    name: Disponibilizar IPA iOS de desenvolvimento
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: ios-build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: EducaMaisDigital-iOS-v11159-unsigned
+          path: dist
+      - name: Criar release público com aviso de assinatura obrigatória
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v11159-ios-native-beta"
+          asset="dist/EducaMaisDigital-iOS-v11159-unsigned.ipa"
+          test -s "$asset"
+          notes="Educa+ Digital iOS nativo V111.59, compilado por Xcode em macOS. IMPORTANTE: IPA SEM ASSINATURA APPLE. Baixar NÃO instala diretamente no iPhone. Para testes pessoais, é preciso assinar pelo Xcode com seu Apple Account em um Mac ou usar ferramenta de assinatura como Sideloadly/AltStore Classic e, no caso de conta Apple gratuita, renovar a assinatura periodicamente. Para distribuir via TestFlight/App Store ou marketplace brasileiro é necessário cumprir o processo de assinatura/notarização e requisitos do Apple Developer Program. Site e PWA oficiais continuam em https://educa-digital.educamaisdigital.workers.dev/. Sem conteúdo de IA offline."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$asset" --clobber
+          else
+            gh release create "$tag" "$asset" --title "Educa+ Digital iOS nativo V111.59 (IPA para assinatura)" --notes "$notes" --prerelease
+          fi
