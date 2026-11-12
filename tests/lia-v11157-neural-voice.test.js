@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {escolherModelo,responderModoLivre} from '../src/free-chat.js';
 
 const worker=readFileSync('public/static/js/lia-kokoro-worker.js','utf8');
+const call=readFileSync('public/static/js/free-video.js','utf8');
 const browser=readFileSync('public/static/js/lia-kokoro-browser.js','utf8');
 const html=readFileSync('public/html/index.html','utf8');
 const cache=readFileSync('public/static/sw.js','utf8');
@@ -61,6 +62,14 @@ test('V111.57: falas com dinheiro são fonetizadas por extenso e não muda o cen
  assert.match(worker,/const MODEL='onnx-community\/Kokoro-82M-v1\.0-ONNX'/);
  assert.match(worker,/const VOICE='pf_dora'/);
  assert.match(worker,/const speed=style==='calma'\?\.94:style==='clara'\?\.98:1\.00/);
+});
+
+test('V111.57: áudio neural tardio do iPhone só toca se conversa ainda for a mesma',()=>{
+ assert.match(call,/async function playBrowserResult\(result,text,serial\)/);
+ assert.match(call,/if\(expired\|\|serial!==session\.serial\|\|!session\.active\|\|!session\.connected\|\|session\.waiting\|\|session\.utterance\)return/);
+ assert.match(call,/void pending\.then\(result=>/);
+ assert.match(call,/clearTimeout\(lateTimer\)/);
+ assert.match(call,/scheduleListen\(400\)/);
 });
 
 test('V111.57: codec neural atenua bordas, versão de voz renova e bancos seguem iguais',()=>{
