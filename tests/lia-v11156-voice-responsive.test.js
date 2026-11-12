@@ -40,7 +40,7 @@ test('V111.56: diálogo da Lia respeita a história e responde perguntas de iden
  }}});
  assert.equal(res.status,200);
  assert.match(instruction,/A pessoa perguntou identidade/);
- assert.match(instruction,/NÃO repita o pedido sem necessidade/);
+ assert.match(instruction,/JÁ fez o pedido de empréstimo/);
  assert.match(instruction,/Se a pessoa desconfiar/);
 });
 test('V111.56: viewport móvel, desktop e nova versão no cache',()=>{
