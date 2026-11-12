@@ -6,7 +6,20 @@
  */
 const MODEL='onnx-community/Kokoro-82M-v1.0-ONNX';
 const VOICE='pf_dora';
-const VOICE_URL='https://huggingface.co/'+MODEL+'/resolve/main/voices/'+VOICE+'.bin';
+// Modelos baixados via Worker Cloudflare, sem acesso direto a HF pelo navegador.
+// O encaminhamento só permite arquivos oficiais numa lista fechada no backend.
+const HUB='https://huggingface.co/'+MODEL+'/resolve/main/';
+const nativeFetch=self.fetch.bind(self);
+self.fetch=(resource,init)=>{
+ const url=typeof resource==='string'?resource:resource?.url||String(resource);
+ if(url.startsWith(HUB)){
+  const rel=url.slice(HUB.length).split('?')[0];
+  const dest=new URL('/api/lia-model/'+rel,self.location.origin);
+  return nativeFetch(dest.href,init);
+ }
+ return nativeFetch(resource,init);
+};
+const VOICE_URL='/api/lia-model/voices/'+VOICE+'.bin';
 let ready=null;
 let engine=null;
 let queue=Promise.resolve();
