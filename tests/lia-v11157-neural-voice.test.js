@@ -77,7 +77,7 @@ test('V111.57: codec neural atenua bordas, versão de voz renova e bancos seguem
  assert.match(browser,/lia-kokoro-worker\.js\?v=11157/);
  assert.match(browser,/voice:'pf_dora',version:'11157'/);
  assert.match(html,/lia-kokoro-browser\.js\?v=11157/);
- assert.match(cache,/const CACHE = 'educa-cf11157-lia-neural-gemma4-voice'/);
+ assert.match(cache,/const CACHE = 'educa-cf11157-lia-neural-gemma4-voice-r2'/);
  assert.doesNotMatch(cache,/\/api\/.*cache\.put/);
  const wrangler=readFileSync('wrangler.toml','utf8');
  assert.match(wrangler,/database_name = "educa-digital"/);
