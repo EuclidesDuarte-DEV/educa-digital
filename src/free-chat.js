@@ -68,7 +68,7 @@ export async function responderModoLivre(request,env){
   const identity=/(?:quem (?:é|e) voc[eê]|qual (?:é|e) seu nome|quem est[aá] falando|sua (?:fun[cç][aã]o|identidade))(?:$|[?.!,\s])/iu.test(normalized);
   const refusing=/\b(n[aã]o vou|n[aã]o quero|n[aã]o tenho|golpe|desconfio|vou bloquear|canal oficial|confirmar por outro|desligar)\b/iu.test(normalized);
   const loanMentioned=parsed.history.some(row=>row.role==='assistant'&&/emprest|pix|dinheiro|r\$\s*350/iu.test(row.content));
-  const accepted=/(?:^|\\s)(?:sim|pode|aceito|vou ajudar|vou fazer|tudo bem|claro)(?:$|[!.?,\\s])/iu.test(normalized);
+  const accepted=/(?:^|\s)(?:sim|pode|aceito|vou ajudar|vou fazer|tudo bem|claro)(?:$|[!.?,\s])/iu.test(normalized);
   const moneyConcern=/(?:pix|dinheiro|emprest|transfer|pagar|reais)/iu.test(normalized);
   // Estado da dramatização derivado do histórico; nenhum dado pessoal é gravado.
   const videoCue=parsed.scenario==='video'
