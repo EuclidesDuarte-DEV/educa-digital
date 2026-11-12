@@ -21,7 +21,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Validar voz feminina, timeout e roteiro educativo
-        run: node --test --test-concurrency=1 tests/lia-v11152-fast-voice.test.js tests/lia-v11132-runtime.test.js tests/lia-v11130-watchdog.test.js tests/lia-v11129-diagnostico.test.js tests/free-mode.test.js
+        run: node --test --test-concurrency=1 tests/lia-v11152-fast-voice.test.js tests/lia-v11157-neural-voice.test.js tests/lia-v11132-runtime.test.js tests/lia-v11130-watchdog.test.js tests/lia-v11129-diagnostico.test.js tests/free-mode.test.js
 
   regressao-por-area:
     name: Regressão ${{ matrix.area }}
