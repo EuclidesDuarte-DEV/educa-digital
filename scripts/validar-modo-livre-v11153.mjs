@@ -35,8 +35,8 @@ try{
      window.EducaFreeMode.triggerEvent();
      // A notificação pertence ao Modo Livre, não ao guia de entrada no Banco.
      // O teste inicia esse fluxo diretamente e ignora o guia que a tela inicial agendou.
-     const guide=document.querySelector('#guideOverlay');
-     if(guide)guide.hidden=true;
+     const currentGuide=document.querySelector('#guideOverlay');
+     if(currentGuide)currentGuide.hidden=true;
      document.body.classList.remove('guide-focus-active','landing-pretest-active');
    });
    const initial=await page.evaluate(()=>({active:window.EducaFreeMode?.isActive?.(),view:document.querySelector('#phoneScreen')?.dataset.currentView,
