@@ -89,7 +89,7 @@ export async function responderModoLivre(request,env){
   try{
     const model=escolherModelo(env);
     const options=model.includes('gemma-4')
-      ?{messages,max_completion_tokens:150,temperature:0.52}
+      ?{messages,max_completion_tokens:150,temperature:0.52,chat_template_kwargs:{enable_thinking:false}}
       :{messages,max_tokens:130,temperature:0.43,repetition_penalty:1.13};
     const generate=async opts=>{
       const result=await env.AI.run(model,opts);
