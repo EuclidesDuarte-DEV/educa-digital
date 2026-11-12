@@ -84,7 +84,7 @@ jobs:
           if(res.status!==200||data.ok!==true||data.mode!=='ia'||typeof data.reply!=='string'||data.reply.length<12){
             throw new Error('Workers AI Preview falhou: status='+res.status+' resposta='+JSON.stringify(data).slice(0,400));
           }
-          if(/https?:\\/\\/|www\\.|\\b\\d{7,}\\b/.test(data.reply))throw new Error('Workers AI respondeu com links ou números não permitidos');
+          if(/https?:\/\/|www\.|\b\d{7,}\b/.test(data.reply))throw new Error('Workers AI respondeu com links ou números não permitidos');
           console.log('Gemma real OK, latencia='+((Date.now()-started)/1000).toFixed(1)+'s; resposta: '+data.reply.slice(0,240));
           NODE
       - name: Cadastro demonstrativo e banco de Preview
