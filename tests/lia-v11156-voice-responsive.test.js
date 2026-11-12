@@ -13,7 +13,7 @@ const sw=read('public/static/sw.js');
 test('V111.56: voz que não começa é recuperada sem deixar a chamada bloqueada',()=>{
  assert.match(video,/function recoverVoice\(serial,text,message\)/);
  assert.match(video,/session\.utterance=null;session\.speechQueue=\[\];session\.prefetched=null/);
- assert.match(video,/stopVoiceProgress\(\);toListening\(\);subtitle\(text\)/);
+ assert.match(video,/stopVoiceProgress\(\);toListening\(\);subtitle\(session\.lastSpoken\|\|text\)/);
  assert.match(video,/scheduleListen\(400\)/);
  assert.match(video,/session\.utterance===u/);
  assert.match(video,/A voz do navegador não começou após 4 segundos/);
