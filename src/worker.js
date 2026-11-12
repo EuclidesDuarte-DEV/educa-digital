@@ -500,10 +500,37 @@ async function liaGateway(request,env,route){
  }catch(e){console.warn('Lia adapter:',String(e?.name||'connection'));return erro(503,'Servidor de vídeo/voz offline ou demorou a responder.');}
 }
 
+// Serve somente os arquivos públicos do modelo Kokoro-82M usados pela LIA.
+// O download pesado é repassado em streaming, sem alocar 90MB na memória do Worker.
+const LIA_MODEL_FILES=new Set([
+ 'config.json','tokenizer_config.json','tokenizer.json',
+ 'onnx/model_quantized.onnx','onnx/model_q8f16.onnx',
+ 'voices/pf_dora.bin'
+]);
+async function servirModeloLia(path){
+ if(!LIA_MODEL_FILES.has(path))return erro(404,'Arquivo neural não permitido.');
+ const source='https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/'+path;
+ try{
+  const upstream=await fetch(source,{redirect:'follow',cf:{cacheEverything:true,cacheTtl:86400}});
+  if(!upstream.ok||!upstream.body){
+   console.warn('Lia neural: arquivo remoto indisponível',path,upstream.status);
+   return erro(503,'O arquivo neural está temporariamente indisponível.');
+  }
+  return new Response(upstream.body,{status:200,headers:{
+   'Content-Type':path.endsWith('.json')?'application/json':'application/octet-stream',
+   'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'
+  }});
+ }catch(err){
+  console.warn('Lia neural: falha no espelho',path,String(err?.message||'falha').slice(0,100));
+  return erro(503,'Não foi possível preparar a voz neural.');
+ }
+}
+
 async function rotearApi(request, env, url) {
   const rota = url.pathname;
   const metodo = request.method.toUpperCase();
 
+  if (metodo === 'GET' && rota.startsWith('/api/lia-model/')) return servirModeloLia(rota.slice('/api/lia-model/'.length));
   if (metodo === 'GET' && rota === '/api/avatar/health') return liaGateway(request,env,'health');
   if (metodo === 'GET' && rota === '/api/avatar/check') return liaGateway(request,env,'check');
   if (metodo === 'POST' && rota === '/api/avatar/preload') return liaGateway(request,env,'preload');
@@ -617,7 +644,7 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    const rotaPublica = ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (url.pathname === '/api/modo-livre/conversar' && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
+    const rotaPublica = (request.method === 'GET' && url.pathname.startsWith('/api/lia-model/')) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (url.pathname === '/api/modo-livre/conversar' && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
     if (!env.DB && !rotaPublica) {
       return erro(503, 'Banco D1 não configurado. Consulte as instruções de publicação.');
     }

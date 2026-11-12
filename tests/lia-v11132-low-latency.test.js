@@ -32,6 +32,6 @@ test('WebGPU precisa produzir WAV antes de ser salvo na preferência; CPU perman
 });
 test('preserva simulação educativa e sinaliza clipes de boca aproximados',()=>{
  const v=read('public/static/js/free-video.js');
- assert.match(v,/Pix fictício/);
+ assert.match(v,/Pix fictício|Pix de treino/);
  assert.match(v,/vídeo original não é neural/);
 });

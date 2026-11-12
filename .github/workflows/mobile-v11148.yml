@@ -11,7 +11,7 @@ permissions:
 jobs:
   viewport-smoke:
     name: Interface completa 320–1920px e video Lia
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # Playwright 1.56 não suporta Ubuntu 26.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4

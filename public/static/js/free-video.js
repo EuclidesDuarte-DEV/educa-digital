@@ -52,7 +52,7 @@ function speechSegments(text){
  const flush=()=>{if(buffer){out.push(buffer);buffer='';}};
  // O início deve ser curto; depois usamos frases inteiras para reduzir inferências.
  for(const part of parts){
-  const limit=out.length===0?70:105;
+  const limit=out.length===0?95:105; // mais prosódia natural na primeira frase, sem esperar pela fala inteira
   if(buffer&&buffer.length+part.length+1<=limit){buffer+=' '+part;continue;}
   flush();
   let rest=part;
@@ -419,9 +419,31 @@ function prefetchNextChunk(serial){
  promise.catch(()=>{}); // cancelamentos de turno não devem gerar exceção sem tratamento.
  session.prefetched={serial,text:next,promise};
 }
+async function playBrowserResult(result,text,serial){
+ if(serial!==session.serial||!session.active||!session.connected||session.waiting)return false;
+ stopRecognition();
+  if(result.voice!=='pf_dora'||result.blob.size<1024)throw Error('Arquivo da voz oficial inválido');
+  clearMedia();
+  const audio=new Audio(),url=URL.createObjectURL(result.blob);
+  session.mediaUrl=url;session.utterance=audio;audio.src=url;audio.muted=outputMuted;
+  indicator('Lia · Kokoro pf_dora no navegador');
+  status('Voz pf_dora gerada neste dispositivo. Os movimentos de boca são estimados; o vídeo original não é neural.');
+  showVoiceProgress('LIA falando · voz pf_dora');
+  audio.onplaying=()=>{if(serial===session.serial){stopVoiceProgress();ui.play.hidden=true;subtitle(text);if(!startSpeechMotion(audio,result.cues))referenceMotion();prefetchNextChunk(serial);}};
+  audio.onpause=()=>{if(serial===session.serial&&!audio.ended)toListening();};
+  audio.onended=()=>{if(serial===session.serial)completed();};
+  audio.onerror=()=>{if(serial===session.serial){recoverVoice(serial,text,'Falha ao reproduzir Kokoro no navegador.');}};
+  try{await audio.play();}catch(_){
+   ui.play.hidden=false;delete ui.play.dataset.retryVoice;ui.play.textContent='▶ Ouvir voz oficial da LIA';
+   showVoiceProgress('Toque em Ouvir voz oficial para liberar o som.');
+   status('Seu navegador pediu uma interação para liberar o áudio neural.');
+  }
+ return true;
+}
 async function playBrowserKokoro(text,serial){
  const browser=window.EducaLiaBrowserKokoro;
  if(!browser)return false;
+ let pending=null;
  try{
   session.utterance={kind:'kokoro-browser-loading'};
   showVoiceProgress('LIA: preparando voz oficial pf_dora…');
@@ -439,7 +461,7 @@ async function playBrowserKokoro(text,serial){
   // O primeiro download Kokoro é pesado no iPhone. Não segurar a conversa:
   // após o orçamento de tempo, usar uma voz FEMININA instalada se existir.
   // A inferência continua em segundo plano para o turno seguinte.
-  const pending=ahead||browser.synthesize(text,selectedStyle());
+  pending=ahead||browser.synthesize(text,selectedStyle());
   pending.catch(()=>{});
   let budgetTimer;
   let result;
@@ -451,27 +473,29 @@ async function playBrowserKokoro(text,serial){
   }finally{clearTimeout(budgetTimer);}
   clearInterval(session.voiceProgressTimer);session.voiceProgressTimer=null;
   if(serial!==session.serial||!session.active||!session.connected)return true;
-  if(result.voice!=='pf_dora'||result.blob.size<1024)throw Error('Arquivo da voz oficial inválido');
-  clearMedia();
-  const audio=new Audio(),url=URL.createObjectURL(result.blob);
-  session.mediaUrl=url;session.utterance=audio;audio.src=url;audio.muted=outputMuted;
-  indicator('Lia · Kokoro pf_dora no navegador');
-  status('Voz pf_dora gerada neste dispositivo. Os movimentos de boca são estimados; o vídeo original não é neural.');
-  showVoiceProgress('LIA falando · voz pf_dora');
-  audio.onplaying=()=>{if(serial===session.serial){stopVoiceProgress();ui.play.hidden=true;subtitle(text);if(!startSpeechMotion(audio,result.cues))referenceMotion();prefetchNextChunk(serial);}};
-  audio.onpause=()=>{if(serial===session.serial&&!audio.ended)toListening();};
-  audio.onended=()=>{if(serial===session.serial)completed();};
-  audio.onerror=()=>{if(serial===session.serial){recoverVoice(serial,text,'Falha ao reproduzir Kokoro no navegador.');}};
-  try{await audio.play();}catch(_){
-   ui.play.hidden=false;delete ui.play.dataset.retryVoice;ui.play.textContent='▶ Ouvir voz oficial da LIA';
-   showVoiceProgress('Toque em Ouvir voz oficial para liberar o som.');
-   status('Seu navegador pediu uma interação para liberar o áudio neural.');
-  }
-  return true;
+  return await playBrowserResult(result,text,serial);
  }catch(e){
   if(serial!==session.serial)return true;
   clearInterval(session.voiceProgressTimer);session.voiceProgressTimer=null;
   const message=String(e?.message||e).slice(0,115);
+  if(e?.code==='KOKORO_WARMING'&&pending&&!window.EducaLiaVoice?.choose?.()){
+   // O iOS pode não ter nenhuma voz feminina pt-BR. Não perca o WAV que
+   // terminar de sintetizar após o orçamento inicial de 7/9 segundos.
+   // Jamais toque uma fala antiga se o aluno já respondeu ou saiu da chamada.
+   session.utterance=null;stopVoiceProgress();toListening();subtitle(text);
+   if(ui.view?.dataset)ui.view.dataset.captions='on';
+   if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
+   status('A voz neural da Lia continua sendo preparada. Você pode responder por texto enquanto isso.');
+   let expired=false;
+   const lateTimer=setTimeout(()=>{expired=true;},18000);
+   void pending.then(result=>{
+    clearTimeout(lateTimer);
+    if(expired||serial!==session.serial||!session.active||!session.connected||session.waiting||session.utterance)return;
+    void playBrowserResult(result,text,serial).catch(()=>{recoverVoice(serial,text,'O áudio neural não pôde iniciar.');});
+   }).catch(()=>{clearTimeout(lateTimer);});
+   scheduleListen(400);
+   return true;
+  }
   if(e?.code==='KOKORO_WARMING'){
    status('Kokoro pf_dora ainda carrega neste aparelho. Tentando voz feminina pt-BR enquanto o modelo fica pronto.');
   }else status('Kokoro pf_dora indisponível: '+message+'. Tentando voz feminina pt-BR do dispositivo.');

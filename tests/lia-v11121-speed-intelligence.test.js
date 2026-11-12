@@ -26,9 +26,9 @@ function harness(){
  return {window,elements,sent,getRecognizer:()=>recognizer};
 }
 test('rápido por padrão e avançado apenas quando escolhido, sem injeção de nomes de modelo',()=>{
- assert.match(escolherModelo({}),/llama-3.1-8b/);
+ assert.match(escolherModelo({}),/gemma-4-26b-a4b-it/);
  assert.match(escolherModelo({LIA_AI_MODEL:'inteligente'}),/llama-3.3-70b/);
- assert.match(escolherModelo({LIA_AI_MODEL:'modelo-estranho'}),/llama-3.1-8b/);
+ assert.match(escolherModelo({LIA_AI_MODEL:'modelo-estranho'}),/gemma-4-26b-a4b-it/);
 });
 test('IA avançada recebe histórico e não ignora última pergunta',async()=>{
  const req=new Request('https://educa.example/api/modo-livre/conversar',{method:'POST',headers:{origin:'https://educa.example'},body:JSON.stringify({scenario:'video',message:'Quem é você?',history:[{role:'user',content:'Oi, posso fazer perguntas?'},{role:'assistant',content:'Claro, pode perguntar.'}]})});

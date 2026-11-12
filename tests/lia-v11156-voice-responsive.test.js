@@ -13,7 +13,7 @@ const sw=read('public/static/sw.js');
 test('V111.56: voz que não começa é recuperada sem deixar a chamada bloqueada',()=>{
  assert.match(video,/function recoverVoice\(serial,text,message\)/);
  assert.match(video,/session\.utterance=null;session\.speechQueue=\[\];session\.prefetched=null/);
- assert.match(video,/stopVoiceProgress\(\);toListening\(\);subtitle\(text\)/);
+ assert.match(video,/stopVoiceProgress\(\);toListening\(\);subtitle\(session\.lastSpoken\|\|text\)/);
  assert.match(video,/scheduleListen\(400\)/);
  assert.match(video,/session\.utterance===u/);
  assert.match(video,/A voz do navegador não começou após 4 segundos/);
@@ -40,7 +40,7 @@ test('V111.56: diálogo da Lia respeita a história e responde perguntas de iden
  }}});
  assert.equal(res.status,200);
  assert.match(instruction,/A pessoa perguntou identidade/);
- assert.match(instruction,/NÃO repita o pedido sem necessidade/);
+ assert.match(instruction,/JÁ fez o pedido de empréstimo/);
  assert.match(instruction,/Se a pessoa desconfiar/);
 });
 test('V111.56: viewport móvel, desktop e nova versão no cache',()=>{
@@ -50,6 +50,6 @@ test('V111.56: viewport móvel, desktop e nova versão no cache',()=>{
  assert.match(css,/body\.lia-call-visible #phoneHardware/);
  assert.match(css,/object-fit:contain!important/);
  assert.match(html,/lia-call-v11156\.css\?v=11156/);
- assert.match(html,/free-video\.js\?v=11154&patch=11156/);
+ assert.match(html,/free-video\.js\?v=11154&patch=11157/);
  assert.match(sw,/educa-cf11156-lia-voice-viewport/);
 });

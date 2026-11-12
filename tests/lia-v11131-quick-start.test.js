@@ -21,7 +21,7 @@ test('progresso de voz aparece na chamada e oferece tentar novamente',()=>{
 });
 test('mantém descrição educativa e não afirma lip-sync fonético exato',()=>{
  const js=read('public/static/js/free-video.js');
- assert.match(js,/Pix fictício de R\$ 350/);
+ assert.match(js,/R\$ 350 pelo Pix de treino/);
  assert.match(js,/vídeo original não é neural/);
- assert.match(read('public/static/sw.js'),/(?:educa-cf1113(?:1|2|3|4|5|6|7|8|9)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y)/);
+ assert.match(read('public/static/sw.js'),/(?:educa-cf1113(?:1|2|3|4|5|6|7|8|9)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y|educa-cf11157-lia-neural-gemma4-voice-r2)/);
 });

@@ -21,7 +21,7 @@ test('V111.52: aquecimento nao gera duas falas e atrasa a primeira resposta',()=
   assert.match(kokoro,/voice:'pf_dora'/);
   assert.match(motor,/VOICE='pf_dora'/);
   assert.match(motor,/loadVoice\('pt-br'\)/);
-  assert.match(motor,/style==='calma'\?\.96:style==='clara'\?1\.04:1\.06/);
+  assert.match(motor,/style==='calma'\?\.94:style==='clara'\?\.98:1\.00/);
 });
 
 test('V111.52: limite de tempo e alternativa exclusivamente feminina em pt-BR',()=>{
@@ -69,7 +69,7 @@ test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>
   let instructions='';
   const res=await responderModoLivre(query,{AI:{run:async(model,opts)=>{
     instructions=opts.messages[0].content;
-    assert.match(model,/llama-3\.1-8b/);
+    assert.match(model,/gemma-4-26b-a4b-it/);
     assert.equal(opts.messages.at(-1).content,'Quem está falando?');
     return {response:'Sou a Lia, personagem do treino. Quer conferir minha identidade antes de continuar?'};}}});
   assert.equal(res.status,200);
@@ -83,9 +83,9 @@ test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>
 
 test('V111.52: publica apenas scripts e mantém os bancos D1',()=>{
   for(const asset of ['lia-kokoro-browser.js','free-video.js'])
-    assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=111(?:52|54)'));
+    assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=111(?:52|54|57)'));
   assert.match(html,/free-mode\.js\?v=11153/);
-  assert.match(kokoro,/lia-kokoro-worker\.js\?v=11152/);
+  assert.match(kokoro,/lia-kokoro-worker\.js\?v=11157/);
   assert.match(sw,/educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight|educa-cf11156-lia-voice-viewport/);
   assert.doesNotMatch(sw,/\/api\/.*cache\.put/);
   const config=read('wrangler.toml');

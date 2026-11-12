@@ -18,8 +18,14 @@ try{
   try{
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeMode&&window.EducaVideoCall&&window.EducaFreeView,{timeout:20000});
+   // Aguarde o agendamento inicial do holofote (220 ms) antes de simular a entrada no Modo Livre.
+   await page.waitForTimeout(650);
    await page.evaluate(()=>{
      const previous=window.EducaFreeView;
+     // Entrar em Modo Livre como quem já concluiu a abertura inicial.
+     // Não deixar o holofote do pré-teste interceptar cliques da notificação.
+     document.body.classList.remove('landing-pretest-active','guide-focus-active');
+     const guide=document.querySelector('#guideOverlay');if(guide)guide.hidden=true;
      // Isolar o treino dos dados da conta: simular apenas a navegação existente.
      window.EducaFreeView={...previous,isTraining:()=>true,setView(name){
        document.querySelectorAll('.android-view').forEach(view=>view.classList.toggle('is-active',view.dataset.view===name));
@@ -27,9 +33,21 @@ try{
      }};
      window.EducaFreeMode.start();
      window.EducaFreeMode.triggerEvent();
+     // A notificação pertence ao Modo Livre, não ao guia de entrada no Banco.
+     // O teste inicia esse fluxo diretamente e ignora o guia que a tela inicial agendou.
+     const currentGuide=document.querySelector('#guideOverlay');
+     if(currentGuide)currentGuide.hidden=true;
+     document.body.classList.remove('guide-focus-active','landing-pretest-active');
    });
+   const initial=await page.evaluate(()=>({active:window.EducaFreeMode?.isActive?.(),view:document.querySelector('#phoneScreen')?.dataset.currentView,
+     guideHidden:document.querySelector('#guideOverlay')?.hidden,
+     noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent}));
+   assert.equal(initial.active,true,'Modo Livre deve estar ativo: '+JSON.stringify(initial));
+   assert.equal(initial.noticeHidden,false,'WhatsApp inicial deve aparecer: '+JSON.stringify(initial));
    await page.locator('#freeEventOpen').click();
-   assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'chat');
+   const after=await page.evaluate(()=>({active:window.EducaFreeMode?.isActive?.(),view:document.querySelector('#phoneScreen')?.dataset.currentView,
+     noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent}));
+   assert.equal(after.view,'chat','WhatsApp inicial: '+JSON.stringify({initial,after}));
    await page.locator('#freeFamilyBlock').click();
    await page.locator('#freeSummaryNext').click();
    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'free-video');

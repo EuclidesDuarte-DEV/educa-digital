@@ -17,7 +17,7 @@ test('V111.53: IA entende Olá e repara resposta fora do contexto sem inventar r
  let count=0;
  const env={AI:{run:async(model,opts)=>{
   count++;
-  assert.match(model,/llama-3\.1-8b/);
+  assert.match(model,/gemma-4-26b-a4b-it/);
   assert.match(opts.messages[0].content,/A pessoa apenas cumprimentou/);
   assert.match(opts.messages[0].content,/Rafael, familiar fictício/);
   assert.equal(opts.messages.at(-1)?.content==='olá'||opts.messages.at(-1)?.role==='system',true);
