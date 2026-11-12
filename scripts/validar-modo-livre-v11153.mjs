@@ -18,6 +18,8 @@ try{
   try{
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeMode&&window.EducaVideoCall&&window.EducaFreeView,{timeout:20000});
+   // Aguarde o agendamento inicial do holofote (220 ms) antes de simular a entrada no Modo Livre.
+   await page.waitForTimeout(650);
    await page.evaluate(()=>{
      const previous=window.EducaFreeView;
      // Entrar em Modo Livre como quem já concluiu a abertura inicial.
