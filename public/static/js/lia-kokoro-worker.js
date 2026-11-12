@@ -11,6 +11,29 @@ let ready=null;
 let engine=null;
 let queue=Promise.resolve();
 const say=(type,data={})=>self.postMessage({type,...data});
+// Numerais monetários são escritos por extenso ANTES da fonetização.
+// Preserva a mesma informação; evita que o espeak leia "R cifrão 350".
+function valorPorExtenso(n){
+ const units=['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
+ const tens=['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+ const hundreds=['','cento','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+ if(n<20)return units[n];
+ if(n<100)return tens[Math.floor(n/10)]+(n%10?' e '+units[n%10]:'');
+ if(n===100)return 'cem';
+ if(n<1000)return hundreds[Math.floor(n/100)]+(n%100?' e '+valorPorExtenso(n%100):'');
+ if(n===1000)return 'mil';
+ return String(n);
+}
+function normalizeSpeechPtBR(text){
+ return String(text||'').replace(/<[^>]*>/g,' ').replace(/[\*#_`]/g,'')
+  .replace(/R\$\s*(\d{1,4})(?!\d)/g,(_,digits)=>{
+    const n=Number(digits);
+    if(n>1000)return 'R$ '+digits;
+    return valorPorExtenso(n)+(n===1?' real':' reais');
+  })
+  .replace(/…/g,'...').replace(/[–—]/g,', ')
+  .replace(/\s+/g,' ').trim();
+}
 function wav(samples,sampleRate=24000){
  const n=samples.length;
  const ab=new ArrayBuffer(44+n*2),d=new DataView(ab);
@@ -19,7 +42,12 @@ function wav(samples,sampleRate=24000){
  d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);
  d.setUint32(24,sampleRate,true);d.setUint32(28,sampleRate*2,true);
  d.setUint16(32,2,true);d.setUint16(34,16,true);str(36,'data');d.setUint32(40,n*2,true);
- for(let i=0;i<n;i++){const s=Math.max(-1,Math.min(1,Number(samples[i])||0));d.setInt16(44+i*2,s<0?Math.round(s*32768):Math.round(s*32767),true);}
+ for(let i=0;i<n;i++){
+  // Rampa de 3 ms apenas nas bordas: evita estalos sem alterar o timbre.
+  const fade=Math.min(1,i/72,(n-1-i)/72);
+  const s=Math.max(-1,Math.min(1,(Number(samples[i])||0)*fade));
+  d.setInt16(44+i*2,s<0?Math.round(s*32768):Math.round(s*32767),true);
+ }
  return ab;
 }
 function viseme(c){
@@ -75,7 +103,7 @@ async function load(deviceMode='wasm'){
 }
 async function synthesize(text,id,style){
  const {tts,g2p,voiceData,device}=await load();
- const phrase=String(text||'').trim().slice(0,360);
+ const phrase=normalizeSpeechPtBR(text).slice(0,360);
  if(!phrase)throw Error('Texto vazio');
  const ipa=g2p.phonemes(phrase);
  if(!ipa||typeof ipa!=='string')throw Error('Fonetização pt-BR falhou');
@@ -85,7 +113,7 @@ async function synthesize(text,id,style){
  const Tensor=ids.constructor;
  const tokens=Math.min(Math.max(ids.dims.at(-1)-2,0),509),offset=tokens*256;
  if(offset+256>voiceData.length)throw Error('Comprimento não suportado pela voz pf_dora');
- const speed=style==='calma'?.96:style==='clara'?1.04:1.06; // pf_dora natural: leve fluidez, sem alterar timbre/pitch
+ const speed=style==='calma'?.94:style==='clara'?.98:1.00; // ritmo original da pf_dora: sem artificialmente acelerar o timbre
  const input={input_ids:ids,style:new Tensor('float32',voiceData.slice(offset,offset+256),[1,256]),speed:new Tensor('float32',[speed],[1])};
  const started=Date.now();
  say('progress',{stage:'Executando inferência Kokoro ('+device+', '+tokens+' tokens)…',device,tokens});
