@@ -1,0 +1,46 @@
+name: EducaDigitalIOS
+options:
+  bundleIdPrefix: com.educamaisdigital
+  deploymentTarget:
+    iOS: "16.4"
+  generateEmptyDirectories: true
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.4"
+    TARGETED_DEVICE_FAMILY: "1"
+    ASSETCATALOG_COMPILER_APPICON_NAME: "AppIcon"
+    CODE_SIGN_STYLE: "Automatic"
+    ENABLE_BITCODE: "NO"
+
+targets:
+  EducaDigital:
+    type: application
+    platform: iOS
+    sources:
+      - path: EducaDigital
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.educamaisdigital.educa
+        PRODUCT_NAME: EducaDigital
+        INFOPLIST_KEY_CFBundleDisplayName: "Educa+ Digital"
+    info:
+      path: EducaDigital/Info.plist
+      properties:
+        CFBundleDisplayName: "Educa+ Digital"
+        CFBundleShortVersionString: "111.59"
+        CFBundleVersion: "11159"
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: false
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSMicrophoneUsageDescription: "A LIA utiliza o microfone somente quando você permite, durante os exercícios simulados de chamadas."
+        NSCameraUsageDescription: "A câmera pode ser usada somente com sua autorização, durante exercícios simulados de videochamada."
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen: {}
