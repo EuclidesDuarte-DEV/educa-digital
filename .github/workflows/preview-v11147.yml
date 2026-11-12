@@ -71,6 +71,22 @@ jobs:
             sleep 8
           done
           exit 1
+      - name: Validar conversa real com Gemma 4 no Preview
+        run: |
+          node --input-type=module <<'NODE'
+          const url=process.env.PREVIEW_URL+'/api/modo-livre/conversar';
+          const body={scenario:'video',message:'Quem está falando e por que pediu o empréstimo?',history:[
+            {role:'assistant',content:'Oi, troquei de celular. Você pode me emprestar R$ 350 pelo Pix de treino?'}
+          ]};
+          const started=Date.now();
+          const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(45000)});
+          const data=await res.json();
+          if(res.status!==200||data.ok!==true||data.mode!=='ia'||typeof data.reply!=='string'||data.reply.length<12){
+            throw new Error('Workers AI Preview falhou: status='+res.status+' resposta='+JSON.stringify(data).slice(0,400));
+          }
+          if(/https?:\\/\\/|www\\.|\\b\\d{7,}\\b/.test(data.reply))throw new Error('Workers AI respondeu com links ou números não permitidos');
+          console.log('Gemma real OK, latencia='+((Date.now()-started)/1000).toFixed(1)+'s; resposta: '+data.reply.slice(0,240));
+          NODE
       - name: Cadastro demonstrativo e banco de Preview
         run: |
           node --input-type=module <<'NODE'
