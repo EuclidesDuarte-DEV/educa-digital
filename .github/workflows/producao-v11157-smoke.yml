@@ -1,0 +1,57 @@
+name: Confirmar produção Educa+ Cloudflare
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar-producao:
+    name: Publicação oficial, IA real e recursos da voz
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    steps:
+      - name: Confirmar versão V111.57 publicada na Cloudflare
+        run: |
+          node --input-type=module <<'NODE'
+          const root='https://educa-digital.educamaisdigital.workers.dev';
+          let ready=false;
+          for(let n=1;n<=30;n++){
+            try{
+              const res=await fetch(root+'/?audit=11157-'+n,{signal:AbortSignal.timeout(15000),headers:{'Cache-Control':'no-cache'}});
+              const html=await res.text();
+              if(res.ok&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')){
+                ready=true;console.log('Versão V111.57 confirmada no site oficial.');break;
+              }
+              console.log('Site oficial ainda sem V111.57: '+res.status+' (checagem '+n+')');
+            }catch(e){console.log('Tentativa '+n+': '+String(e.message).slice(0,100));}
+            await new Promise(resolve=>setTimeout(resolve,10000));
+          }
+          if(!ready)throw new Error('A Cloudflare ainda não publicou a V111.57 no endereço oficial.');
+          const health=await fetch(root+'/api/saude',{signal:AbortSignal.timeout(15000)});
+          if(!health.ok||(await health.json()).ok!==true)throw new Error('Saúde da API oficial falhou.');
+          const model=await fetch(root+'/api/lia-model/config.json',{signal:AbortSignal.timeout(25000)});
+          if(!model.ok)throw new Error('Distribuição oficial do Kokoro falhou: HTTP '+model.status);
+          const config=await model.json();
+          if(!config||typeof config!=='object')throw new Error('Configuração neural inválida');
+          console.log('API oficial e config do Kokoro: OK');
+          NODE
+      - name: Teste real de conversa da LIA na produção
+        run: |
+          node --input-type=module <<'NODE'
+          const root='https://educa-digital.educamaisdigital.workers.dev';
+          const res=await fetch(root+'/api/modo-livre/conversar',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({scenario:'video',message:'Como confirmo que você é a Lia?',history:[
+              {role:'assistant',content:'Oi, troquei de celular. Você pode me emprestar R$ 350 pelo Pix de treino?'}
+            ]}),signal:AbortSignal.timeout(50000)
+          });
+          const data=await res.json();
+          if(res.status!==200||data.ok!==true||data.mode!=='ia'||!String(data.reply||'').trim()){
+            throw new Error('IA da LIA não respondeu na produção: HTTP '+res.status+' '+JSON.stringify(data).slice(0,300));
+          }
+          console.log('Gemma 4 em produção OK: '+data.reply.slice(0,230));
+          NODE
