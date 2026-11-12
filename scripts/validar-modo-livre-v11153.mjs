@@ -28,8 +28,14 @@ try{
      window.EducaFreeMode.start();
      window.EducaFreeMode.triggerEvent();
    });
+   const initial=await page.evaluate(()=>({active:window.EducaFreeMode?.isActive?.(),view:document.querySelector('#phoneScreen')?.dataset.currentView,
+     noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent}));
+   assert.equal(initial.active,true,'Modo Livre deve estar ativo: '+JSON.stringify(initial));
+   assert.equal(initial.noticeHidden,false,'WhatsApp inicial deve aparecer: '+JSON.stringify(initial));
    await page.locator('#freeEventOpen').click();
-   assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'chat');
+   const after=await page.evaluate(()=>({active:window.EducaFreeMode?.isActive?.(),view:document.querySelector('#phoneScreen')?.dataset.currentView,
+     noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent}));
+   assert.equal(after.view,'chat','WhatsApp inicial: '+JSON.stringify({initial,after}));
    await page.locator('#freeFamilyBlock').click();
    await page.locator('#freeSummaryNext').click();
    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'free-video');
