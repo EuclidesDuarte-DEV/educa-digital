@@ -1,12 +1,11 @@
 {
   "name": "Educa+ Digital",
   "short_name": "Educa+",
-  "description": "Treinamento digital seguro e acessível.",
-  "start_url": "/",
+  "description": "Simulações educativas de segurança digital no celular, conectadas ao Educa+ Digital.",
+  "start_url": "/?app=1",
   "scope": "/",
-  "display": "fullscreen",
+  "display": "standalone",
   "display_override": [
-    "fullscreen",
     "standalone"
   ],
   "background_color": "#eef4fb",
@@ -25,5 +24,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "id": "/?app=1"
 }

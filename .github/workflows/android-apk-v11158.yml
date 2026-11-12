@@ -1,0 +1,70 @@
+name: Educa+ Digital APK Android V111.58
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'android-app/**'
+      - 'public/static/icons_pwa/**'
+      - '.github/workflows/android-apk-v11158.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android-apk:
+    name: Compilar APK Android conectado a Cloudflare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Usar SDK Android nativo do GitHub runner
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
+          fi
+          "$SDKMANAGER" --version
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Copiar ícone oficial para aplicativo
+        run: |
+          mkdir -p android-app/app/src/main/res/drawable
+          cp public/static/icons_pwa/icon-192.png android-app/app/src/main/res/drawable/educa_icon.png
+      - name: Compilar protótipo APK (assinado para testes pelo Android SDK)
+        run: gradle -p android-app :app:assembleDebug --no-daemon --stacktrace
+      - name: Preparar APK instalável
+        run: |
+          mkdir -p dist
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk dist/EducaMaisDigital-Android-v11158.apk
+          test -s dist/EducaMaisDigital-Android-v11158.apk
+          sha256sum dist/EducaMaisDigital-Android-v11158.apk
+      - name: Disponibilizar APK para download no GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: EducaMaisDigital-Android-v11158
+          path: dist/EducaMaisDigital-Android-v11158.apk
+          if-no-files-found: error
+          retention-days: 90
+      - name: Publicar protótipo Android no GitHub Releases
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v11158-android-prototype"
+          notes="Educa+ Digital V111.58 — protótipo APK para testes. Interface imersiva sem moldura, conteúdo oficial carregado via HTTPS da Cloudflare, IA e voz continuam na mesma infraestrutura. APK de teste assinado com chave de depuração: para atualizar a versão é possível que seja preciso desinstalar a anterior. Não é distribuição Google Play."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/EducaMaisDigital-Android-v11158.apk --clobber
+          else
+            gh release create "$tag" dist/EducaMaisDigital-Android-v11158.apk --title "Educa+ Digital — Android V111.58 (protótipo)" --notes "$notes" --prerelease
+          fi

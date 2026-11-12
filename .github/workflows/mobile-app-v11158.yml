@@ -1,0 +1,27 @@
+name: Educa+ App Mobile Android e iPhone V111.58
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-pwa-layout:
+    name: App sem moldura 320px–896px e site web preservado
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Instalar navegador de teste
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Validar interfaces instaladas Android e iPhone
+        run: |
+          python3 -m http.server 8789 --directory public >/tmp/educa-mobile-http.log 2>&1 &
+          node scripts/validar-mobile-app-v11158.mjs
