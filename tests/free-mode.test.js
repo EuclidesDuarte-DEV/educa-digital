@@ -37,7 +37,7 @@ test('Sem IA não existe fallback roteirizado',async()=>{
 });
 test('IA real responde contextual e mantém histórico',async()=>{
  let called=0;
- const response=await responderModoLivre(fakeReq('family','Quem está falando?',[{role:'assistant',content:'Oi, troquei de número.'}]),{AI:{run:async(model,opts)=>{called++;assert.match(model,/llama-3.1-8b/);assert.match(opts.messages[0].content,/português brasileiro/);assert.equal(opts.messages.at(-1).content,'Quem está falando?');return {response:'Sou o Rafael. Estou falando do celular novo.'};}}});
+ const response=await responderModoLivre(fakeReq('family','Quem está falando?',[{role:'assistant',content:'Oi, troquei de número.'}]),{AI:{run:async(model,opts)=>{called++;assert.match(model,/gemma-4-26b-a4b-it/);assert.match(opts.messages[0].content,/português brasileiro/);assert.equal(opts.messages.at(-1).content,'Quem está falando?');return {response:'Sou o Rafael. Estou falando do celular novo.'};}}});
  assert.equal(called,1);assert.equal(response.status,200);const data=await response.json();assert.equal(data.mode,'ia');assert.match(data.reply,/Rafael/);
 });
 test('Falha do provedor não apresenta uma mensagem inventada como se fosse da IA',async()=>{
