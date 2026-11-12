@@ -26,23 +26,24 @@ try{
        isTraining:window.EducaFreeView?.isTraining?.()};
    });
    console.log('V11154 DOM inicial '+c.w,JSON.stringify({...boot,pageErrors}));
-   assert.ok(boot.cueCount>0,c.w+': banco sem balão inicial: '+JSON.stringify(boot));
+   // V111.55 substituiu o balão duplicado pelo holofote do próprio Banco.
+   assert.equal(boot.cueCount,0,c.w+': não deve haver balão duplicado no Banco');
    const home=await page.evaluate(()=>{
     const r=el=>{if(!el)return null;const b=el.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
-    const cue=document.querySelector('.bank-start-cue'),bank=document.querySelector('[data-open-app="bank"]');
+    const spotlight=document.querySelector('#phoneScreen .guide-spotlight'),bank=document.querySelector('[data-open-app="bank"]');
     return {header:r(document.querySelector('.site-header')),hero:r(document.querySelector('.hero-experience')),
-      copy:r(document.querySelector('.hero-copy')),cue:r(cue),bank:r(bank),
+      copy:r(document.querySelector('.hero-copy')),spotlight:r(spotlight),bank:r(bank),
       phone:r(document.querySelector('#phoneScreen')),
-      hintVisible:getComputedStyle(cue).display!=='none',
-      guideHidden:document.querySelector('#guideOverlay').hidden,
+      guideVisible:!document.querySelector('#guideOverlay').hidden,
       tourHidden:document.querySelector('#educaTour').hidden,
       activated:document.body.classList.contains('landing-pretest-active'),
       bankName:bank.getAttribute('aria-label')};
    });
-   assert.ok(home.activated&&home.hintVisible&&home.guideHidden&&home.tourHidden,c.w+': guia deve apontar para Banco sem escurecer');
+   assert.ok(home.activated&&home.guideVisible&&home.tourHidden,c.w+': guia V111.55 deve destacar o Banco');
    assert.ok(/primeira atividade/i.test(home.bankName),c.w+': aria-label do Banco');
-   assert.ok(home.cue.top>=home.phone.top-2&&home.cue.bottom<home.bank.top+3,c.w+': apontador fora do alvo');
-   assert.ok(home.cue.left>=home.phone.left-2&&home.cue.right<=home.phone.right+3,c.w+': balão cortado no celular');
+   assert.ok(home.spotlight&&home.spotlight.top>=home.phone.top-2&&home.spotlight.bottom<=home.phone.bottom+3,c.w+': holofote fora do celular');
+   assert.ok(home.spotlight.left>=home.phone.left-2&&home.spotlight.right<=home.phone.right+3,c.w+': holofote cortado');
+   assert.ok(overlaps(home.spotlight,home.bank),c.w+': holofote não aponta para Banco');
    if(c.w>=1100){
     assert.ok(home.header.height>=60&&home.header.height<=84,c.w+': cabeçalho desktop excessivamente alto: '+home.header.height);
     assert.ok(home.copy.top-home.hero.top<=55,c.w+': texto da home começa muito abaixo: '+(home.copy.top-home.hero.top));
