@@ -46,7 +46,7 @@
  }
  function ensure(){
   if(worker)return worker;
-  worker=new Worker('/static/js/lia-kokoro-worker.js?v=11157',{type:'module'});
+  worker=new Worker('/static/js/lia-kokoro-worker.js?v=11157&mirror=2',{type:'module'});
   worker.onmessage=({data})=>{
    if(data.type==='progress'){
     progress=data.stage||progress;
