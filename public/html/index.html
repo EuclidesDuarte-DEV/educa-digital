@@ -5,7 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Educa+ Digital</title>
   <meta name="theme-color" content="#f7faff">
-  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="manifest" href="/static/manifest.webmanifest?v=11158">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Educa+">
+  <link rel="apple-touch-icon" href="/static/icons_pwa/icon-192.png">
+  <script>
+    // Somente PWA instalado, WebView Android próprio ou atalho ?app=1.
+    // A vitrine do site normal permanece inalterada.
+    (function(){
+      const query=new URLSearchParams(location.search);
+      const installed=matchMedia('(display-mode:standalone)').matches
+        || matchMedia('(display-mode:fullscreen)').matches
+        || navigator.standalone===true;
+      const nativeAndroid=navigator.userAgent.includes('EducaNativeAndroid/');
+      if(installed||nativeAndroid||query.get('app')==='1'){
+        document.documentElement.classList.add('educa-mobile-app');
+      }
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +44,7 @@
 <link rel="stylesheet" href="/static/css/responsive-v11149.css?v=11149">
 <link rel="stylesheet" href="/static/css/fullscreen-v11150.css?v=11150">
 <link rel="stylesheet" href="/static/css/phone-entry-v11151.css?v=11151">
-<link rel="stylesheet" href="/static/css/responsive-v11154.css?v=11155"><link rel="stylesheet" href="/static/css/lia-call-v11156.css?v=11156"></head>
+<link rel="stylesheet" href="/static/css/responsive-v11154.css?v=11155"><link rel="stylesheet" href="/static/css/lia-call-v11156.css?v=11156"><link rel="stylesheet" href="/static/css/mobile-app-v11158.css?v=11158"></head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
     <a class="brand" href="/" aria-label="Educa+ Digital — início">
@@ -1374,7 +1392,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11154&patch=11157&mirror=2').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11158').catch(() => {});
       });
     }
   </script>
