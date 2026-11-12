@@ -11,6 +11,7 @@
 - **Fonetização de texto:** eSpeak NG (Spellophone pt-br) antes do Kokoro.
 - **Qualidade:** valores como R$ 350 passam a ser pronunciados por extenso; velocidade padrão natural 1.00, pausada 0.94 e clara 0.98; microfade de 3 ms nas bordas de cada WAV reduz estalos sem alterar a identidade vocal.
 - **Execução:** Kokoro ONNX WASM no navegador por padrão, com WebGPU opcional. O primeiro acesso pode baixar modelo grande. Não há promessa de velocidade em todos os iPhones/Android.
+- **Distribuição do modelo:** a Cloudflare encaminha em streaming apenas `config.json`, `tokenizer_config.json`, `tokenizer.json`, os ONNX permitidos e `voices/pf_dora.bin` pelo endpoint público `/api/lia-model/`. Não há proxy geral de URLs nem alterações no banco. A disponibilidade do modelo externo continua necessária.
 - **Alternativa:** voz feminina pt-BR do dispositivo, somente quando identificada; legendas legíveis se nenhuma voz iniciar.
 
 ## O que move o rosto
