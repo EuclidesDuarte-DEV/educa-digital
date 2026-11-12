@@ -22,7 +22,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: node --test --test-concurrency=4 tests/*.test.js
+      - run: node --test --test-force-exit --test-concurrency=4 tests/*.test.js
 
   smoke-preview:
     name: API publica do Preview (nunca producao)
