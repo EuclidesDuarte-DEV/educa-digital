@@ -52,7 +52,7 @@ function speechSegments(text){
  const flush=()=>{if(buffer){out.push(buffer);buffer='';}};
  // O início deve ser curto; depois usamos frases inteiras para reduzir inferências.
  for(const part of parts){
-  const limit=out.length===0?70:105;
+  const limit=out.length===0?95:105; // mais prosódia natural na primeira frase, sem esperar pela fala inteira
   if(buffer&&buffer.length+part.length+1<=limit){buffer+=' '+part;continue;}
   flush();
   let rest=part;
