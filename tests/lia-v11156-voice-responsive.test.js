@@ -50,6 +50,6 @@ test('V111.56: viewport móvel, desktop e nova versão no cache',()=>{
  assert.match(css,/body\.lia-call-visible #phoneHardware/);
  assert.match(css,/object-fit:contain!important/);
  assert.match(html,/lia-call-v11156\.css\?v=11156/);
- assert.match(html,/free-video\.js\?v=11154&patch=11156/);
+ assert.match(html,/free-video\.js\?v=11154&patch=11157/);
  assert.match(sw,/educa-cf11156-lia-voice-viewport/);
 });
