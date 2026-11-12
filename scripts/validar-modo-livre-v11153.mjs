@@ -20,6 +20,10 @@ try{
    await page.waitForFunction(()=>window.EducaFreeMode&&window.EducaVideoCall&&window.EducaFreeView,{timeout:20000});
    await page.evaluate(()=>{
      const previous=window.EducaFreeView;
+     // Entrar em Modo Livre como quem já concluiu a abertura inicial.
+     // Não deixar o holofote do pré-teste interceptar cliques da notificação.
+     document.body.classList.remove('landing-pretest-active','guide-focus-active');
+     const guide=document.querySelector('#guideOverlay');if(guide)guide.hidden=true;
      // Isolar o treino dos dados da conta: simular apenas a navegação existente.
      window.EducaFreeView={...previous,isTraining:()=>true,setView(name){
        document.querySelectorAll('.android-view').forEach(view=>view.classList.toggle('is-active',view.dataset.view===name));
