@@ -14,8 +14,12 @@ try{
    return {mobile:document.documentElement.classList.contains('educa-mobile-app'),
     hardware:box('#phoneHardware'),screen:box('#phoneScreen'),stage:box('#phoneStage'),
     header:box('.site-header'),hero:box('.hero-copy'),frameButton:box('#fullscreenBtn'),
-    active:document.querySelector('#phoneScreen')?.dataset.currentView};
+    active:document.querySelector('#phoneScreen')?.dataset.currentView,
+    loadedStyles:[...document.styleSheets].map(x=>x.href?.split('/').at(-1)).filter(Boolean),
+    rootClass:document.documentElement.className,
+    headerStyle:getComputedStyle(document.querySelector('.site-header')).cssText};
   });
+  console.log('Mobile viewport debug',size.width,JSON.stringify(result).slice(0,1700));
   assert.ok(result.mobile,'app class ausente');
   assert.equal(result.header.visible,false,'site-header não deve aparecer no app');
   assert.equal(result.hero.visible,false,'hero-copy não deve aparecer no app');
