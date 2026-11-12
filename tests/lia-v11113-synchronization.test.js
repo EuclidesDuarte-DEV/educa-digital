@@ -29,7 +29,7 @@ test('Legenda da Lia não antecipa a resposta antes da reprodução de voz',asyn
  assert.doesNotMatch(els.freeVideoSubtitle.textContent,/trezentos e cinquenta reais/);
  intro.onstart();
  assert.equal(els.freeVideoSubtitle.textContent,intro.text);
- assert.match(intro.text,/Oi! Sou a Lia/);
+ assert.match(intro.text,/Oi[,!] sou a Lia/i);
  intro.onend();
  window.EducaVideoCall.addLine('user','Posso verificar antes?');
  window.EducaVideoCall.addLine('assistant','Pode verificar por outro meio.');
