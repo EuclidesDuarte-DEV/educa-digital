@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {escolherModelo,responderModoLivre} from '../src/free-chat.js';
+import worker from '../src/worker.js';
 
 const worker=readFileSync('public/static/js/lia-kokoro-worker.js','utf8');
 const call=readFileSync('public/static/js/free-video.js','utf8');
@@ -12,6 +13,24 @@ const cache=readFileSync('public/static/sw.js','utf8');
 const request=(message,history=[])=>new Request('https://educa.example/api/modo-livre/conversar',{
  method:'POST',headers:{Origin:'https://educa.example','Content-Type':'application/json'},
  body:JSON.stringify({scenario:'video',message,history})
+});
+
+test('V111.57: proxy neural só serve arquivos fixos, sem D1 nem SSRF',async()=>{
+ const original=globalThis.fetch;
+ let fetched='';
+ try{
+  globalThis.fetch=async url=>{
+   fetched=String(url);
+   return new Response('{"ok":true}',{status:200,headers:{'Content-Type':'application/json'}});
+  };
+  const ok=await worker.fetch(new Request('https://educa.example/api/lia-model/config.json'),{});
+  assert.equal(ok.status,200);
+  assert.match(fetched,/^https:\/\/huggingface\.co\/onnx-community\/Kokoro-82M-v1\.0-ONNX\/resolve\/main\/config\.json$/);
+  assert.equal(ok.headers.get('content-type'),'application/json');
+  const denied=await worker.fetch(new Request('https://educa.example/api/lia-model/evil-model.bin'),{});
+  assert.equal(denied.status,404);
+  assert.match((await denied.json()).message,/não permitido/);
+ }finally{globalThis.fetch=original;}
 });
 
 test('V111.57: Gemma 4 MoE substitui Llama 3.1 e modo 70B continua opt-in',()=>{
