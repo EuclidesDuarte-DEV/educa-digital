@@ -32,7 +32,7 @@ try {
       });
       assert.equal(state.accessibilityCount,1,width+': duplicata do controle');
       assert.ok(state.inlineAudio&&!state.duplicate,width+': atalhos repetidos');
-      assert.ok(state.tourHidden&&state.spotlightHidden,width+': tour abre sozinho');
+      assert.ok(state.tourHidden&&!state.spotlightHidden,width+': tour opcional fechado, holofote Banco ativo V111.55');
       assert.ok(state.phone.left>=-1&&state.phone.right<=width+1,width+': telefone fora da tela');
       for(const e of state.elements) {
         assert.ok(e.left>=-1&&e.right<=width+1,width+': controle fora da tela');
