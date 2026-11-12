@@ -1368,13 +1368,13 @@
   <script src="/static/js/free-mode.js?v=11153&patch=11156"></script>
   
   <script src="/static/js/lia-female-voice.js?v=11111"></script>
-  <script src="/static/js/lia-kokoro-browser.js?v=11157"></script>
+  <script src="/static/js/lia-kokoro-browser.js?v=11157&mirror=2"></script>
   <script src="/static/js/free-video.js?v=11154&patch=11157"></script>
   <script src="/static/js/web-real.js?v=109"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11154&patch=11157').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11154&patch=11157&mirror=2').catch(() => {});
       });
     }
   </script>
