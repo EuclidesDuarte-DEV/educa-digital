@@ -46,7 +46,7 @@
  }
  function ensure(){
   if(worker)return worker;
-  worker=new Worker('/static/js/lia-kokoro-worker.js?v=11152',{type:'module'});
+  worker=new Worker('/static/js/lia-kokoro-worker.js?v=11157',{type:'module'});
   worker.onmessage=({data})=>{
    if(data.type==='progress'){
     progress=data.stage||progress;
@@ -127,7 +127,7 @@
  window.EducaLiaBrowserKokoro=Object.freeze({
   prepare,synthesize,prewarmIntro,setDevice,confirmDevice,getStatus:()=>progress,getLastError:()=>lastError,
   isReady:()=>Boolean(ready&&readyResolve===null&&worker&&lastError===''),
-  getDiagnostics:()=>({version:'11152',device,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
-  voice:'pf_dora',version:'11152'
+  getDiagnostics:()=>({version:'11157',device,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
+  voice:'pf_dora',version:'11157'
  });
 })();
