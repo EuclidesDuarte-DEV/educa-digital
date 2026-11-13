@@ -1,4 +1,7 @@
-/* V111.63 — APENAS WEB. Garante legibilidade mínima no modo de letras muito grandes\n * e a visibilidade do feedback da revisão de Pix.\n */\n/* V111.62 — APENAS WEB. Corrige tremor no destaque do Pix sem afetar apps nativos.
+/* V111.63 — APENAS WEB. Garante legibilidade mínima no modo de letras muito grandes
+ * e a visibilidade do feedback da revisão de Pix.
+ */
+/* V111.62 — APENAS WEB. Corrige tremor no destaque do Pix sem afetar apps nativos.
  * Evita que mudanças no balão do guia disparem reflow de todas as letras.
  * Mantém o aumento de fontes implementado na V111.61.
  */
