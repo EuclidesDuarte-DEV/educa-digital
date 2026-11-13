@@ -197,6 +197,7 @@ final class CallProtectionModel: ObservableObject {
 
 struct CallProtectionView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var realCallActivity: RealCallEventBridge
     @StateObject private var model = CallProtectionModel()
 
     var body: some View {
@@ -249,7 +250,7 @@ struct CallProtectionView: View {
                 Section("Notificações no iPhone real") {
                     Label(model.notificationStatus, systemImage: model.notificationsAllowed ? "bell.badge.fill" : "bell.slash")
                         .foregroundStyle(model.notificationsAllowed ? .green : .secondary)
-                    Text("Permita notificações para receber avisos educativos que o Educa+ realmente agendar. Autorizar não fornece ao app o número de quem está ligando e não ativa alertas por ligação real.")
+                    Text("Permita notificações para receber os avisos que o Educa+ conseguir agendar. Autorizar não fornece ao app o número de quem está ligando. O acionador experimental abaixo funciona somente com o app nativo em execução.")
                         .font(.subheadline)
                     if model.notificationPermissionDenied {
                         Button("Abrir Ajustes de notificações") {
@@ -270,6 +271,27 @@ struct CallProtectionView: View {
                         Text(model.notificationMessage)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
+                    }
+                }
+
+                Section("Acionador próprio de chamada real (experimental)") {
+                    Toggle("Avisar sobre atividade de ligação no iPhone", isOn: Binding(
+                        get: { realCallActivity.enabled },
+                        set: { realCallActivity.setEnabled($0) }
+                    ))
+                    .accessibilityHint("Tenta emitir aviso educativo quando o Educa+ nativo estiver em execução e o sistema comunicar uma chamada recebida.")
+                    Label(realCallActivity.statusText, systemImage: "waveform.path")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Text("Este acionador usa CallKit para observar que houve uma ligação REAL, apenas enquanto o aplicativo nativo está em execução. Não informa o número, não sabe se está salvo nos contatos e não funciona no aplicativo instalado pelo Safari.")
+                        .font(.subheadline)
+                    Text("Pode não mostrar a notificação quando o iPhone apresentar a própria tela de chamada ou suspender o Educa+. Não é possível prometer funcionamento com o app fechado. Para proteção contínua, use a triagem nativa do iOS.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    if !model.notificationsAllowed {
+                        Text("Para tentar receber o aviso, toque em Permitir notificações na seção acima.")
+                            .font(.footnote)
+                            .foregroundStyle(.orange)
                     }
                 }
 
