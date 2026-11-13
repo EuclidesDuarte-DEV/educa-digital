@@ -1,3 +1,83 @@
-/* Somente Web: adicione aqui estilos pedidos exclusivamente para o site.
- * Não altere app.css compartilhado quando o pedido for "só WEB". */
+/* V111.61: SOMENTE WEB. Tipografia acessível dentro dos exercícios.
+ * O tamanho base de cada texto é medido pelo overrides.js, para respeitar
+ * o design original e ampliar inclusive px/!important de telas simuladas.
+ */
 html[data-educa-platform="web"] { --educa-web-channel: 1; }
+
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .android-view [data-educa-web-a11y-text] {
+  line-height: 1.42 !important;
+  min-width: 0;
+  max-width: 100%;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal;
+}
+
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .android-view [data-educa-web-a11y-text]:not(input):not(textarea):not(select) {
+  white-space: normal !important;
+  hyphens: auto;
+}
+
+/* Botões textuais podem ganhar altura. Ícones sem texto ficam intocados. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .android-view :is(button,a)[data-educa-web-a11y-text] {
+  min-height: 44px;
+  height: auto !important;
+  max-width: 100%;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Contêineres das atividades podem reduzir a largura e permitir reflow. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen :is(.android-view,.app-surface,.bank-surface,.guided-surface,
+    .learning-surface,.topic-surface,.module-path-content,.module-lesson-card,
+    .video-lesson-surface,.gov-app-surface,.bank-help-card,.pix-demo-option,
+    .gov-service-card,.settings-row,.learning-card,.learning-featured) {
+  min-width: 0 !important;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* Texto de exercícios não deve ser cortado em regiões com rolagem própria. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .android-view.is-active {
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen :is(.guided-surface,.bank-surface,.topic-surface,
+    .learning-surface,.module-path-content,.video-lesson-surface,
+    .gov-auth-screen,.gov-real-home-scroll,.gov-service-list.real-services) {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
+
+/* Cartões das atividades se reorganizam ao ampliar as letras; sem zoom
+ * que distorce o simulador ou sobrepõe controles. */
+html[data-educa-platform="web"].a11y-text-extra
+  #phoneScreen :is(.pix-type-grid,.pix-amount-grid,.learning-grid) {
+  grid-template-columns: minmax(0,1fr) !important;
+}
+
+@media (max-width: 420px) {
+  html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+    #phoneScreen :is(.pix-type-grid,.pix-amount-grid,.learning-grid) {
+    grid-template-columns: minmax(0,1fr) !important;
+  }
+  html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+    #phoneScreen .android-view :is(input,textarea,select)[data-educa-web-a11y-text] {
+    min-width: 0;
+    max-width: 100% !important;
+  }
+}
+
+/* Não alterar modo padrão, iOS e Android; preservar foco acessível. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .android-view :is(button,a,input,select,textarea):focus-visible {
+  outline-offset: 2px;
+}
