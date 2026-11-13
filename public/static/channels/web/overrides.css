@@ -197,3 +197,25 @@ html[data-educa-platform="web"] #phoneScreen[data-current-view="bank-review"]
   #bankAnswerFeedback:not([hidden]) {
   scroll-margin-bottom:20px;
 }
+
+/* O acerto da revisão Pix permanece legível também na conclusão, pois o
+ * treinamento avança automaticamente depois de 900 ms. */
+html[data-educa-platform="web"] #successView .web-pix-review-result {
+  width:100%;
+  box-sizing:border-box;
+  margin:10px 0 12px;
+  padding:12px 14px;
+  border:1px solid #98d8bc;
+  border-radius:14px;
+  background:#e8f8ef;
+  color:#155a40;
+  font-size:14px;
+  line-height:1.55;
+  font-weight:750;
+  overflow-wrap:anywhere;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #successView .web-pix-review-result {
+  font-size: max(var(--ed-web-text-min,14px),calc(14px * var(--ed-font-factor,1))) !important;
+  line-height:1.55!important;
+}
