@@ -40,7 +40,7 @@ function renderNavigation(platform='web') {
   const nav={querySelectorAll:selector=>selector==='button'?buttons:[]};
   const phone={querySelectorAll:()=>[]};
   const doc={
-    documentElement:{dataset:{educaPlatform:platform}},
+    documentElement:{dataset:{educaPlatform:platform},classList:{contains:()=>false,add(){},remove(){}}},
     querySelector:selector=>selector==='#phoneScreen'?phone:
       selector==='#bankHomeView .bank-bottom-nav'?nav:null,
     createElementNS:(_ns,tag)=>svgNode(tag),
