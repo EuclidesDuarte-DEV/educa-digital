@@ -5,6 +5,7 @@ import Foundation
 enum SpamNumberStore {
     static let appGroup = "group.com.educamaisdigital.educa"
     static let key = "educa.userMarkedSuspectedNumbers.v1"
+    static let lastAppliedKey = "educa.appliedCallerIdentificationNumbers.v1"
     static let maximumEntries = 1_000
 
     static func digits(_ raw: String) -> String {
@@ -36,6 +37,18 @@ enum SpamNumberStore {
         let raw = defaults.stringArray(forKey: key) ?? []
         let verified = raw.compactMap(normalize)
         return Array(Set(verified)).sorted()
+    }
+
+    /// Última lista que a extensão concluiu de carregar no CallKit.
+    static func applied() -> [String] {
+        let raw = UserDefaults(suiteName: appGroup)?
+            .stringArray(forKey: lastAppliedKey) ?? []
+        return Array(Set(raw.compactMap(normalize))).sorted()
+    }
+
+    static func recordApplied(_ values: [String]) {
+        let clean = Array(Set(values.compactMap(normalize))).sorted()
+        UserDefaults(suiteName: appGroup)?.set(clean, forKey: lastAppliedKey)
     }
 
     @discardableResult
