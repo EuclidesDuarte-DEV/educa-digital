@@ -99,7 +99,7 @@ test('[web] destaque Pix não dispara reflow a cada mutação do balão do guia'
  s.flush();
  const baseline=s.counts;
  assert.equal(s.first.style.getPropertyValue('font-size'),
-   'calc(11px * var(--ed-font-factor, 1))');
+   'max(var(--ed-web-text-min, 14px), calc(11px * var(--ed-font-factor, 1)))');
  for(let i=0;i<30;i++){s.guideMutation();s.flush();}
  assert.deepEqual(s.counts,baseline,
    'guide pointer mutation must not trigger another font sweep');
@@ -116,7 +116,7 @@ test('[web] novo texto de atividade cresce sem reescrever botões anteriores',()
  const dynamic=s.addActivityText();
  s.flush();
  assert.equal(dynamic.style.getPropertyValue('font-size'),
-   'calc(11px * var(--ed-font-factor, 1))');
+   'max(var(--ed-web-text-min, 14px), calc(11px * var(--ed-font-factor, 1)))');
  assert.equal(s.first.style.getPropertyValue('font-size'),oldStyle);
  assert.equal(s.counts.removeRootCount,baseline.removeRootCount+1,
    'one layout pass for genuinely new content');
