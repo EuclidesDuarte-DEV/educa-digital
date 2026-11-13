@@ -8,7 +8,7 @@ struct CloudflareTrainingWebView: UIViewRepresentable {
     @ObservedObject var state: TrainingState
 
     static let officialHost = "educa-digital.educamaisdigital.workers.dev"
-    static let startURL = URL(string: "https://educa-digital.educamaisdigital.workers.dev/?app=1")!
+    static let startURL = URL(string: "https://educa-digital.educamaisdigital.workers.dev/?app=1&platform=ios")!
 
     func makeCoordinator() -> Coordinator {
         Coordinator(state: state)

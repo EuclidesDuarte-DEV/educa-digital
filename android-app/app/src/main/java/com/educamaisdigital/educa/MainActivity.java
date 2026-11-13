@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 public final class MainActivity extends Activity {
     private static final String ORIGIN = "educa-digital.educamaisdigital.workers.dev";
-    private static final String START = "https://" + ORIGIN + "/?app=1";
+    private static final String START = "https://" + ORIGIN + "/?app=1&platform=android";
     private static final int WEB_PERMISSION_CODE = 1134;
     private WebView webView;
     private PermissionRequest pendingWebPermission;

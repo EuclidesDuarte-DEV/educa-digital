@@ -1,0 +1,28 @@
+name: Proteger escopo Web Android iOS
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+permissions:
+  contents: read
+jobs:
+  validar-escopo:
+    name: Verificar escopo Web Android iOS
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar se PR exclusivo muda somente a plataforma pedida
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node scripts/validar-escopo-plataformas.mjs \
+            --title "$PR_TITLE" --base "$BASE_SHA" --head "$HEAD_SHA"
+      - name: Testar roteamento Web Android iOS e regras
+        run: node --test tests/platform-channels-v11160.test.js

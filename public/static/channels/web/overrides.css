@@ -1,0 +1,3 @@
+/* Somente Web: adicione aqui estilos pedidos exclusivamente para o site.
+ * Não altere app.css compartilhado quando o pedido for "só WEB". */
+html[data-educa-platform="web"] { --educa-web-channel: 1; }
