@@ -164,8 +164,8 @@
       ['bankReviewOptions', 'bankAnswerFeedback'],
       ['bankScamOptions', 'bankScamFeedback']
     ]) {
-      const options = document.getElementById(optionsId);
-      const feedback = document.getElementById(feedbackId);
+      const options = document.getElementById?.(optionsId);
+      const feedback = document.getElementById?.(feedbackId);
       options?.addEventListener('click', event => {
         if (!event.target.closest('[data-bank-answer],[data-bank-scam-answer]')) return;
         requestAnimationFrame(() => {
