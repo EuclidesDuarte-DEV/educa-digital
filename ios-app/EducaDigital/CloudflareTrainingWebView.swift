@@ -46,50 +46,6 @@ struct CloudflareTrainingWebView: UIViewRepresentable {
             injectionTime: .atDocumentEnd,
             forMainFrameOnly: true
         ))
-        // Somente WKWebView iOS: alerta educativo ao receber ligação
-        // desconhecida na simulação. Não intercepta chamadas telefônicas reais.
-        let simulatedCallerWarning = """
-        (function() {
-          if (location.host !== 'educa-digital.educamaisdigital.workers.dev') return;
-          function update() {
-            const screen = document.getElementById('freeCallView');
-            const name = document.getElementById('freeCallName');
-            const state = document.getElementById('freeCallLine');
-            if (!screen || !name || !state) return;
-            let badge = document.getElementById('educa-ios-training-caller-warning');
-            if (!badge) {
-              badge = document.createElement('div');
-              badge.id = 'educa-ios-training-caller-warning';
-              badge.setAttribute('role','status');
-              badge.setAttribute('aria-live','polite');
-              badge.style.cssText = 'display:none;margin:12px 16px 8px;padding:12px 14px;border:1px solid #fbbf24;border-radius:13px;background:#fffbeb;color:#78350f;font:700 15px/1.5 -apple-system,BlinkMacSystemFont,sans-serif;overflow-wrap:anywhere;text-align:center;';
-              state.insertAdjacentElement('afterend', badge);
-            }
-            const unknown = /desconhecid|unknown|não identificad/i.test(name.textContent || '');
-            const active = screen.classList.contains('is-active');
-            badge.style.display = active && unknown ? 'block' : 'none';
-            const warning = '⚠️ Possível spam — número não identificado. No treino, não compartilhe códigos, senhas ou faça Pix sem verificar.';
-            if (badge.textContent !== warning) badge.textContent = warning;
-          }
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', start, {once:true});
-          } else start();
-          function start() {
-            update();
-            const root = document.getElementById('phoneScreen');
-            if (!root) return;
-            new MutationObserver(update).observe(root, {
-              attributes:true, attributeFilter:['class'], childList:true,
-              characterData:true, subtree:true
-            });
-          }
-        })();
-        """
-        config.userContentController.addUserScript(WKUserScript(
-            source: simulatedCallerWarning,
-            injectionTime: .atDocumentEnd,
-            forMainFrameOnly: true
-        ))
         config.userContentController.add(context.coordinator, name: "educaIOS")
 
         let webView = WKWebView(frame: .zero, configuration: config)
