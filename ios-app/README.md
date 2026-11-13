@@ -26,6 +26,14 @@ Na tela nativa do escudo, o usuário também pode pedir permissão de notificaç
 
 Veja [PROTECAO_CHAMADAS_V11169.md](./PROTECAO_CHAMADAS_V11169.md), o [guia V111.68](./PROTECAO_CHAMADAS_V11168.md) e o [registro histórico V111.67](./PROTECAO_CHAMADAS_V11167.md) para configuração App Groups, assinatura, testes físicos, privacidade e limitações. A instalação via Safari/PWA **não** permite extensões CallKit — é necessário o app iOS nativo assinado.
 
+## Atualização automática via TestFlight (preparada)
+
+O pipeline [`ios-testflight.yml`](../.github/workflows/ios-testflight.yml) está pronto para assinar o app **e a extensão CallKit** usando certificados/perfis Apple armazenados exclusivamente em GitHub Actions Secrets e enviar novas versões nativas ao App Store Connect/TestFlight. A primeira configuração da conta Apple Developer e dos oito secrets é obrigatória, assim como cadastrar um grupo de testadores no App Store Connect. Enquanto faltarem credenciais, a etapa de publicação é ignorada e o workflow explica o que está pendente.
+
+Depois de configurado, pushes iOS na `main` disparam o upload automaticamente. A pessoa ativa **Automatic Updates** no TestFlight do iPhone para receber os builds disponibilizados pela Apple. O site Cloudflare carregado pelo WKWebView se atualiza independentemente de um novo IPA.
+
+**[Guia de configuração e instalação TestFlight](./TESTFLIGHT_AUTOUPDATE.md)**. O IPA público `*-unsigned.ipa` continua sendo apenas para testes de compilação e não instala diretamente no iPhone.
+
 ## Criar o projeto no Mac
 
 1. Instale Xcode e XcodeGen (`brew install xcodegen`).

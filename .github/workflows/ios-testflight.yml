@@ -1,0 +1,90 @@
+name: Educa+ iOS — publicar automaticamente no TestFlight
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ios-app/**'
+      - 'public/static/channels/ios/**'
+      - 'public/static/icons_pwa/**'
+      - '.github/workflows/ios-testflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: educa-ios-testflight-distribution
+  cancel-in-progress: false
+
+jobs:
+  verificar-apple:
+    name: Conferir configuracao de distribuicao Apple
+    runs-on: ubuntu-24.04
+    outputs:
+      ready: ${{ steps.verify.outputs.ready }}
+    steps:
+      - name: Conferir apenas a presenca dos secrets (sem imprimir valores)
+        id: verify
+        env:
+          IOS_APPLE_TEAM_ID: ${{ secrets.IOS_APPLE_TEAM_ID }}
+          IOS_APPLE_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_APPLE_DISTRIBUTION_P12_BASE64 }}
+          IOS_APPLE_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_APPLE_DISTRIBUTION_P12_PASSWORD }}
+          IOS_APPSTORE_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROFILE_BASE64 }}
+          IOS_CALLERID_PROFILE_BASE64: ${{ secrets.IOS_CALLERID_PROFILE_BASE64 }}
+          IOS_ASC_KEY_ID: ${{ secrets.IOS_ASC_KEY_ID }}
+          IOS_ASC_ISSUER_ID: ${{ secrets.IOS_ASC_ISSUER_ID }}
+          IOS_ASC_PRIVATE_KEY_BASE64: ${{ secrets.IOS_ASC_PRIVATE_KEY_BASE64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          faltantes=()
+          for nome in IOS_APPLE_TEAM_ID IOS_APPLE_DISTRIBUTION_P12_BASE64 IOS_APPLE_DISTRIBUTION_P12_PASSWORD IOS_APPSTORE_PROFILE_BASE64 IOS_CALLERID_PROFILE_BASE64 IOS_ASC_KEY_ID IOS_ASC_ISSUER_ID IOS_ASC_PRIVATE_KEY_BASE64; do
+            if [[ -z "$(printenv "$nome")" ]]; then faltantes+=("$nome"); fi
+          done
+          if (( ${#faltantes[@]} )); then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "### TestFlight ainda nao configurado" >> "$GITHUB_STEP_SUMMARY"
+            echo "Nao houve tentativa de assinar ou publicar. Configure os seguintes **Actions secrets** em Settings → Secrets and variables → Actions:" >> "$GITHUB_STEP_SUMMARY"
+            printf -- '- `%s`\n' "${faltantes[@]}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Depois rode novamente este workflow em Actions, ou faca novo commit iOS na main." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "### Credenciais presentes — distribuicao TestFlight sera executada" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  publicar-testflight:
+    name: Assinar app e extensao, enviar a Apple
+    needs: verificar-apple
+    if: needs.verificar-apple.outputs.ready == 'true'
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirmar Xcode 26 ou posterior
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          major="$(xcodebuild -version | sed -n 's/^Xcode \([0-9][0-9]*\).*/\1/p' | head -1)"
+          test -n "$major" && test "$major" -ge 26
+          xcrun --sdk iphoneos --show-sdk-version
+      - name: Instalar XcodeGen
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v xcodegen >/dev/null; then brew install xcodegen; fi
+          xcodegen --version
+      - name: Assinar e publicar distribuicao TestFlight
+        shell: bash
+        env:
+          IOS_APPLE_TEAM_ID: ${{ secrets.IOS_APPLE_TEAM_ID }}
+          IOS_APPLE_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_APPLE_DISTRIBUTION_P12_BASE64 }}
+          IOS_APPLE_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_APPLE_DISTRIBUTION_P12_PASSWORD }}
+          IOS_APPSTORE_PROFILE_BASE64: ${{ secrets.IOS_APPSTORE_PROFILE_BASE64 }}
+          IOS_CALLERID_PROFILE_BASE64: ${{ secrets.IOS_CALLERID_PROFILE_BASE64 }}
+          IOS_ASC_KEY_ID: ${{ secrets.IOS_ASC_KEY_ID }}
+          IOS_ASC_ISSUER_ID: ${{ secrets.IOS_ASC_ISSUER_ID }}
+          IOS_ASC_PRIVATE_KEY_BASE64: ${{ secrets.IOS_ASC_PRIVATE_KEY_BASE64 }}
+        run: |
+          bash ios-app/scripts/publicar-testflight.sh
