@@ -72,7 +72,7 @@ html[data-educa-platform="web"].a11y-text-extra
   html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
     #phoneScreen .android-view :is(input,textarea,select)[data-educa-web-a11y-text] {
     min-width: 0;
-    width: min(100%, 100%);
+    max-width: 100% !important;
   }
 }
 
