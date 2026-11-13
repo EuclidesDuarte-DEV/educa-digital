@@ -70,7 +70,7 @@ test('[web] somente o navegador Web aplica ajustes de fontes internas',()=>{
  assert.equal(ios.win.EducaWebChannel,undefined);
  const web=harness('web');
  assert.equal(web.win.EducaWebChannel.name,'web');
- assert.equal(web.win.EducaWebChannel.a11yActivityVersion,'11163');
+ assert.equal(web.win.EducaWebChannel.a11yActivityVersion,'11164');
 });
 
 test('[web] texto interno amplia em grande e muito grande e volta ao original',()=>{
