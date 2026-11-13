@@ -1,5 +1,6 @@
 import CallKit
 import Foundation
+import SwiftUI
 import UserNotifications
 
 /// Observa atividade de chamadas reais SOMENTE enquanto o processo nativo
@@ -11,7 +12,7 @@ final class RealCallEventBridge: NSObject, ObservableObject, CXCallObserverDeleg
     private var notifiedCalls = Set<UUID>()
     private var observing = false
 
-    @Published private(set) var enabled = UserDefaults.standard.bool(forKey: preferenceKey)
+    @Published private(set) var enabled = UserDefaults.standard.bool(forKey: RealCallEventBridge.preferenceKey)
     @Published private(set) var statusText = "O aviso por atividade de ligação está desativado."
 
     func activateIfNeeded() {
