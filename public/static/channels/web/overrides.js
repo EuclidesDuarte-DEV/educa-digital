@@ -201,7 +201,7 @@
         requestAnimationFrame(() => {
           if (!feedback || feedback.hidden) return;
           if (event.target.closest('[data-bank-answer="correct"],[data-bank-scam-answer="correct"]')) {
-            pendingSuccessNote = feedback.textContent.trim();
+            pendingSuccessNote = String(feedback.textContent || '').trim();
           }
           const panel = feedback.closest('.bank-content');
           if (!panel) return;
