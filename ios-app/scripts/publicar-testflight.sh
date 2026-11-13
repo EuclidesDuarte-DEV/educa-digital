@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Distribuicao iOS/TestFlight: usa somente credenciais do GitHub Actions Secrets.
-# Nunca executar com set -x; nenhum segredo e gravado no repositorio ou artefato publico.
+# Nunca habilitar eco de comandos; nenhum segredo e gravado no repositorio ou artefato publico.
 set -euo pipefail
 umask 077
 
