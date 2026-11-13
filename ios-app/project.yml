@@ -40,8 +40,8 @@ targets:
       path: EducaDigital/Info.plist
       properties:
         CFBundleDisplayName: "Educa+ Digital"
-        CFBundleShortVersionString: "111.67"
-        CFBundleVersion: "11167"
+        CFBundleShortVersionString: "111.68"
+        CFBundleVersion: "11168"
         UIStatusBarHidden: true
         UIViewControllerBasedStatusBarAppearance: false
         UIRequiresFullScreen: true
@@ -78,8 +78,8 @@ targets:
       path: CallerIDExtension/Info.plist
       properties:
         CFBundleDisplayName: "Educa+ Proteção de Chamadas"
-        CFBundleShortVersionString: "111.67"
-        CFBundleVersion: "11167"
+        CFBundleShortVersionString: "111.68"
+        CFBundleVersion: "11168"
         NSExtension:
           NSExtensionPointIdentifier: "com.apple.callkit.call-directory"
           NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).CallDirectoryProvider"
