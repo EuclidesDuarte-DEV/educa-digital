@@ -1,4 +1,4 @@
-# Educa+ Digital iOS nativo — V111.68
+# Educa+ Digital iOS nativo — V111.69
 
 Aplicativo **SwiftUI + WebKit** para iPhone, com código-fonte próprio em Swift e acesso ao mesmo backend Cloudflare usado na web e Android.
 
@@ -12,7 +12,7 @@ Aplicativo **SwiftUI + WebKit** para iPhone, com código-fonte próprio em Swift
 - Não há chaves, tokens, secrets, certificados, armazenamento de senhas ou pagamentos reais no código.
 - O app requer internet para a IA, não é uma LIA neural offline.
 
-## Proteção nativa contra chamadas suspeitas (V111.68)
+## Proteção nativa contra chamadas suspeitas (V111.69)
 
 A versão **SwiftUI instalada e assinada** inclui uma extensão Call Directory do CallKit. Pela tela do escudo, o usuário pode marcar números específicos como suspeitos, ativar a extensão nos Ajustes do iPhone e solicitar a atualização da lista local. A extensão **não bloqueia chamadas**, não intercepta áudio e não classifica números desconhecidos automaticamente.
 
@@ -20,7 +20,11 @@ A versão **SwiftUI instalada e assinada** inclui uma extensão Call Directory d
 
 Na tela nativa do escudo, o usuário também pode pedir permissão de notificações e agendar um **aviso de demonstração** para a tela do iPhone fora do Educa+. Esse aviso é claramente identificado como teste, não é acionado por chamadas e não significa que o aplicativo consegue observar todas as ligações. A autorização de notificações é independente da ativação da extensão Call Directory.
 
-Veja [PROTECAO_CHAMADAS_V11168.md](./PROTECAO_CHAMADAS_V11168.md) e o [registro histórico V111.67](./PROTECAO_CHAMADAS_V11167.md) para configuração App Groups, assinatura, testes físicos, privacidade e limitações. A instalação via Safari/PWA **não** permite extensões CallKit — é necessário o app iOS nativo assinado.
+**Novo na V111.69:** o painel do escudo explica como ativar a **triagem automática de números não salvos no iOS 26**, usando o ajuste nativo `Ajustes → Apps → Telefone → Filtrar Números Desconhecidos → Perguntar Motivo da Ligação`. Esta função do sistema pergunta quem está ligando e por quê antes de tocar, sem depender de um alerta do Educa+. O painel mostra a mensagem educativa **“Educa+ Digital — Atenção. Número desconhecido. Tenha cuidado com possíveis tentativas de golpe. Nunca compartilhe senhas ou códigos.”** e a reproduz numa notificação local **SIMULAÇÃO** quando solicitada explicitamente.
+
+**Limite técnico:** apps de terceiros não recebem evento/número para cada chamada celular não salva. A permissão de notificações não detecta ligações e o aviso educativo personalizado do Educa+ não aparece automaticamente a cada chamada real. A proteção automática dos números não salvos depende de configurar a triagem da Apple pelo usuário, e a identificação individual do Educa+ continua limitada aos números cadastrados previamente. Nenhuma mudança Android, Web, Workers, D1 ou IA.
+
+Veja [PROTECAO_CHAMADAS_V11169.md](./PROTECAO_CHAMADAS_V11169.md), o [guia V111.68](./PROTECAO_CHAMADAS_V11168.md) e o [registro histórico V111.67](./PROTECAO_CHAMADAS_V11167.md) para configuração App Groups, assinatura, testes físicos, privacidade e limitações. A instalação via Safari/PWA **não** permite extensões CallKit — é necessário o app iOS nativo assinado.
 
 ## Criar o projeto no Mac
 

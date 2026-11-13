@@ -9,8 +9,8 @@ const app = read('ios-app/EducaDigital/EducaDigitalApp.swift');
 const callKit = read('ios-app/CallerIDExtension/CallDirectoryProvider.swift');
 const guide = read('ios-app/PROTECAO_CHAMADAS_V11168.md');
 
-test('[ios] a versão 111.68 mantém extensão nativa e não altera o host', () => {
-  assert.match(yaml, /CFBundleShortVersionString: "111\.68"/);
+test('[ios] a versão 111.69 mantém extensão nativa e não altera o host', () => {
+  assert.match(yaml, /CFBundleShortVersionString: "111\.69"/);
   assert.match(yaml, /com\.apple\.callkit\.call-directory/);
   assert.match(app, /CallProtectionView\(\)/);
   assert.match(web, /educa-digital\.educamaisdigital\.workers\.dev/);
@@ -26,9 +26,9 @@ test('[ios] solicita permissão por gesto do usuário sem confundir com CallKit'
   assert.match(view, /func checkNotificationPermissions\(/);
   assert.match(view, /func sendTestNotification\(/);
   assert.match(view, /UNTimeIntervalNotificationTrigger\(timeInterval: 8, repeats: false\)/);
-  assert.match(view, /Educa\+ — aviso de demonstração/);
-  assert.match(view, /NÃO uma chamada detectada/);
-  assert.match(view, /permissão não identifica números desconhecidos/);
+  assert.match(view, /SIMULAÇÃO —/);
+  assert.match(view, /Apenas demonstração: nenhuma ligação real foi identificada/);
+  assert.match(view, /Autorizar não fornece ao app o número/);
 });
 
 test('[ios] alerta visual fictício removido da WKWebView', () => {

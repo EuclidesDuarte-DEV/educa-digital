@@ -16,7 +16,7 @@ test('[ios] extensão real Call Directory está embutida no aplicativo nativo',(
  assert.match(yaml,/com\.apple\.callkit\.call-directory/);
  assert.match(yaml,/NSExtensionPrincipalClass: "\$\(PRODUCT_MODULE_NAME\)\.CallDirectoryProvider"/);
  assert.match(yaml,/PRODUCT_BUNDLE_IDENTIFIER: com\.educamaisdigital\.educa\.callerid/);
- assert.match(yaml,/CFBundleShortVersionString: "111\.68"/);
+ assert.match(yaml,/CFBundleShortVersionString: "111\.69"/);
  assert.match(yaml,/com\.apple\.security\.application-groups:[\s\S]*?group\.com\.educamaisdigital\.educa/);
 });
 
@@ -64,5 +64,5 @@ test('[ios] aviso fictício não é mais injetado no protótipo; CallKit segue n
  assert.doesNotMatch(web,/simulatedCallerWarning|educa-ios-training-caller-warning/);
  assert.match(web,/platform=ios/);
  assert.match(ext,/addIdentificationEntry\(/);
- assert.doesNotMatch(local,/V111\.68/);
+ assert.doesNotMatch(local,/V111\.69/);
 });

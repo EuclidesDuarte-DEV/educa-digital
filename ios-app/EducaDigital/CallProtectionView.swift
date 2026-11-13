@@ -6,6 +6,14 @@ import UserNotifications
 
 /// Interface nativa para ativar a identificação no iOS.
 /// Não acessa lista de contatos, histórico de chamadas nem redes externas.
+/// Mensagem educativa solicitada para avisar sobre riscos de números não salvos.
+/// O texto NÃO é uma interceptação de ligação celular real.
+enum UnknownCallerSafetyMessage {
+    static let title = "Educa+ Digital — Atenção"
+    static let body = "Número desconhecido. Tenha cuidado com possíveis tentativas de golpe. Nunca compartilhe senhas ou códigos."
+    static let appleGuide = URL(string: "https://support.apple.com/pt-br/111106")!
+}
+
 @MainActor
 final class CallProtectionModel: ObservableObject {
     static let extensionID = "com.educamaisdigital.educa.callerid"
@@ -107,8 +115,8 @@ final class CallProtectionModel: ObservableObject {
         }
         notificationBusy = true
         let content = UNMutableNotificationContent()
-        content.title = "Educa+ — aviso de demonstração"
-        content.body = "Este é apenas um teste educativo, NÃO uma chamada detectada. Para ligações reais, ative a identificação de chamadas do iPhone."
+        content.title = "SIMULAÇÃO — " + UnknownCallerSafetyMessage.title
+        content.body = UnknownCallerSafetyMessage.body + " Apenas demonstração: nenhuma ligação real foi identificada."
         content.sound = .default
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 8, repeats: false)
         let request = UNNotificationRequest(
@@ -202,13 +210,46 @@ struct CallProtectionView: View {
                     Text("O rótulo “Educa+: possível spam” funciona somente para números que você marcou como suspeitos e que o iOS carregou na extensão.")
                     Text("Desconhecido não significa golpista. O Educa+ não analisa automaticamente suas ligações, não bloqueia chamadas e não acessa seus contatos.")
                         .foregroundStyle(.secondary)
+                }
+
+                Section("Proteger ligações de números não salvos") {
+                    Label("Triagem automática do próprio iPhone", systemImage: "phone.arrow.down.left.fill")
+                        .font(.headline)
+                    Text("A proteção para números não salvos é feita pelo iOS, mesmo com o Educa+ fechado. Você precisa ativá-la nos Ajustes; nenhum aplicativo pode ativá-la por você.")
+                    if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 26 {
+                        Text("1. Abra Ajustes → Apps → Telefone.")
+                        Text("2. Procure Filtrar Números Desconhecidos.")
+                        Text("3. Selecione Perguntar Motivo da Ligação.")
+                        Text("O iPhone perguntará o nome e o motivo da ligação antes de tocar para números não salvos. Você decide se atende; o Educa+ não recebe os dados da ligação.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("1. Abra Ajustes → Telefone (ou Apps → Telefone).")
+                        Text("2. Ative Silenciar Desconhecidos, se disponível.")
+                        Text("Em versões antigas, a triagem com pergunta sobre o motivo pode não estar disponível. Silenciar pode fazer você perder ligações legítimas.")
+                            .foregroundStyle(.secondary)
+                    }
+                    Button {
+                        UIApplication.shared.open(UnknownCallerSafetyMessage.appleGuide)
+                    } label: {
+                        Label("Consultar instruções oficiais da Apple", systemImage: "arrow.up.right.square")
+                    }
+                    .accessibilityHint("Abre o guia oficial da Apple para configurar ligações desconhecidas")
+                }
+
+                Section("Aviso educativo para números desconhecidos") {
+                    Label(UnknownCallerSafetyMessage.title, systemImage: "exclamationmark.shield.fill")
+                        .font(.headline)
+                        .foregroundStyle(.orange)
+                    Text(UnknownCallerSafetyMessage.body)
+                    Text("Esta mensagem aparece nesta orientação e na notificação de DEMONSTRAÇÃO, quando solicitada. A Apple não permite mostrá-la automaticamente como notificação do Educa+ em toda ligação real não salva.")
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
 
                 Section("Notificações no iPhone real") {
                     Label(model.notificationStatus, systemImage: model.notificationsAllowed ? "bell.badge.fill" : "bell.slash")
                         .foregroundStyle(model.notificationsAllowed ? .green : .secondary)
-                    Text("Autorize avisos educativos do Educa+ fora do aplicativo. Essa permissão não identifica números desconhecidos nem dispara alertas ao receber uma ligação.")
+                    Text("Permita notificações para receber avisos educativos que o Educa+ realmente agendar. Autorizar não fornece ao app o número de quem está ligando e não ativa alertas por ligação real.")
                         .font(.subheadline)
                     if model.notificationPermissionDenied {
                         Button("Abrir Ajustes de notificações") {
@@ -224,7 +265,7 @@ struct CallProtectionView: View {
                         model.sendTestNotification()
                     }
                     .disabled(!model.notificationsAllowed || model.notificationBusy)
-                    .accessibilityHint("Agenda apenas um aviso de demonstração. Não depende de uma chamada real.")
+                    .accessibilityHint("Mostra a mensagem educativa do Educa+ como SIMULAÇÃO fora do aplicativo, sem detectar ligação real.")
                     if !model.notificationMessage.isEmpty {
                         Text(model.notificationMessage)
                             .font(.footnote)
