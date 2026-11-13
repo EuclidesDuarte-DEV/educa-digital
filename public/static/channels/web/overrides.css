@@ -233,3 +233,203 @@ html[data-educa-platform="web"] #successView .lesson-success-screen:has(.web-pix
   flex-shrink:0;
   margin-top:18px !important;
 }
+
+/* ================================================================
+ * V111.64 — Somente Web | Banco Educa
+ *
+ * Barra inferior com ícones vetoriais reais, menos ruído visual,
+ * fontes por hierarquia e layout fluido sem aumentar tudo igualmente.
+ * Mantém as correções V111.61–V111.63 (Pix, guia e feedback).
+ * ================================================================ */
+
+/* O convite para instalar BB/CAIXA pertence a outro contexto.
+ * Na simulação do banco, o foco deve permanecer no exercício de Pix. */
+html[data-educa-platform="web"] #bankHomeView .bank-real-apps {
+  display:none !important;
+}
+
+/* Barra do banco: controles de 44px, iconografia linear e rótulos legíveis.
+ * Limitado ao simulador WEB; não toca na navegação Android/iOS. */
+html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav {
+  bottom:6px;
+  height:62px;
+  min-height:62px;
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:center;
+  gap:4px;
+  padding:5px 8px 7px;
+  border-top:1px solid #dae6f4;
+  background:#fff;
+  box-shadow:0 -5px 16px rgba(20,55,96,.045);
+}
+html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav button {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  min-width:0;
+  min-height:44px;
+  height:48px;
+  padding:4px 3px;
+  border-radius:12px;
+  background:transparent;
+  color:#587087;
+  font-family:inherit;
+  line-height:1.12;
+  transition:background-color .15s ease,color .15s ease;
+}
+html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav button.active {
+  color:#1859a4;
+  background:#e9f2ff;
+}
+html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav .web-bank-nav-icon {
+  display:block;
+  width:20px;
+  height:20px;
+  flex:0 0 20px;
+  color:inherit;
+  stroke:currentColor;
+}
+html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav button span {
+  display:block;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.15;
+  white-space:normal;
+  overflow-wrap:normal;
+  text-align:center;
+  color:inherit;
+}
+html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav button:focus-visible {
+  outline:2px solid #246bce;
+  outline-offset:1px;
+}
+/* A barra é fixa no simulador; o conteúdo recebe espaço para rolar
+ * sem encobrir o último elemento. */
+html[data-educa-platform="web"] #bankHomeView .bank-content {
+  padding-bottom:82px !important;
+  min-width:0;
+}
+
+/* Tipografia equilibrada em acessibilidade:
+ * - 14px apoio e navegação;
+ * - 15px botões e cartões breves;
+ * - 16px conteúdo principal;
+ * - 18px+ títulos.
+ * São limites mínimos para o script de ampliação já existente.
+ */
+html[data-educa-platform="web"].a11y-text-large #phoneScreen {
+  --ed-web-text-min:14px;
+}
+html[data-educa-platform="web"].a11y-text-extra #phoneScreen {
+  --ed-web-text-min:16px;
+}
+html[data-educa-platform="web"].a11y-text-extra #phoneScreen
+  :is(.bank-training-note strong,.bank-training-note span,
+      .pix-practice-progress,.bank-welcome > small,
+      .bank-balance-card > span,.bank-balance-card > small,
+      .bank-section-title span,.bank-review-card span,
+      .bank-sub-header small,.bank-section-title strong,
+      .bank-movement small,.bank-welcome .bank-balance-card small,
+      .bank-shortcut small,.bank-review-options button b,
+      .bank-bottom-nav button span,.bank-movement b,
+      .pix-demo-option small,.success-kicker) {
+  --ed-web-text-min:14px;
+  line-height:1.4;
+}
+html[data-educa-platform="web"].a11y-text-large #phoneScreen
+  :is(.bank-bottom-nav button span,.bank-review-options button b,
+      .bank-training-note span,.bank-shortcut small) {
+  --ed-web-text-min:13px;
+  line-height:1.4;
+}
+html[data-educa-platform="web"].a11y-text-extra #phoneScreen
+  :is(.bank-shortcut strong,.bank-movement strong,
+      .pix-type-grid button,.pix-amount-grid button,
+      .bank-review-options button span,
+      .bank-main-btn,.bank-shortcut small) {
+  --ed-web-text-min:15px;
+}
+html[data-educa-platform="web"].a11y-text-extra #phoneScreen
+  :is(.bank-welcome h2,.bank-sub-header strong,
+      .success-screen h2) {
+  --ed-web-text-min:19px;
+  line-height:1.27;
+}
+
+/* A etapa atual e os rótulos importantes não ficam ilegíveis,
+ * mas não competem em tamanho com as ações principais. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen :is(.bank-training-note,.pix-practice-progress) {
+  min-width:0;
+  overflow-wrap:break-word;
+  white-space:normal;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .pix-practice-progress {
+  letter-spacing:.015em !important;
+  line-height:1.45 !important;
+  padding:10px 11px;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .bank-training-note {
+  gap:4px;
+  line-height:1.45;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .bank-training-note span {
+  white-space:normal !important;
+  overflow-wrap:break-word !important;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .bank-shortcut {
+  min-width:0;
+  min-height:90px;
+  padding:11px 9px;
+  grid-template-columns:32px minmax(0,1fr);
+  column-gap:7px;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .bank-shortcut :is(strong,small) {
+  min-width:0;
+  overflow-wrap:break-word !important;
+  white-space:normal !important;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen .bank-review-options button {
+  min-width:0;
+  border-radius:14px;
+  line-height:1.4;
+}
+html[data-educa-platform="web"].a11y-text-extra
+  #bankHomeView .bank-bottom-nav button span {
+  --ed-web-text-min:14px;
+  line-height:1.2 !important;
+}
+html[data-educa-platform="web"].a11y-text-large
+  #bankHomeView .bank-bottom-nav button span {
+  --ed-web-text-min:13px;
+}
+
+/* Quando o telefone simulado for estreito, não achatar ícones e nomes. */
+@container (max-width:350px) {
+  html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav {
+    gap:2px;
+    padding-inline:5px;
+  }
+  html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav button {
+    min-width:0;
+    padding-inline:2px;
+  }
+  html[data-educa-platform="web"] #bankHomeView .bank-shortcuts {
+    gap:7px;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-educa-platform="web"] #bankHomeView .bank-bottom-nav button {
+    transition:none !important;
+  }
+}
