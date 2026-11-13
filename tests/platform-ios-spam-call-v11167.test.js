@@ -16,7 +16,7 @@ test('[ios] extensão real Call Directory está embutida no aplicativo nativo',(
  assert.match(yaml,/com\.apple\.callkit\.call-directory/);
  assert.match(yaml,/NSExtensionPrincipalClass: "\$\(PRODUCT_MODULE_NAME\)\.CallDirectoryProvider"/);
  assert.match(yaml,/PRODUCT_BUNDLE_IDENTIFIER: com\.educamaisdigital\.educa\.callerid/);
- assert.match(yaml,/CFBundleShortVersionString: "111\.67"/);
+ assert.match(yaml,/CFBundleShortVersionString: "111\.68"/);
  assert.match(yaml,/com\.apple\.security\.application-groups:[\s\S]*?group\.com\.educamaisdigital\.educa/);
 });
 
@@ -60,13 +60,9 @@ test('[ios] app usa botão nativo para ativar, editar e remover suspeitos',()=>{
  assert.match(view,/não bloqueia chamadas/);
 });
 
-test('[ios] simulação desconhecida tem alerta independente da Web/Android',()=>{
- assert.match(web,/let simulatedCallerWarning = """/);
- assert.match(web,/getElementById\('freeCallView'\)/);
- assert.match(web,/getElementById\('freeCallName'\)/);
- assert.match(web,/Possível spam — número não identificado/);
- assert.match(web,/classList\.contains\('is-active'\)/);
- assert.match(web,/injectionTime: \.atDocumentEnd/);
+test('[ios] aviso fictício não é mais injetado no protótipo; CallKit segue nativo',()=>{
+ assert.doesNotMatch(web,/simulatedCallerWarning|educa-ios-training-caller-warning/);
  assert.match(web,/platform=ios/);
- assert.doesNotMatch(local,/V111\.67/);
+ assert.match(ext,/addIdentificationEntry\(/);
+ assert.doesNotMatch(local,/V111\.68/);
 });
