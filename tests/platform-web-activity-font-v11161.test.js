@@ -70,7 +70,7 @@ test('[web] somente o navegador Web aplica ajustes de fontes internas',()=>{
  assert.equal(ios.win.EducaWebChannel,undefined);
  const web=harness('web');
  assert.equal(web.win.EducaWebChannel.name,'web');
- assert.equal(web.win.EducaWebChannel.a11yActivityVersion,'11162');
+ assert.equal(web.win.EducaWebChannel.a11yActivityVersion,'11163');
 });
 
 test('[web] texto interno amplia em grande e muito grande e volta ao original',()=>{
@@ -79,12 +79,12 @@ test('[web] texto interno amplia em grande e muito grande e volta ao original',(
  assert.equal(ui.element.style.getPropertyValue('font-size'),'');
  ui.classes.add('a11y-text-large');
  ui.accessibility();ui.flush();
- assert.equal(ui.element.style.getPropertyValue('font-size'),'calc(12px * var(--ed-font-factor, 1))');
+ assert.equal(ui.element.style.getPropertyValue('font-size'),'max(var(--ed-web-text-min, 14px), calc(12px * var(--ed-font-factor, 1)))');
  assert.equal(ui.element.style.getPropertyPriority('font-size'),'important');
  assert.equal(ui.attrs.has('data-educa-web-a11y-text'),true);
  ui.classes.delete('a11y-text-large');ui.classes.add('a11y-text-extra');
  ui.accessibility();ui.flush();
- assert.equal(ui.element.style.getPropertyValue('font-size'),'calc(12px * var(--ed-font-factor, 1))');
+ assert.equal(ui.element.style.getPropertyValue('font-size'),'max(var(--ed-web-text-min, 14px), calc(12px * var(--ed-font-factor, 1)))');
  ui.mutation();ui.flush(); // conteúdo criado dinamicamente ao iniciar atividade.
  ui.classes.delete('a11y-text-extra');ui.accessibility();ui.flush();
  assert.equal(ui.element.style.getPropertyValue('font-size'),'');
