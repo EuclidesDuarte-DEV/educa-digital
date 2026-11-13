@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "shared": "111.60",
+  "cloudflare": "https://educa-digital.educamaisdigital.workers.dev",
+  "channels": {
+    "web": {
+      "interface": "111.60",
+      "mode": "website"
+    },
+    "android": {
+      "interface": "111.60",
+      "native": "111.58",
+      "mode": "webview-apk"
+    },
+    "ios": {
+      "interface": "111.60",
+      "native": "111.59",
+      "mode": "swift-wkwebview"
+    }
+  },
+  "rules": {
+    "default": "all",
+    "scoped": "web|android|ios|mobile",
+    "server_shared": true,
+    "native_binary_update": "new_signed_app_required"
+  }
+}
