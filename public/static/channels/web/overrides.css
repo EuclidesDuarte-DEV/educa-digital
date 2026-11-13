@@ -219,3 +219,17 @@ html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
   font-size: max(var(--ed-web-text-min,14px),calc(14px * var(--ed-font-factor,1))) !important;
   line-height:1.55!important;
 }
+
+html[data-educa-platform="web"] #successView .lesson-success-screen:has(.web-pix-review-result) {
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior-y:contain;
+  padding-top:clamp(28px,7cqh,68px) !important;
+  padding-bottom:calc(24px + env(safe-area-inset-bottom,0px)) !important;
+  gap:8px;
+}
+html[data-educa-platform="web"] #successView .lesson-success-screen:has(.web-pix-review-result)
+  .lesson-success-actions {
+  flex-shrink:0;
+  margin-top:18px !important;
+}
