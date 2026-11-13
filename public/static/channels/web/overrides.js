@@ -256,6 +256,16 @@
         });
       });
     }
+    // V111.65: ícones do Design System apenas na Web.
+    // Código e assets locais à Cloudflare, sem carregamento por CDN.
+    if (document.head && typeof document.createElement === 'function' &&
+        !document.getElementById?.('educa-web-icons-v11165')) {
+      const iconScript = document.createElement('script');
+      iconScript.id = 'educa-web-icons-v11165';
+      iconScript.src = '/static/channels/web/icons-v11165.js?v=11165';
+      iconScript.defer = true;
+      document.head.appendChild(iconScript);
+    }
     // Interface pública de diagnóstico; nunca altera preferência da pessoa.
     window.EducaWebChannel = Object.freeze({
       name:'web',
