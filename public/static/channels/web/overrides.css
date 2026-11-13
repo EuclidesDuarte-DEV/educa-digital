@@ -433,3 +433,172 @@ html[data-educa-platform="web"].a11y-text-large
     transition:none !important;
   }
 }
+
+/* ===============================================================
+ * V111.65 — sistema visual único de ícones vetoriais Lucide, Web
+ * Não modifica logos oficiais, fontes ou classes de Android/iOS.
+ * =============================================================== */
+html[data-educa-platform="web"] #phoneScreen .ed-lucide-icon {
+  display:block;
+  width:20px;
+  height:20px;
+  min-width:0;
+  flex:0 0 20px;
+  color:inherit;
+  stroke:currentColor;
+  stroke-width:2;
+  fill:none;
+  pointer-events:none;
+  overflow:visible;
+}
+html[data-educa-platform="web"] #phoneScreen .ed-lucide-slot {
+  display:grid;
+  place-items:center;
+}
+html[data-educa-platform="web"] #phoneScreen .ed-lucide-row {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-width:0;
+}
+html[data-educa-platform="web"] #pixTypeGrid button.ed-lucide-row {
+  min-height:46px;
+  box-sizing:border-box;
+  padding-inline:10px;
+  white-space:normal;
+  text-align:center;
+  line-height:1.35;
+  border-radius:13px;
+  transition:background-color .15s ease,border-color .15s ease;
+}
+html[data-educa-platform="web"] #pixTypeGrid button.ed-lucide-row .ed-lucide-icon {
+  width:19px;
+  height:19px;
+  flex-basis:19px;
+}
+html[data-educa-platform="web"] #pixTypeGrid button.ed-lucide-row.selected {
+  background:#e8f3ff;
+  border-color:#2675d8;
+  color:#194d94;
+}
+html[data-educa-platform="web"] #pixTypeGrid button:focus-visible {
+  outline:3px solid #3b82f6;
+  outline-offset:2px;
+}
+html[data-educa-platform="web"] #bankHomeView .bank-generic-icon .ed-lucide-icon,
+html[data-educa-platform="web"] #bankPixView .bank-action-grid button > span .ed-lucide-icon {
+  width:21px;
+  height:21px;
+  flex-basis:21px;
+}
+html[data-educa-platform="web"] #bankHomeView .movement-dot .ed-lucide-icon {
+  width:17px;
+  height:17px;
+  flex-basis:17px;
+}
+html[data-educa-platform="web"] #bankPixView .bank-action-symbol .ed-lucide-icon {
+  width:21px;
+  height:21px;
+  flex-basis:21px;
+}
+html[data-educa-platform="web"] #bankPixView .bank-help-card > span.ed-lucide-slot .ed-lucide-icon {
+  width:20px;
+  height:20px;
+}
+html[data-educa-platform="web"] #phoneScreen .bank-warning-card > span.ed-lucide-slot .ed-lucide-icon {
+  width:18px;
+  height:18px;
+  color:#fff;
+}
+
+/* gov.br simulado: aparência consistente, sem interferir nos logos. */
+html[data-educa-platform="web"] #phoneScreen .gov-bottom-nav button > span.ed-lucide-slot {
+  display:grid;
+  place-items:center;
+  min-height:23px;
+  line-height:1;
+}
+html[data-educa-platform="web"] #phoneScreen .gov-bottom-nav .ed-lucide-icon {
+  width:22px;
+  height:22px;
+  flex-basis:22px;
+}
+html[data-educa-platform="web"] #phoneScreen :is(.gov-service-icon,.gov-home-row > .icon).ed-lucide-slot
+  .ed-lucide-icon {
+  width:21px;
+  height:21px;
+  flex-basis:21px;
+}
+html[data-educa-platform="web"] #phoneScreen :is(.gov-real-search,.gov-search-card,.gov-breadcrumb).ed-lucide-row {
+  justify-content:flex-start;
+}
+html[data-educa-platform="web"] #phoneScreen .gov-breadcrumb.ed-lucide-row {
+  display:flex;
+  gap:6px;
+}
+html[data-educa-platform="web"] #phoneScreen :is(.gov-browser-round,.gov-share-fab).ed-lucide-slot
+  .ed-lucide-icon {
+  width:19px;
+  height:19px;
+  flex-basis:19px;
+}
+
+/* Mensagens, contato, voz e configurações: leveza sem emojis gigantes. */
+html[data-educa-platform="web"] #phoneScreen .chat-composer button.ed-lucide-slot {
+  display:grid;
+  place-items:center;
+  font-size:0;
+}
+html[data-educa-platform="web"] #phoneScreen .chat-composer button.ed-lucide-slot .ed-lucide-icon {
+  width:21px;
+  height:21px;
+  flex-basis:21px;
+}
+html[data-educa-platform="web"] #phoneScreen .wa-call-controls > span.ed-lucide-row {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+html[data-educa-platform="web"] #phoneScreen .wa-call-controls > span.ed-lucide-row small {
+  font-size:inherit;
+}
+html[data-educa-platform="web"] #phoneScreen :is(.v106-caller-avatar,.protect-shield,
+ .playstore-safety-banner > span,.official-developer-card > span).ed-lucide-slot .ed-lucide-icon {
+  width:clamp(21px,6vw,27px);
+  height:clamp(21px,6vw,27px);
+  flex-basis:auto;
+}
+html[data-educa-platform="web"] #phoneScreen .wifi-symbol.ed-lucide-slot .ed-lucide-icon {
+  width:20px;
+  height:20px;
+  flex-basis:20px;
+}
+
+/* Aumentar letras não aumenta o desenho do ícone: preserva proporção.
+ * Áreas clicáveis continuam espaçosas para idosos e leitores de tela. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen #pixTypeGrid button.ed-lucide-row {
+  min-height:52px;
+  height:auto;
+  padding-block:11px;
+  gap:9px;
+  line-height:1.3;
+}
+html[data-educa-platform="web"].a11y-text-extra #pixTypeGrid button.ed-lucide-row {
+  justify-content:flex-start;
+  padding-inline:14px;
+}
+@media (max-width:360px) {
+  html[data-educa-platform="web"] #pixTypeGrid button.ed-lucide-row {
+    gap:7px;
+    padding-inline:8px;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-educa-platform="web"] #pixTypeGrid button.ed-lucide-row {
+    transition:none;
+  }
+}
