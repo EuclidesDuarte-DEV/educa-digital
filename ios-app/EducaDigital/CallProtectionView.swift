@@ -1,6 +1,8 @@
 import CallKit
 import Foundation
 import SwiftUI
+import UIKit
+import UserNotifications
 
 /// Interface nativa para ativar a identificação no iOS.
 /// Não acessa lista de contatos, histórico de chamadas nem redes externas.
@@ -14,6 +16,11 @@ final class CallProtectionModel: ObservableObject {
     @Published var infoText = ""
     @Published var newPhone = ""
     @Published var busy = false
+    @Published var notificationsAllowed = false
+    @Published var notificationPermissionDenied = false
+    @Published var notificationBusy = false
+    @Published var notificationStatus = "Verificando permissão..."
+    @Published var notificationMessage = ""
 
     init() {
         numbers = SpamNumberStore.read()
@@ -35,6 +42,88 @@ final class CallProtectionModel: ObservableObject {
                 case .enabled: self.statusText = "Identificação de chamadas ativada"
                 case .disabled: self.statusText = "Ative a identificação nos Ajustes do iPhone"
                 default: self.statusText = "Estado da identificação desconhecido"
+                }
+            }
+        }
+    }
+
+    /// Autorizar notificações é opcional e NÃO permite observar chamadas celulares.
+    /// A identificação na ligação usa Call Directory, de forma independente.
+    func checkNotificationPermissions() {
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                switch settings.authorizationStatus {
+                case .authorized:
+                    self.notificationsAllowed = true
+                    self.notificationPermissionDenied = false
+                    self.notificationStatus = "Notificações permitidas"
+                case .provisional, .ephemeral:
+                    self.notificationsAllowed = true
+                    self.notificationPermissionDenied = false
+                    self.notificationStatus = "Notificações silenciosas ou temporárias"
+                case .denied:
+                    self.notificationsAllowed = false
+                    self.notificationPermissionDenied = true
+                    self.notificationStatus = "Notificações desativadas nos Ajustes"
+                default:
+                    self.notificationsAllowed = false
+                    self.notificationPermissionDenied = false
+                    self.notificationStatus = "Notificações ainda não autorizadas"
+                }
+            }
+        }
+    }
+
+    func requestNotificationPermission() {
+        notificationBusy = true
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { [weak self] granted, error in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.notificationBusy = false
+                if let error {
+                    self.notificationMessage = "Não foi possível pedir a permissão: \(error.localizedDescription)"
+                } else {
+                    self.notificationMessage = granted
+                        ? "Permissão registrada. Faça um teste para conhecer o aviso fora do aplicativo."
+                        : "Você pode permitir as notificações depois nos Ajustes do iPhone."
+                }
+                self.checkNotificationPermissions()
+            }
+        }
+    }
+
+    func openNotificationSettings() {
+        guard let settings = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(settings)
+    }
+
+    /// Notificação LOCAL explicitamente identificada como teste, nunca como chamada real.
+    /// Não acessa o histórico de chamadas, CallKit em tempo real ou APNs.
+    func sendTestNotification() {
+        guard notificationsAllowed else {
+            notificationMessage = "Permita as notificações antes de testar."
+            return
+        }
+        notificationBusy = true
+        let content = UNMutableNotificationContent()
+        content.title = "Educa+ — aviso de demonstração"
+        content.body = "Este é apenas um teste educativo, NÃO uma chamada detectada. Para ligações reais, ative a identificação de chamadas do iPhone."
+        content.sound = .default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 8, repeats: false)
+        let request = UNNotificationRequest(
+            identifier: "educa-ios-call-protection-notification-demo",
+            content: content,
+            trigger: trigger
+        )
+        UNUserNotificationCenter.current().add(request) { [weak self] error in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.notificationBusy = false
+                if let error {
+                    self.notificationMessage = "Não foi possível agendar o aviso de demonstração: \(error.localizedDescription)"
+                } else {
+                    self.notificationMessage = "Teste agendado. Volte à tela inicial ou bloqueie o iPhone para ver o aviso; a entrega depende dos Ajustes do iOS."
                 }
             }
         }
@@ -109,12 +198,41 @@ struct CallProtectionView: View {
                     Label("Proteção contra ligações suspeitas", systemImage: "shield.lefthalf.filled")
                         .font(.headline)
                         .accessibilityAddTraits(.isHeader)
-                    Text("O iPhone pode mostrar “Educa+: possível spam” ao receber ligação de um número que você marcou nesta lista.")
+                    Text("O aviso de identificação aparece na tela de chamada do próprio iPhone, mesmo com o Educa+ fechado — não dentro do celular simulado.")
+                    Text("O rótulo “Educa+: possível spam” funciona somente para números que você marcou como suspeitos e que o iOS carregou na extensão.")
                     Text("Desconhecido não significa golpista. O Educa+ não analisa automaticamente suas ligações, não bloqueia chamadas e não acessa seus contatos.")
+                        .foregroundStyle(.secondary)
                         .foregroundStyle(.secondary)
                 }
 
-                Section("Status do iPhone") {
+                Section("Notificações no iPhone real") {
+                    Label(model.notificationStatus, systemImage: model.notificationsAllowed ? "bell.badge.fill" : "bell.slash")
+                        .foregroundStyle(model.notificationsAllowed ? .green : .secondary)
+                    Text("Autorize avisos educativos do Educa+ fora do aplicativo. Essa permissão não identifica números desconhecidos nem dispara alertas ao receber uma ligação.")
+                        .font(.subheadline)
+                    if model.notificationPermissionDenied {
+                        Button("Abrir Ajustes de notificações") {
+                            model.openNotificationSettings()
+                        }
+                    } else if !model.notificationsAllowed {
+                        Button("Permitir notificações") {
+                            model.requestNotificationPermission()
+                        }
+                        .disabled(model.notificationBusy)
+                    }
+                    Button("Testar notificação fora do aplicativo") {
+                        model.sendTestNotification()
+                    }
+                    .disabled(!model.notificationsAllowed || model.notificationBusy)
+                    .accessibilityHint("Agenda apenas um aviso de demonstração. Não depende de uma chamada real.")
+                    if !model.notificationMessage.isEmpty {
+                        Text(model.notificationMessage)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Section("Identificação de chamadas reais") {
                     Label(model.statusText, systemImage: model.enabled ? "checkmark.shield.fill" : "exclamationmark.shield")
                         .foregroundStyle(model.enabled ? .green : .orange)
                     Button("Abrir identificação de chamadas nos Ajustes") {
@@ -170,8 +288,8 @@ struct CallProtectionView: View {
                 }
 
                 Section {
-                    Text("Na prática educativa, números desconhecidos recebem um aviso de atenção. Isso é uma simulação, não uma análise de chamadas reais.")
-                    Text("Para triagem automática de qualquer número desconhecido, o iPhone oferece funções próprias em Ajustes → Apps → Telefone, conforme a versão do iOS.")
+                    Text("O treinamento do Modo Livre continua dentro do protótipo, mas não exibe mais o aviso de spam sobre a ligação simulada. O aviso real é responsabilidade do sistema Telefone do iPhone.")
+                    Text("Não é possível detectar toda ligação desconhecida apenas permitindo notificações. Para filtrar ou silenciar desconhecidos, consulte os recursos do próprio iPhone em Ajustes → Apps → Telefone, conforme a versão do iOS.")
                 }
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -183,7 +301,10 @@ struct CallProtectionView: View {
                     Button("Fechar") { dismiss() }
                 }
             }
-            .onAppear { model.check() }
+            .onAppear {
+                model.check()
+                model.checkNotificationPermissions()
+            }
         }
     }
 }
