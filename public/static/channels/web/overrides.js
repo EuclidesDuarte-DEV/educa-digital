@@ -1,4 +1,4 @@
-/* V111.62 — APENAS WEB. Corrige tremor no destaque do Pix sem afetar apps nativos.
+/* V111.63 — APENAS WEB. Garante legibilidade mínima no modo de letras muito grandes\n * e a visibilidade do feedback da revisão de Pix.\n */\n/* V111.62 — APENAS WEB. Corrige tremor no destaque do Pix sem afetar apps nativos.
  * Evita que mudanças no balão do guia disparem reflow de todas as letras.
  * Mantém o aumento de fontes implementado na V111.61.
  */
@@ -103,7 +103,7 @@
         const originalPixels = Math.round(base * 100) / 100;
         el.style.setProperty(
           'font-size',
-          'calc(' + originalPixels + 'px * var(--ed-font-factor, 1))',
+          'max(var(--ed-web-text-min, 14px), calc(' + originalPixels + 'px * var(--ed-font-factor, 1)))',
           'important'
         );
         el.setAttribute('data-educa-web-a11y-text', '');
@@ -156,10 +156,34 @@
     window.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
     window.visualViewport?.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
     schedule(true);
+
+    // V111.63 — o guia é desenhado sobre a confirmação do Pix.
+    // Depois da escolha, deixa a explicação visível e dentro da rolagem.
+    // Não modifica regras do Pix nem o comportamento de iOS/Android.
+    for (const [optionsId, feedbackId] of [
+      ['bankReviewOptions', 'bankAnswerFeedback'],
+      ['bankScamOptions', 'bankScamFeedback']
+    ]) {
+      const options = document.getElementById(optionsId);
+      const feedback = document.getElementById(feedbackId);
+      options?.addEventListener('click', event => {
+        if (!event.target.closest('[data-bank-answer],[data-bank-scam-answer]')) return;
+        requestAnimationFrame(() => {
+          if (!feedback || feedback.hidden) return;
+          const panel = feedback.closest('.bank-content');
+          if (!panel) return;
+          const viewport = panel.getBoundingClientRect();
+          const message = feedback.getBoundingClientRect();
+          if (message.bottom > viewport.bottom - 12) {
+            panel.scrollTop += message.bottom - viewport.bottom + 16;
+          }
+        });
+      });
+    }
     // Interface pública de diagnóstico; nunca altera preferência da pessoa.
     window.EducaWebChannel = Object.freeze({
       name:'web',
-      a11yActivityVersion:'11162',
+      a11yActivityVersion:'11163',
       refreshActivityText: () => schedule(true)
     });
   }
