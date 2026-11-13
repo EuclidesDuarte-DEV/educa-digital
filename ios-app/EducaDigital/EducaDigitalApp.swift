@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct EducaDigitalApp: App {
     @StateObject private var state = TrainingState()
+    @StateObject private var realCallActivity = RealCallEventBridge()
     @State private var showingCallProtection = false
 
     var body: some Scene {
@@ -45,6 +46,10 @@ struct EducaDigitalApp: App {
             }
             .sheet(isPresented: $showingCallProtection) {
                 CallProtectionView()
+                    .environmentObject(realCallActivity)
+            }
+            .onAppear {
+                realCallActivity.activateIfNeeded()
             }
             .statusBarHidden()
             .ignoresSafeArea(.keyboard, edges: .bottom)
