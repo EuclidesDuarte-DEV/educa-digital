@@ -1,4 +1,4 @@
-# Educa+ Digital iOS nativo — V111.69
+# Educa+ Digital iOS nativo — V111.71
 
 Aplicativo **SwiftUI + WebKit** para iPhone, com código-fonte próprio em Swift e acesso ao mesmo backend Cloudflare usado na web e Android.
 
@@ -11,6 +11,14 @@ Aplicativo **SwiftUI + WebKit** para iPhone, com código-fonte próprio em Swift
 - Feedback tátil nativo para botões do treinamento, tela de reconexão quando o endereço oficial está indisponível.
 - Não há chaves, tokens, secrets, certificados, armazenamento de senhas ou pagamentos reais no código.
 - O app requer internet para a IA, não é uma LIA neural offline.
+
+## Novo V111.71 — acionador real experimental de ligacoes
+
+O aplicativo iOS **nativo assinado** inclui o `CXCallObserver` para observar alterações de estado de chamadas **enquanto o processo do Educa+ estiver em execução**. No escudo, ative o botão **Avisar sobre atividade de ligação no iPhone** e conceda permissão de notificações. Quando uma ligação recebida for observada, o aplicativo tentará emitir um aviso real e condicional: **"Educa+ Digital — Atenção. Ligação recebida. Se o número for desconhecido, tenha cuidado com possíveis tentativas de golpe. Nunca compartilhe senhas ou códigos."** (não é simulação quando acionado por uma ligação, mas pode ser suprimido pelo iOS).
+
+**Limitações:** `CXCallObserver` não fornece número telefônico nem acesso aos contatos. O app não consegue saber se o número está salvo; a notificação condicional é igual para qualquer chamada recebida. Com o app encerrado/suspenso, **não há promessa de detecção ou aviso**. A interface de ligação do sistema pode suprimir o banner. O Safari/PWA não suporta o acionador. Para a proteção permanente de números desconhecidos, ative a triagem do próprio iOS em Ajustes. O módulo não captura histórico, áudio, contatos ou números de telefone; nada é enviado a servidor.
+
+Veja [REAL_CALL_EVENT_TRIGGER_V11171.md](./REAL_CALL_EVENT_TRIGGER_V11171.md).
 
 ## Proteção nativa contra chamadas suspeitas (V111.69)
 
