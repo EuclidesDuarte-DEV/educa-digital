@@ -160,6 +160,33 @@
     window.visualViewport?.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
     schedule(true);
 
+    // A conclusão acontece 900 ms após a resposta correta. O feedback
+    // também fica disponível na tela de atividade concluída, para dar
+    // tempo de leitura às pessoas que precisam de letras maiores.
+    let pendingSuccessNote = '';
+    const successView = document.getElementById?.('successView');
+    if (successView && typeof MutationObserver !== 'undefined') {
+      new MutationObserver(() => {
+        const isSuccess = phone.dataset.currentView === 'success';
+        const old = successView.querySelector('.web-pix-review-result');
+        if (isSuccess && pendingSuccessNote) {
+          const note = old || document.createElement('p');
+          note.className = 'web-pix-review-result';
+          note.setAttribute('role', 'status');
+          note.textContent = pendingSuccessNote;
+          if (!old) {
+            const anchor = successView.querySelector('#successLearned');
+            if (anchor) anchor.insertAdjacentElement('afterend', note);
+            else successView.querySelector('.success-screen')?.appendChild(note);
+          }
+          pendingSuccessNote = '';
+        } else if (!isSuccess) {
+          old?.remove();
+          pendingSuccessNote = '';
+        }
+      }).observe(phone, {attributes:true,attributeFilter:['data-current-view']});
+    }
+
     // V111.63 — o guia é desenhado sobre a confirmação do Pix.
     // Depois da escolha, deixa a explicação visível e dentro da rolagem.
     // Não modifica regras do Pix nem o comportamento de iOS/Android.
@@ -173,6 +200,9 @@
         if (!event.target.closest('[data-bank-answer],[data-bank-scam-answer]')) return;
         requestAnimationFrame(() => {
           if (!feedback || feedback.hidden) return;
+          if (event.target.closest('[data-bank-answer="correct"],[data-bank-scam-answer="correct"]')) {
+            pendingSuccessNote = feedback.textContent.trim();
+          }
           const panel = feedback.closest('.bank-content');
           if (!panel) return;
           const viewport = panel.getBoundingClientRect();
