@@ -38,7 +38,7 @@ test('[ios] nenhuma interceptação de telefonia real ou notificação falsament
 });
 
 test('[ios] versão, escopo e explicação de limitações técnicas', () => {
-  assert.equal((project.match(/CFBundleShortVersionString: "111\.69"/g) || []).length, 2);
+  assert.equal((project.match(/CFBundleShortVersionString: "111\.71"/g) || []).length, 2);
   assert.match(guide, /NÃO é disparada automaticamente por toda ligação não salva/);
   assert.match(guide, /Live Caller ID Lookup/);
   assert.match(guide, /Android, Web, Cloudflare Workers, D1 e motor LIA não foram modificados/);
