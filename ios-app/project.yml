@@ -21,6 +21,16 @@ targets:
     platform: iOS
     sources:
       - path: EducaDigital
+      - path: Shared/SpamNumberStore.swift
+    dependencies:
+      - target: CallerIDExtension
+        embed: true
+        link: false
+    entitlements:
+      path: EducaDigital/EducaDigital.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.educamaisdigital.educa
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.educamaisdigital.educa
@@ -30,8 +40,8 @@ targets:
       path: EducaDigital/Info.plist
       properties:
         CFBundleDisplayName: "Educa+ Digital"
-        CFBundleShortVersionString: "111.59"
-        CFBundleVersion: "11159"
+        CFBundleShortVersionString: "111.67"
+        CFBundleVersion: "11167"
         UIStatusBarHidden: true
         UIViewControllerBasedStatusBarAppearance: false
         UIRequiresFullScreen: true
@@ -44,3 +54,32 @@ targets:
         NSCameraUsageDescription: "A câmera pode ser usada somente com sua autorização, durante exercícios simulados de videochamada."
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen: {}
+
+  CallerIDExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: CallerIDExtension/CallDirectoryProvider.swift
+      - path: Shared/SpamNumberStore.swift
+    entitlements:
+      path: CallerIDExtension/CallerIDExtension.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.educamaisdigital.educa
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.educamaisdigital.educa.callerid
+        PRODUCT_NAME: EducaCallerID
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_VERSION: "5.0"
+    info:
+      path: CallerIDExtension/Info.plist
+      properties:
+        CFBundleDisplayName: "Educa+ Proteção de Chamadas"
+        CFBundleShortVersionString: "111.67"
+        CFBundleVersion: "11167"
+        NSExtension:
+          NSExtensionPointIdentifier: "com.apple.callkit.call-directory"
+          NSExtensionPrincipalClass: "$(PRODUCT_MODULE_NAME).CallDirectoryProvider"
