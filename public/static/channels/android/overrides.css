@@ -1,0 +1,3 @@
+/* Somente Android: CSS aplicado no APK/WebView ou PWA Android.
+ * Para mudanças Android isoladas, edite este arquivo, não app.css. */
+html[data-educa-platform="android"] { --educa-android-channel: 1; }
