@@ -73,3 +73,13 @@ test('[web] correção rola feedback para área visível, mas não afeta Android
    assert.equal(app.win.EducaWebChannel,undefined);
  }
 });
+
+test('[web] acerto continua legível na conclusão após avanço de 900 ms',()=>{
+ assert.match(js,/pendingSuccessNote/);
+ assert.match(js,/data-current-view/);
+ assert.match(js,/attributeFilter:\s*\['data-current-view'\]/);
+ assert.match(js,/web-pix-review-result/);
+ assert.match(js,/successLearned/);
+ assert.match(css,/#successView \.web-pix-review-result/);
+ assert.match(css,/background:#e8f8ef/);
+});
