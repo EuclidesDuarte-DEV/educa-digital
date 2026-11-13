@@ -20,9 +20,16 @@ enum SpamNumberStore {
         guard numbers.count >= 8 && numbers.count <= 15 else { return nil }
 
         var result = numbers
-        if !cleaned.hasPrefix("+") && !numbers.hasPrefix("55") {
-            guard numbers.count == 10 || numbers.count == 11 else { return nil }
-            result = "55" + numbers
+        if !cleaned.hasPrefix("+") {
+            if numbers.count == 10 || numbers.count == 11 {
+                // Inclui DDD 55 do Brasil, sem confundir com código do país.
+                result = "55" + numbers
+            } else {
+                // Número internacional sem + é ambíguo: aceitar apenas
+                // E.164 brasileiro de 12–13 dígitos já iniciado por 55.
+                guard numbers.hasPrefix("55"),
+                      numbers.count == 12 || numbers.count == 13 else { return nil }
+            }
         }
         guard result.count >= 10 && result.count <= 15,
               result.first != "0",
