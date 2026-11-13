@@ -1,0 +1,3 @@
+/* Somente iOS: CSS aplicado no iPhone (PWA e app Swift/WKWebView).
+ * Para mudanças iOS isoladas, edite este arquivo, não app.css. */
+html[data-educa-platform="ios"] { --educa-ios-channel: 1; }
