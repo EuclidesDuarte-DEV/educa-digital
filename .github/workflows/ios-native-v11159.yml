@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'ios-app/**'
+      - 'public/static/channels/ios/**'
       - 'public/static/icons_pwa/**'
       - '.github/workflows/ios-native-v11159.yml'
   workflow_dispatch:
