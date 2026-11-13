@@ -43,7 +43,7 @@ function makeMock(platform='web') {
  const view={querySelectorAll:()=>[txt]};
  const phone={querySelectorAll:selector=>selector==='.android-view'||selector==='.android-view.is-active'?[view]:[]};
  const scroller={scrollTop:0,getBoundingClientRect:()=>({bottom:400})};
- const feedback={hidden:false,closest:()=>scroller,getBoundingClientRect:()=>({bottom:454})};
+ const feedback={hidden:false,textContent:'Correto! O nome não é o esperado.',closest:()=>scroller,getBoundingClientRect:()=>({bottom:454})};
  const options={addEventListener:(event,fn)=>handlers.set(event,fn)};
  const doc={
    documentElement:{dataset:{educaPlatform:platform},classList:{contains:k=>classes.has(k),add:k=>classes.add(k),remove:(...keys)=>keys.forEach(k=>classes.delete(k))}},
