@@ -55,7 +55,7 @@ enum SpamNumberStore {
 
     static func recordApplied(_ values: [String]) {
         let clean = Array(Set(values.compactMap(normalize))).sorted()
-        UserDefaults(suiteName: appGroup)?.set(clean, forKey: lastAppliedKey)
+        UserDefaults(suiteName: appGroup)?.set(clean.map { "+" + $0 }, forKey: lastAppliedKey)
     }
 
     @discardableResult
@@ -63,7 +63,7 @@ enum SpamNumberStore {
         guard let defaults = UserDefaults(suiteName: appGroup) else { return false }
         let verified = Array(Set(values.compactMap(normalize))).sorted()
         guard verified.count <= maximumEntries else { return false }
-        defaults.set(verified, forKey: key)
+        defaults.set(verified.map { "+" + $0 }, forKey: key)
         return true
     }
 
