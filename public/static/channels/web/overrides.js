@@ -1,3 +1,4 @@
+/* V111.64 — APENAS WEB: navegação limpa e tipografia por hierarquia. */
 /* V111.63 — APENAS WEB. Garante legibilidade mínima no modo de letras muito grandes
  * e a visibilidade do feedback da revisão de Pix.
  */
@@ -127,6 +128,47 @@
       sync(all);
     });
   }
+  // V111.64 — ícones vetoriais apenas na barra do Banco na Web.
+  // Substitui glifos de fonte (⌂, ≡, ?) sem tocar nas telas Android/iOS
+  // e sem remover os botões/handlers originais do treinamento.
+  function polishBankNavigation() {
+    const bar = document.querySelector('#bankHomeView .bank-bottom-nav');
+    if (!bar || typeof document.createElementNS !== 'function') return;
+    const namespace = 'http://www.w3.org/2000/svg';
+    const icons = [
+      ['Início', ['M3 10.5 12 3l9 7.5V21h-6.5v-6.5h-5V21H3V10.5Z']],
+      ['Extrato', ['M9 6h11', 'M9 12h11', 'M9 18h11', 'M4 6h.01', 'M4 12h.01', 'M4 18h.01']],
+      ['Ajuda', ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z',
+        'M9.5 9.3a2.5 2.5 0 1 1 4.2 1.8c-1.3 1-1.7 1.7-1.7 3', 'M12 17.5h.01']]
+    ];
+    Array.from(bar.querySelectorAll('button')).slice(0, 3).forEach((button, index) => {
+      if (button.querySelector('.web-bank-nav-icon')) return;
+      const [fallbackLabel, paths] = icons[index];
+      // O glifo antigo é um nó de texto; mantém o <span> com o rótulo.
+      Array.from(button.childNodes).forEach(node => {
+        if (node.nodeType === 3) node.nodeValue = '';
+      });
+      const svg = document.createElementNS(namespace, 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '1.9');
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
+      svg.setAttribute('aria-hidden', 'true');
+      svg.setAttribute('focusable', 'false');
+      svg.classList.add('web-bank-nav-icon');
+      for (const d of paths) {
+        const path = document.createElementNS(namespace, 'path');
+        path.setAttribute('d', d);
+        svg.appendChild(path);
+      }
+      button.insertBefore(svg, button.firstChild);
+      button.setAttribute('aria-label',
+        button.querySelector('span')?.textContent?.trim() || fallbackLabel);
+    });
+  }
+
   function start() {
     // A11y é disparado também quando o usuário modifica o seletor no meio
     // de uma atividade, sem precisar recarregar a página.
@@ -158,6 +200,7 @@
     }
     window.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
     window.visualViewport?.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
+    polishBankNavigation();
     schedule(true);
 
     // A conclusão acontece 900 ms após a resposta correta. O feedback
@@ -216,7 +259,7 @@
     // Interface pública de diagnóstico; nunca altera preferência da pessoa.
     window.EducaWebChannel = Object.freeze({
       name:'web',
-      a11yActivityVersion:'11163',
+      a11yActivityVersion:'11164',
       refreshActivityText: () => schedule(true)
     });
   }
