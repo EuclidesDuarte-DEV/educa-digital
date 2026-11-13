@@ -1,3 +1,7 @@
+/* V111.62 — APENAS WEB. Corrige tremor no destaque do Pix sem afetar apps nativos.
+ * Evita que mudanças no balão do guia disparem reflow de todas as letras.
+ * Mantém o aumento de fontes implementado na V111.61.
+ */
 /* V111.61 — APENAS WEB.
  * O painel original aplica a11y-text-large/extra ao <html>, mas os
  * exercícios internos usam centenas de font-size fixos em px/!important.
@@ -19,6 +23,9 @@
   ].join(',');
   const formTags = new Set(['INPUT','TEXTAREA','SELECT']);
   const previousInline = new WeakMap();
+  // Nós já ampliados não precisam ter a fonte recalculada a cada mutação.
+  // A medição repetida alterava as dimensões do alvo seguido pelo guia Pix.
+  const scaled = new WeakSet();
   let pendingFrame = 0;
   let pendingFull = false;
 
@@ -71,11 +78,16 @@
     if (!enlarged) {
       for (const el of phone.querySelectorAll('[data-educa-web-a11y-text]')) {
         restore(el);
+        scaled.delete(el);
         el.removeAttribute('data-educa-web-a11y-text');
       }
       return;
     }
-    const targets = nodesForScan(full);
+    // Em telas com guia, mexer em elementos já ampliados induz reflow,
+    // ResizeObserver e reposicionamento em ciclo (o efeito de tremor).
+    // Só configura fontes de elementos NOVOS; mudar grande/muito grande
+    // atua automaticamente via a variável CSS --ed-font-factor.
+    const targets = nodesForScan(full).filter(el => !scaled.has(el));
     if (!targets.length) return;
     for (const el of targets) { remember(el); restore(el); }
 
@@ -95,6 +107,7 @@
           'important'
         );
         el.setAttribute('data-educa-web-a11y-text', '');
+        scaled.add(el);
       }
     } finally {
       if (large) html.classList.add('a11y-text-large');
@@ -120,9 +133,24 @@
     if (typeof MutationObserver !== 'undefined') {
       new MutationObserver(records => {
         if (!isEnlarged()) return;
-        if (records.some(rec => rec.type === 'childList' || rec.type === 'characterData')) {
-          schedule(false);
-        }
+        // O treinamento escreve o texto do balão do guia Pix a cada
+        // reposicionamento. Esse balão é IRMÃO das telas .android-view,
+        // nunca é uma nova atividade: ignorá-lo interrompe o loop.
+        const activityContentChanged = records.some(rec => {
+          const parent = rec.target?.nodeType === 1
+            ? rec.target : rec.target?.parentElement;
+          if (!parent?.closest?.('.android-view.is-active')) return false;
+          if (rec.type === 'characterData') {
+            // Alterar texto de um nó já ampliado não altera seu font-size.
+            return !scaled.has(parent) && eligible(parent);
+          }
+          if (rec.type !== 'childList') return false;
+          return Array.from(rec.addedNodes || []).some(node =>
+            node.nodeType === 1 ||
+            (node.nodeType === 3 && Boolean(node.nodeValue?.trim()))
+          );
+        });
+        if (activityContentChanged) schedule(false);
       }).observe(phone, {subtree:true, childList:true, characterData:true});
     }
     window.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
@@ -131,7 +159,7 @@
     // Interface pública de diagnóstico; nunca altera preferência da pessoa.
     window.EducaWebChannel = Object.freeze({
       name:'web',
-      a11yActivityVersion:'11161',
+      a11yActivityVersion:'11162',
       refreshActivityText: () => schedule(true)
     });
   }

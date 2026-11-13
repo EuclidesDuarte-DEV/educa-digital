@@ -81,3 +81,30 @@ html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
   #phoneScreen .android-view :is(button,a,input,select,textarea):focus-visible {
   outline-offset: 2px;
 }
+
+/* V111.62 — APENAS WEB: estabilidade do guia em "Enviar Pix".
+ * O banco já tem scroll interno em .bank-content. Um segundo scroller em
+ * .android-view.is-active (adicionado na V111.61) fazia o foco oscilar
+ * perto do último botão após aumentar a letra.
+ */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen #bankSendView.android-view.is-active {
+  overflow: hidden !important;
+}
+
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen #bankSendView .bank-content {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overflow-anchor: none;
+  scroll-behavior: auto !important;
+  overscroll-behavior-y: contain;
+}
+
+/* O destaque aponta para o botão real sem animações adicionais.
+ * Não desativa o tutorial nem altera outras atividades. */
+html[data-educa-platform="web"] #phoneScreen[data-current-view="bank-send"]
+  :is(#guideSpotlight,#guidePointer) {
+  animation: none !important;
+  transition: none !important;
+}
