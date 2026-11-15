@@ -34,7 +34,7 @@ test('[all] lista WhatsApp tem espaço real, não max-height legado de 290px',()
 });
 
 test('[all] rodape do WhatsApp mantém quatro rótulos sem quebrar palavras',()=>{
- assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);
+ assert.match(css,/grid-template-columns:minmax\(0,\.9fr\) minmax\(0,1\.1fr\) minmax\(0,1\.25fr\) minmax\(0,\.75fr\)/);
  assert.match(css,/#phoneScreen #whatsappView \.whatsapp-bottom small/);
  assert.match(css,/--ed-wa-nav:11px/);
  assert.match(css,/white-space:nowrap!important/);
