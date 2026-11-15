@@ -51,7 +51,7 @@
     // na folha compartilhada. Aumentar cada filho novamente em linha
     // causava "Pesqui-sar", nomes de apps e cabecalhos sobrepostos.
     // A excecao so vale durante Modo Livre; outros testes preservados.
-    if (phone.classList.contains('free-active') &&
+    if (phone.classList?.contains?.('free-active') &&
         el.closest('#homeView .launcher-grid, #homeView .launcher-bottom, #homeView .at-a-glance, #webRealView')) return false;
     if (el.closest('[aria-hidden="true"],svg,[data-educa-web-ignore-font]')) return false;
     if (formTags.has(el.tagName)) return true;
