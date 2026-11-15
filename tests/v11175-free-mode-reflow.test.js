@@ -12,7 +12,7 @@ const visual=read('scripts/validar-modo-livre-v11175.mjs');
 const flow=read('.github/workflows/mobile-v11148.yml');
 
 test('[all] remove barra Inicio/situacoes sem apagar progresso nem voltar nativo',()=>{
- assert.match(free,/if\(els\.floating\)els\.floating\.hidden=true;/);
+ assert.match(free,/if\(els\.floating\)els\.floating\.hidden=!state\.active/);
  assert.match(css,/#phoneScreen\.free-active #freeFloatingHome \{display:none!important/);
  assert.match(free,/if\(els\.solved\)els\.solved\.textContent=/);
  const web=read('public/static/js/web-real.js');
