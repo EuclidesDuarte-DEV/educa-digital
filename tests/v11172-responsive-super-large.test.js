@@ -58,6 +58,7 @@ test('[all] guia continua funcional e some ao inves de cobrir pergunta ou botoes
   assert.match(training,/guidePointer\.style\.visibility = '';/);
   assert.match(web,/if \(el\.id === 'successTitle' \|\| el\.id === 'successText'\) return false;/);
   assert.match(training,/function positionGuideOnTarget\(/);
+  assert.match(training,/\$\$\('\.guide-target'\)\.forEach/);
   assert.match(training,/function revealGuideTarget\(/);
 });
 
