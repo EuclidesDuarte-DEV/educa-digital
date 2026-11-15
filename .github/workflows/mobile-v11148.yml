@@ -32,6 +32,8 @@ jobs:
         run: node scripts/validar-mobile-v11148.mjs
       - name: Validar 11 larguras, cabecalho, login e acessibilidade
         run: node scripts/validar-layout-v11149.mjs
+      - name: V111.72 — Pix, golpe, sucesso e aprendizagem em 9 resolucoes × 2 fontes
+        run: node scripts/validar-reflow-v11172.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
         run: node scripts/validar-fullscreen-v11150.mjs
       - name: Entrada de telefone unica — conta nova e existente
@@ -50,4 +52,5 @@ jobs:
             artifacts/entrada-v11151/
             artifacts/modo-livre-v11153/
             artifacts/layout-v11154/
+            artifacts/reflow-v11172/
           if-no-files-found: ignore

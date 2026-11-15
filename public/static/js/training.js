@@ -566,6 +566,7 @@
     }
     document.body.classList.remove('guide-focus-active');
     guidePointer?.classList.remove('below-target');
+    if (guidePointer) guidePointer.style.visibility = '';
     $$('.guide-target').forEach(el => { el.classList.remove('guide-target'); el.classList.remove('guide-icon-motion'); });
 
     const views = $$('.android-view');
@@ -619,6 +620,7 @@
       guidePointer.classList.remove('below-target', 'no-guide-arrow');
       guidePointer.style.left = '';
       guidePointer.style.top = '';
+      guidePointer.style.visibility = '';
     }
     $$('.guide-target').forEach(el => { el.classList.remove('guide-target'); el.classList.remove('guide-icon-motion'); });
     if (!keepState) activeGuide = null;
@@ -824,6 +826,16 @@
     guideSpotlight.style.height = `${Math.max(1, bottomEdge - topEdge)}px`;
     guideSpotlight.style.borderRadius = isAppIcon ? '25px' : '15px';
 
+    // A pergunta "O que é mais seguro fazer?" já descreve as respostas.
+    // Em fonte ampliada, o balão "O que você faria?" cobria a pergunta:
+    // manter o holofote no grupo sem colocar uma segunda etiqueta em cima.
+    // Em outras atividades, o guia continua normalmente posicionado.
+    guidePointer.style.visibility = '';
+    if (target.matches('#bankReviewOptions, #bankScamOptions')) {
+      guidePointer.style.visibility = 'hidden';
+      return;
+    }
+
     // O balão acompanha o alvo (flip + shift), não o rodapé do telefone.
     const pointerWidth = guidePointer.offsetWidth || 110;
     const pointerHeight = guidePointer.offsetHeight || 39;
@@ -837,10 +849,11 @@
     if (fitsAbove) pointerTop = above;
     else if (fitsBelow) { pointerTop = below; isBelow = true; }
     else {
-      // Um painel muito baixo não comporta balão + seta. Não sobreponha a
-      // barra inferior: posicione a etiqueta junto ao alvo e oculte a seta.
-      pointerTop = Math.max(safe.top + 2, Math.min(above, safe.bottom - pointerHeight - 2));
+      // Sem espaço real não existe posição segura. Preserve o destaque,
+      // mas não desenhe etiqueta sobre os textos, botões ou a barra inferior.
       guidePointer.classList.add('no-guide-arrow');
+      guidePointer.style.visibility = 'hidden';
+      return;
     }
     if (fitsAbove || fitsBelow) guidePointer.classList.remove('no-guide-arrow');
     const centerX = (visible.left + visible.right) / 2;

@@ -39,6 +39,10 @@
   }
   function eligible(el) {
     if (!el || !el.tagName) return false;
+    // V111.72: a tela de conclusão dimensiona título e descrição por CSS
+    // fluido e rolagem própria. Impedir inline !important duplicado do
+    // escalonador legado, que fazia "Muito bem!" ocupar três linhas.
+    if (el.id === 'successTitle' || el.id === 'successText') return false;
     if (el.closest('[aria-hidden="true"],svg,[data-educa-web-ignore-font]')) return false;
     if (formTags.has(el.tagName)) return true;
     // Somente nós que têm texto próprio: não amplia contêineres, imagens
