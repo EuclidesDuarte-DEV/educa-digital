@@ -323,7 +323,7 @@ html.a11y-text-extra {
   left:auto!important;
   right:auto!important;
   display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr) minmax(0,1.25fr) minmax(0,.75fr)!important;
   align-items:center!important;
   box-sizing:border-box!important;
   width:100%!important;
