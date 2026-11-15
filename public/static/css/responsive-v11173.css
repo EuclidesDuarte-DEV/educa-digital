@@ -293,7 +293,7 @@ html.a11y-text-extra { --ed-chat-message:20px; --ed-chat-title:18px; --ed-chat-a
   font-size:20px!important;
   padding:0!important;
 }
-#phoneScreen #normalChatView .chat-composer {
+#phoneScreen #normalChatView .chat-composer:not([hidden]) {
   display:grid!important;
   grid-template-columns:28px minmax(0,1fr) 28px 28px 44px!important;
 }
