@@ -36,6 +36,8 @@ jobs:
         run: node scripts/validar-reflow-v11172.mjs
       - name: V111.73 — auditar TODAS as telas, 3 fontes e fullscreen
         run: node scripts/validar-a11y-todas-telas-v11173.mjs
+      - name: V111.74 — WhatsApp lista, barra e alertas com todos tamanhos
+        run: node scripts/validar-whatsapp-nav-v11174.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
         run: node scripts/validar-fullscreen-v11150.mjs
       - name: Entrada de telefone unica — conta nova e existente
@@ -56,4 +58,5 @@ jobs:
             artifacts/layout-v11154/
             artifacts/reflow-v11172/
             artifacts/reflow-v11173/
+            artifacts/whatsapp-v11174/
           if-no-files-found: ignore
