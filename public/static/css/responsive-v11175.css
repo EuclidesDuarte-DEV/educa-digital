@@ -105,11 +105,18 @@ html.a11y-text-extra {
  * no espaço estreito, sem cortar o nome e sem reduzir o texto do chat. */
 #phoneScreen.free-active #homeView .app-tile[data-open-app="whatsapp"] > span:last-child,
 #phoneScreen.free-active #homeView .app-tile[data-open-app="youtube"] > span:last-child {
-  font-size:clamp(10px,calc(var(--ed-free-icon-label) - 4px),11px)!important;
+  font-size:11px!important;
   letter-spacing:-.035em!important;
   word-break:normal!important;
   white-space:nowrap!important;
   max-height:1.3em!important;
+}
+/* O nome Ajustes tambem precisa caber por inteiro em paisagem/tela cheia. */
+#phoneScreen.free-active #homeView .app-tile[data-open-app="settings"] > span:last-child {
+  font-size:clamp(12px,calc(var(--ed-free-icon-label) - 2px),13px)!important;
+  letter-spacing:-.025em!important;
+  word-break:normal!important;
+  hyphens:none!important;
 }
 #phoneScreen.free-active #homeView .launcher-bottom {
   position:absolute;
