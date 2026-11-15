@@ -44,9 +44,26 @@ try{
      noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent}));
    assert.equal(initial.active,true,'Modo Livre deve estar ativo: '+JSON.stringify(initial));
    assert.equal(initial.noticeHidden,false,'WhatsApp inicial deve aparecer: '+JSON.stringify(initial));
+   // V111.75: diagnostico de event delegation e bloqueios do tutorial, sem
+   // simular respostas nem bypass do clique do usuario.
+   const clickable=await page.evaluate(()=>{
+     window.__eduClickTrace=[];
+     document.addEventListener('click',e=>window.__eduClickTrace.push({phase:'document capture',target:e.target?.id,defaultPrevented:e.defaultPrevented}),true);
+     document.getElementById('freeEventOpen').addEventListener('click',e=>window.__eduClickTrace.push({phase:'button',target:e.target?.id}),true);
+     const btn=document.getElementById('freeEventOpen'),r=btn.getBoundingClientRect();
+     const at=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+     return {atCenter:at?.id,htmlClass:document.documentElement.className,bodyClass:document.body.className,
+       guideHidden:document.getElementById('guideOverlay')?.hidden,
+       phoneView:document.getElementById('phoneScreen')?.dataset.currentView,
+       rect:{x:r.x,y:r.y,width:r.width,height:r.height}};
+   });
    await page.locator('#freeEventOpen').click();
    const after=await page.evaluate(()=>({active:window.EducaFreeMode?.isActive?.(),view:document.querySelector('#phoneScreen')?.dataset.currentView,
-     noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent}));
+     noticeHidden:document.querySelector('#freeEventNotice')?.hidden,notification:document.querySelector('#freeEventTitle')?.textContent,
+     clickTrace:window.__eduClickTrace,
+     guideHidden:document.querySelector('#guideOverlay')?.hidden,
+     bodyClass:document.body.className}));
+   if(after.view!=='chat')console.error('Diagnostico clique WhatsApp:',JSON.stringify({clickable,initial,after}));
    assert.equal(after.view,'chat','WhatsApp inicial: '+JSON.stringify({initial,after}));
    await page.locator('#freeFamilyBlock').click();
    await page.locator('#freeSummaryNext').click();
