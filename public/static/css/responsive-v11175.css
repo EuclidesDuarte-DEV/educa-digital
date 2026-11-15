@@ -101,6 +101,16 @@ html.a11y-text-extra {
   -webkit-line-clamp:2;
   line-clamp:2;
 }
+/* WhatsApp/YouTube são nomes indivisíveis: reduzir apenas o rótulo
+ * no espaço estreito, sem cortar o nome e sem reduzir o texto do chat. */
+#phoneScreen.free-active #homeView .app-tile[data-open-app="whatsapp"] > span:last-child,
+#phoneScreen.free-active #homeView .app-tile[data-open-app="youtube"] > span:last-child {
+  font-size:clamp(10px,calc(var(--ed-free-icon-label) - 4px),11px)!important;
+  letter-spacing:-.035em!important;
+  word-break:normal!important;
+  white-space:nowrap!important;
+  max-height:1.3em!important;
+}
 #phoneScreen.free-active #homeView .launcher-bottom {
   position:absolute;
   bottom:31px!important;
