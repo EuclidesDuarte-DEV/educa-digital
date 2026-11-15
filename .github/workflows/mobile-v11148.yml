@@ -34,6 +34,8 @@ jobs:
         run: node scripts/validar-layout-v11149.mjs
       - name: V111.72 — Pix, golpe, sucesso e aprendizagem em 9 resolucoes × 2 fontes
         run: node scripts/validar-reflow-v11172.mjs
+      - name: V111.73 — auditar TODAS as telas, 3 fontes e fullscreen
+        run: node scripts/validar-a11y-todas-telas-v11173.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
         run: node scripts/validar-fullscreen-v11150.mjs
       - name: Entrada de telefone unica — conta nova e existente
@@ -53,4 +55,5 @@ jobs:
             artifacts/modo-livre-v11153/
             artifacts/layout-v11154/
             artifacts/reflow-v11172/
+            artifacts/reflow-v11173/
           if-no-files-found: ignore
