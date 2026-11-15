@@ -106,7 +106,7 @@ html.a11y-text-extra {
 #phoneScreen.free-active #homeView .app-tile[data-open-app="whatsapp"] > span:last-child,
 #phoneScreen.free-active #homeView .app-tile[data-open-app="youtube"] > span:last-child {
   font-size:11px!important;
-  letter-spacing:-.035em!important;
+  letter-spacing:-.09em!important;
   word-break:normal!important;
   white-space:nowrap!important;
   max-height:1.3em!important;
