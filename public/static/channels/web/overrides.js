@@ -46,7 +46,7 @@
     // V111.73: nas conversas WhatsApp, os tamanhos de fonte sao resolvidos
     // pela folha responsiva para nao transformar o nome/avatar/botoes
     // em texto gigante. Evitar inline !important impede a sobreposicao.
-    if (el.closest('#chatView .chat-surface, #normalChatView .chat-surface')) return false;
+    if (el.closest('#chatView .chat-surface, #normalChatView .chat-surface, #whatsappView .whatsapp-surface')) return false;
     if (el.closest('[aria-hidden="true"],svg,[data-educa-web-ignore-font]')) return false;
     if (formTags.has(el.tagName)) return true;
     // Somente nós que têm texto próprio: não amplia contêineres, imagens
