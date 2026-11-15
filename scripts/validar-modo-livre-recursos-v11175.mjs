@@ -45,7 +45,7 @@ for(const [w,h] of devices) for(const mode of modes) for(const full of [false,..
           lineHeight:parseFloat(style.lineHeight),
           hyphens:style.hyphens};
       });
-      const searchLabel=search.querySelector('b');
+      const searchLabel=search.querySelector('span');
       return {count:tiles.length,labels,
         gridBottom:rect(grid).bottom,dockTop:rect(dock).top,
         searchHeight:rect(search).height,searchLabelHeight:rect(searchLabel).height,
