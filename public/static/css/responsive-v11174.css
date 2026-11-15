@@ -14,7 +14,7 @@ html.a11y-text-large {
   --ed-wa-name:16px;
   --ed-wa-preview:13px;
   --ed-wa-meta:12px;
-  --ed-wa-nav:12px;
+  --ed-wa-nav:11px;
   --ed-wa-filter:13px;
   --ed-wa-search:14px;
   --ed-wa-brand:23px;
@@ -23,7 +23,7 @@ html.a11y-text-extra {
   --ed-wa-name:17px;
   --ed-wa-preview:14px;
   --ed-wa-meta:12px;
-  --ed-wa-nav:12px;
+  --ed-wa-nav:11px;
   --ed-wa-filter:14px;
   --ed-wa-search:15px;
   --ed-wa-brand:24px;
@@ -454,7 +454,7 @@ html.a11y-text-extra {
 /* Quando o telefone é estreito, não inventar duas linhas na navegação.
    Usar ícones compactos e rótulos ligeiramente menores SOMENTE ali. */
 @container educa-wa-list (max-width:340px) {
-  .whatsapp-bottom small {font-size:10px!important;letter-spacing:-.045em;}
+  .whatsapp-bottom small {font-size:9.5px!important;letter-spacing:-.055em;}
   .wa-chat-list .chat-row {
     grid-template-columns:40px minmax(0,1fr) 39px!important;
     gap:7px!important;
@@ -464,6 +464,6 @@ html.a11y-text-extra {
   .wa-chat-list .wa-avatar {width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;}
 }
 @media (max-height:500px) {
-  #phoneScreen #whatsappView .whatsapp-surface {grid-template-rows:minmax(45px,auto) 39px auto 35px 34px minmax(0,1fr) 54px!important;}
+  #phoneScreen #whatsappView .whatsapp-surface {grid-template-rows:minmax(45px,auto) 39px auto 39px 37px minmax(0,1fr) 54px!important;}
   #phoneScreen #whatsappView .whatsapp-bottom {height:54px!important;min-height:54px!important;max-height:54px!important;}
 }
