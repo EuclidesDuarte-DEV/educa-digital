@@ -14,9 +14,9 @@ const browser=read('scripts/validar-reflow-v11172.mjs');
 test('[all] css real carregado por web, Android e iOS com cache PWA renovado',()=>{
   assert.match(html,/responsive-v11172\.css\?v=11172/);
   assert.match(html,/training\.js\?v=11155&layout=11172/);
-  assert.match(sw,/educa-cf11172-responsive-text-reflow/);
+  assert.match(sw,/educa-cf1117(?:2-responsive-text-reflow|3-all-screens-reflow)/);
   assert.match(sw,/responsive-v11172\.css/);
-  assert.match(html,/sw\.js\?v=11160&layout=11172/);
+  assert.match(html,/sw\.js\?v=11160&layout=1117(?:2|3)/);
   const declarations=css.replace(/\/\*[\s\S]*?\*\//g,'');
   assert.doesNotMatch(declarations,/\bzoom\s*:|transform\s*:\s*scale/);
   assert.match(css,/#phoneScreen \.bank-app\.bank-sub-screen/);

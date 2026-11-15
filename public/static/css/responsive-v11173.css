@@ -1,0 +1,345 @@
+/* Educa+ V111.73 — layout proporcional no WhatsApp e auditoria de todo prototipo.
+   Mesmo componente para PC/notebook/tablet/mobile, mockup e tela cheia.
+   Escala texto com a preferência; não escala moldura, ícones ou botões inteiros. */
+html { --ed-chat-message:14px; --ed-chat-title:14px; --ed-chat-action:13px; --ed-chat-input:15px; --ed-chat-note:11px; }
+html.a11y-text-large { --ed-chat-message:17px; --ed-chat-title:16px; --ed-chat-action:15px; --ed-chat-input:17px; --ed-chat-note:12px; }
+html.a11y-text-extra { --ed-chat-message:20px; --ed-chat-title:18px; --ed-chat-action:16px; --ed-chat-input:19px; --ed-chat-note:13px; }
+
+/* O corpo da conversa tem linhas de grade reais: cabeçalho / mensagens /
+   escolhas opcionais / composição. Não usa bottom fixo calculado em px.
+   Funciona quando o conteúdo aumenta ou a tela cheia muda a altura. */
+#phoneScreen :is(#chatView,#normalChatView) .chat-surface {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:minmax(55px,auto) minmax(0,1fr) auto auto!important;
+  align-content:stretch;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  padding:38px 0 0!important;
+  container-type:inline-size;
+  container-name:educa-chat;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header {
+  grid-column:1;
+  grid-row:1;
+  position:relative!important;
+  width:100%;
+  min-width:0;
+  min-height:55px!important;
+  max-height:none!important;
+  height:auto!important;
+  padding:7px 9px!important;
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:32px 35px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:5px!important;
+  overflow:hidden;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header > span:nth-of-type(2) {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  min-width:0!important;
+  max-width:100%;
+  overflow:hidden;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header strong {
+  display:block;
+  min-width:0;
+  max-width:100%;
+  font-size:var(--ed-chat-title)!important;
+  font-weight:750;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header small {
+  display:block;
+  font-size:var(--ed-chat-note)!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  max-width:100%;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header .chat-header-actions {
+  display:flex!important;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:nowrap!important;
+  min-width:0;
+  width:max-content;
+  gap:2px;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header .chat-icon-btn {
+  display:grid!important;
+  place-items:center;
+  flex:0 0 30px!important;
+  width:30px!important;
+  height:38px!important;
+  min-width:30px!important;
+  min-height:38px!important;
+  padding:4px!important;
+  font-size:0!important;
+  line-height:1!important;
+  box-sizing:border-box!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header .chat-icon-btn svg {
+  width:19px!important;
+  height:19px!important;
+  flex:none;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-header > .avatar {
+  flex:none;
+  width:35px!important;
+  height:35px!important;
+  min-width:35px;
+  font-size:15px!important;
+}
+
+/* Mensagens ficam somente nesta região rolável, inclusive se o teclado
+   virtual reduzir a altura. O painel de decisões jamais as sobrepõe. */
+#phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper {
+  position:relative!important;
+  grid-column:1;
+  grid-row:2;
+  inset:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  box-sizing:border-box!important;
+  padding:12px clamp(10px,3.2%,20px) 20px!important;
+  scrollbar-width:thin;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scroll-padding-block:15px 26px;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper :is(.message,.chat-day,.system-chip,.security-note) {
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:min(86%,560px)!important;
+  height:auto!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper .message {
+  width:max-content;
+  max-width:min(86%,560px)!important;
+  margin-block:7px 10px!important;
+  padding:10px 11px 21px!important;
+  white-space:pre-wrap!important;
+  font-size:var(--ed-chat-message)!important;
+  line-height:1.46!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper .message.outgoing {
+  margin-left:auto!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper .message time {
+  font-size:var(--ed-chat-note)!important;
+  line-height:1.1!important;
+}
+#phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper :is(.chat-day,.system-chip,.security-note) {
+  font-size:clamp(12px,var(--ed-chat-action),16px)!important;
+  line-height:1.35!important;
+  max-width:100%!important;
+}
+
+/* Escolhas de segurança: região de fluxo, sem ocupar os balões.
+   2 colunas apenas quando o TELEFONE SIMULADO oferece largura. */
+#phoneScreen #chatView #freeFamilyActions:not([hidden]) {
+  display:grid!important;
+  grid-column:1;
+  grid-row:3;
+  position:relative!important;
+  inset:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  width:min(100%,660px)!important;
+  justify-self:center!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  align-items:stretch;
+  gap:8px!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+  padding:6px 10px!important;
+  border-top:1px solid rgba(144,169,188,.23);
+  max-height:min(33dvh,170px);
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin;
+  background:#efeae2;
+}
+#phoneScreen #chatView #freeFamilyActions button {
+  display:block;
+  min-width:0!important;
+  width:100%;
+  max-width:100%;
+  min-height:48px!important;
+  height:auto!important;
+  margin:0!important;
+  padding:10px 8px!important;
+  box-sizing:border-box!important;
+  font-size:var(--ed-chat-action)!important;
+  line-height:1.3!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  white-space:normal!important;
+}
+/* Guided/training decision sheet is row 3 when free family buttons absent. */
+#phoneScreen #chatView #decisionSheet:not([hidden]) {
+  grid-column:1;
+  grid-row:3;
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  max-height:min(40dvh,280px);
+  min-width:0;
+  width:min(100%,660px);
+  justify-self:center;
+  box-sizing:border-box;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  margin:0!important;
+}
+#phoneScreen #chatView #decisionOptions {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:7px!important;
+  min-width:0;
+}
+#phoneScreen #chatView #decisionOptions button {
+  min-width:0!important;
+  max-width:100%;
+  min-height:44px!important;
+  height:auto!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  font-size:var(--ed-chat-action)!important;
+  line-height:1.35!important;
+}
+
+/* Compose é SEMPRE a última linha. Campo e envio não aumentam com a fonte
+   nem cobrem ações/balões do chat. Safe area protege gesto inferior do iPhone. */
+#phoneScreen #chatView #freeOriginalComposer:not([hidden]),
+#phoneScreen :is(#chatView,#normalChatView) .chat-composer:not([hidden]) {
+  display:flex!important;
+  grid-column:1;
+  grid-row:4;
+  position:relative!important;
+  inset:auto!important;
+  left:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:min(100%,660px)!important;
+  justify-self:center!important;
+  align-items:center!important;
+  min-width:0;
+  max-width:100%;
+  height:auto!important;
+  min-height:60px!important;
+  box-sizing:border-box!important;
+  gap:7px!important;
+  margin:0!important;
+  padding:7px 10px max(14px,env(safe-area-inset-bottom,0px))!important;
+  background:#efeae2;
+}
+#phoneScreen #chatView #freeOriginalInput,
+#phoneScreen #normalChatView #normalMessageInput {
+  flex:1 1 0;
+  display:block;
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:100%!important;
+  width:100%;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  padding:8px 14px!important;
+  font-size:var(--ed-chat-input)!important;
+  line-height:1.3!important;
+  white-space:nowrap!important;
+}
+#phoneScreen #chatView #freeOriginalSend,
+#phoneScreen #normalChatView #sendNormalMessage {
+  display:grid!important;
+  place-items:center;
+  flex:0 0 44px!important;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  min-height:44px!important;
+  font-size:20px!important;
+  padding:0!important;
+}
+#phoneScreen #normalChatView .chat-composer:not([hidden]) {
+  display:grid!important;
+  grid-template-columns:28px minmax(0,1fr) 28px 28px 44px!important;
+}
+#phoneScreen #normalChatView .chat-composer > button:not(.mic) {
+  min-width:28px; width:28px; max-width:28px;
+  font-size:18px!important;
+  padding:0!important;
+}
+#phoneScreen #chatView #freeOriginalAiStatus,
+#phoneScreen #chatView #freeOriginalTyping {
+  max-width:calc(100% - 24px);
+  box-sizing:border-box;
+  overflow-wrap:break-word!important;
+  font-size:var(--ed-chat-note)!important;
+}
+
+/* O input legado e os botoes guiados sao escondidos pelo modo livre.
+   [hidden] continua prioritario em toda a navegacao. */
+#phoneScreen #chatView #freeFamilyActions[hidden],
+#phoneScreen #chatView #freeOriginalComposer[hidden],
+#phoneScreen #chatView #decisionSheet[hidden] { display:none!important; }
+
+/* A largura do mockup (e nao o browser) define mudancas para celular pequeno.
+   Em "muito grande", botoes de 2 linhas continuam legiveis e independentes. */
+@container educa-chat (max-width:315px) {
+  #freeFamilyActions:not([hidden]) { grid-template-columns:minmax(0,1fr)!important; }
+}
+@media (max-height:500px) {
+  #phoneScreen #chatView #freeFamilyActions:not([hidden]) { max-height:29dvh; }
+  #phoneScreen #chatView #decisionSheet:not([hidden]) { max-height:33dvh; }
+}
+@media (prefers-reduced-motion:reduce) {
+  #phoneScreen :is(#chatView,#normalChatView) .chat-wallpaper { scroll-behavior:auto!important; }
+}
+
+/* Reflow transversal: não encolher fonte para disfarçar cortes em outras
+   atividades; texto longo quebra e os alvos em áreas roláveis permanecem
+   acessíveis, no mockup e em fullscreen. */
+#phoneScreen .android-view.is-active :is(.learning-card,.guided-card,.module-lesson-card,.gov-service-card,.settings-row,.bank-help-card,.bank-review-card,.free-summary-card) {
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  overflow-wrap:break-word;
+}
+#phoneScreen .android-view.is-active :is(.gov-service-card,.learning-card,.guided-card,.module-lesson-card,.settings-row) :is(strong,small,p,span) {
+  min-width:0;
+  max-width:100%;
+  overflow-wrap:break-word;
+}
