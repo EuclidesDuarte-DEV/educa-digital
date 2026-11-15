@@ -31,6 +31,7 @@ test('[all] guia do pre-teste nunca intercepta notificação do Modo Livre',()=>
 test('[all] 3 tamanhos de fonte proporcional para nomes, pesquisa e conteudo',()=>{
  for(const cls of ['html.a11y-text-large','html.a11y-text-extra'])assert.ok(css.includes(cls));
  assert.match(css,/--ed-free-icon-label:15px/);
+ assert.match(css,/grid-template-columns:repeat\(3,minmax\(0,1fr\)\)!important/);
  assert.match(css,/--ed-free-search-label:18px/);
  assert.match(css,/--ed-free-resource-text:19px/);
  assert.match(css,/#homeView \.app-tile > span:last-child/);
