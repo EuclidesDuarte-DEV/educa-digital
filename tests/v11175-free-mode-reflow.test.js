@@ -31,7 +31,7 @@ test('[all] 3 tamanhos de fonte proporcional para nomes, pesquisa e conteudo',()
  assert.match(css,/hyphens:none!important/);
  assert.match(css,/#homeView \.google-search > span/);
  assert.match(css,/white-space:nowrap!important/);
- assert.match(scaling,/phone\.classList\.contains\('free-active'\)/);
+ assert.match(scaling,/phone\.classList\?\.contains\?\.\('free-active'\)/);
  assert.match(scaling,/#homeView \.launcher-grid, #homeView \.launcher-bottom/);
  assert.match(scaling,/#webRealView/);
 });
