@@ -81,7 +81,7 @@ html.a11y-text-extra {--free-app-label:16px;--free-dock-search:19px;--free-resou
   padding:0 12px!important;
   gap:7px!important;
 }
-#phoneScreen.free-active #homeView .google-search b {
+#phoneScreen.free-active #homeView .google-search > span {
   display:block;
   min-width:0;
   font-size:var(--free-dock-search)!important;
