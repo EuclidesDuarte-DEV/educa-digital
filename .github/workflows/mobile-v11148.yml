@@ -28,6 +28,10 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-http.log 2>&1 &
           node scripts/validar-interface-v11154.mjs
+      - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
+        run: node scripts/validar-modo-livre-v11175.mjs
+      - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
+        run: node scripts/validar-modo-livre-v11153.mjs
       - name: Testar sete resolucoes sem banco remoto
         run: node scripts/validar-mobile-v11148.mjs
       - name: Validar 11 larguras, cabecalho, login e acessibilidade
@@ -38,14 +42,10 @@ jobs:
         run: node scripts/validar-a11y-todas-telas-v11173.mjs
       - name: V111.74 — WhatsApp lista, barra e alertas com todos tamanhos
         run: node scripts/validar-whatsapp-nav-v11174.mjs
-      - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
-        run: node scripts/validar-modo-livre-v11175.mjs
       - name: Fullscreen iPhone Safari e desktop sem sobreposicoes
         run: node scripts/validar-fullscreen-v11150.mjs
       - name: Entrada de telefone unica — conta nova e existente
         run: node scripts/validar-entrada-v11151.mjs
-      - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
-        run: node scripts/validar-modo-livre-v11153.mjs
       - name: Imagens para auditoria
         if: always()
         uses: actions/upload-artifact@v4
