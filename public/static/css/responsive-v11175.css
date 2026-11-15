@@ -1,0 +1,373 @@
+/* Educa+ V111.75 — Modo Livre limpo para Normal, Grande e Muito grande.
+ * Corrige somente a camada de navegação e recursos do Modo Livre.
+ * O texto dos exercícios e as mensagens da LIA não são reduzidos.
+ */
+
+/* A barra flutuante duplicava o botão Voltar existente e cobria os
+ * formulários. O progresso continua disponível no resumo da atividade. */
+#phoneScreen.free-active #freeFloatingHome {display:none!important;}
+
+/* Escalas independentes para ícones, pesquisa, recursos e conteúdo.
+ * A preferência de leitura continua ampliando textos informativos. */
+html {
+  --ed-free-icon-label:12px;
+  --ed-free-search-label:15px;
+  --ed-free-resource-title:16px;
+  --ed-free-resource-text:13px;
+  --ed-free-resource-field:14px;
+  --ed-free-resource-heading:15px;
+}
+html.a11y-text-large {
+  --ed-free-icon-label:14px;
+  --ed-free-search-label:17px;
+  --ed-free-resource-title:19px;
+  --ed-free-resource-text:16px;
+  --ed-free-resource-field:16px;
+  --ed-free-resource-heading:19px;
+}
+html.a11y-text-extra {
+  --ed-free-icon-label:15px;
+  --ed-free-search-label:18px;
+  --ed-free-resource-title:22px;
+  --ed-free-resource-text:19px;
+  --ed-free-resource-field:18px;
+  --ed-free-resource-heading:22px;
+}
+
+/* Tela inicial: ícones não precisam dobrar de tamanho junto com as letras.
+ * Cada nome fica em até duas linhas, quebrando em palavras inteiras,
+ * sem 'What-sApp', 'YouTu-be' ou 'Ch-rome'. */
+#phoneScreen.free-active #homeView .launcher-grid {
+  position:absolute;
+  top:clamp(128px,19%,154px)!important;
+  bottom:clamp(147px,22%,190px)!important;
+  left:clamp(12px,4%,22px)!important;
+  right:clamp(12px,4%,22px)!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-auto-rows:minmax(0,max-content)!important;
+  justify-items:stretch;
+  align-content:start;
+  gap:clamp(12px,2vh,23px) 5px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  scroll-padding-bottom:12px;
+  scrollbar-width:none;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  box-sizing:border-box;
+}
+#phoneScreen.free-active #homeView .launcher-grid::-webkit-scrollbar {display:none;}
+#phoneScreen.free-active #homeView .app-tile {
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:92px!important;
+  height:auto!important;
+  gap:7px!important;
+  padding:2px 0!important;
+  box-sizing:border-box;
+  min-width:0!important;
+  max-width:100%;
+  overflow:hidden;
+}
+#phoneScreen.free-active #homeView .app-tile .adaptive-icon {
+  flex:0 0 52px!important;
+  width:52px!important;
+  height:52px!important;
+  min-width:52px!important;
+  min-height:52px!important;
+}
+#phoneScreen.free-active #homeView .app-tile > span:last-child {
+  display:-webkit-box!important;
+  width:100%!important;
+  max-width:100%!important;
+  max-height:calc(2 * 1.24em);
+  min-width:0;
+  margin:0!important;
+  padding:0 1px;
+  box-sizing:border-box;
+  overflow:hidden!important;
+  font-size:var(--ed-free-icon-label)!important;
+  line-height:1.24!important;
+  font-weight:720!important;
+  text-align:center;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:keep-all!important;
+  hyphens:none!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+}
+#phoneScreen.free-active #homeView .launcher-bottom {
+  position:absolute;
+  bottom:31px!important;
+  left:clamp(12px,4%,22px)!important;
+  right:clamp(12px,4%,22px)!important;
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+}
+#phoneScreen.free-active #homeView .favorite-row {
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  margin-bottom:10px!important;
+  gap:5px!important;
+}
+#phoneScreen.free-active #homeView .favorite-row button,
+#phoneScreen.free-active #homeView .favorite-row img {
+  width:52px!important;
+  height:52px!important;
+  max-width:100%;
+}
+#phoneScreen.free-active #homeView .google-search {
+  display:grid!important;
+  grid-template-columns:24px minmax(0,1fr) 22px 22px!important;
+  align-items:center!important;
+  width:100%!important;
+  min-width:0;
+  height:50px!important;
+  max-height:50px!important;
+  padding:0 12px!important;
+  gap:7px!important;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+#phoneScreen.free-active #homeView .google-search > span {
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  font-size:var(--ed-free-search-label)!important;
+  line-height:1.3!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen.free-active #homeView .google-search img {
+  width:23px!important;height:23px!important;max-width:100%;
+}
+#phoneScreen.free-active #homeView .google-search svg {
+  width:21px!important;height:21px!important;max-width:100%;
+}
+#phoneScreen.free-active #homeView .at-a-glance strong {
+  font-size:clamp(12px,var(--ed-free-icon-label),15px)!important;
+  line-height:1.28!important;
+  white-space:nowrap!important;
+}
+#phoneScreen.free-active #homeView .at-a-glance span {
+  font-size:clamp(11px,var(--ed-free-icon-label),14px)!important;
+  line-height:1.3!important;
+}
+
+/* Recursos web: o cabeçalho é uma linha própria, o conteúdo é uma região
+ * rolável. A barra do Android simulada (38px) permanece reservada. */
+#phoneScreen.free-active #webRealView.android-view.is-active {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:66px minmax(0,1fr)!important;
+  box-sizing:border-box!important;
+  height:100%!important;
+  width:100%!important;
+  max-width:100%;
+  padding-top:38px!important;
+  overflow:hidden!important;
+}
+#phoneScreen.free-active #webRealView .webreal-header {
+  position:relative!important;
+  inset:auto!important;
+  grid-row:1;
+  display:grid!important;
+  grid-template-columns:38px 35px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%;
+  height:66px!important;
+  max-height:66px!important;
+  min-width:0;
+  min-height:0;
+  margin:0!important;
+  padding:7px 12px!important;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+#phoneScreen.free-active #webRealView .webreal-header > button {
+  width:38px!important;
+  min-width:38px!important;
+  height:44px!important;
+  min-height:44px!important;
+  font-size:28px!important;
+  line-height:1!important;
+}
+#phoneScreen.free-active #webRealView .webreal-header > img {
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+}
+#phoneScreen.free-active #webRealView .webreal-header > div {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0!important;
+  max-width:100%;
+  overflow:hidden;
+  gap:2px;
+}
+#phoneScreen.free-active #webRealView .webreal-header strong {
+  display:block;
+  min-width:0;
+  max-width:100%;
+  font-size:var(--ed-free-resource-title)!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen.free-active #webRealView .webreal-header small {
+  display:block;
+  font-size:12px!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+/* O subtítulo é redundante em fonte grande e consumia a área do título. */
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen.free-active
+#webRealView .webreal-header small {display:none!important;}
+#phoneScreen.free-active #webRealView .webreal-scroll {
+  grid-row:2;
+  position:relative!important;
+  inset:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  min-width:0;
+  max-width:100%;
+  margin:0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scroll-padding-bottom:48px;
+  box-sizing:border-box;
+  padding:12px 14px max(55px,calc(32px + env(safe-area-inset-bottom,0px)))!important;
+}
+#phoneScreen.free-active #webRealView .webreal-scroll > * {
+  min-width:0!important;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#phoneScreen.free-active #webRealView .wr-disclosure {
+  margin:0 0 12px!important;
+  font-size:var(--ed-free-resource-text)!important;
+  line-height:1.47!important;
+  overflow-wrap:break-word;
+}
+#phoneScreen.free-active #webRealView .wr-card {
+  box-sizing:border-box!important;
+  min-width:0!important;
+  max-width:100%;
+  padding:13px!important;
+  gap:10px!important;
+  margin:0 0 12px!important;
+  height:auto!important;
+}
+#phoneScreen.free-active #webRealView .wr-card > strong {
+  font-size:var(--ed-free-resource-heading)!important;
+  line-height:1.3!important;
+  overflow-wrap:break-word;
+}
+#phoneScreen.free-active #webRealView .wr-card p,
+#phoneScreen.free-active #webRealView .wr-muted {
+  font-size:var(--ed-free-resource-text)!important;
+  line-height:1.47!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen.free-active #webRealView :is(.wr-card label,.webreal-scroll label) {
+  min-width:0;
+  max-width:100%;
+  font-size:var(--ed-free-resource-field)!important;
+  line-height:1.4!important;
+  overflow-wrap:break-word;
+}
+#phoneScreen.free-active #webRealView .webreal-scroll :is(input,textarea,select) {
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:46px!important;
+  font-size:var(--ed-free-resource-field)!important;
+  line-height:1.35!important;
+  box-sizing:border-box!important;
+  overflow-wrap:break-word;
+}
+#phoneScreen.free-active #webRealView .webreal-scroll button {
+  min-width:0!important;
+  max-width:100%;
+  min-height:46px!important;
+  height:auto!important;
+  box-sizing:border-box;
+  padding:10px 12px!important;
+  font-size:var(--ed-free-resource-field)!important;
+  line-height:1.35!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen.free-active #webRealView .wr-row {
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(min(105px,100%),1fr))!important;
+  gap:8px!important;
+  width:100%;
+  min-width:0;
+}
+#phoneScreen.free-active #webRealView .wr-row button {
+  display:block;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%;
+}
+#phoneScreen.free-active #webRealView .webreal-status {
+  max-height:100px;
+  overflow-y:auto;
+  box-sizing:border-box;
+  font-size:var(--ed-free-resource-text)!important;
+  line-height:1.4!important;
+}
+
+/* Baixas alturas/orientação horizontal: a lista de ícones continua rolável. */
+@media(max-height:650px) {
+  #phoneScreen.free-active #homeView .launcher-grid {
+    top:120px!important;
+    bottom:138px!important;
+    row-gap:12px!important;
+  }
+  #phoneScreen.free-active #homeView .app-tile .adaptive-icon {
+    flex-basis:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+    width:44px!important;
+    min-width:44px!important;
+  }
+  #phoneScreen.free-active #homeView .app-tile {min-height:80px!important;}
+  #phoneScreen.free-active #homeView .favorite-row button,
+  #phoneScreen.free-active #homeView .favorite-row img {width:44px!important;height:44px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+  #phoneScreen.free-active #webRealView .webreal-scroll,
+  #phoneScreen.free-active #homeView .launcher-grid {scroll-behavior:auto!important;}
+}
