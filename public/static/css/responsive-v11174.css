@@ -1,0 +1,469 @@
+/* Educa+ V111.74: barra inferior, lista e notificacao do WhatsApp.
+   Mantem mensagens grandes legiveis; redistribui espaco no mockup/fullscreen.
+   A altura e resolvida pela area interna do telefone, nao pelo viewport da pagina. */
+html {
+  --ed-wa-name:14px;
+  --ed-wa-preview:12px;
+  --ed-wa-meta:11px;
+  --ed-wa-nav:11px;
+  --ed-wa-filter:12px;
+  --ed-wa-search:13px;
+  --ed-wa-brand:22px;
+}
+html.a11y-text-large {
+  --ed-wa-name:16px;
+  --ed-wa-preview:13px;
+  --ed-wa-meta:12px;
+  --ed-wa-nav:12px;
+  --ed-wa-filter:13px;
+  --ed-wa-search:14px;
+  --ed-wa-brand:23px;
+}
+html.a11y-text-extra {
+  --ed-wa-name:17px;
+  --ed-wa-preview:14px;
+  --ed-wa-meta:12px;
+  --ed-wa-nav:12px;
+  --ed-wa-filter:14px;
+  --ed-wa-search:15px;
+  --ed-wa-brand:24px;
+}
+
+/* As linhas respeitam o tamanho real da tela simulada:
+   cabeçalho | busca | busca ativa | filtros | arquivadas | conversa | navegação.
+   A LISTA é o único elemento que precisa crescer/rolar verticalmente. */
+#phoneScreen #whatsappView .whatsapp-surface {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:minmax(51px,auto) minmax(43px,auto) auto minmax(39px,auto) minmax(37px,auto) minmax(0,1fr) 58px!important;
+  align-items:stretch;
+  align-content:stretch;
+  width:100%;
+  height:100%!important;
+  max-height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  padding:38px 0 max(12px,env(safe-area-inset-bottom,0px))!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  container-type:inline-size;
+  container-name:educa-wa-list;
+}
+#phoneScreen #whatsappView .wa-topbar {
+  grid-column:1;
+  grid-row:1;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  min-width:0;
+  height:auto!important;
+  min-height:51px!important;
+  max-height:57px;
+  margin:0!important;
+  padding:4px 12px!important;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+#phoneScreen #whatsappView .wa-topbar > strong {
+  display:block;
+  flex:1 1 0;
+  min-width:0;
+  max-width:100%;
+  font-size:var(--ed-wa-brand)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  line-height:1.2!important;
+}
+#phoneScreen #whatsappView .wa-top-actions {
+  display:flex!important;
+  flex:0 0 auto!important;
+  flex-wrap:nowrap!important;
+  gap:2px!important;
+}
+#phoneScreen #whatsappView .wa-top-actions .wa-icon-btn {
+  flex:0 0 32px!important;
+  width:32px!important;
+  min-width:32px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:6px!important;
+  font-size:0!important;
+  line-height:1!important;
+}
+#phoneScreen #whatsappView .wa-top-actions .wa-icon-btn svg {
+  width:19px!important;
+  height:19px!important;
+}
+/* Ao ampliar a fonte, a barra de pesquisa deve continuar uma unica linha;
+   o texto permanece acessivel por aria-label. */
+#phoneScreen #whatsappView .whatsapp-search {
+  display:flex!important;
+  grid-row:2;
+  grid-column:1;
+  box-sizing:border-box!important;
+  width:calc(100% - 24px)!important;
+  min-height:39px!important;
+  height:auto!important;
+  max-height:44px!important;
+  margin:2px 12px 4px!important;
+  padding:5px 11px!important;
+  overflow:hidden;
+  gap:8px;
+}
+#phoneScreen #whatsappView .whatsapp-search > span {
+  flex:1;
+  display:block;
+  min-width:0;
+  max-width:100%;
+  font-size:var(--ed-wa-search)!important;
+  line-height:1.28!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen #whatsappView #waSearchInline {
+  grid-row:3;
+  grid-column:1;
+  position:relative;
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+}
+#phoneScreen #whatsappView #waSearchInline[hidden],
+#phoneScreen #whatsappView #waSearchEmpty[hidden] {display:none!important;}
+#phoneScreen #whatsappView .whatsapp-filters {
+  grid-column:1;
+  grid-row:4;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center;
+  width:100%!important;
+  min-width:0;
+  min-height:39px!important;
+  height:39px!important;
+  padding:2px 12px 4px!important;
+  box-sizing:border-box;
+  gap:7px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+#phoneScreen #whatsappView .whatsapp-filters::-webkit-scrollbar {display:none;}
+#phoneScreen #whatsappView .whatsapp-filters button {
+  flex:0 0 auto!important;
+  min-height:31px!important;
+  height:31px!important;
+  width:auto!important;
+  min-width:0;
+  max-width:none;
+  padding:5px 10px!important;
+  border-radius:15px;
+  font-size:var(--ed-wa-filter)!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  box-sizing:border-box!important;
+}
+#phoneScreen #whatsappView .wa-archived {
+  grid-column:1;
+  grid-row:5;
+  position:relative!important;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box!important;
+  min-height:37px!important;
+  height:37px!important;
+  max-height:37px!important;
+  margin:0!important;
+  padding:2px 14px!important;
+  gap:9px!important;
+  overflow:hidden;
+}
+#phoneScreen #whatsappView .wa-archived strong {
+  min-width:0;
+  font-size:clamp(13px,var(--ed-wa-name),17px)!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* O scroll é da lista, não da tela WhatsApp inteira. Remove o cálculo
+   legado max-height:calc(100% - 290px) que roubava espaço das mensagens. */
+#phoneScreen #whatsappView .wa-chat-list {
+  display:block!important;
+  grid-column:1;
+  grid-row:6;
+  min-width:0!important;
+  min-height:0!important;
+  max-height:none!important;
+  height:auto!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0 0 12px!important;
+  box-sizing:border-box!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scroll-padding-block:8px 14px;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-row {
+  display:grid!important;
+  grid-template-columns:44px minmax(0,1fr) 43px!important;
+  align-items:center!important;
+  gap:9px!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:auto!important;
+  min-height:74px!important;
+  padding:9px 11px!important;
+  overflow:hidden;
+}
+#phoneScreen #whatsappView .wa-chat-list .wa-avatar {
+  box-sizing:border-box;
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  font-size:17px!important;
+  line-height:1!important;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-copy {
+  display:block;
+  min-width:0!important;
+  max-width:100%!important;
+  width:100%!important;
+  overflow:hidden!important;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-copy strong {
+  display:block!important;
+  width:100%!important;
+  max-width:100%;
+  min-width:0;
+  font-size:var(--ed-wa-name)!important;
+  line-height:1.35!important;
+  white-space:nowrap!important;
+  text-overflow:ellipsis!important;
+  overflow:hidden!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-copy small {
+  display:-webkit-box!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%;
+  margin:4px 0 0!important;
+  font-size:var(--ed-wa-preview)!important;
+  line-height:1.35!important;
+  white-space:normal!important;
+  overflow:hidden!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-meta {
+  display:flex!important;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-self:center;
+  align-items:flex-end;
+  min-width:0!important;
+  width:43px;
+  max-width:43px;
+  gap:5px;
+  overflow:visible;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-meta small {
+  font-size:var(--ed-wa-meta)!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+}
+#phoneScreen #whatsappView .wa-chat-list .chat-meta b {
+  display:grid;
+  place-items:center;
+  flex:none;
+  width:18px!important;
+  height:18px!important;
+  border-radius:999px;
+  font-size:11px!important;
+}
+#phoneScreen #whatsappView #waSearchEmpty:not([hidden]) {
+  position:absolute;
+  top:190px;
+  left:12px;
+  right:12px;
+  z-index:5;
+  width:auto;
+  box-sizing:border-box;
+}
+
+/* Navegação fica no final real da tela: NUNCA ocupa múltiplas linhas.
+   Botões preservam o rótulo legível e alvos adequados em 320px. */
+#phoneScreen #whatsappView .whatsapp-bottom {
+  grid-column:1;
+  grid-row:7;
+  position:relative!important;
+  inset:auto!important;
+  top:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  right:auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:center!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0;
+  min-height:58px!important;
+  height:58px!important;
+  max-height:58px!important;
+  margin:0!important;
+  padding:3px 4px 2px!important;
+  overflow:hidden!important;
+  background:#fff;
+  border-top:1px solid #e4eae7;
+}
+#phoneScreen #whatsappView .whatsapp-bottom button {
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:3px!important;
+  box-sizing:border-box!important;
+  width:100%;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:47px!important;
+  height:47px!important;
+  padding:2px 0!important;
+  overflow:hidden!important;
+  font-size:0!important;
+}
+#phoneScreen #whatsappView .whatsapp-bottom .wa-nav-icon {
+  display:grid!important;
+  place-items:center;
+  flex:0 0 24px!important;
+  width:34px!important;
+  min-width:34px!important;
+  height:24px!important;
+  min-height:24px!important;
+  padding:0!important;
+}
+#phoneScreen #whatsappView .whatsapp-bottom .wa-nav-icon svg {
+  width:18px!important;
+  height:18px!important;
+}
+#phoneScreen #whatsappView .whatsapp-bottom small {
+  display:block!important;
+  max-width:100%;
+  min-width:0;
+  overflow:hidden!important;
+  font-size:var(--ed-wa-nav)!important;
+  font-weight:700!important;
+  line-height:1.12!important;
+  white-space:nowrap!important;
+  text-overflow:clip!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  letter-spacing:-.025em;
+}
+#phoneScreen #whatsappView .whatsapp-fab {
+  position:absolute!important;
+  z-index:6;
+  right:14px!important;
+  bottom:85px!important;
+  width:44px!important;
+  height:44px!important;
+}
+
+/* Notificação didática do Modo Livre: compacta, não vira um cartão de
+   várias telas quando letras grandes. "Abrir" permite ler toda mensagem. */
+#phoneScreen .free-event-notice:not([hidden]) {
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  top:45px!important;
+  left:9px!important;
+  right:9px!important;
+  min-height:0!important;
+  max-height:108px!important;
+  overflow:hidden!important;
+  padding:9px!important;
+  box-sizing:border-box!important;
+}
+#phoneScreen .free-event-copy {
+  display:flex;
+  flex:1 1 0;
+  min-width:0!important;
+  max-height:88px;
+  gap:3px;
+  overflow:hidden!important;
+}
+#phoneScreen .free-event-copy strong {
+  display:-webkit-box!important;
+  font-size:clamp(12px,var(--ed-wa-name),15px)!important;
+  line-height:1.25!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  white-space:normal!important;
+  overflow:hidden!important;
+  overflow-wrap:break-word!important;
+}
+#phoneScreen .free-event-copy small {
+  display:-webkit-box!important;
+  font-size:clamp(11px,var(--ed-wa-preview),13px)!important;
+  line-height:1.25!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  white-space:normal!important;
+  overflow:hidden!important;
+  overflow-wrap:break-word!important;
+}
+#phoneScreen .free-event-notice > button {
+  flex:0 0 auto;
+  min-width:37px;
+  min-height:40px;
+  max-width:55px;
+  padding:5px 6px!important;
+  box-sizing:border-box;
+  font-size:12px!important;
+}
+#phoneScreen .free-event-notice > .v106-alert-icon {
+  width:27px!important;
+  height:27px!important;
+  flex:0 0 27px!important;
+}
+
+/* Quando o telefone é estreito, não inventar duas linhas na navegação.
+   Usar ícones compactos e rótulos ligeiramente menores SOMENTE ali. */
+@container educa-wa-list (max-width:340px) {
+  .whatsapp-bottom small {font-size:10px!important;letter-spacing:-.045em;}
+  .wa-chat-list .chat-row {
+    grid-template-columns:40px minmax(0,1fr) 39px!important;
+    gap:7px!important;
+    padding-inline:8px!important;
+  }
+  .wa-chat-list .chat-meta {width:39px!important;}
+  .wa-chat-list .wa-avatar {width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;}
+}
+@media (max-height:500px) {
+  #phoneScreen #whatsappView .whatsapp-surface {grid-template-rows:minmax(45px,auto) 39px auto 35px 34px minmax(0,1fr) 54px!important;}
+  #phoneScreen #whatsappView .whatsapp-bottom {height:54px!important;min-height:54px!important;max-height:54px!important;}
+}
