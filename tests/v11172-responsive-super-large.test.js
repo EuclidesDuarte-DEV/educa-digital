@@ -17,7 +17,8 @@ test('[all] css real carregado por web, Android e iOS com cache PWA renovado',()
   assert.match(sw,/educa-cf11172-responsive-text-reflow/);
   assert.match(sw,/responsive-v11172\.css/);
   assert.match(html,/sw\.js\?v=11160&layout=11172/);
-  assert.doesNotMatch(css,/\bzoom\s*:|transform\s*:\s*scale/);
+  const declarations=css.replace(/\/\*[\s\S]*?\*\//g,'');
+  assert.doesNotMatch(declarations,/\bzoom\s*:|transform\s*:\s*scale/);
   assert.match(css,/#phoneScreen \.bank-app\.bank-sub-screen/);
   assert.match(css,/#phoneScreen #successView/);
 });
