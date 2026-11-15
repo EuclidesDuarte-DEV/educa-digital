@@ -15,6 +15,8 @@
 
 **Agenda, Navegador e demais recursos:** a estrutura `#webRealView` usa Grid para as linhas de cabeçalho de 66px e conteúdo `minmax(0,1fr)`, sem os `top:102px;bottom:23px` absolutos do CSS anterior. O conteúdo pode rolar verticalmente até os botões. Campos, botões, textos e cartões se redimensionam automaticamente, com quebra de palavras apropriada. O subtítulo repetitivo "Modo Livre · recursos web" fica oculto apenas nos modos de letra grande, liberando espaço para o título.
 
+**Proteção do fluxo educativo:** o teste original V111.53 revelou que o holofote do pré-teste podia reaparecer de forma assíncrona e interceptar o toque em **Abrir** na notificação simulada do WhatsApp. Agora a captura em `training.js` libera os cliques quando `#phoneScreen.free-active`, enquanto o CSS esconde o holofote **apenas no Modo Livre**. Nas atividades guiadas, a proteção do tutorial permanece inalterada.
+
 **Acessibilidade:** tipografia diferenciada para navegação (15px ícones em "Muito grande" e 18px busca) e conteúdo da ferramenta (19px corpo e 22px títulos em "Muito grande"). A camada Web não injeta um segundo `font-size !important` no cabeçalho e na navegação do Modo Livre. As mensagens e exercícios não foram diminuídos.
 
 ## Arquivos
