@@ -9,7 +9,7 @@
 
 ## Correção aplicada
 
-**Controles desnecessários:** `free-mode.js` agora define `freeFloatingHome.hidden=true` durante o Modo Livre, além da proteção CSS. O contador continua sendo incrementado normalmente e aparece na tela final de feedback/resumo; não se apaga pontuação. As telas dos recursos web já possuem o botão **Voltar à tela inicial** no cabeçalho; o gesto de início do aparelho simulado também continua disponível.
+**Controles desnecessários:** a regra CSS `#phoneScreen.free-active #freeFloatingHome` remove visualmente o painel redundante sem alterar os manipuladores JavaScript da notificação. O contador continua sendo incrementado normalmente e aparece na tela final de feedback/resumo; não se apaga pontuação. As telas dos recursos web já possuem o botão **Voltar à tela inicial** no cabeçalho; o gesto de início do aparelho simulado também continua disponível.
 
 **Tela inicial e pesquisa:** o grid de aplicativos ficou isolado entre o cabeçalho e a barra dos favoritos, com rolagem vertical quando necessário. Os ícones permanecem proporcionais, e os nomes quebram apenas em palavras inteiras (até duas linhas). A barra "Pesquisar" usa `grid-template-columns:24px minmax(0,1fr) 22px 22px` com texto em uma linha, sem ocupar a barra gestual.
 
@@ -20,7 +20,7 @@
 ## Arquivos
 
 - `public/static/css/responsive-v11175.css` — regras de pesquisa, ícones, recursos e formulário.
-- `public/static/js/free-mode.js` — esconde a barra flutuante sem apagar progresso.
+- `public/static/js/free-mode.js` — preservado no comportamento original de navegação, eventos e progresso.
 - `public/static/channels/web/overrides.js` — escala proporcional na Web apenas no Modo Livre.
 - `public/html/index.html` e `public/static/sw.js` — stylesheet e cache atualizado.
 - `scripts/validar-modo-livre-v11175.mjs` — teste visual dos 10 aplicativos em 9 resoluções, 3 níveis de fonte, fullscreen e mockup.
