@@ -60,7 +60,7 @@ try {
            searchNoWrap:getComputedStyle(name).whiteSpace==='nowrap',
            searchX:name.scrollWidth-name.clientWidth,
            tileCount:tiles.length,tiles,
-           floatHidden:$('#freeFloatingHome').hidden,
+           floatHidden:getComputedStyle($('#freeFloatingHome')).display==='none',
            root:rect(root)};
        });
        assert.ok(home.floatHidden,name+': barra inicio/situacoes ainda aparece');
@@ -91,7 +91,7 @@ try {
              titleLines:title.clientHeight/parseFloat(getComputedStyle(title).lineHeight),
              scrollX:scroll.scrollWidth-scroll.clientWidth,
              overflow:scroll.scrollHeight-scroll.clientHeight,
-             hidden:floating.hidden,show:root.classList.contains('is-active'),
+             hidden:getComputedStyle(floating).display==='none',show:root.classList.contains('is-active'),
              cards:[...scroll.querySelectorAll('.wr-card')].length};
            scroll.scrollTop=scroll.scrollHeight;
            const children=[...scroll.children].filter(el=>getComputedStyle(el).display!=='none');
