@@ -15,9 +15,9 @@ test('[all] WhatsApp V111.74 carregado apos V111.73 com cache renovado',()=>{
  assert.match(html,/responsive-v11173\.css\?v=11173/);
  assert.match(html,/responsive-v11174\.css\?v=11174/);
  assert.ok(html.indexOf('responsive-v11174.css')>html.indexOf('responsive-v11173.css'));
- assert.match(cache,/educa-cf11174-whatsapp-navigation/);
+ assert.match(cache,/educa-cf1117(?:4-whatsapp-navigation|5-free-resources)/);
  assert.match(cache,/responsive-v11174\.css/);
- assert.match(html,/sw\.js\?v=11160&layout=11174/);
+ assert.match(html,/sw\.js\?v=11160&layout=1117(?:4|5)/);
 });
 
 test('[all] lista WhatsApp tem espaço real, não max-height legado de 290px',()=>{
@@ -53,7 +53,7 @@ test('[all] lista, buscas e avisos legíveis, sem duplicar escala de fonte na We
  assert.match(css,/#phoneScreen \.free-event-notice:not\(\[hidden\]\)/);
  assert.match(css,/max-height:108px!important/);
  assert.match(css,/font-size:var\(--ed-wa-name\)!important/);
- assert.match(web,/el\.closest\('#chatView \.chat-surface, #normalChatView \.chat-surface, #whatsappView \.whatsapp-surface'\)/);
+ assert.match(web,/el\.closest\('#chatView \.chat-surface, #normalChatView \.chat-surface, #whatsappView \.whatsapp-surface, #homeView \.launcher-grid, #homeView \.launcher-bottom, #webRealView'\)/);
 });
 
 test('[all] auditoria visual roda em nove resoluções e tres modos de texto',()=>{
