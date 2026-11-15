@@ -41,7 +41,7 @@ test('[all] rodape do WhatsApp mantém quatro rótulos sem quebrar palavras',()=
  assert.match(css,/word-break:normal!important/);
  assert.match(css,/hyphens:none!important/);
  assert.match(css,/@container educa-wa-list/);
- assert.match(css,/font-size:10px!important/);
+ assert.match(css,/font-size:9\.5px!important/);
 });
 
 test('[all] lista, buscas e avisos legíveis, sem duplicar escala de fonte na Web',()=>{
