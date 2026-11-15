@@ -390,6 +390,14 @@ html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen.free-active
 }
 
 /* Baixas alturas/orientação horizontal: a lista de ícones continua rolável. */
+/* No landscape baixo, o telefone simulado fica estreito; em "Muito
+ * grande" use duas colunas roláveis para manter "WhatsApp" inteiro e
+ * legível, sem encolher novamente o texto de acessibilidade. */
+@media (max-height:500px) {
+  html.a11y-text-extra #phoneScreen.free-active #homeView .launcher-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
 @media(max-height:650px) {
   #phoneScreen.free-active #homeView .launcher-grid {
     top:120px!important;
