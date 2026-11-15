@@ -21,6 +21,13 @@ test('[all] remove barra Inicio/situacoes sem apagar progresso nem voltar nativo
  assert.match(free,/freeFloatingBack/);
 });
 
+test('[all] guia do pre-teste nunca intercepta notificação do Modo Livre',()=>{
+ const training=read('public/static/js/training.js');
+ assert.match(training,/phoneScreen\.classList\?\.contains\?\.\('free-active'\)\) return;/);
+ assert.match(css,/#phoneScreen\.free-active #guideOverlay \{display:none!important;\}/);
+ assert.match(read('scripts/validar-modo-livre-v11153.mjs'),/after\.view,'chat'/);
+});
+
 test('[all] 3 tamanhos de fonte proporcional para nomes, pesquisa e conteudo',()=>{
  for(const cls of ['html.a11y-text-large','html.a11y-text-extra'])assert.ok(css.includes(cls));
  assert.match(css,/--ed-free-icon-label:15px/);
