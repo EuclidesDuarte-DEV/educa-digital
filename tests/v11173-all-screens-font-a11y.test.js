@@ -45,7 +45,7 @@ test('[all] 3 níveis de texto sem inflar o título, ícones, opções ou compos
   assert.match(css,/text-overflow:ellipsis!important/);
   assert.match(css,/--ed-chat-input:19px/);
   assert.match(css,/min-height:44px!important/);
-  assert.match(web,/el\.closest\('#chatView \.chat-surface, #normalChatView \.chat-surface'\)/);
+  assert.match(web,/el\.closest\('#chatView \.chat-surface, #normalChatView \.chat-surface, #whatsappView \.whatsapp-surface'\)/);
   assert.match(css,/padding:7px 10px max\(14px,env\(safe-area-inset-bottom,0px\)\)/);
 });
 
