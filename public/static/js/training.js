@@ -567,7 +567,7 @@
     document.body.classList.remove('guide-focus-active');
     guidePointer?.classList.remove('below-target');
     if (guidePointer) guidePointer.style.visibility = '';
-    $('.guide-target').forEach(el => { el.classList.remove('guide-target'); el.classList.remove('guide-icon-motion'); });
+    $$('.guide-target').forEach(el => { el.classList.remove('guide-target'); el.classList.remove('guide-icon-motion'); });
 
     const views = $$('.android-view');
     const exists = views.some(view => view.dataset.view === name);
