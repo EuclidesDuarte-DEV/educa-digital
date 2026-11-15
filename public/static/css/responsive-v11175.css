@@ -6,6 +6,10 @@
 /* A barra flutuante duplicava o botão Voltar existente e cobria os
  * formulários. O progresso continua disponível no resumo da atividade. */
 #phoneScreen.free-active #freeFloatingHome {display:none!important;}
+/* Guia antigo do pre-teste nao pode reaparecer e cobrir avisos do Modo
+ * Livre. Mantemos a mesma sobreposicao nas 22 atividades guiadas. */
+#phoneScreen.free-active #guideOverlay {display:none!important;}
+
 
 /* Escalas independentes para ícones, pesquisa, recursos e conteúdo.
  * A preferência de leitura continua ampliando textos informativos. */
