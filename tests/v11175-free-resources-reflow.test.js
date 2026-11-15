@@ -27,7 +27,7 @@ test('V111.75 recursos e launcher têm escalas por elemento, nao explosao dos ic
  assert.match(css,/\.app-tile > span:last-child/);
  assert.match(css,/word-break:normal!important/);
  assert.match(css,/hyphens:none!important/);
- assert.match(css,/\.google-search b/);
+ assert.match(css,/\.google-search > span/);
  assert.match(css,/white-space:nowrap!important/);
  assert.match(css,/\.wr-row/);
  assert.match(css,/overflow-y:auto!important/);
