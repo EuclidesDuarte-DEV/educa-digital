@@ -270,7 +270,7 @@ html.a11y-text-extra {--free-app-label:16px;--free-dock-search:19px;--free-resou
 @container free-resource-phone (max-width:350px) {
   .launcher-grid {row-gap:14px!important;}
   .app-tile > span:last-child {font-size:13px!important;}
-  .google-search b {font-size:15px!important;}
+  .google-search > span {font-size:15px!important;}
   .webreal-scroll .wr-row {grid-template-columns:minmax(0,1fr)!important;}
 }
 @media (max-height:520px) {
