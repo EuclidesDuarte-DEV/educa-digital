@@ -2751,6 +2751,10 @@
   // Durante uma etapa guiada, só a ação iluminada pode ser executada.
   // Isso evita cliques acidentais e mantém uma ação por vez, como sugerido na mentoria.
   phoneScreen?.addEventListener('click', (event) => {
+    // V111.75: o guia do pre-teste pode reacender por um agendamento legado;
+    // durante o Modo Livre nao deve bloquear botoes reais de SMS, WhatsApp
+    // e aplicativos. No treino guiado a protecao original segue intacta.
+    if (phoneScreen.classList?.contains?.('free-active')) return;
     if (!guideOverlay || guideOverlay.hidden) return;
     const target = $('.guide-target', phoneScreen);
     if (!target || !target.getClientRects().length || target.contains(event.target)) return;
