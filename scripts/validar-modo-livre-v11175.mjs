@@ -72,6 +72,7 @@ try {
        for(const tile of home.tiles) {
          assert.ok(tile.lines<=2.15,name+': nome do app ocupa mais de 2 linhas '+tile.label);
          assert.ok(tile.font>=11&&tile.font<=16,name+': escala incorreta no app '+tile.label);
+         if(size!=='normal')assert.ok(tile.font>=13.5,name+': fonte grande reduzida indevidamente no app '+tile.label);
          assert.ok(tile.scrollX<=5,name+': nome do app cortado na horizontal '+tile.label);
        }
        if([320,390,768,1366,896].includes(viewport.width)){
