@@ -15,7 +15,7 @@ No frontend legado `free-mode.css`, o seletor `#phoneScreen.free-active #whatsap
 ### Mudanças
 
 1. **Grid interno do WhatsApp:** linhas definidas para cabeçalho, busca, busca ativa, filtros, arquivadas, **lista rolável com `minmax(0,1fr)`** e barra inferior de 58px. Elimina o cálculo de 290px e a sobreposição.
-2. **Abas inferiores:** quatro colunas `repeat(4,minmax(0,1fr))`, ícones fixos e rótulos de uma linha (11px padrão, 12px grande/muito grande). Em contêiner estreito, 10px para caber; são etiquetas complementares aos ícones/aria-labels acessíveis.
+2. **Abas inferiores:** quatro colunas `repeat(4,minmax(0,1fr))`, ícones fixos e rótulos de uma linha (11px para os três modos e 9,5px apenas em telefones simulados muito estreitos). Em contêiner estreito, 10px para caber; são etiquetas complementares aos ícones/aria-labels acessíveis.
 3. **Conversas:** nomes por hierarquia 14/16/17px com uma linha e reticências quando necessário, sem separar a palavra no meio; prévias 12/13/14px com duas linhas; datas e círculos de não lidas permanecem visíveis. Ao tocar na conversa, a mensagem completa permanece acessível no chat, que mantém a fonte maior (V111.73).
 4. **Filtros:** linha de chips horizontalmente rolável sem cortar as sílabas e com alvos adequados.
 5. **Aviso de mensagem:** cartão de aviso reduzido a até 108px com texto resumido em duas linhas e botão **Abrir** preservado para ver a mensagem completa.
