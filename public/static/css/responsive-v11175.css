@@ -112,7 +112,9 @@ html.a11y-text-extra {
   max-height:1.3em!important;
 }
 /* O nome Ajustes tambem precisa caber por inteiro em paisagem/tela cheia. */
-#phoneScreen.free-active #homeView .app-tile[data-open-app="settings"] > span:last-child {
+#phoneScreen.free-active #homeView .app-tile[data-open-app="settings"] > span:last-child,
+#phoneScreen.free-active #homeView .app-tile[data-open-app="calendar"] > span:last-child,
+#phoneScreen.free-active #homeView .app-tile[data-open-app="chrome"] > span:last-child {
   font-size:clamp(12px,calc(var(--ed-free-icon-label) - 2px),13px)!important;
   letter-spacing:-.025em!important;
   word-break:normal!important;
