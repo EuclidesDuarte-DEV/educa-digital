@@ -41,7 +41,7 @@ for(const [w,h] of devices) for(const mode of modes) for(const full of [false,..
         const style=getComputedStyle(label);
         return {title:label.textContent, h:b.height,
           fontSize:parseFloat(style.fontSize),
-          overflowX:label.scrollWidth-label.clientWidth,
+          overflowX:Math.max(0,b.right-rect(el).right),
           lineHeight:parseFloat(style.lineHeight),
           hyphens:style.hyphens};
       });
