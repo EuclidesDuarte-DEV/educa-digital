@@ -28,7 +28,14 @@ try {
        await page.waitForFunction(()=>!!(window.EducaFreeMode&&window.EducaWebReal&&window.EducaAccessibility),{timeout:15000});
        await page.addStyleTag({content:'*,*::before,*::after{animation-duration:0s!important;transition-duration:0s!important;}'});
        await page.evaluate(({size,full})=>{
+         // A ponte de treinamento inicia desligada na tela de abertura;
+         // o fluxo real a habilita antes de começar o Modo Livre.
+         // Aqui habilitamos apenas a condicao para auditar os recursos,
+         // sem simular uma chamada, Pix, permissao nem API de producao.
+         window.EducaFreeView.isTraining=()=>true;
          window.EducaFreeMode.start();
+         if(!document.getElementById('phoneScreen').classList.contains('free-active'))
+           throw new Error('Modo Livre nao foi ativado para o teste');
          if(size!=='normal') window.EducaAccessibility.update({text:size});
          if(full) {
            document.body.classList.add('prototype-focus');
