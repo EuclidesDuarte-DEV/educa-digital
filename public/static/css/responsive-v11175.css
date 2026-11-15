@@ -1,0 +1,279 @@
+/* Educa+ Digital V111.75 — Modo Livre: recursos e home responsivos.
+ * Nada e ampliado com transform/zoom; area rolavel permanece acessivel.
+ * O botao Voltar ja existe no cabecalho dos recursos; remove-se somente
+ * a barra redundante flutuante "Inicio / situacoes". */
+html {--free-app-label:13px;--free-dock-search:16px;--free-resource-title:18px;--free-resource-copy:14px;--free-resource-field:14px;}
+html.a11y-text-large {--free-app-label:15px;--free-dock-search:18px;--free-resource-title:21px;--free-resource-copy:17px;--free-resource-field:17px;}
+html.a11y-text-extra {--free-app-label:16px;--free-dock-search:19px;--free-resource-title:23px;--free-resource-copy:19px;--free-resource-field:18px;}
+
+/* O rodape duplicado foi colocado sobre os formulários. A volta principal
+   no app de recursos e feita pelo botao Voltar de seu cabecalho. */
+#phoneScreen.free-active #freeFloatingHome {display:none!important;}
+#phoneScreen .free-floating-home[hidden] {display:none!important;}
+
+/* Tela inicial do telefone: a grade nao infla as palavras nem cria
+   hifenizacao solta. O nome permanece completo no atributo aria-label. */
+#phoneScreen.free-active #homeView .launcher-grid {
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  column-gap:8px!important;
+  row-gap:18px!important;
+  left:clamp(12px,5%,22px)!important;
+  right:clamp(12px,5%,22px)!important;
+  min-width:0!important;
+  max-width:100%;
+}
+#phoneScreen.free-active #homeView .app-tile {
+  min-width:0!important;
+  width:100%;
+  max-width:100%;
+  gap:6px!important;
+  height:auto!important;
+  align-self:start;
+  justify-content:flex-start;
+  overflow:visible;
+}
+#phoneScreen.free-active #homeView .app-tile .adaptive-icon {
+  flex:0 0 auto;
+  width:clamp(43px,14cqi,54px)!important;
+  height:clamp(43px,14cqi,54px)!important;
+}
+#phoneScreen.free-active #homeView .app-tile > span:last-child {
+  display:-webkit-box!important;
+  width:100%;
+  max-width:100%!important;
+  min-width:0;
+  min-height:1.28em;
+  max-height:2.6em!important;
+  overflow:hidden!important;
+  text-align:center;
+  font-size:var(--free-app-label)!important;
+  line-height:1.28!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  text-overflow:ellipsis;
+  text-wrap:balance;
+}
+/* Dock e busca nao sao um bloco de texto: input ocupa uma unica linha
+   e deixa livres os icones e a barra de gesto. */
+#phoneScreen.free-active #homeView .launcher-bottom {
+  box-sizing:border-box;
+  left:clamp(12px,4%,20px)!important;
+  right:clamp(12px,4%,20px)!important;
+  bottom:max(29px,calc(env(safe-area-inset-bottom,0px) + 23px))!important;
+  max-width:100%;
+  min-width:0;
+}
+#phoneScreen.free-active #homeView .google-search {
+  display:grid!important;
+  grid-template-columns:26px minmax(0,1fr) 23px 23px!important;
+  align-items:center!important;
+  min-width:0!important;
+  width:100%;
+  height:48px!important;
+  min-height:48px!important;
+  max-height:48px!important;
+  overflow:hidden!important;
+  padding:0 12px!important;
+  gap:7px!important;
+}
+#phoneScreen.free-active #homeView .google-search b {
+  display:block;
+  min-width:0;
+  font-size:var(--free-dock-search)!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  hyphens:none!important;
+  word-break:normal!important;
+}
+#phoneScreen.free-active #homeView .favorite-row {
+  margin-bottom:12px!important;
+  gap:6px!important;
+}
+#phoneScreen.free-active #homeView .favorite-row button {
+  min-width:0!important;
+  width:clamp(43px,13cqi,54px)!important;
+  height:clamp(43px,13cqi,54px)!important;
+  max-width:100%;
+}
+
+/* Recursos web do Modo Livre: cabeçalho compacto de altura fixa.
+   O subtítulo nao ocupa tres linhas e o titulo nunca invade o corpo. */
+#phoneScreen #webRealView .webreal-header {
+  display:grid!important;
+  grid-template-columns:36px 35px minmax(0,1fr)!important;
+  align-items:center;
+  gap:8px!important;
+  position:absolute!important;
+  top:38px!important;
+  left:0!important;right:0!important;
+  width:100%;
+  height:67px!important;
+  min-height:67px!important;
+  max-height:67px!important;
+  padding:6px 12px!important;
+  overflow:hidden!important;
+  box-sizing:border-box;
+}
+#phoneScreen #webRealView .webreal-header > button {
+  box-sizing:border-box;
+  min-width:36px!important;
+  width:36px!important;
+  height:44px!important;
+  padding:2px!important;
+  font-size:28px!important;
+  line-height:1!important;
+}
+#phoneScreen #webRealView .webreal-header img {
+  width:35px!important;
+  height:35px!important;
+  min-width:35px!important;
+}
+#phoneScreen #webRealView .webreal-header > div {
+  min-width:0!important;
+  max-width:100%;
+  overflow:hidden!important;
+  gap:2px!important;
+}
+#phoneScreen #webRealView .webreal-header strong {
+  display:block!important;
+  font-size:clamp(16px,var(--free-resource-title),23px)!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen #webRealView .webreal-header small {
+  display:block!important;
+  font-size:clamp(11px,var(--free-resource-copy),13px)!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Toda a altura abaixo do cabecalho fica a disposicao do conteudo.
+   Nao ha barra Inicio/Situacoes escondendo inputs da Agenda. */
+#phoneScreen #webRealView .webreal-scroll {
+  position:absolute!important;
+  top:105px!important;
+  bottom:max(17px,env(safe-area-inset-bottom,0px))!important;
+  left:0!important;right:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:100%!important;
+  max-width:100%!important;
+  height:auto!important;
+  box-sizing:border-box!important;
+  padding:14px 12px 36px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scroll-padding-block:14px 36px;
+}
+#phoneScreen #webRealView .wr-card {
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  min-width:0!important;
+  max-width:100%;
+  height:auto!important;
+  box-sizing:border-box!important;
+  padding:14px 12px!important;
+  gap:11px!important;
+}
+#phoneScreen #webRealView .wr-card > strong {
+  font-size:var(--free-resource-title)!important;
+  line-height:1.28!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+}
+#phoneScreen #webRealView .wr-card p,
+#phoneScreen #webRealView .wr-disclosure {
+  font-size:var(--free-resource-copy)!important;
+  line-height:1.48!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+}
+#phoneScreen #webRealView :is(.wr-card label,.webreal-scroll label) {
+  min-width:0;
+  width:100%;
+  font-size:clamp(13px,var(--free-resource-field),18px)!important;
+  line-height:1.35!important;
+  overflow-wrap:break-word!important;
+}
+#phoneScreen #webRealView .webreal-scroll :is(input,textarea) {
+  min-width:0!important;
+  max-width:100%;
+  width:100%;
+  height:auto!important;
+  min-height:48px!important;
+  padding:11px 12px!important;
+  font-size:var(--free-resource-field)!important;
+  line-height:1.35!important;
+  box-sizing:border-box!important;
+  overflow-wrap:anywhere!important;
+}
+#phoneScreen #webRealView .webreal-scroll button {
+  min-width:0!important;
+  min-height:44px!important;
+  max-width:100%;
+  height:auto!important;
+  padding:10px 11px!important;
+  font-size:clamp(13px,var(--free-resource-field),18px)!important;
+  line-height:1.3!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+#phoneScreen #webRealView .wr-row {
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,105px),1fr))!important;
+  align-items:stretch;
+  gap:8px!important;
+  width:100%;
+  min-width:0;
+}
+#phoneScreen #webRealView .wr-row button {
+  width:100%;
+  min-width:0!important;
+  max-width:100%;
+}
+#phoneScreen #webRealView :is(.webreal-scroll form,.wr-card, .wr-card > div) {
+  max-width:100%;
+  min-width:0;
+}
+#phoneScreen #webRealView .webreal-scroll form {gap:10px!important;}
+#phoneScreen #webRealView .webreal-status {
+  left:12px;right:12px;bottom:max(20px,env(safe-area-inset-bottom,0px));
+  max-width:calc(100% - 24px);
+  box-sizing:border-box;
+  font-size:clamp(12px,var(--free-resource-field),16px)!important;
+  overflow-wrap:break-word;
+}
+#phoneScreen #webRealView .webreal-status[hidden] {display:none!important;}
+
+/* A largura do TELEFONE e que manda; nao a janela de PC ao redor. */
+#phoneScreen.free-active #homeView,
+#phoneScreen #webRealView {container-type:inline-size;container-name:free-resource-phone;}
+@container free-resource-phone (max-width:350px) {
+  .launcher-grid {row-gap:14px!important;}
+  .app-tile > span:last-child {font-size:13px!important;}
+  .google-search b {font-size:15px!important;}
+  .webreal-scroll .wr-row {grid-template-columns:minmax(0,1fr)!important;}
+}
+@media (max-height:520px) {
+  #phoneScreen #webRealView .webreal-scroll {padding-bottom:22px!important;}
+  #phoneScreen.free-active #homeView .launcher-grid {row-gap:12px!important;}
+}
