@@ -1094,3 +1094,412 @@ html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
   max-height:calc(2 * 1.24em) !important;
   -webkit-line-clamp:2;
 }
+
+
+/* ================================================================
+ * V111.77 — SOMENTE WEB | Design System das seis trilhas e vídeo
+ * Refinamento da V111.76: preserva o layout simples e o motor de progresso.
+ * Marca por assunto no cabeçalho, cores pontuais e check vetorial concluído.
+ * ================================================================ */
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished) {
+  --ed-topic-accent:#2873D8;
+  --ed-topic-dark:#184C97;
+  --ed-topic-soft:#ECF4FF;
+  --ed-topic-border:#D6E6FA;
+  --ed-topic-card:#FCFDFE;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-pix {
+  --ed-topic-accent:#11756E;
+  --ed-topic-dark:#0F655F;
+  --ed-topic-soft:#E9F8F5;
+  --ed-topic-border:#C8E9E2;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-whatsapp {
+  --ed-topic-accent:#137749;
+  --ed-topic-dark:#126B40;
+  --ed-topic-soft:#EBF9F0;
+  --ed-topic-border:#CDEBD8;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-security {
+  --ed-topic-accent:#7457C7;
+  --ed-topic-dark:#51379B;
+  --ed-topic-soft:#F1EDFC;
+  --ed-topic-border:#DDD4F5;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-settings {
+  --ed-topic-accent:#456DA1;
+  --ed-topic-dark:#2E4F7C;
+  --ed-topic-soft:#EDF3FA;
+  --ed-topic-border:#D6E4F4;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-govbr {
+  --ed-topic-accent:#2367BD;
+  --ed-topic-dark:#194A90;
+  --ed-topic-soft:#EDF5FF;
+  --ed-topic-border:#D2E4FC;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-playstore {
+  --ed-topic-accent:#AC641D;
+  --ed-topic-dark:#87501E;
+  --ed-topic-soft:#FFF4E6;
+  --ed-topic-border:#F4E1C8;
+}
+
+/* Marca local do assunto sempre presente, inclusive na trilha concluída. */
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-header {
+  grid-template-columns:44px 40px minmax(0,1fr) !important;
+  gap:10px !important;
+  background:linear-gradient(180deg,#FFF 65%,var(--ed-topic-soft)) !important;
+  border-bottom:1px solid var(--ed-topic-border) !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple #modulePathBack {
+  background:#FFF !important;
+  color:var(--ed-topic-dark) !important;
+  box-shadow:0 0 0 1px var(--ed-topic-border);
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .ed-activity-topic-icon,
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .ed-video-topic-icon {
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  min-width:40px;
+  border-radius:13px;
+  box-sizing:border-box;
+  background:#FFF;
+  border:1px solid var(--ed-topic-border);
+  box-shadow:0 3px 9px rgba(16,39,80,.045);
+  overflow:hidden;
+}
+html[data-educa-platform="web"]
+:is(#modulePathView.web-activity-simple .ed-activity-topic-icon,
+    #videoLessonView.ed-web-video-polished .ed-video-topic-icon) img {
+  display:block;
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  object-fit:contain;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-header strong {
+  color:var(--ed-topic-dark) !important;
+}
+
+/* O cartão continua simples, mas deixa de parecer um bloco cinza uniforme. */
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-intro {
+  background:linear-gradient(142deg,var(--ed-topic-soft) 0%,#FFF 96%) !important;
+  border:1px solid var(--ed-topic-border) !important;
+  box-shadow:0 5px 16px rgba(19,49,89,.035) !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple #modulePathHeadline {
+  color:#21334A !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple #modulePathIntro {
+  color:#53647A !important;
+}
+
+/* Barra de progresso identifica o assunto sem mudar os valores reais. */
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-progress > i {
+  height:5px !important;
+  background:#E9EEF4 !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple #modulePathProgressFill {
+  background:var(--ed-topic-accent) !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple :is(#modulePathProgressText,#modulePathProgressPct) {
+  color:#28415C !important;
+  font-weight:650 !important;
+}
+
+/* Cartões mais leves, com um realce discreto no toque e foco. */
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card {
+  background:var(--ed-topic-card) !important;
+  border:1px solid #E5EAF0 !important;
+  box-shadow:0 2px 8px rgba(22,43,71,.035) !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card:is(:hover,:focus-visible) {
+  background:var(--ed-topic-soft) !important;
+  border-color:var(--ed-topic-border) !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card:focus-visible {
+  outline:3px solid var(--ed-topic-accent) !important;
+  outline-offset:2px;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-number {
+  background:var(--ed-topic-soft) !important;
+  color:var(--ed-topic-dark) !important;
+  font-weight:700 !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-state {
+  color:var(--ed-topic-dark) !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card-copy strong {
+  color:#1C2C3E !important;
+}
+
+/* Check vetorial da lição concluída: usa o .is-complete EXISTENTE.
+   Nunca cria estado de progresso nem troca o clique da atividade. */
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card.is-complete .module-lesson-number {
+  position:relative;
+  border-radius:50% !important;
+  background:#178A55 !important;
+  color:transparent !important;
+  font-size:0 !important;
+  box-shadow:0 0 0 4px #E4F6EC !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card.is-complete .module-lesson-number::after {
+  content:"";
+  width:22px;
+  height:22px;
+  background:#FFF;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m4.5 12 5 5 10-11' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m4.5 12 5 5 10-11' stroke='black' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-lesson-card.is-complete {
+  border-color:#D1EADC !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple.is-web-activity-complete #modulePathProgressText {
+  color:#147849 !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple.is-web-activity-complete .module-path-note p {
+  color:#3A6652 !important;
+}
+
+/* Vídeo acompanha a identidade do assunto; nenhum vídeo/ação é modificado. */
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished.android-view.is-active {
+  overflow:hidden !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-lesson-surface {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto minmax(0,1fr);
+  height:100% !important;
+  min-height:0 !important;
+  max-width:100%;
+  overflow:hidden !important;
+  background:#F8FAFC !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-lesson-header {
+  position:relative !important;
+  top:auto !important;
+  display:grid !important;
+  grid-template-columns:42px 40px minmax(0,1fr) !important;
+  gap:10px !important;
+  align-items:center;
+  min-height:105px !important;
+  height:auto !important;
+  padding:39px 14px 14px !important;
+  border-bottom:1px solid var(--ed-topic-border) !important;
+  background:linear-gradient(180deg,#FFF 65%,var(--ed-topic-soft)) !important;
+  box-sizing:border-box;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-lesson-header > div {
+  min-width:0;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished #videoLessonBack {
+  display:grid;
+  place-items:center;
+  width:42px !important;
+  height:42px !important;
+  min-width:42px;
+  min-height:42px;
+  padding:10px !important;
+  border-radius:50% !important;
+  background:#FFF !important;
+  color:var(--ed-topic-dark) !important;
+  box-shadow:0 0 0 1px var(--ed-topic-border);
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished #videoLessonKicker {
+  display:block;
+  font-size:11px !important;
+  line-height:1.3 !important;
+  letter-spacing:.04em !important;
+  color:var(--ed-topic-dark) !important;
+  font-weight:750 !important;
+  white-space:normal;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished #videoLessonTitle {
+  display:block;
+  color:#1D3250 !important;
+  font-size:20px !important;
+  font-weight:800 !important;
+  line-height:1.18 !important;
+  white-space:normal !important;
+  overflow-wrap:break-word !important;
+}
+html[data-educa-platform="web"].a11y-text-large
+#videoLessonView.ed-web-video-polished #videoLessonTitle {font-size:22px !important;}
+html[data-educa-platform="web"].a11y-text-extra
+#videoLessonView.ed-web-video-polished #videoLessonTitle {font-size:24px !important;}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-lesson-content {
+  box-sizing:border-box;
+  min-width:0;
+  min-height:0 !important;
+  height:auto !important;
+  max-width:100%;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  padding:17px 15px max(38px,env(safe-area-inset-bottom,0px)) !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-frame-shell {
+  width:100%;
+  max-width:100%;
+  overflow:hidden;
+  border-radius:17px !important;
+  border:1px solid #D9E5F2;
+  box-shadow:0 8px 18px rgba(18,36,66,.09) !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-enlarge-btn {
+  box-sizing:border-box;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-width:0;
+  min-height:44px !important;
+  height:auto !important;
+  margin:11px 0 14px !important;
+  padding:10px 12px !important;
+  border-radius:12px !important;
+  border:1px solid var(--ed-topic-border) !important;
+  background:var(--ed-topic-soft) !important;
+  color:var(--ed-topic-dark) !important;
+  font-size:15px !important;
+  font-weight:700 !important;
+  line-height:1.35 !important;
+  white-space:normal !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished #videoLessonSummary {
+  display:block;
+  margin:10px 2px 15px !important;
+  font-size:15px !important;
+  line-height:1.5 !important;
+  color:#4E6076 !important;
+  overflow-wrap:break-word;
+}
+html[data-educa-platform="web"].a11y-text-large
+#videoLessonView.ed-web-video-polished #videoLessonSummary {font-size:17px !important;}
+html[data-educa-platform="web"].a11y-text-extra
+#videoLessonView.ed-web-video-polished #videoLessonSummary {font-size:19px !important;}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-safe-note {
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  box-sizing:border-box;
+  min-width:0;
+  width:100%;
+  max-width:100%;
+  padding:13px !important;
+  border-radius:16px !important;
+  background:#ECF9F1 !important;
+  border:1px solid #CDEBDD !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-safe-note > span {
+  width:36px !important;
+  height:36px !important;
+  border-radius:50%;
+  background:#179C65 !important;
+  color:#FFF !important;
+  font-size:22px !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-safe-note strong {
+  font-size:16px !important;
+  line-height:1.3 !important;
+  font-weight:750 !important;
+  color:#145D42 !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-safe-note small {
+  font-size:13px !important;
+  line-height:1.43 !important;
+  color:#3D6D58 !important;
+  margin-top:4px !important;
+}
+html[data-educa-platform="web"].a11y-text-large
+#videoLessonView.ed-web-video-polished .video-safe-note small {font-size:15px !important;}
+html[data-educa-platform="web"].a11y-text-extra
+#videoLessonView.ed-web-video-polished .video-safe-note small {font-size:17px !important;}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished #videoPracticeBtn {
+  display:block;
+  width:100%;
+  min-width:0;
+  min-height:50px !important;
+  height:auto !important;
+  padding:12px 14px !important;
+  margin:15px 0 0 !important;
+  border-radius:16px !important;
+  border:0 !important;
+  background:var(--ed-topic-accent) !important;
+  color:#FFF !important;
+  box-shadow:0 7px 15px rgba(21,53,90,.12) !important;
+  font-size:16px !important;
+  font-weight:800 !important;
+  line-height:1.3 !important;
+}
+html[data-educa-platform="web"].a11y-text-large
+#videoLessonView.ed-web-video-polished #videoPracticeBtn {font-size:18px !important;}
+html[data-educa-platform="web"].a11y-text-extra
+#videoLessonView.ed-web-video-polished #videoPracticeBtn {font-size:20px !important;}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished :is(button,a):focus-visible {
+  outline:3px solid var(--ed-topic-accent) !important;
+  outline-offset:2px;
+}
+@media (max-height:640px) {
+  html[data-educa-platform="web"]
+  #videoLessonView.ed-web-video-polished .video-lesson-content {
+    padding-top:12px !important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-educa-platform="web"]
+  #modulePathView.web-activity-simple #modulePathProgressFill {
+    transition:none !important;
+  }
+}

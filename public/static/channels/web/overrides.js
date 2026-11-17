@@ -45,7 +45,7 @@
     if (el.id === 'successTitle' || el.id === 'successText') return false;
     // V111.76: cartões de atividades têm escalas próprias no canal Web.
     // Impedir dupla ampliação inline ao alternar Grande/Muito grande.
-    if (el.closest?.('#modulePathView .module-path-surface')) return false;
+    if (el.closest?.('#modulePathView .module-path-surface, #videoLessonView .video-lesson-surface')) return false;
     // V111.73: nas conversas WhatsApp, os tamanhos de fonte sao resolvidos
     // pela folha responsiva para nao transformar o nome/avatar/botoes
     // em texto gigante. Evitar inline !important impede a sobreposicao.
@@ -195,6 +195,71 @@
     const list = document.getElementById?.('moduleLessonList');
     if (!view || !list) return;
 
+    // V111.77 (somente Web). Reutiliza os logos que ja existem no projeto.
+    // Nenhuma marca, etapa ou estado de conclusao vem de dados externos.
+    const activityThemes = Object.freeze({
+      pix:      {icon:'/static/icons/pix.svg'},
+      whatsapp: {icon:'/static/icons/whatsapp.svg'},
+      security: {icon:'/static/channels/web/security-shield-v11177.svg'},
+      settings: {icon:'/static/icons/settings.svg'},
+      govbr:    {icon:'/static/icons/govbr.svg'},
+      playstore:{icon:'/static/icons/playstore.svg'}
+    });
+    const themeNames = Object.keys(activityThemes);
+    function themeFor(title) {
+      const name = String(title || '').normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+      const match = ({
+        'pix':'pix',
+        'whatsapp':'whatsapp',
+        'seguranca':'security',
+        'ajustes':'settings',
+        'gov.br':'govbr',
+        'apps seguros':'playstore'
+      })[name];
+      return match || 'security';
+    }
+    function insertTopicIcon(header, content, className, iconSource) {
+      if (!header || typeof document.createElement !== 'function') return;
+      const text = header.querySelector?.(content);
+      if (!text) return;
+      let badge = header.querySelector?.('.' + className);
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = className;
+        badge.setAttribute('aria-hidden','true');
+        const image = document.createElement('img');
+        image.alt = '';
+        image.decoding = 'async';
+        badge.appendChild(image);
+        header.insertBefore(badge, text);
+      }
+      const image = badge.querySelector?.('img');
+      if (image && image.getAttribute('src') !== iconSource)
+        image.setAttribute('src', iconSource);
+    }
+    function enhanceActivityTopic(title) {
+      const theme = themeFor(title);
+      const videoView = document.getElementById?.('videoLessonView');
+      for (const name of themeNames) {
+        view.classList.toggle?.('is-theme-' + name, name === theme);
+        videoView?.classList?.toggle?.('is-theme-' + name, name === theme);
+      }
+      videoView?.classList?.add?.('ed-web-video-polished');
+      insertTopicIcon(
+        view.querySelector?.('.module-path-header'),
+        '.module-path-header > div',
+        'ed-activity-topic-icon',
+        activityThemes[theme].icon
+      );
+      insertTopicIcon(
+        videoView?.querySelector?.('.video-lesson-header'),
+        '.video-lesson-header > div',
+        'ed-video-topic-icon',
+        activityThemes[theme].icon
+      );
+    }
+
     function refresh() {
       const cards = [...list.querySelectorAll('button[data-module-lesson]')];
       if (!cards.length) return;
@@ -214,6 +279,7 @@
 
       view.classList.add('web-activity-simple');
       view.classList.toggle('is-web-activity-complete', finished);
+      enhanceActivityTopic(title);
       if (isPix && !finished) {
         const headlineCopy = 'Aprenda como fazer um Pix com segurança';
         const introCopy = 'Siga os passos e pratique no seu ritmo.';
