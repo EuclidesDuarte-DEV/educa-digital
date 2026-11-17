@@ -1085,9 +1085,12 @@ html[data-educa-platform="web"] #modulePathView.web-activity-simple .module-path
 html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
   #phoneScreen.free-active #homeView
   .app-tile[data-open-app="whatsapp"] > span:last-child {
-  font-size:11px !important;
-  letter-spacing:-.055em !important;
-  white-space:nowrap !important;
+  font-size:var(--ed-free-icon-label,15px) !important;
+  letter-spacing:-.02em !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
   word-break:normal !important;
   hyphens:none !important;
+  max-height:calc(2 * 1.24em) !important;
+  -webkit-line-clamp:2;
 }
