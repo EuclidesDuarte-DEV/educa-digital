@@ -1111,14 +1111,14 @@ html[data-educa-platform="web"]
 }
 html[data-educa-platform="web"]
 :is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-pix {
-  --ed-topic-accent:#168C83;
+  --ed-topic-accent:#11756E;
   --ed-topic-dark:#0F655F;
   --ed-topic-soft:#E9F8F5;
   --ed-topic-border:#C8E9E2;
 }
 html[data-educa-platform="web"]
 :is(#modulePathView.web-activity-simple,#videoLessonView.ed-web-video-polished).is-theme-whatsapp {
-  --ed-topic-accent:#169958;
+  --ed-topic-accent:#137749;
   --ed-topic-dark:#126B40;
   --ed-topic-soft:#EBF9F0;
   --ed-topic-border:#CDEBD8;
