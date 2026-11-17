@@ -133,7 +133,7 @@ test('[web] layout da equipe: cartões numerados, chevron, badges e rolagem',()=
   assert.match(js,/querySelectorAll\('button\[data-module-lesson\]'\)/);
   assert.match(js,/classList\.contains\('is-complete'\)/);
   assert.match(js,/\.observe\(list, \{childList:true\}\)/);
-  assert.match(js,/el\.closest\?\.\('#modulePathView \.module-path-surface'\)/);
+  assert.match(js,/el\.closest\?\.\('#modulePathView \.module-path-surface, #videoLessonView \.video-lesson-surface'\)/);
   assert.doesNotMatch(css.slice(css.indexOf('V111.76 — SOMENTE WEB')),/(^|[;{\s])zoom\s*:/m);
 });
 
