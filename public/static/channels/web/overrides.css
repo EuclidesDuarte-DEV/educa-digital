@@ -1077,3 +1077,17 @@ html[data-educa-platform="web"] #modulePathView.web-activity-simple .module-path
     transition:none !important;
   }
 }
+
+
+/* V111.76 Web: regressão visual pré-existente de 320 px no Modo Livre.
+ * O CSS compartilhado ampliava "WhatsApp" novamente em fonte Extra e
+ * cortava a palavra. A correção local não modifica outras plataformas. */
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+  #phoneScreen.free-active #homeView
+  .app-tile[data-open-app="whatsapp"] > span:last-child {
+  font-size:11px !important;
+  letter-spacing:-.055em !important;
+  white-space:nowrap !important;
+  word-break:normal !important;
+  hyphens:none !important;
+}
