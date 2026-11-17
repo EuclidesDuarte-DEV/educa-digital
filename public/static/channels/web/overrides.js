@@ -43,6 +43,9 @@
     // fluido e rolagem própria. Impedir inline !important duplicado do
     // escalonador legado, que fazia "Muito bem!" ocupar três linhas.
     if (el.id === 'successTitle' || el.id === 'successText') return false;
+    // V111.76: cartões de atividades têm escalas próprias no canal Web.
+    // Impedir dupla ampliação inline ao alternar Grande/Muito grande.
+    if (el.closest?.('#modulePathView .module-path-surface')) return false;
     // V111.73: nas conversas WhatsApp, os tamanhos de fonte sao resolvidos
     // pela folha responsiva para nao transformar o nome/avatar/botoes
     // em texto gigante. Evitar inline !important impede a sobreposicao.
@@ -183,6 +186,60 @@
     });
   }
 
+  /* V111.76 — somente canal WEB. Redesenha a apresentação da trilha,
+   * sem duplicar estado ou substituir os botões do training.js. Os cartões
+   * continuam com os mesmos data-module-lesson e listeners originais.
+   * O progresso é derivado das classes .is-complete já renderizadas. */
+  function installSimpleActivitiesWeb() {
+    const view = document.getElementById?.('modulePathView');
+    const list = document.getElementById?.('moduleLessonList');
+    if (!view || !list) return;
+
+    function refresh() {
+      const cards = [...list.querySelectorAll('button[data-module-lesson]')];
+      if (!cards.length) return;
+      const total = cards.length;
+      const completed = cards.filter(card => card.classList.contains('is-complete')).length;
+      const finished = completed === total;
+      const title = document.getElementById('modulePathTitle')?.textContent?.trim() || '';
+      const isPix = title.toUpperCase() === 'PIX';
+      const headline = document.getElementById('modulePathHeadline');
+      const intro = document.getElementById('modulePathIntro');
+      const progressText = document.getElementById('modulePathProgressText');
+      const progressPanel = view.querySelector('.module-path-progress');
+      const noteText = view.querySelector('.module-path-note p');
+
+      view.classList.add('web-activity-simple');
+      view.classList.toggle('is-web-activity-complete', finished);
+      if (isPix && !finished) {
+        const headlineCopy = 'Aprenda como fazer um Pix com segurança';
+        const introCopy = 'Siga os passos e pratique no seu ritmo.';
+        if (headline && headline.textContent !== headlineCopy) headline.textContent = headlineCopy;
+        if (intro && intro.textContent !== introCopy) intro.textContent = introCopy;
+      }
+      const progressCopy = finished
+        ? 'Parabéns! 100% das atividades concluídas!'
+        : completed + '/' + total;
+      if (progressText && progressText.textContent !== progressCopy) progressText.textContent = progressCopy;
+      if (progressPanel) {
+        progressPanel.setAttribute('aria-label',
+          completed + ' de ' + total + ' atividades concluídas' +
+          (finished ? ', parabéns!' : ''));
+      }
+      if (finished && noteText) {
+        const note = 'Volte quando quiser para revisar o que aprendeu!';
+        if (noteText.textContent !== note) noteText.textContent = note;
+      }
+    }
+
+    // training.js reconstrói a lista ao entrar na trilha ou voltar do treino.
+    // Observar apenas childList evita loop com os textos alterados acima.
+    if (typeof MutationObserver !== 'undefined') {
+      new MutationObserver(refresh).observe(list, {childList:true});
+    }
+    refresh();
+  }
+
   function start() {
     // A11y é disparado também quando o usuário modifica o seletor no meio
     // de uma atividade, sem precisar recarregar a página.
@@ -215,6 +272,7 @@
     window.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
     window.visualViewport?.addEventListener('resize', () => { if (isEnlarged()) schedule(true); }, {passive:true});
     polishBankNavigation();
+    installSimpleActivitiesWeb();
     schedule(true);
 
     // A conclusão acontece 900 ms após a resposta correta. O feedback
