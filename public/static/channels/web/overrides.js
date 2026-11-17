@@ -202,6 +202,9 @@
       const completed = cards.filter(card => card.classList.contains('is-complete')).length;
       const finished = completed === total;
       const title = document.getElementById('modulePathTitle')?.textContent?.trim() || '';
+      const navigationLabel = view.querySelector('.module-path-header small');
+      if (navigationLabel && navigationLabel.textContent !== 'Atividades livres')
+        navigationLabel.textContent = 'Atividades livres';
       const isPix = title.toUpperCase() === 'PIX';
       const headline = document.getElementById('modulePathHeadline');
       const intro = document.getElementById('modulePathIntro');
