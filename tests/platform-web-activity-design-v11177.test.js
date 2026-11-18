@@ -178,3 +178,22 @@ test('[web] V111.77 — apenas arquivos exclusivos Web podem ser modificados',as
   assert.equal(validate(files,'web').ok,true);
   assert.equal(validate(['public/static/js/training.js'],'web').ok,false);
 });
+
+
+test('[web] V111.78 — check de conclusão centralizado sem alterar lógica ou plataformas',()=>{
+  const selector=/html\\[data-educa-platform="web"\\]\\s*#modulePathView\\.web-activity-simple \\.module-lesson-card\\.is-complete \\.module-lesson-number::after\\s*\\{([^}]+)\\}/;
+  const match=css.match(selector);
+  assert.ok(match,'pseudo-elemento restrito ao canal Web e ao estado real de conclusão');
+  const rule=match[1];
+  assert.match(rule,/display:block/);
+  assert.match(rule,/width:22px/);
+  assert.match(rule,/height:22px/);
+  assert.match(rule,/place-self:center/);
+  assert.match(rule,/pointer-events:none/);
+  assert.match(rule,/stroke-width='3'/);
+  assert.match(rule,/stroke-linecap='round'/);
+  assert.match(rule,/M5\\.5 12\\.5 L9\\.75 16\\.5 L18\\.5 7\\.75/);
+  assert.match(rule,/-webkit-mask:url\\("data:image\\/svg\\+xml/);
+  assert.match(rule,/mask:url\\("data:image\\/svg\\+xml/);
+  assert.ok(!js.includes('completedLessons.add('),'a apresentação não muda o progresso');
+});
