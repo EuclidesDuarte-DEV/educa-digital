@@ -51,6 +51,9 @@
     if(!normalized||normalized.length>350||/[?]/.test(raw))return 'continue';
     const conditional=/\b(?:se\s+eu|caso\s+eu|e\s+se|talvez|seria|poderia|mandaria|enviaria|brincadeira|so\s+que\s+nao|se\s+for|depois\s+de\s+confirmar|antes\s+de\s+(?:pagar|mandar|confirmar|conferir|verificar))\b/;
     if(conditional.test(normalized))return 'continue';
+    // Negativas no imperativo ("não mande a chave") não significam aceite.
+    if(/\b(?:nao|nem|nunca|jamais)\s+(?:me\s+)?(?:manda|mande|envia|envie|passa|passe|pague|paga)\b/.test(normalized))return 'safe';
+    if(/\b(?:nao\s+acredito\s+que|ele\s+disse\s+que|ela\s+disse\s+que|alguem\s+disse\s+que)\b/.test(normalized))return 'continue';
     const refusal=[...normalized.matchAll(safeRefusal)];
     let withoutRefusals=normalized;
     for(const match of refusal)withoutRefusals=withoutRefusals.replace(match[0],' ');
@@ -171,6 +174,13 @@
       return;
     }
     // A chamada deve estar atendida antes de uma segunda fala.
+    if(target.view==='free-video'&&target.level===1)return; // Novato: uma fala por vez.
+    if(target.view==='free-video'&&(
+       window.speechSynthesis?.speaking||
+       !document.getElementById('freeVideoVoiceProgress')?.hidden||
+       document.getElementById('freeVideoSend')?.disabled)){
+      sceneTimer=setTimeout(()=>sendVisibleLine(target),5000);return;
+    }
     if(target.view==='free-video'&&!window.EducaVideoCall?.isConnected?.()){
       sceneTimer=setTimeout(()=>sendVisibleLine(target),4500);return;
     }
@@ -239,7 +249,7 @@
     if(!LEVEL_VARIANTS[scenario]?.[level])return;
     scene={scenario,view,level,count:0,pending:[],lastReplyAt:0};
     sceneTimer=setTimeout(()=>sendVisibleLine(scene),
-      level===1?14500:11000+Math.random()*4000);
+      view==='free-video'?25000:level===1?14500:11000+Math.random()*4000);
   }
   if(typeof MutationObserver==='function')
     new MutationObserver(updateScene).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
