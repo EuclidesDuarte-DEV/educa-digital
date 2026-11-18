@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const dialogue=readFileSync('public/static/channels/web/dialogue-v11183.js','utf8');
 const loader=readFileSync('public/static/channels/web/overrides.js','utf8');
 
-function setup(platform='web'){
+function setup(platform='web', aiReply='Continue a conversa.'){
   const state={active:true,view:'chat',scenario:'family',clicks:[],fetchCalls:[]};
   const nodes={
     freeCallVerify:{click(){state.clicks.push('safe');state.view='free-summary';}},
@@ -26,7 +26,7 @@ function setup(platform='web'){
     EducaFreeMode:{videoState:()=>state.scenario},
     fetch:async(input,opts)=>{
       state.fetchCalls.push([input,opts]);
-      return new Response(JSON.stringify({ok:true,mode:'ia',reply:'Continue a conversa.'}),{status:200});
+      return new Response(JSON.stringify({ok:true,mode:'ia',reply:aiReply}),{status:200});
     }
   };
   vm.runInNewContext(dialogue,{document,window,Response,Promise,queueMicrotask,JSON,Set,String,Math}, {timeout:2000});
@@ -228,4 +228,28 @@ test('[web] V111.85 — a resposta real da IA é naturalizada, não inventada',a
   assert.equal(json.reply,'Continue a conversa.');
   assert.equal(v.state.fetchCalls.length,1);
   assert.equal(v.state.clicks.length,0);
+});
+
+
+test('[web] V111.85 — WhatsApp, SMS, ligação e LIA recebem a resposta real sem termos didáticos',async()=>{
+  for(const channel of ['family','sms-delivery','bank','video']){
+    const v=setup('web','Olha, me ajuda com um Pix de treino? Preciso pagar uma conta fictícia.');
+    const result=await v.send('Por quê?',channel);
+    const data=await result.json();
+    assert.equal(data.mode,'ia');
+    assert.equal(data.reply,'Olha, me ajuda com um Pix? Preciso pagar uma conta.');
+    assert.equal(v.state.fetchCalls.length,1,'uma única chamada ao motor real para '+channel);
+    assert.equal(v.state.clicks.length,0);
+  }
+});
+
+test('[web] V111.85 — a limpeza só altera falas do personagem, não decisões ou alertas da interface',()=>{
+  const v=setup();
+  const clean=v.window.EducaWebDialogue.naturalize;
+  const warning='Não informe dados, códigos, senhas ou links reais.';
+  assert.equal(clean(warning),warning);
+  assert.equal(v.window.EducaWebDialogue.classify('Vou mandar o Pix agora.','family'),'unsafe');
+  assert.equal(v.window.EducaWebDialogue.classify('Não vou enviar o dinheiro.','family'),'safe');
+  assert.equal(v.window.EducaWebDialogue.classify('Sério isso?','family'),'continue');
+  assert.doesNotMatch(dialogue,/setTimeout\s*\(\(\)=>sendVisibleLine|ed-web-level-scene|Pix fictício\? Pode responder/);
 });
