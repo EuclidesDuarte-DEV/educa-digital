@@ -423,9 +423,20 @@
         !document.getElementById?.('educa-web-dialogue-v11183')) {
       const dialogueScript = document.createElement('script');
       dialogueScript.id = 'educa-web-dialogue-v11183';
-      dialogueScript.src = '/static/channels/web/dialogue-v11183.js?v=11183';
+      dialogueScript.src = '/static/channels/web/dialogue-v11183.js?v=11184';
       dialogueScript.async = false;
       document.head.appendChild(dialogueScript);
+    }
+    // V111.84 — novos contatos automáticos quando a pessoa está ociosa na Home.
+    // Usa API pública do Modo Livre somente na versão Web; não interrompe chat,
+    // SMS, ligação, LIA ou outras telas de atividade.
+    if (document.head && typeof document.createElement === 'function' &&
+        !document.getElementById?.('educa-web-free-events-v11184')) {
+      const eventsScript = document.createElement('script');
+      eventsScript.id = 'educa-web-free-events-v11184';
+      eventsScript.src = '/static/channels/web/free-events-v11184.js?v=11184';
+      eventsScript.async = false;
+      document.head.appendChild(eventsScript);
     }
     // Interface pública de diagnóstico; nunca altera preferência da pessoa.
     window.EducaWebChannel = Object.freeze({
