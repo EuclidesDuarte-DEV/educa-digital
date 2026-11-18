@@ -196,7 +196,7 @@ test('[web] V111.85 — respostas em WhatsApp, SMS e ligação sem exposição d
     ['SMS DE TREINO: O rastreio fictício está pendente.', 'O rastreio está pendente.'],
     ['A taxa fictícia é de R$ 12.', 'A taxa é de R$ 12.']
   ]) assert.equal(clean(original),expected,original);
-  assert.match(dialogue,/freeSmsMessages/);
+  assert.match(dialogue,/O SMS inicial conserva o marcador explícito/);
   assert.match(dialogue,/freeCallTranscript/);
   assert.doesNotMatch(dialogue,/QUIZZES|ed-modo-question|launchChallenge/);
 });
