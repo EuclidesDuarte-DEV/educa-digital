@@ -42,33 +42,47 @@
     /\b(?:vou|irei)\s+mandar\s+(?:uma\s+)?mensagem\s+(?:para|pro|pra)\s+(?:o|a|meu|minha)?\s*(?:filho|filha|banco|familiar|contato)\b/,
     /\b(?:nao\s+vou\s+cair\s+nessa|nao\s+confio\s+nesse\s+pedido|parece\s+golpe)\b/
   ];
-  function classify(message,scenario){
+  /* V111.84: classificador por decisão, sem punir frases exploratórias.
+     A última solicitação da personagem ajuda a interpretar respostas curtas.
+     Texto e fala transcrita percorrem o MESMO send() e a mesma pontuação. */
+  function classify(message,scenario,history=[]){
     if(!SCAMS.has(scenario))return 'continue';
-    const raw=String(message||'').trim();
-    const normalized=asText(raw);
+    const raw=String(message||'').trim(),normalized=asText(raw);
     if(!normalized||normalized.length>350||/[?]/.test(raw))return 'continue';
-    // Não confundir relatos, hipótese, ironia ou uma frase citada com aceite.
-    if(/\b(?:se\s+eu|caso\s+eu|e\s+se|talvez|seria|poderia|mandaria|enviaria|brincadeira|so\s+que\s+nao)\b/.test(normalized)||
-       /\b(?:depois|antes)\s+de\s+(?:confirmar|conferir|verificar)\b/.test(normalized))return 'continue';
+    const conditional=/\b(?:se\s+eu|caso\s+eu|e\s+se|talvez|seria|poderia|mandaria|enviaria|brincadeira|so\s+que\s+nao|se\s+for|depois\s+de\s+confirmar|antes\s+de\s+(?:pagar|mandar|confirmar|conferir|verificar))\b/;
+    if(conditional.test(normalized))return 'continue';
     const refusal=[...normalized.matchAll(safeRefusal)];
     let withoutRefusals=normalized;
     for(const match of refusal)withoutRefusals=withoutRefusals.replace(match[0],' ');
-    const recognized=safeRecognition.some(re=>re.test(normalized));
-    const safe=refusal.length>0||recognized;
-    const objects=/\b(?:pix|dinheiro|reais|valor|quantia|pagamento|transferencia|chave|codigo|senha|token|link|dados|conta)\b/;
-    const risky=[...withoutRefusals.matchAll(riskyAction)].some(m=>{
-      const verb=m[0];
-      const after=withoutRefusals.slice(m.index+m[0].length,m.index+m[0].length+65);
-      const explicit=objects.test(after);
-      const directMoney=/(?:pagar|depositar|transfiro|transferir|pago|deposito)/.test(verb)&&
-        ['family','bank','video','delivery','relative','prize','sms-delivery','sms-prize'].includes(scenario);
-      return explicit||directMoney||
+    const explicitRefusal=refusal.length>0 ||
+      /\b(?:nao\s+(?:vou\s+)?(?:dar\s+dinheiro|ajudar\s+com\s+dinheiro|fazer\s+isso|cair\s+nesse\s+golpe|aceito|caio\s+nessa)|nem\s+pensar|cai\s+fora|nao\s+me\s+engana)\b/.test(normalized);
+    const recognized=safeRecognition.some(re=>re.test(normalized)) ||
+      /\b(?:e\s+golpe|isso\s+e\s+mentira|voce\s+esta\s+tentando\s+me\s+enganar|nao\s+confio\s+em\s+voce|vou\s+denunciar|vou\s+bloquear)\b/.test(normalized);
+    const safe=explicitRefusal||recognized;
+    const cashScenarios=new Set(['family','bank','video','relative','delivery','prize','sms-delivery','sms-prize']);
+    const wantsMoney=cashScenarios.has(scenario);
+    const riskObject=/\b(?:pix|dinheiro|reais|valor|quantia|pagamento|transferencia|chave|codigo|senha|token|link|dados|conta)\b/;
+    const direct=[...withoutRefusals.matchAll(riskyAction)].some(m=>{
+      const verb=m[0],after=withoutRefusals.slice(m.index+m[0].length,m.index+m[0].length+70);
+      const explicit=riskObject.test(after);
+      const money=/(?:pagar|depositar|transfiro|transferir|pago|deposito)/.test(verb)&&wantsMoney;
+      return explicit||money||
         (/\b(?:mandar|enviar|mando|envio)\b/.test(verb)&&/\b(?:agora|pra voce|para voce)\b/.test(after));
     });
-    if(safe&&risky)return 'continue';  // Mensagem contraditória: não pontuar.
+    // Pedir a chave Pix em contexto de golpe já indica intenção de pagar.
+    const askingKey=wantsMoney&&
+      /\b(?:manda|mande|me\s+manda|me\s+envia|me\s+passa|pode\s+(?:mandar|passar|enviar)|passa|envia)\s+(?:(?:a|sua|o|seu|uma|pra\s+mim)\s+){0,3}(?:chave|pix|dados\s+da\s+conta)\b/.test(withoutRefusals);
+    const committing=wantsMoney&&
+      /\b(?:deixa\s+(?:comigo|que\s+eu\s+(?:pago|mando|faco|transfiro))|eu\s+(?:te|lhe)\s+(?:ajudo|pago)|pode\s+contar\s+comigo|eu\s+assumo\s+(?:o\s+)?pagamento)\b/.test(withoutRefusals);
+    const recent=Array.isArray(history)?history.filter(x=>x?.role==='assistant').slice(-2).map(x=>asText(x.content)).join(' '):'';
+    const requestedRisk=/\b(?:pix|dinheiro|emprestimo|empresta|emprestar|transferencia|transferir|pagamento|pagar|codigo|senha|chave)\b/.test(recent);
+    const consent=/^(?:sim|certo|beleza|ta\s+bom|tudo\s+bem|pode\s+ser|combinado|fechado|ok|claro|vou\s+fazer|pode\s+deixar)(?:\s+(?:pode\s+deixar|eu\s+faco|eu\s+mando|eu\s+pago|vou\s+ajudar|agora|sim|ok))?$/;
+    const implicit=requestedRisk&&consent.test(withoutRefusals);
+    const risky=direct||askingKey||committing||implicit;
+    if(safe&&risky)return 'continue'; // Mensagem contraditória: evite pontuação automática.
     if(safe)return 'safe';
     if(risky)return 'unsafe';
-    return 'continue';                 // Conversa aberta: a IA responde normalmente.
+    return 'continue';
   }
   // Variações curtas e educativas; aparecem como mensagens NORMAIS do
   // WhatsApp, não como questionário ou alerta. A IA recebe a fala vista.
@@ -135,7 +149,7 @@
     try{payload=JSON.parse(options.body);}catch(_){return originalFetch(input,options);}
     const scenario=payload?.scenario;
     if(scenario!==window.EducaFreeMode.videoState?.())return originalFetch(input,options);
-    const verdict=classify(payload?.message,scenario);
+    const verdict=classify(payload?.message,scenario,payload?.history);
     if(verdict==='continue'){
       if(scene&&!scene.injected&&scene.scenario===scenario&&
          Array.isArray(payload.history)&&payload.history.length<12){
