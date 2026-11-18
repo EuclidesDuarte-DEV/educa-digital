@@ -25,6 +25,7 @@
     /\bvoce\s+nao\s+(?:e|eh)\s+(?:meu|minha|o|a|quem)\b/,
     /\b(?:vou|irei|quero|prefiro)\s+(?:bloquear|denunciar|desligar|verificar|conferir|confirmar|consultar)\b/,
     /\b(?:vou|irei|prefiro)\s+(?:ligar\s+para|falar\s+com)\s+(?:meu|minha|o|a|um|uma)?\s*(?:filho|filha|banco|contato|familiar|central|suporte|numero)\b/,
+    /\b(?:vou|irei)\s+mandar\s+(?:uma\s+)?mensagem\s+(?:para|pro|pra)\s+(?:o|a|meu|minha)?\s*(?:filho|filha|banco|familiar|contato)\b/,
     /\b(?:nao\s+vou\s+cair\s+nessa|nao\s+confio\s+nesse\s+pedido|parece\s+golpe)\b/
   ];
   function classify(message,scenario){
@@ -33,7 +34,8 @@
     const normalized=asText(raw);
     if(!normalized||normalized.length>350||/[?]/.test(raw))return 'continue';
     // Não confundir relatos, hipótese, ironia ou uma frase citada com aceite.
-    if(/\b(?:se\s+eu|caso\s+eu|e\s+se|talvez|seria|poderia|mandaria|enviaria|brincadeira|so\s+que\s+nao)\b/.test(normalized))return 'continue';
+    if(/\b(?:se\s+eu|caso\s+eu|e\s+se|talvez|seria|poderia|mandaria|enviaria|brincadeira|so\s+que\s+nao)\b/.test(normalized)||
+       /\b(?:depois|antes)\s+de\s+(?:confirmar|conferir|verificar)\b/.test(normalized))return 'continue';
     const refusal=[...normalized.matchAll(safeRefusal)];
     let withoutRefusals=normalized;
     for(const match of refusal)withoutRefusals=withoutRefusals.replace(match[0],' ');
