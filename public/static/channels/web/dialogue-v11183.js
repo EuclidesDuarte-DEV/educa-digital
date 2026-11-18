@@ -52,7 +52,7 @@
     const conditional=/\b(?:se\s+eu|caso\s+eu|e\s+se|talvez|seria|poderia|mandaria|enviaria|brincadeira|so\s+que\s+nao|se\s+for|depois\s+de\s+confirmar|antes\s+de\s+(?:pagar|mandar|confirmar|conferir|verificar))\b/;
     if(conditional.test(normalized))return 'continue';
     // Negativas no imperativo ("não mande a chave") não significam aceite.
-    if(/\b(?:nao|nem|nunca|jamais)\s+(?:me\s+)?(?:manda|mande|envia|envie|passa|passe|pague|paga)\b/.test(normalized))return 'safe';
+    if(/\b(?:nao|nem|nunca|jamais)\s+(?:pode\s+)?(?:me\s+)?(?:mandar|passar|enviar|pagar|manda|mande|envia|envie|passa|passe|pague|paga)\b/.test(normalized))return 'safe';
     if(/\b(?:nao\s+acredito\s+que|ele\s+disse\s+que|ela\s+disse\s+que|alguem\s+disse\s+que)\b/.test(normalized))return 'continue';
     const refusal=[...normalized.matchAll(safeRefusal)];
     let withoutRefusals=normalized;
