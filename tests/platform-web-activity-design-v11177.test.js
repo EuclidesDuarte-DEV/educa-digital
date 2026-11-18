@@ -181,10 +181,13 @@ test('[web] V111.77 — apenas arquivos exclusivos Web podem ser modificados',as
 
 
 test('[web] V111.78 — check de conclusão centralizado sem alterar lógica ou plataformas',()=>{
-  const selector='html[data-educa-platform="web"]\\n#modulePathView.web-activity-simple .module-lesson-card.is-complete .module-lesson-number::after {';
+  const selector=[
+    'html[data-educa-platform="web"]',
+    '#modulePathView.web-activity-simple .module-lesson-card.is-complete .module-lesson-number::after {'
+  ].join(String.fromCharCode(10));
   const begin=css.indexOf(selector);
   assert.ok(begin>=0,'check restrito ao canal Web e ao estado real de conclusão');
-  const end=css.indexOf('\\n}',begin);
+  const end=css.indexOf(String.fromCharCode(10)+'}',begin);
   assert.ok(end>begin,'regra CSS deve terminar corretamente');
   const rule=css.slice(begin,end+2);
   for(const style of ['display:block','width:22px','height:22px','place-self:center','pointer-events:none']){
