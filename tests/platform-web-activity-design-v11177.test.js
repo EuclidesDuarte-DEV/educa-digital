@@ -217,3 +217,29 @@ test('[web] V111.79 — check absoluto fica no centro nos três tamanhos de font
     assert.ok(!after.includes('a11y-text-'+font),'sem variações por tamanho '+font);
   }
 });
+
+
+test('[web] V111.80 — topo compacto sem reduzir a fonte e sem afetar outras plataformas',()=>{
+  const idx=css.indexOf('V111.80 — SOMENTE WEB');
+  assert.ok(idx>0,'a melhoria Web deve existir');
+  const part=css.slice(idx);
+  const scoped='html[data-educa-platform="web"]'+String.fromCharCode(10)+'#modulePathView.web-activity-simple ';
+  function rule(selector){
+    const at=part.indexOf(scoped+selector+' {');
+    assert.ok(at>=0,'CSS Web específico para '+selector);
+    return part.slice(at,part.indexOf('}',at)+1);
+  }
+  const header=rule('.module-path-header');
+  assert.ok(header.includes('min-height:76px !important'),'menos espaço vertical');
+  assert.ok(header.includes('height:auto !important'),'cresce com o texto acessível');
+  assert.ok(header.includes('padding:14px 14px 12px !important'),'espaço acima do título reduzido');
+  assert.ok(rule('.module-path-content').includes('padding-top:15px !important'),'conteúdo começa mais cedo');
+  assert.ok(rule('.module-path-intro').includes('padding:15px 15px !important'),'cartão introdutório compactado');
+  assert.ok(rule('#modulePathIntro').includes('margin-top:5px !important'),'espaçamento do subtítulo controlado');
+  assert.ok(rule('.module-path-progress').includes('margin:12px 3px 15px !important'),'progresso mais próximo das atividades');
+  assert.ok(!part.includes('font-size:'),'nenhuma fonte foi encolhida');
+  assert.ok(!part.includes('zoom:'),'sem zoom que deforme a tela');
+  assert.ok(!part.includes('transform:'),'sem escalas ou deslocamentos');
+  assert.match(css,/#modulePathView\.web-activity-simple #modulePathBack \{[\s\S]*?width:44px !important;/,'botão voltar de 44 px preservado');
+  assert.ok(!js.includes('completedLessons.add('),'motor de conclusão continua intacto');
+});
