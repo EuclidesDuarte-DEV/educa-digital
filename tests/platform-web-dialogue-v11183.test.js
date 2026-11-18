@@ -127,9 +127,9 @@ test('[web] V111.83 — feedback contextual não confunde código de SMS com Pix
 });
 test('[web] V111.83 — nível muda contexto de conversas sem criar questionários',()=>{
   assert.match(dialogue,/LEVEL_VARIANTS/);
-  assert.match(dialogue,/Math\.floor\(Math\.random\(\)\*variants\.length\)/);
+  assert.match(dialogue,/Math\.floor\(Math\.random\(\)\*phrases\.length\)/);
   assert.match(dialogue,/ed-web-level-scene/);
-  assert.match(dialogue,/const history=\[\.\.\.payload\.history/);
+  assert.match(dialogue,/context=scene\.pending\.splice/);
   assert.doesNotMatch(dialogue,/launchChallenge|ed-modo-option|ed-modo-question/);
 });
 
