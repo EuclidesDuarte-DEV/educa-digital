@@ -40,6 +40,7 @@ function setup(platform='web'){
 test('[web] V111.84 — novos contatos quando está ocioso, sem poluir telas',()=>{
   const ui=setup();
   assert.equal(ui.window.EducaWebEvents.version,'11184');
+  ui.tick(0); // detecta que o Modo Livre começou, antes do intervalo mínimo
   ui.tick(15000);
   assert.equal(ui.state.calls,0);
   ui.tick(10000);
