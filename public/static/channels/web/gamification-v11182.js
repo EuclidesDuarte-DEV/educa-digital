@@ -60,6 +60,8 @@
   badge.id='edModoLevelBadge';
   badge.className='ed-modo-level-badge';
   badge.setAttribute('aria-haspopup','dialog');
+  // A tipografia desta peça compacta é controlada pelo CSS responsivo.
+  badge.setAttribute('data-educa-web-ignore-font','');
   badge.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 19.5 5v6c0 5.1-3.2 8.7-7.5 11-4.3-2.3-7.5-5.9-7.5-11V5L12 2Z" fill="currentColor"/><path d="m12 6.4 1.7 3.5 3.9.5-2.8 2.8.7 4-3.5-1.9-3.5 1.9.7-4-2.8-2.8 3.9-.5L12 6.4Z" fill="#fff"/></svg><span>Nível 1</span>';
   learning.appendChild(badge);
   function updateBadge(){
