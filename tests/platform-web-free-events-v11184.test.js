@@ -74,6 +74,6 @@ test('[ios/android] V111.84 — script não executa fora da Web',()=>{
     assert.equal(ui.window.EducaWebEvents,undefined);
   }
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
-  assert.match(src,/data-educa-platform/);
+  assert.match(src,/educaPlatform/);
   assert.doesNotMatch(src,/\/api\/|fetch\(/);
 });
