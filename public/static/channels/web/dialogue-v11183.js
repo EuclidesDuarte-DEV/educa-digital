@@ -31,7 +31,7 @@
     .replace(/[\u0300-\u036f]/g,'').replace(/[^\p{L}\p{N}\s?]/gu,' ')
     .replace(/\s+/g,' ').trim();
   const riskVerbs='enviar|mandar|transferir|fazer|pagar|depositar|passar|compartilhar|informar|clicar|abrir|dar';
-  const safeRefusal=new RegExp('\\b(?:nao|nunca|jamais|nem)\\s+(?:(?:vou|irei|quero|pretendo|posso|estou)\\s+)?(?:(?:te|lhe|me)\\s+)?(?:'+riskVerbs+'|mando|envio|pago|passo|faco|compartilho|transfiro|deposito)\\b','g');
+  const safeRefusal=new RegExp('\\b(?:nao|nunca|jamais|nem)\\s+(?:(?:vou|irei|quero|querendo|pretendo|posso|estou)\\s+)?(?:(?:te|lhe|me)\\s+)?(?:'+riskVerbs+'|mando|envio|pago|passo|faco|compartilho|transfiro|deposito)\\b','g');
   const riskyAction=new RegExp('\\b(?:(?:eu\\s+)?(?:vou|irei|quero|pretendo|estou\\s+indo)\\s+(?:(?:te|lhe|me)\\s+)?(?:'+riskVerbs+')|(?:eu\\s+)?(?:mando|envio|pago|passo|faco|compartilho|transfiro|deposito))\\b','g');
   const safeRecognition=[
     /\b(?:isso|essa mensagem|esse pedido|essa ligacao)\s+(?:e|parece)\s+(?:um\s+)?(?:golpe|fraude)\b/,
