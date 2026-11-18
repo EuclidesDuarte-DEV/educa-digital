@@ -1541,3 +1541,52 @@ html[data-educa-platform="web"]
 #modulePathView.web-activity-simple .module-path-progress {
   margin:12px 3px 15px !important;
 }
+
+
+/* ================================================================
+ * V111.81 — SOMENTE WEB | Menos espaço acima do vídeo e da prática.
+ * Mantém a barra de status do telefone, 44px de área de toque e
+ * altura automática para Normal, Grande e Muito grande.
+ * Não altera a tela de conclusão, as lições ou os estados salvos.
+ * ================================================================ */
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-lesson-header {
+  grid-template-columns:44px 40px minmax(0,1fr) !important;
+  min-height:76px !important;
+  height:auto !important;
+  padding:12px 14px 10px !important;
+  align-items:center !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished #videoLessonBack {
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  align-self:center !important;
+  margin-top:0 !important;
+}
+html[data-educa-platform="web"]
+#videoLessonView.ed-web-video-polished .video-lesson-content {
+  padding-top:12px !important;
+}
+/* A prática também abre sem a faixa de vazio do cabeçalho legado. */
+html[data-educa-platform="web"]
+#phoneScreen #guidedPracticeView .guided-surface {
+  padding-top:36px !important;
+  padding-bottom:max(30px, env(safe-area-inset-bottom,0px)) !important;
+  box-sizing:border-box;
+}
+html[data-educa-platform="web"]
+#phoneScreen #guidedPracticeView .guided-header {
+  grid-template-columns:44px minmax(0,1fr) !important;
+  gap:10px !important;
+  margin-bottom:10px !important;
+}
+html[data-educa-platform="web"]
+#phoneScreen #guidedPracticeView .guided-back {
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+}

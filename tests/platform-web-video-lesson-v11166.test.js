@@ -68,3 +68,40 @@ test('[web] Android e iOS não recebem CSS de vídeos do canal Web', () => {
   assert.doesNotMatch(ios,/V111\.66|videoLessonView/);
   assert.match(css,/V111\.66 — SOMENTE WEB/);
 });
+
+
+test('[web] V111.81 — topo compacto dos videos mantém títulos e botões acessíveis',()=>{
+  const ix=css.indexOf('V111.81 — SOMENTE WEB');
+  assert.ok(ix>0,'bloco Web V111.81 presente');
+  const block=css.slice(ix);
+  const prefix='html[data-educa-platform="web"]'+String.fromCharCode(10);
+  function getRule(selector){
+    const start=block.indexOf(prefix+selector+' {');
+    assert.ok(start>=0,'seletor exclusivo da Web: '+selector);
+    return block.slice(start,block.indexOf('}',start)+1);
+  }
+  const header=getRule('#videoLessonView.ed-web-video-polished .video-lesson-header');
+  assert.match(header,/min-height:76px !important/);
+  assert.match(header,/height:auto !important/);
+  assert.match(header,/padding:12px 14px 10px !important/);
+  assert.match(header,/grid-template-columns:44px 40px minmax\(0,1fr\)/);
+  const back=getRule('#videoLessonView.ed-web-video-polished #videoLessonBack');
+  assert.match(back,/width:44px !important/);
+  assert.match(back,/height:44px !important/);
+  assert.match(back,/margin-top:0 !important/);
+  assert.match(getRule('#videoLessonView.ed-web-video-polished .video-lesson-content'),/padding-top:12px !important/);
+  assert.ok(!block.includes('font-size:'),'nenhum texto reduzido');
+  assert.ok(!block.includes('transform:'),'sem zoom ou escala');
+});
+test('[web] V111.81 — pratica guiada libera area util sem cobrir status ou cortar rolagem',()=>{
+  const ix=css.indexOf('V111.81 — SOMENTE WEB');
+  const block=css.slice(ix);
+  assert.ok(block.includes('#phoneScreen #guidedPracticeView .guided-surface'));
+  assert.ok(block.includes('padding-top:36px !important'));
+  assert.ok(block.includes('padding-bottom:max(30px, env(safe-area-inset-bottom,0px)) !important'));
+  assert.ok(block.includes('grid-template-columns:44px minmax(0,1fr) !important'));
+  assert.ok(block.includes('margin-bottom:10px !important'));
+  assert.ok(block.includes('min-height:44px !important'));
+  assert.match(css,/html\[data-educa-platform="web"\]\.a11y-text-large/);
+  assert.match(css,/html\[data-educa-platform="web"\]\.a11y-text-extra/);
+});
