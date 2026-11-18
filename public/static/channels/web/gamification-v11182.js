@@ -6,8 +6,7 @@
   if (document.documentElement?.dataset?.educaPlatform !== 'web') return;
   const phone=document.getElementById('phoneScreen');
   const learning=document.querySelector('#learningView .learning-header');
-  const controls=document.getElementById('freeHomeTools');
-  if (!phone || !learning || !controls) return;
+  if (!phone || !learning) return;
   const STORE='educaWebModoLivreNivelV11182';
   const MAX_XP=9999;
   const LEVELS=[
@@ -129,6 +128,14 @@
     sheet.append(element('p','ed-modo-count',info.next?info.xp+' de '+info.next+' XP para o próximo nível':info.xp+' XP acumulados · nível máximo'));
     sheet.append(element('p','ed-modo-info','Somente suas decisões e desafios do Modo Livre mudam este nível.'));
     sheet.append(element('p','ed-modo-info','Ação segura: +20 XP · decisão arriscada: −15 XP. Repetir uma mesma situação no dia não gera pontos extras.'));
+    const launch=element('button','ed-modo-start-challenge','Praticar desafio do meu nível');
+    launch.type='button';
+    launch.addEventListener('click',()=>{
+      closeDialog();
+      document.getElementById('freeModeEntry')?.click();
+      if(phone.classList.contains('free-active'))launchChallenge();
+    });
+    sheet.append(launch);
     sheet.append(element('p','ed-modo-footnote','Progresso salvo neste navegador. Não sincronizado com outras contas ou aparelhos.'));
   }
   badge.addEventListener('click',progressView);
@@ -156,13 +163,6 @@
   if(typeof MutationObserver==='function'){
     new MutationObserver(evaluateSummary).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
   }
-  const challenge=document.createElement('button');
-  challenge.type='button';
-  challenge.id='edModoChallengeBtn';
-  challenge.className='free-micro-control ed-modo-challenge';
-  challenge.textContent='Desafio';
-  challenge.setAttribute('aria-label','Abrir um desafio de segurança digital do seu nível');
-  controls.insertBefore(challenge,controls.firstChild);
   function launchChallenge(){
     if(!phone.classList.contains('free-active'))return;
     const info=snapshot(),pool=QUIZZES[info.level];
@@ -198,7 +198,6 @@
     sheet.append(options);
     sheet.append(element('p','ed-modo-footnote','Tudo aqui é fictício. Nenhum link ou Pix real é utilizado.'));
   }
-  challenge.addEventListener('click',launchChallenge);
   updateBadge();
   window.EducaWebGamification=Object.freeze({version:'11182',getSnapshot:snapshot});
 })();
