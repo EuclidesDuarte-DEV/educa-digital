@@ -82,18 +82,21 @@ function runWebGamification(platform='web'){
   };
   vm.runInNewContext(game,{document,window,MutationObserver,localStorage,Date,Object,Set,Math,Number,String,JSON}, {timeout:2000});
   const fire=(id,isSafe,active=true)=>{
+    phone.dataset.currentView='home';
+    for(const fn of observers)fn();
     scenario=id;phone.dataset.currentView='free-summary';
     if(active) phone.classList.add('free-active');
     else phone.classList.remove('free-active');
     title.textContent=isSafe?'Situação concluída':'Atenção à decisão';
     for(const fn of observers)fn();
   };
+  const repeatObserver=()=>{for(const fn of observers)fn();};
   const walk=(root,cls)=>{
     if(root.className?.split(' ').includes(cls))return root;
     for(const child of root.children){const found=walk(child,cls);if(found)return found;}
     return null;
   };
-  return {window,phone,controls,header,fire,walk,store};
+  return {window,phone,controls,header,fire,repeatObserver,walk,store};
 }
 
 test('[web] V111.82 — indicador discreto, XP só no Modo Livre e 3 faixas',()=>{
@@ -106,23 +109,22 @@ test('[web] V111.82 — indicador discreto, XP só no Modo Livre e 3 faixas',()=
   assert.equal(badge.attrs['aria-haspopup'],'dialog');
   assert.equal(ui.controls.children.length,0,'nenhum botão extra polui o Modo Livre');
   badge.click();
-  const launch=ui.walk(ui.phone,'ed-modo-start-challenge');
-  assert.ok(launch,'desafio acessível no painel do nível');
-  launch.click();
-  assert.ok(ui.walk(ui.phone,'ed-modo-option'),'desafio progressivo abre dentro do Modo Livre');
-  assert.equal(ui.phone.classList.contains('free-active'),true);
+  assert.equal(ui.walk(ui.phone,'ed-modo-option'),null,'nenhum quiz na Home');
+  assert.equal(ui.walk(ui.phone,'ed-modo-start-challenge'),null,'sem botão de desafio');
   assert.ok(!game.includes('completedLessons.add('));
   assert.ok(!game.includes('/api/progresso'));
   assert.match(css,/#learningView \.ed-modo-level-badge/);
 });
 
-test('[web] pontuação: acertos sobem, erros descem, e a mesma situação não rende XP repetidamente',()=>{
+test('[web] pontuação: cada conversa terminada pontua apenas uma vez, mas novas tentativas contam',()=>{
   const ui=runWebGamification();
   ui.fire('family',true);
   assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,20);
+  ui.repeatObserver();
+  assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,20,'não duplicar XP na mesma conclusão');
   ui.fire('family',true);
-  assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,20);
-  for(const id of ['video','bank','code'])ui.fire(id,true);
+  assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,40);
+  for(const id of ['video','bank'])ui.fire(id,true);
   assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,80);
   assert.equal(ui.window.EducaWebGamification.getSnapshot().name,'Intermediário');
   for(const id of ['relative','delivery'])ui.fire(id,false);
@@ -140,29 +142,28 @@ test('[web] pontua só enquanto a simulação estiver ativa; modo ausente não a
   assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,40);
 });
 
-test('[web] desafios têm complexidade crescente sem URLs, senhas reais ou Pix real',()=>{
-  assert.match(game,/n1-number/);
-  assert.match(game,/n2-delivery/);
-  assert.match(game,/n3-video/);
-  assert.match(game,/A aparência da mensagem não prova a origem/);
-  assert.match(game,/Imagem, voz e nome podem ser imitados por IA/);
-  assert.match(game,/Nenhum link ou Pix real é utilizado/);
+test('[web] V111.83 — sem quiz ou pop-up de desafio; pontos somente após resultado',()=>{
+  assert.doesNotMatch(game,/QUIZZES|launchChallenge|ed-modo-option/);
+  assert.doesNotMatch(game,/ed-modo-start-challenge/);
   assert.match(game,/const tierFor=xp=>xp>=210\?3:xp>=80\?2:1/);
   assert.match(game,/safe\?20:-15/);
-  assert.match(game,/correct\?15:-10/);
-  assert.match(game,/model\.credits\[key\]===today\(\)/);
+  assert.match(game,/resultHandled=true/);
+  assert.match(game,/Erros da IA ou da conexão não retiram pontos/);
   assert.doesNotMatch(game,/fetch\s*\(/);
 });
 
 test('[web] dificuldade permanece isolada no canal Web; sem editar núcleo, Android/iOS ou D1',async()=>{
   assert.match(game,/educaPlatform !== 'web'/);
-  assert.match(loader,/gamification-v11182\.js\?v=11182/);
+  assert.match(loader,/gamification-v11182\.js\?v=11183/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11183/);
   assert.match(loader,/educaPlatform !== 'web'/);
   const {validate}=await import('../scripts/validar-escopo-plataformas.mjs');
   const changed=[
     'public/static/channels/web/overrides.js',
     'public/static/channels/web/overrides.css',
     'public/static/channels/web/gamification-v11182.js',
+    'public/static/channels/web/dialogue-v11183.js',
+    'tests/platform-web-dialogue-v11183.test.js',
     'tests/platform-web-gamification-v11182.test.js'
   ];
   assert.equal(validate(changed,'web').ok,true);
