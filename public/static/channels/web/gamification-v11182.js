@@ -18,32 +18,13 @@
     'family','bank','video','code','delivery','call-tech','relative',
     'account','prize','sms-delivery','sms-bank','sms-prize'
   ]);
-  const QUIZZES=Object.freeze({
-    1:[
-      {id:'n1-number',q:'Um número novo diz ser seu filho e pede Pix com urgência. Qual atitude é mais segura?',options:['Enviar o dinheiro sem conferir','Ligar para o contato antigo e confirmar'],answer:1,explain:'Números novos e urgência são sinais de alerta. Confirme com a pessoa por outro contato conhecido.'},
-      {id:'n1-code',q:'Um desconhecido pede o código que chegou por SMS. O que fazer?',options:['Não informar o código','Enviar o código para ajudar'],answer:0,explain:'Códigos de acesso são pessoais, inclusive durante um atendimento fictício.'}
-    ],
-    2:[
-      {id:'n2-delivery',q:'Você recebe um SMS de entrega com uma cobrança inesperada, escrito como se fosse da transportadora. Como conferir?',options:['Abrir o link recebido','Abrir por conta própria o aplicativo oficial da transportadora','Responder com o código de acesso'],answer:1,explain:'A aparência da mensagem não prova a origem. Consulte a empresa pelo aplicativo ou canal oficial.'},
-      {id:'n2-bank',q:'Uma suposta central avisa sobre bloqueio urgente e pede confirmação por Pix. Qual decisão protege sua conta?',options:['Desligar e entrar em contato pelo aplicativo oficial do banco','Realizar o Pix de teste','Acreditar no número exibido na chamada'],answer:0,explain:'Golpistas podem imitar centrais e números. Bancos não exigem Pix para proteger uma conta.'}
-    ],
-    3:[
-      {id:'n3-video',q:'Na videochamada, alguém parecido com um familiar usa voz conhecida, diz ter mudado de número e pede Pix para conta de terceiro. O que fazer?',options:['Confiar na aparência do vídeo','Conferir por um canal antigo e independente antes de qualquer transferência','Enviar um valor menor para testar','Pedir código de autenticação do familiar'],answer:1,explain:'Imagem, voz e nome podem ser imitados por IA. A verificação independente continua essencial.'},
-      {id:'n3-multichannel',q:'WhatsApp e SMS chegam com o mesmo aviso de bloqueio, enquanto uma pessoa liga oferecendo solução imediata. Qual estratégia é mais segura?',options:['Seguir as instruções da ligação','Abrir os links dos dois canais para comparar','Encerrar o contato e verificar diretamente no serviço oficial','Compartilhar apenas o primeiro código recebido'],answer:2,explain:'Mensagens combinadas e pressão de tempo não são prova de autenticidade. Use um canal que você mesmo iniciou.'}
-    ]
-  });
-  const today=()=>{
-    const d=new Date();
-    return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
-  };
   const clamp=n=>Math.max(0,Math.min(MAX_XP,Math.floor(Number(n)||0)));
   const tierFor=xp=>xp>=210?3:xp>=80?2:1;
   function restore(){
     try{
       const d=JSON.parse(localStorage.getItem(STORE)||'{}');
-      const credits=typeof d.credits==='object'&&d.credits!==null?d.credits:{};
-      return {xp:clamp(d.xp),credits:Object.fromEntries(Object.entries(credits).filter(([k,v])=>typeof k==='string'&&v===today()).slice(-60))};
-    }catch(_){return {xp:0,credits:{}};}
+      return {xp:clamp(d.xp)};
+    }catch(_){return {xp:0};}
   }
   const model=restore();
   let dialog=null, focusBefore=null;
@@ -68,11 +49,8 @@
     badge.querySelector('span').textContent='Nível '+info.level;
     badge.setAttribute('aria-label','Meu nível no Modo Livre: '+info.level+', '+info.name+'. Abrir progresso.');
   }
-  function credit(key,delta){
-    if (model.credits[key]===today())return null;
-    const previous=snapshot();
-    model.credits[key]=today();
-    const old=model.xp;
+  function credit(delta){
+    const previous=snapshot(),old=model.xp;
     model.xp=clamp(old+delta);
     persist();
     updateBadge();
@@ -126,16 +104,8 @@
     meter.append(filled);
     sheet.append(meter);
     sheet.append(element('p','ed-modo-count',info.next?info.xp+' de '+info.next+' XP para o próximo nível':info.xp+' XP acumulados · nível máximo'));
-    sheet.append(element('p','ed-modo-info','Somente suas decisões e desafios do Modo Livre mudam este nível.'));
-    sheet.append(element('p','ed-modo-info','Ação segura: +20 XP · decisão arriscada: −15 XP. Repetir uma mesma situação no dia não gera pontos extras.'));
-    const launch=element('button','ed-modo-start-challenge','Praticar desafio do meu nível');
-    launch.type='button';
-    launch.addEventListener('click',()=>{
-      closeDialog();
-      document.getElementById('freeModeEntry')?.click();
-      if(phone.classList.contains('free-active'))launchChallenge();
-    });
-    sheet.append(launch);
+    sheet.append(element('p','ed-modo-info','Somente decisões tomadas no Modo Livre mudam seu nível.'));
+    sheet.append(element('p','ed-modo-info','Decisão segura: +20 XP. Decisão arriscada: −15 XP. Erros da IA ou da conexão não retiram pontos.'));
     sheet.append(element('p','ed-modo-footnote','Progresso salvo neste navegador. Não sincronizado com outras contas ou aparelhos.'));
   }
   badge.addEventListener('click',progressView);
@@ -150,54 +120,24 @@
       (result.previous!==result.current.level?(result.current.level>result.previous?' · Subiu de nível!':' · Nível ajustado, tente novamente.'):'');
     note.setAttribute('role','status');
   }
+  let resultHandled=false;
   function evaluateSummary(){
-    if(!phone.classList.contains('free-active')||phone.dataset.currentView!=='free-summary')return;
+    if(phone.dataset.currentView!=='free-summary'){
+      resultHandled=false;
+      return;
+    }
+    if(resultHandled||!phone.classList.contains('free-active'))return;
     const scenario=window.EducaFreeMode?.videoState?.();
     if(!SCAM_IDS.has(scenario))return;
     const title=document.getElementById('freeSummaryTitle')?.textContent?.trim();
     if(!['Situação concluída','Atenção à decisão'].includes(title))return;
+    resultHandled=true; // Exatamente uma pontuação por finalização real da conversa.
     const safe=title==='Situação concluída';
-    const awarded=credit('scenario:'+scenario,safe?20:-15);
-    showResult(awarded);
+    showResult(credit(safe?20:-15));
   }
   if(typeof MutationObserver==='function'){
     new MutationObserver(evaluateSummary).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
   }
-  function launchChallenge(){
-    if(!phone.classList.contains('free-active'))return;
-    const info=snapshot(),pool=QUIZZES[info.level];
-    const quiz=pool.find(q=>model.credits['quiz:'+q.id]!==today());
-    const sheet=createDialog('Desafio '+info.name);
-    sheet.append(element('h2','','Desafio · '+info.name));
-    if(!quiz){
-      sheet.append(element('p','ed-modo-info','Você já respondeu aos desafios deste nível hoje. Continue nas simulações de WhatsApp, SMS ou chamadas.'));
-      return;
-    }
-    sheet.append(element('p','ed-modo-question',quiz.q));
-    const options=element('div','ed-modo-options');
-    const buttons=[];
-    quiz.options.forEach((option,i)=>{
-      const btn=element('button','ed-modo-option',option);
-      btn.type='button';
-      btn.addEventListener('click',()=>{
-        if(!dialog || buttons.every(x=>x.disabled))return;
-        buttons.forEach(x=>x.disabled=true);
-        const correct=i===quiz.answer;
-        const result=credit('quiz:'+quiz.id,correct?15:-10);
-        btn.classList.add(correct?'ed-correct':'ed-incorrect');
-        const feedback=element('p','ed-modo-feedback',correct?'Boa decisão! ':'Veja como se proteger: ');
-        feedback.append(document.createTextNode(quiz.explain));
-        sheet.append(feedback);
-        if(result&&result.previous!==result.current.level){
-          sheet.append(element('p','ed-modo-feedback','Agora você está no nível '+result.current.level+' — '+result.current.name+'.'));
-        }
-      });
-      buttons.push(btn);
-      options.append(btn);
-    });
-    sheet.append(options);
-    sheet.append(element('p','ed-modo-footnote','Tudo aqui é fictício. Nenhum link ou Pix real é utilizado.'));
-  }
   updateBadge();
-  window.EducaWebGamification=Object.freeze({version:'11182',getSnapshot:snapshot});
+  window.EducaWebGamification=Object.freeze({version:'11183',getSnapshot:snapshot});
 })();
