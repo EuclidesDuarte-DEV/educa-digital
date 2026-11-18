@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const dialogue=readFileSync('public/static/channels/web/dialogue-v11183.js','utf8');
 const loader=readFileSync('public/static/channels/web/overrides.js','utf8');
 
-function setup(platform='web', aiReply='Continue a conversa.'){
+function setup(platform='web', aiReply='Continue a conversa.', level=1){
   const state={active:true,view:'chat',scenario:'family',clicks:[],fetchCalls:[]};
   const nodes={
     freeCallVerify:{click(){state.clicks.push('safe');state.view='free-summary';}},
@@ -24,6 +24,7 @@ function setup(platform='web', aiReply='Continue a conversa.'){
   };
   const window={
     EducaFreeMode:{videoState:()=>state.scenario},
+    EducaWebGamification:{getSnapshot:()=>({level})},
     fetch:async(input,opts)=>{
       state.fetchCalls.push([input,opts]);
       return new Response(JSON.stringify({ok:true,mode:'ia',reply:aiReply}),{status:200});
@@ -112,7 +113,7 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11185/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11186/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });
@@ -252,4 +253,72 @@ test('[web] V111.85 — a limpeza só altera falas do personagem, não decisões
   assert.equal(v.window.EducaWebDialogue.classify('Não vou enviar o dinheiro.','family'),'safe');
   assert.equal(v.window.EducaWebDialogue.classify('Sério isso?','family'),'continue');
   assert.doesNotMatch(dialogue,/setTimeout\s*\(\(\)=>sendVisibleLine|ed-web-level-scene|Pix fictício\? Pode responder/);
+});
+
+
+test('[web] V111.86 — Novato acerta na primeira recusa sem uma nova insistência',async()=>{
+  const v=setup('web','Continue.',1);
+  await v.send('Não vou mandar Pix.');
+  await Promise.resolve();
+  assert.deepEqual(v.state.clicks,['safe']);
+  assert.equal(v.state.fetchCalls.length,0);
+});
+
+test('[web] V111.86 — Intermediário: uma insistência da IA, depois acerto',async()=>{
+  const v=setup('web','Mas eu realmente preciso resolver isso.',2);
+  const first=await v.send('Não vou mandar Pix.');
+  assert.equal((await first.json()).reply,'Mas eu realmente preciso resolver isso.');
+  assert.deepEqual(v.state.clicks,[],'primeira recusa não encerra');
+  assert.equal(v.state.fetchCalls.length,1);
+  assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar-web$/);
+  assert.equal(JSON.parse(v.state.fetchCalls[0][1].body).webChallenge.tries,1);
+  assert.equal(JSON.parse(v.state.fetchCalls[0][1].body).webChallenge.level,2);
+  await v.send('Eu continuo não querendo enviar dinheiro.');
+  await Promise.resolve();
+  assert.deepEqual(v.state.clicks,['safe'],'segunda recusa confirma proteção');
+  assert.equal(v.state.fetchCalls.length,1,'não pede terceira insistência');
+});
+
+test('[web] V111.86 — Experiente: até duas insistências da IA e encerra ao manter a recusa',async()=>{
+  const v=setup('web','Entendo. Posso esclarecer uma coisa?',3);
+  await v.send('Não vou mandar o dinheiro.');
+  await v.send('Não vou passar o Pix.');
+  assert.equal(v.state.fetchCalls.length,2);
+  assert.deepEqual(v.state.fetchCalls.map(x=>JSON.parse(x[1].body).webChallenge.tries),[1,2]);
+  assert.equal(v.state.clicks.length,0);
+  await v.send('Não vou mandar Pix.');
+  await Promise.resolve();
+  assert.deepEqual(v.state.clicks,['safe']);
+  assert.equal(v.state.fetchCalls.length,2);
+});
+
+test('[web] V111.86 — aceita o Pix após recusar: erro, sem insistências extras',async()=>{
+  const v=setup('web','Eu preciso mesmo de ajuda.',3);
+  await v.send('Não vou mandar Pix.');
+  await v.send('Tá bom, vou mandar Pix agora.');
+  await Promise.resolve();
+  assert.deepEqual(v.state.clicks,['unsafe']);
+  assert.equal(v.state.fetchCalls.length,1,'não envia aceite à IA');
+});
+
+test('[web] V111.86 — bloqueio, verificação e denúncia encerram imediatamente até no Experiente',async()=>{
+  for(const sentence of ['Vou bloquear esse contato.','Vou confirmar com o meu filho.','Vou denunciar você.']){
+    const v=setup('web','Continue.',3);
+    await v.send(sentence);
+    await Promise.resolve();
+    assert.deepEqual(v.state.clicks,['safe'],sentence);
+    assert.equal(v.state.fetchCalls.length,0,sentence);
+  }
+});
+
+test('[web] V111.86 — contato normal e cenário de código não ganham pressão Pix',async()=>{
+  const v=setup('web','Oi!',3);
+  await v.send('Oi, tudo bem?','friend');
+  assert.equal(v.state.fetchCalls.length,1);
+  assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar$/);
+  const w=setup('web','Entendi.',3);
+  await w.send('Não vou passar o código.','code');
+  await Promise.resolve();
+  assert.deepEqual(w.state.clicks,['safe']);
+  assert.equal(w.state.fetchCalls.length,0);
 });

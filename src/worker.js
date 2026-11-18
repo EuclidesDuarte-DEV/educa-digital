@@ -541,6 +541,10 @@ async function rotearApi(request, env, url) {
   if (metodo === 'POST' && rota === '/api/modo-livre/conversar') {
     return responderModoLivre(request, env);
   }
+  // V111.86: rota opcional do simulador Web, sem mudar o endpoint nativo.
+  if (metodo === 'POST' && rota === '/api/modo-livre/conversar-web') {
+    return responderModoLivre(request, env, true);
+  }
   if (metodo === 'GET' && rota === '/api/modo-livre/capacidades') {
     return responder({ok:true,projeto:'Educa+ Digital',conversa:env?.AI?.run?'workers-ai':'aguardando-binding-ai',voz_neural_online:liaConfigured(env)&&liaPublicVoice(env),voz_alternativa:'voz-feminina-pt-br-do-navegador',precisa_cmd:false});
   }
@@ -644,7 +648,7 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    const rotaPublica = (request.method === 'GET' && url.pathname.startsWith('/api/lia-model/')) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (url.pathname === '/api/modo-livre/conversar' && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
+    const rotaPublica = (request.method === 'GET' && url.pathname.startsWith('/api/lia-model/')) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (['/api/modo-livre/conversar','/api/modo-livre/conversar-web'].includes(url.pathname) && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
     if (!env.DB && !rotaPublica) {
       return erro(503, 'Banco D1 não configurado. Consulte as instruções de publicação.');
     }
