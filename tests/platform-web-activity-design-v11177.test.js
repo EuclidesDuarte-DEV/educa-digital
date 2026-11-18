@@ -190,7 +190,7 @@ test('[web] V111.78 — check de conclusão centralizado sem alterar lógica ou 
   const end=css.indexOf(String.fromCharCode(10)+'}',begin);
   assert.ok(end>begin,'regra CSS deve terminar corretamente');
   const rule=css.slice(begin,end+2);
-  for(const style of ['display:block','width:22px','height:22px','place-self:center','pointer-events:none']){
+  for(const style of ['position:absolute','display:block','inset:0','width:22px','height:22px','margin:auto','transform:none !important','pointer-events:none']){
     assert.ok(rule.includes(style),'estilo esperado: '+style);
   }
   assert.ok(rule.includes('M5.5 12.5 L9.75 16.5 L18.5 7.75'),'desenho regular e equilibrado');
@@ -199,4 +199,21 @@ test('[web] V111.78 — check de conclusão centralizado sem alterar lógica ou 
   assert.ok(rule.includes('-webkit-mask:url("data:image/svg+xml'),'máscara Safari/WebKit');
   assert.ok(rule.includes('mask:url("data:image/svg+xml'),'máscara padrão');
   assert.ok(!js.includes('completedLessons.add('),'a apresentação não muda o progresso');
+});
+
+
+test('[web] V111.79 — check absoluto fica no centro nos três tamanhos de fonte',()=>{
+  const start=css.indexOf('V111.79 — Posicionamento absoluto do check');
+  assert.ok(start>=0,'V111.79 presente no CSS do canal Web');
+  const selector=css.indexOf('.module-lesson-card.is-complete .module-lesson-number::after',start);
+  assert.ok(selector>start,'check usa o estado original de conclusão');
+  const after=css.slice(selector,css.indexOf('}',selector)+1);
+  assert.ok(after.includes('position:absolute'),'remove o pseudo da grade com texto numerado');
+  assert.ok(after.includes('inset:0'),'centraliza em dois eixos');
+  assert.ok(after.includes('margin:auto'),'centraliza sem deslocamento óptico por texto');
+  assert.ok(after.includes('transform:none !important'),'não inclina nem gira o check');
+  assert.ok(after.includes('width:22px')&&after.includes('height:22px'),'tamanho uniforme');
+  for(const font of ['normal','large','extra']){
+    assert.ok(!after.includes('a11y-text-'+font),'sem variações por tamanho '+font);
+  }
 });
