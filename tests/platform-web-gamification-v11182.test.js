@@ -79,8 +79,10 @@ function runWebGamification(platform='web'){
     setItem:(k,v)=>{store.set(k,v);}
   };
   vm.runInNewContext(game,{document,window,MutationObserver,localStorage,Date,Object,Set,Math,Number,String,JSON}, {timeout:2000});
-  const fire=(id,isSafe)=>{
-    scenario=id;phone.dataset.currentView='free-summary';phone.classList.add('free-active');
+  const fire=(id,isSafe,active=true)=>{
+    scenario=id;phone.dataset.currentView='free-summary';
+    if(active) phone.classList.add('free-active');
+    else phone.classList.remove('free-active');
     title.textContent=isSafe?'Situação concluída':'Atenção à decisão';
     for(const fn of observers)fn();
   };
@@ -122,12 +124,11 @@ test('[web] pontuação: acertos sobem, erros descem, e a mesma situação não 
 
 test('[web] pontua só enquanto a simulação estiver ativa; modo ausente não altera XP',()=>{
   const ui=runWebGamification();
-  ui.phone.dataset.currentView='learning';
   ui.fire('family',true);
   assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,20);
-  ui.phone.classList.remove('free-active');
+  ui.fire('bank',true,false);
+  assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,20);
   ui.fire('bank',true);
-  ui.phone.classList.remove('free-active');
   assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,40);
 });
 
