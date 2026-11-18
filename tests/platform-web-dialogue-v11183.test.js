@@ -84,7 +84,7 @@ test('[web] V111.83 — uma decisão segura encerra sem chamada à IA e conserva
   assert.deepEqual(v.state.clicks,['safe']);
   assert.equal(v.state.fetchCalls.length,0);
   assert.match(v.nodes.freeSummaryText.textContent,/Muito bem/);
-  assert.match(v.nodes.freeSummaryDetail.textContent,/Orientação original/);
+  assert.match(v.nodes.freeSummaryDetail.textContent,/Confirme pedidos de familiares/);
 });
 test('[web] V111.83 — compromisso com Pix encerra com erro e nenhuma transação real',async()=>{
   const v=setup();
@@ -114,4 +114,20 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
   }
   assert.match(loader,/dialogue-v11183\.js\?v=11183/);
   assert.match(loader,/educaPlatform !== 'web'/);
+});
+
+test('[web] V111.83 — feedback contextual não confunde código de SMS com Pix',async()=>{
+  const v=setup();
+  await v.send('Vou informar minha senha agora.','sms-bank');
+  await Promise.resolve();
+  assert.deepEqual(v.state.clicks,['unsafe']);
+  assert.match(v.nodes.freeSummaryDetail.textContent,/SMS parecido com mensagem bancária/);
+  assert.doesNotMatch(v.nodes.freeSummaryDetail.textContent,/destinatário mostrado/);
+});
+test('[web] V111.83 — nível muda contexto de conversas sem criar questionários',()=>{
+  assert.match(dialogue,/LEVEL_VARIANTS/);
+  assert.match(dialogue,/Math\.floor\(Math\.random\(\)\*variants\.length\)/);
+  assert.match(dialogue,/ed-web-level-scene/);
+  assert.match(dialogue,/history:\[/);
+  assert.doesNotMatch(dialogue,/launchChallenge|ed-modo-option|ed-modo-question/);
 });
