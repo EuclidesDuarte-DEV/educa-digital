@@ -57,6 +57,8 @@ function runWebGamification(platform='web'){
   const phone=new Element('div');phone.id='phoneScreen';phone.dataset.currentView='learning';
   const header=new Element('header');
   const controls=new Element('div');controls.id='freeHomeTools';
+  const entry=new Element('button');entry.id='freeModeEntry';
+  entry.addEventListener('click',()=>{phone.classList.add('free-active');phone.dataset.currentView='home';});
   const fakeSummary=new Element('p');fakeSummary.id='freeSummaryText';
   const summaryRoot=new Element('div');summaryRoot.append(fakeSummary);
   const title=new Element('h2');title.id='freeSummaryTitle';
@@ -102,7 +104,13 @@ test('[web] V111.82 — indicador discreto, XP só no Modo Livre e 3 faixas',()=
   assert.ok(badge);
   assert.equal(badge.querySelector('span').textContent,'Nível 1');
   assert.equal(badge.attrs['aria-haspopup'],'dialog');
-  assert.equal(ui.controls.children.find(x=>x.id==='edModoChallengeBtn')?.textContent,'Desafio');
+  assert.equal(ui.controls.children.length,0,'nenhum botão extra polui o Modo Livre');
+  badge.click();
+  const launch=ui.walk(ui.phone,'ed-modo-start-challenge');
+  assert.ok(launch,'desafio acessível no painel do nível');
+  launch.click();
+  assert.ok(ui.walk(ui.phone,'ed-modo-option'),'desafio progressivo abre dentro do Modo Livre');
+  assert.equal(ui.phone.classList.contains('free-active'),true);
   assert.ok(!game.includes('completedLessons.add('));
   assert.ok(!game.includes('/api/progresso'));
   assert.match(css,/#learningView \.ed-modo-level-badge/);
