@@ -130,7 +130,6 @@
     if(!phone.classList.contains('free-active'))return;
     const selectors=[
       '#chatWallpaper .message.incoming',
-      '#freeSmsMessages .v11153-sms-bubble.received span',
       '#freeCallTranscript p'
     ];
     for(const selector of selectors){
@@ -147,7 +146,9 @@
   }
   if(typeof MutationObserver==='function'){
     // Observa apenas os contêineres de conversa, não a tela inteira.
-    for(const id of ['chatWallpaper','freeSmsMessages','freeCallTranscript','freeEventText']){
+    // O SMS inicial conserva o marcador explícito "SMS SIMULADO" por segurança
+    // e compatibilidade; a IA naturaliza apenas as respostas que gerar.
+    for(const id of ['chatWallpaper','freeCallTranscript','freeEventText']){
       const node=document.getElementById(id);
       if(node)new MutationObserver(refreshConversations)
         .observe(node,{childList:true,subtree:true,characterData:true});
