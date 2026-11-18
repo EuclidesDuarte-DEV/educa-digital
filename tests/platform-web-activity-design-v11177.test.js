@@ -181,19 +181,19 @@ test('[web] V111.77 — apenas arquivos exclusivos Web podem ser modificados',as
 
 
 test('[web] V111.78 — check de conclusão centralizado sem alterar lógica ou plataformas',()=>{
-  const selector=/html\\[data-educa-platform="web"\\]\\s*#modulePathView\\.web-activity-simple \\.module-lesson-card\\.is-complete \\.module-lesson-number::after\\s*\\{([^}]+)\\}/;
-  const match=css.match(selector);
-  assert.ok(match,'pseudo-elemento restrito ao canal Web e ao estado real de conclusão');
-  const rule=match[1];
-  assert.match(rule,/display:block/);
-  assert.match(rule,/width:22px/);
-  assert.match(rule,/height:22px/);
-  assert.match(rule,/place-self:center/);
-  assert.match(rule,/pointer-events:none/);
-  assert.match(rule,/stroke-width='3'/);
-  assert.match(rule,/stroke-linecap='round'/);
-  assert.match(rule,/M5\\.5 12\\.5 L9\\.75 16\\.5 L18\\.5 7\\.75/);
-  assert.match(rule,/-webkit-mask:url\\("data:image\\/svg\\+xml/);
-  assert.match(rule,/mask:url\\("data:image\\/svg\\+xml/);
+  const selector='html[data-educa-platform="web"]\\n#modulePathView.web-activity-simple .module-lesson-card.is-complete .module-lesson-number::after {';
+  const begin=css.indexOf(selector);
+  assert.ok(begin>=0,'check restrito ao canal Web e ao estado real de conclusão');
+  const end=css.indexOf('\\n}',begin);
+  assert.ok(end>begin,'regra CSS deve terminar corretamente');
+  const rule=css.slice(begin,end+2);
+  for(const style of ['display:block','width:22px','height:22px','place-self:center','pointer-events:none']){
+    assert.ok(rule.includes(style),'estilo esperado: '+style);
+  }
+  assert.ok(rule.includes('M5.5 12.5 L9.75 16.5 L18.5 7.75'),'desenho regular e equilibrado');
+  assert.ok(rule.includes("stroke-width='3'"),'espessura uniforme');
+  assert.ok(rule.includes("stroke-linecap='round'"),'pontas arredondadas');
+  assert.ok(rule.includes('-webkit-mask:url("data:image/svg+xml'),'máscara Safari/WebKit');
+  assert.ok(rule.includes('mask:url("data:image/svg+xml'),'máscara padrão');
   assert.ok(!js.includes('completedLessons.add('),'a apresentação não muda o progresso');
 });
