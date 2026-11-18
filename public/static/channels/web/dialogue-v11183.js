@@ -158,6 +158,30 @@
     new MutationObserver(refreshConversations)
       .observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
   refreshConversations();
+  // V111.86 — resistência pedagógica progressiva no Modo Livre Web.
+  // Uma recusa nunca é erro; ela pode gerar uma ou duas respostas adicionais
+  // da IA real, mas bloquear, denunciar, conferir por outro canal ou sair
+  // encerram com acerto imediato. Nenhum texto do aluno é alterado.
+  const persistence={scenario:null,refusals:0};
+  const eligiblePressure=new Set(['family','relative','bank','video','delivery','prize','sms-delivery','sms-prize']);
+  function resetPersistence(){
+    persistence.scenario=null;
+    persistence.refusals=0;
+  }
+  if(typeof MutationObserver==='function')
+    new MutationObserver(()=>{
+      if(phone.dataset.currentView==='free-summary'||!phone.classList.contains('free-active'))
+        resetPersistence();
+    }).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
+  const stopSignals=/\b(?:vou|irei|quero|prefiro)\s+(?:bloquear|denunciar|desligar|encerrar|parar|confirmar|conferir|verificar|consultar|ligar\s+para|falar\s+com)\b|\b(?:pare\s+de\s+(?:falar|insistir)|nao\s+quero\s+mais\s+(?:conversar|falar)|chega\s+de\s+(?:conversa|mensagem)|me\s+deixa\s+em\s+paz)\b/;
+  function getChallenge(scenario){
+    if(persistence.scenario!==scenario){
+      persistence.scenario=scenario;
+      persistence.refusals=0;
+    }
+    const level=Math.max(1,Math.min(3,Number(window.EducaWebGamification?.getSnapshot?.().level||1)));
+    return {level,limit:!eligiblePressure.has(scenario)?0:level===3?2:level===2?1:0};
+  }
   const originalFetch=window.fetch.bind(window);
   const nextMicrotask=fn=>typeof queueMicrotask==='function'?queueMicrotask(fn):Promise.resolve().then(fn);
   window.fetch=async function(input,options){
@@ -171,20 +195,46 @@
     const scenario=payload?.scenario;
     if(scenario!==window.EducaFreeMode.videoState?.())return originalFetch(input,options);
     const verdict=classify(payload?.message,scenario,payload?.history);
-    if(verdict==='continue'){
-      // O mesmo histórico da pessoa segue para a IA, mas sem termos de
-      // bastidores nos textos do personagem. Isso evita ecoar "fictício".
+    const challenge=getChallenge(scenario);
+    const firmEnd=stopSignals.test(asText(payload?.message));
+    const extraRefusal=verdict==='safe'&&!firmEnd&&
+      persistence.refusals<challenge.limit;
+    if(verdict==='continue'||extraRefusal){
+      // Só tentativas educativas adicionais, sem resposta pronta.
+      if(extraRefusal)persistence.refusals++;
       const history=Array.isArray(payload.history)
         ?payload.history.map(item=>item?.role==='assistant'
             ?{role:'assistant',content:naturalize(item.content)}
             :item)
         :[];
+      const useWebRoute=challenge.level>1 && eligiblePressure.has(scenario) &&
+        typeof input==='string';
+      const endpoint=useWebRoute
+        ?input.replace('/api/modo-livre/conversar','/api/modo-livre/conversar-web')
+        :input;
       const revised={...payload,history};
-      const response=await originalFetch(input,{...options,body:JSON.stringify(revised)});
-      if(!response?.ok||typeof response.clone!=='function')return response;
+      if(useWebRoute)
+        revised.webChallenge={level:challenge.level,tries:persistence.refusals};
+      let response;
+      try{
+        response=await originalFetch(endpoint,{...options,body:JSON.stringify(revised)});
+      }catch(error){
+        if(extraRefusal)persistence.refusals=Math.max(0,persistence.refusals-1);
+        throw error;
+      }
+      if(!response?.ok||typeof response.clone!=='function'){
+        if(extraRefusal)persistence.refusals=Math.max(0,persistence.refusals-1);
+        return response;
+      }
       let data;
-      try{data=await response.clone().json();}catch(_){return response;}
-      if(!data?.ok||data.mode!=='ia'||typeof data.reply!=='string')return response;
+      try{data=await response.clone().json();}catch(_){
+        if(extraRefusal)persistence.refusals=Math.max(0,persistence.refusals-1);
+        return response;
+      }
+      if(!data?.ok||data.mode!=='ia'||typeof data.reply!=='string'){
+        if(extraRefusal)persistence.refusals=Math.max(0,persistence.refusals-1);
+        return response;
+      }
       const improved=naturalize(data.reply);
       if(!improved||improved===data.reply)return response;
       return new Response(JSON.stringify({...data,reply:improved}),{
@@ -220,5 +270,5 @@
       status:200,headers:{'Content-Type':'application/json'}
     }));
   };
-  window.EducaWebDialogue=Object.freeze({version:'11185',classify,naturalize});
+  window.EducaWebDialogue=Object.freeze({version:'11186',classify,naturalize,getChallenge});
 })();
