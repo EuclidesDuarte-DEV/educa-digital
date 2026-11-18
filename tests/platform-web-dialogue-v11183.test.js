@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const dialogue=readFileSync('public/static/channels/web/dialogue-v11183.js','utf8');
 const loader=readFileSync('public/static/channels/web/overrides.js','utf8');
 
-function setup(platform='web', aiReply='Continue a conversa.'){
+function setup(platform='web', aiReply='Continue a conversa.', level=1){
   const state={active:true,view:'chat',scenario:'family',clicks:[],fetchCalls:[]};
   const nodes={
     freeCallVerify:{click(){state.clicks.push('safe');state.view='free-summary';}},
@@ -24,6 +24,7 @@ function setup(platform='web', aiReply='Continue a conversa.'){
   };
   const window={
     EducaFreeMode:{videoState:()=>state.scenario},
+    EducaWebGamification:{getSnapshot:()=>({level})},
     fetch:async(input,opts)=>{
       state.fetchCalls.push([input,opts]);
       return new Response(JSON.stringify({ok:true,mode:'ia',reply:aiReply}),{status:200});
@@ -112,7 +113,7 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11185/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11186/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });
