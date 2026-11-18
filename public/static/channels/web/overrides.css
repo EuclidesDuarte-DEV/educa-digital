@@ -1511,3 +1511,33 @@ html[data-educa-platform="web"]
     transition:none !important;
   }
 }
+
+/* ================================================================
+ * V111.80 — SOMENTE WEB | Cabeçalho das trilhas mais compacto.
+ * Libera área útil do telefone sem encolher textos, alvos de toque,
+ * ícones, progresso ou conclusão. As alturas continuam automáticas
+ * para acolher Normal, Grande e Muito grande.
+ * ================================================================ */
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-header {
+  min-height:76px !important;
+  height:auto !important;
+  padding:14px 14px 12px !important;
+  align-items:center;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-content {
+  padding-top:15px !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-intro {
+  padding:15px 15px !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple #modulePathIntro {
+  margin-top:5px !important;
+}
+html[data-educa-platform="web"]
+#modulePathView.web-activity-simple .module-path-progress {
+  margin:12px 3px 15px !important;
+}
