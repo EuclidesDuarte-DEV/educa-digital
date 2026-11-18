@@ -93,173 +93,73 @@
   }
   // Variações curtas e educativas; aparecem como mensagens NORMAIS do
   // WhatsApp, não como questionário ou alerta. A IA recebe a fala vista.
-  // Mensagens extras chegam sem quiz, no próprio canal, com dificuldade por nível.
-  const LEVEL_VARIANTS={
-    family:{
-      1:['Você viu meu pedido de Pix fictício? Pode responder por aqui, sem compartilhar dados reais.'],
-      2:['Estou usando um celular emprestado, por isso esse número é diferente. Preciso resolver uma despesa fictícia de hoje.',
-         'Meu aparelho antigo parou de funcionar. A conta fictícia está vencendo e estou falando por este número novo.'],
-      3:['Se preferir, posso aparecer em vídeo, mas estou sem acesso ao meu número antigo. A conta de treino está no nome de outra pessoa.',
-         'Sei que parece estranho. Estou usando um número novo e a conta fictícia do Pix é de um conhecido. É importante verificar antes de enviar.']
-    },
-    relative:{
-      1:['Oi, você recebeu minha mensagem deste número novo?'],
-      2:['Tive que trocar de telefone e ainda não consegui recuperar meu número antigo. Você me reconhece?',
-         'Estou numa correria com uma despesa de treino e mandei mensagem por este número novo.'],
-      3:['Tenho o seu contato do grupo da família. Eu consigo mandar uma foto, mas não consigo atender pelo meu antigo número.',
-         'A conta fictícia para o Pix está no nome de outra pessoa, porque o meu acesso está bloqueado. Você consegue confirmar que sou eu?']
-    },
-    account:{
-      1:['Você viu o aviso fictício sobre a conta?'],
-      2:['O aviso de segurança diz que sua conta pode ficar indisponível. Você conferiu diretamente no aplicativo?',
-         'Este alerta apareceu com urgência no nosso sistema simulado. Não use dados verdadeiros para responder.'],
-      3:['O aviso apareceu no SMS e no WhatsApp quase ao mesmo tempo. Mesmo assim, verifique pelo aplicativo oficial.',
-         'O número exibido pode parecer o atendimento do banco. Isso por si só não comprova a identidade do contato.']
-    },
-    delivery:{
-      1:['A entrega simulada ainda está pendente. Você recebeu o aviso?'],
-      2:['A entrega fictícia teria uma taxa inesperada. Você consegue conferir o pedido no aplicativo oficial?',
-         'Apareceu uma pendência no envio simulado, mas só o serviço oficial pode confirmar.'],
-      3:['O rastreamento parece legítimo, mas a cobrança de treino veio por uma mensagem diferente. Vale conferir a origem.',
-         'Recebi um comprovante de entrega fictício, mas o Pix está em nome diferente da empresa. Isso merece verificação.']
-    },
-    code:{
-      1:['Recebeu aquele código de treino?'],
-      2:['O sistema simulado diz que o código de acesso vai vencer em alguns minutos.'],
-      3:['O alerta fictício chegou por dois canais diferentes. Você consegue confirmar no aplicativo oficial?']
-    },
-    bank:{
-      1:['Sou da central fictícia. Você conseguiu conferir o aviso?'],
-      2:['O alerta de segurança apareceu hoje, mas o aplicativo oficial pode mostrar informações diferentes.'],
-      3:['O aviso simulado também apareceu em uma mensagem parecida com a do banco. Você confia nesse contato?']
-    },
-    video:{
-      1:['Oi, ainda estou aqui na videochamada de treino. Você ouviu meu pedido?'],
-      2:['Estou em outro telefone e preciso resolver a despesa fictícia. Você reconhece minha voz?'],
-      3:['Mesmo com esta videochamada, estou num número novo e a conta Pix fictícia é de outra pessoa. Você tem certeza de quem sou?']
-    },
-    'call-tech':{
-      1:['Você ouviu o aviso fictício sobre o celular?'],
-      2:['A suposta central de suporte precisa que você aja rápido. Você verificou quem ligou?'],
-      3:['O identificador de chamada parece oficial, mas também poderia ser falsificado. Você conferiu a origem por outro meio?']
-    },
-    'sms-delivery':{
-      1:['SMS DE TREINO: Sua entrega simulada ainda está aguardando confirmação.'],
-      2:['SMS DE TREINO: o rastreio fictício mostra uma taxa inesperada.'],
-      3:['SMS DE TREINO: o código de rastreio parece conhecido, mas o destinatário da cobrança é diferente.']
-    },
-    'sms-bank':{
-      1:['SMS DE TREINO: Confira seu banco pelo aplicativo oficial.'],
-      2:['SMS DE TREINO: uma movimentação de teste foi sinalizada como suspeita.'],
-      3:['SMS DE TREINO: aviso parecido com o do banco, enviado por número diferente.']
-    },
-    'sms-prize':{
-      1:['SMS DE TREINO: Você recebeu uma mensagem sobre um prêmio fictício.'],
-      2:['SMS DE TREINO: a promoção simulada anuncia prazo curto para resgate.'],
-      3:['SMS DE TREINO: a oferta parece oficial, mas exige uma taxa antecipada fictícia.']
-    },
-    prize:{
-      1:['Você viu a oferta fictícia que mandei?'],
-      2:['A promoção simulada diz que o prazo está quase acabando.'],
-      3:['A mensagem parece vir de uma marca conhecida, mas a taxa de treino usa outro destinatário.']
-    }
-  };
-  let scene=null,sceneTimer=null;
-  function resetScene(){
-    if(sceneTimer!==null)clearTimeout(sceneTimer);
-    sceneTimer=null;
-    scene=null;
+  /* V111.85 — IMERSÃO WEB: a conversa pertence à IA, não a um roteiro
+   * que injeta frases a cada 15 s. Avisos pedagógicos continuam nos
+   * elementos de orientação da interface, fora dos balões do personagem.
+   * Nunca reescrever mensagens enviadas pelo participante.
+   */
+  function naturalize(value){
+    const original=String(value||'');
+    let text=original
+      .replace(/^\s*SMS\s+(?:SIMULADO|DE\s+TREINO)\s*:\s*/iu,'')
+      .replace(/\b(?:Pix|transferência)\s+(?:de\s+)?(?:treino|treinamento|fict[ií]ci[oa]|simulad[oa])\b/giu,m=>m.split(/\s+/)[0])
+      .replace(/\b(conta|taxa|pedido|despesa|pagamento|prêmio|empréstimo|código|valor|entrega|aviso|movimentação|promoção|rastreio|central)\s+(?:de\s+)?(?:treino|treinamento|fict[ií]ci[oa]|simulad[oa])\b/giu,'$1')
+      .replace(/\b(?:nesta|nessa)\s+simulação\s*[,;:—-]?\s*/giu,'')
+      .replace(/\b(?:de\s+treinamento|de\s+treino|fict[ií]ci[oa]|simulad[oa])\b/giu,'')
+      .replace(/\s+([.,;:!?])/g,'$1')
+      .replace(/\s{2,}/g,' ')
+      .trim();
+    // Remova instruções metalinguísticas que são próprias da interface.
+    text=text.replace(/(?:^|[.!?]\s+)(?:tudo aqui é|isto é|isso é|este é|esta é)\s+(?:apenas\s+)?(?:um\s+)?(?:treino|simulação|exercício|ambiente de treinamento)[.!?]?/giu,' ');
+    text=text.replace(/(?:^|[.!?]\s+)(?:não compartilhe dados reais|nenhum pix real será enviado|nenhum dinheiro real será enviado|nenhum pix ou pagamento real será feito)[.!?]?/giu,' ');
+    text=text.replace(/\s+([.,;:!?])/g,'$1').replace(/\s{2,}/g,' ').trim();
+    return text.length>=5?text:original;
   }
-  function sendVisibleLine(target){
-    if(scene!==target||!phone.classList.contains('free-active')||
-       phone.dataset.currentView!==target.view)return;
-    if(document.hidden||Date.now()-(target.lastReplyAt||0)<9000){
-      sceneTimer=setTimeout(()=>sendVisibleLine(target),5500);
-      return;
-    }
-    // A chamada deve estar atendida antes de uma segunda fala.
-    if(target.view==='free-video'&&target.level===1)return; // Novato: uma fala por vez.
-    if(target.view==='free-video'&&(
-       window.speechSynthesis?.speaking||
-       !document.getElementById('freeVideoVoiceProgress')?.hidden||
-       document.getElementById('freeVideoSend')?.disabled)){
-      sceneTimer=setTimeout(()=>sendVisibleLine(target),5000);return;
-    }
-    if(target.view==='free-video'&&!window.EducaVideoCall?.isConnected?.()){
-      sceneTimer=setTimeout(()=>sendVisibleLine(target),4500);return;
-    }
-    if(target.view==='free-call'&&!document.getElementById('freeCallAnswer')?.hidden){
-      sceneTimer=setTimeout(()=>sendVisibleLine(target),4500);return;
-    }
-    const phrases=LEVEL_VARIANTS[target.scenario]?.[target.level]||[];
-    if(!phrases.length)return;
-    const content=phrases[Math.floor(Math.random()*phrases.length)];
-    if(target.view==='chat'){
-      const wallpaper=document.getElementById('chatWallpaper');
-      if(!wallpaper)return;
-      const bubble=document.createElement('div');
-      bubble.className='message incoming ed-web-level-scene';
-      bubble.textContent=content;
-      bubble.setAttribute('data-educa-training-scene','');
-      wallpaper.appendChild(bubble);
-      wallpaper.scrollTop=wallpaper.scrollHeight;
-    }else if(target.view==='free-sms'){
-      const messages=document.getElementById('freeSmsMessages');
-      if(!messages)return;
-      const bubble=document.createElement('p');
-      bubble.className='v11153-sms-bubble received ed-web-level-scene';
-      const body=document.createElement('span');body.textContent=content;
-      const stamp=document.createElement('small');stamp.textContent='Agora · treino';
-      bubble.append(body,stamp);messages.appendChild(bubble);
-      messages.scrollTop=messages.scrollHeight;
-    }else if(target.view==='free-call'){
-      const log=document.getElementById('freeCallTranscript');
-      if(!log)return;
-      const row=document.createElement('p');
-      const strong=document.createElement('strong');strong.textContent='Contato fictício: ';
-      row.append(strong,document.createTextNode(content));log.appendChild(row);
-      log.scrollTop=log.scrollHeight;
-      if(window.SpeechSynthesisUtterance&&window.speechSynthesis&&!window.speechSynthesis.speaking){
-        try{
-          const utterance=new window.SpeechSynthesisUtterance(content);
-          utterance.lang='pt-BR';utterance.rate=1.02;
-          window.speechSynthesis.speak(utterance);
-        }catch(_){}
+  function cleanMessageNode(node){
+    if(!node)return;
+    if(node.classList?.contains('message')&&node.classList?.contains('incoming')){
+      for(const child of node.childNodes||[]){
+        if(child.nodeType===3){const revised=naturalize(child.textContent);if(revised!==child.textContent)child.textContent=revised;}
       }
-    }else if(target.view==='free-video'){
-      // A LIA mantém sua própria voz, avatar e sincronismo.
-      // Usar a mesma API de respostas do vídeo evita uma legenda sem áudio.
-      if(!window.EducaVideoCall?.reply)return;
-      window.EducaVideoCall.reply(content);
-    }else return;
-    target.count++;
-    target.pending.push(content);
-    if(target.pending.length>2)target.pending.shift();
-    // Uma ou duas insistências espaçadas, sem mensagens infinitas por conversa.
-    if(target.count<(target.level===1?1:2))
-      sceneTimer=setTimeout(()=>sendVisibleLine(target),21000+Math.random()*7000);
-  }
-  function updateScene(){
-    const view=phone.dataset.currentView;
-    const scenario=window.EducaFreeMode?.videoState?.();
-    if(!phone.classList.contains('free-active')||
-       !['chat','free-sms','free-call','free-video'].includes(view)||
-       !SCAMS.has(scenario)){
-      resetScene();return;
+    }else{
+      const revised=naturalize(node.textContent);
+      if(revised!==node.textContent)node.textContent=revised;
     }
-    if(scene?.scenario===scenario&&scene.view===view)return;
-    resetScene();
-    const level=window.EducaWebGamification?.getSnapshot?.().level||1;
-    if(!LEVEL_VARIANTS[scenario]?.[level])return;
-    scene={scenario,view,level,count:0,pending:[],lastReplyAt:0};
-    sceneTimer=setTimeout(()=>sendVisibleLine(scene),
-      view==='free-video'?25000:level===1?14500:11000+Math.random()*4000);
+  }
+  function refreshConversations(){
+    if(!phone.classList.contains('free-active'))return;
+    const selectors=[
+      '#chatWallpaper .message.incoming',
+      '#freeSmsMessages .v11153-sms-bubble.received span',
+      '#freeCallTranscript p'
+    ];
+    for(const selector of selectors){
+      for(const item of document.querySelectorAll?.(selector)||[]){
+        if(selector.includes('#freeCallTranscript')){
+          for(const node of item.childNodes||[]){
+            if(node.nodeType===3){const clean=naturalize(node.textContent);if(clean!==node.textContent)node.textContent=clean;}
+          }
+        }else cleanMessageNode(item);
+      }
+    }
+    const notice=document.getElementById('freeEventText');
+    if(notice&&!notice.hidden)cleanMessageNode(notice);
+  }
+  if(typeof MutationObserver==='function'){
+    // Observa apenas os contêineres de conversa, não a tela inteira.
+    for(const id of ['chatWallpaper','freeSmsMessages','freeCallTranscript','freeEventText']){
+      const node=document.getElementById(id);
+      if(node)new MutationObserver(refreshConversations)
+        .observe(node,{childList:true,subtree:true,characterData:true});
+    }
   }
   if(typeof MutationObserver==='function')
-    new MutationObserver(updateScene).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
+    new MutationObserver(refreshConversations)
+      .observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
+  refreshConversations();
   const originalFetch=window.fetch.bind(window);
   const nextMicrotask=fn=>typeof queueMicrotask==='function'?queueMicrotask(fn):Promise.resolve().then(fn);
-  window.fetch=function(input,options){
+  window.fetch=async function(input,options){
     const url=typeof input==='string'?input:input?.url||'';
     if(!/\/api\/modo-livre\/conversar(?:\?|$)/.test(url)||
        !phone.classList.contains('free-active')||
@@ -271,15 +171,26 @@
     if(scenario!==window.EducaFreeMode.videoState?.())return originalFetch(input,options);
     const verdict=classify(payload?.message,scenario,payload?.history);
     if(verdict==='continue'){
-      if(scene&&scene.scenario===scenario)scene.lastReplyAt=Date.now();
-      if(scene?.pending?.length&&scene.scenario===scenario&&
-         Array.isArray(payload.history)&&payload.history.length<12){
-        // A IA recebe somente mensagens que a pessoa VIU/OUVIU.
-        const context=scene.pending.splice(0,Math.max(0,12-payload.history.length))
-          .map(content=>({role:'assistant',content}));
-        return originalFetch(input,{...options,body:JSON.stringify({...payload,history:[...payload.history,...context]})});
-      }
-      return originalFetch(input,options);
+      // O mesmo histórico da pessoa segue para a IA, mas sem termos de
+      // bastidores nos textos do personagem. Isso evita ecoar "fictício".
+      const history=Array.isArray(payload.history)
+        ?payload.history.map(item=>item?.role==='assistant'
+            ?{role:'assistant',content:naturalize(item.content)}
+            :item)
+        :[];
+      const revised={...payload,history};
+      const response=await originalFetch(input,{...options,body:JSON.stringify(revised)});
+      if(!response?.ok||typeof response.clone!=='function')return response;
+      let data;
+      try{data=await response.clone().json();}catch(_){return response;}
+      if(!data?.ok||data.mode!=='ia'||typeof data.reply!=='string')return response;
+      const improved=naturalize(data.reply);
+      if(!improved||improved===data.reply)return response;
+      return new Response(JSON.stringify({...data,reply:improved}),{
+        status:response.status,
+        statusText:response.statusText,
+        headers:response.headers
+      });
     }
     // O Modo Livre já desenhou a mensagem da pessoa antes deste fetch.
     // Finalizamos usando as mesmas ações existentes, sem duplicar o resultado.
@@ -308,5 +219,5 @@
       status:200,headers:{'Content-Type':'application/json'}
     }));
   };
-  window.EducaWebDialogue=Object.freeze({version:'11183',classify});
+  window.EducaWebDialogue=Object.freeze({version:'11185',classify,naturalize});
 })();
