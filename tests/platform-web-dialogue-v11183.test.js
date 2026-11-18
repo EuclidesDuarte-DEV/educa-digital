@@ -150,6 +150,8 @@ test('[web] V111.84 — aceitar indiretamente o Pix conta como decisão arriscad
   for(const phrase of ['Sim','Pode deixar','Beleza','Tá bom','Fechado'])
     assert.equal(classify(phrase,'family',history),'unsafe',phrase);
   assert.equal(classify('Beleza','family'),'continue','sem histórico não presume Pix');
+  assert.equal(classify('Vou te ajudar','family',history),'unsafe','ajuda após pedido explícito de dinheiro');
+  assert.equal(classify('Vou ajudar a conferir no banco','family',history),'continue','verificação não é aceite de Pix');
   assert.equal(classify('Claro','code',[{role:'assistant',content:'Posso enviar uma explicação?'}]),'continue');
 });
 
