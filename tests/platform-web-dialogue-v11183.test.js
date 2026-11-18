@@ -112,7 +112,7 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11184/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11185/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });
@@ -125,12 +125,12 @@ test('[web] V111.83 — feedback contextual não confunde código de SMS com Pix
   assert.match(v.nodes.freeSummaryDetail.textContent,/SMS parecido com mensagem bancária/);
   assert.doesNotMatch(v.nodes.freeSummaryDetail.textContent,/destinatário mostrado/);
 });
-test('[web] V111.83 — nível muda contexto de conversas sem criar questionários',()=>{
-  assert.match(dialogue,/LEVEL_VARIANTS/);
-  assert.match(dialogue,/Math\.floor\(Math\.random\(\)\*phrases\.length\)/);
-  assert.match(dialogue,/ed-web-level-scene/);
-  assert.match(dialogue,/context=scene\.pending\.splice/);
-  assert.doesNotMatch(dialogue,/launchChallenge|ed-modo-option|ed-modo-question/);
+test('[web] V111.85 — conversa pertence à IA, sem mensagens inseridas por roteiro',()=>{
+  assert.doesNotMatch(dialogue,/LEVEL_VARIANTS|ed-web-level-scene|sceneTimer|launchChallenge|ed-modo-option/);
+  assert.doesNotMatch(dialogue,/Você viu meu pedido de Pix fictício/);
+  assert.match(dialogue,/naturalize\(data\.reply\)/);
+  assert.match(dialogue,/payload\.history\.map/);
+  assert.match(dialogue,/function refreshConversations\(/);
 });
 
 
@@ -187,15 +187,45 @@ test('[web] V111.84 — não desconta pontos por dúvida, citação ou hipótese
   ])assert.equal(classify(phrase,'family'),'continue',phrase);
 });
 
-test('[web] V111.84 — mensagens progressivas chegam sem novo questionário',()=>{
-  assert.match(dialogue,/const LEVEL_VARIANTS=/);
-  for(const key of ['family','video','bank','relative','delivery','code','sms-delivery','sms-bank','sms-prize','call-tech'])
-    assert.ok(dialogue.includes(key+':')||dialogue.includes("'"+key+"':"),'cenário '+key);
+test('[web] V111.85 — respostas em WhatsApp, SMS e ligação sem exposição do treinamento',()=>{
+  const clean=setup().window.EducaWebDialogue.naturalize;
+  for(const [original,expected] of [
+    ['Você viu meu pedido de Pix fictício?', 'Você viu meu pedido de Pix?'],
+    ['Pode responder por aqui, por um Pix de treino?', 'Pode responder por aqui, por um Pix?'],
+    ['Sua conta de treinamento tem uma movimentação simulada.', 'Sua conta tem uma movimentação.'],
+    ['SMS DE TREINO: O rastreio fictício está pendente.', 'O rastreio está pendente.'],
+    ['A taxa fictícia é de R$ 12.', 'A taxa é de R$ 12.']
+  ]) assert.equal(clean(original),expected,original);
   assert.match(dialogue,/freeSmsMessages/);
   assert.match(dialogue,/freeCallTranscript/);
-  assert.match(dialogue,/EducaVideoCall\.reply/);
-  assert.match(dialogue,/sceneTimer=setTimeout/);
-  assert.match(dialogue,/target\.pending\.push\(content\)/);
-  assert.match(dialogue,/context=scene\.pending\.splice/);
   assert.doesNotMatch(dialogue,/QUIZZES|ed-modo-question|launchChallenge/);
+});
+
+
+test('[web] V111.85 — o histórico do personagem é limpo antes de consultar a IA',async()=>{
+  const v=setup();
+  const requestHistory=[
+    {role:'assistant',content:'Preciso de um Pix fictício de R$ 350.'},
+    {role:'user',content:'Sério isso?'}
+  ];
+  await v.window.fetch('/api/modo-livre/conversar',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({scenario:'family',message:'Me conta melhor.',history:requestHistory})
+  });
+  assert.equal(v.state.fetchCalls.length,1);
+  const sent=JSON.parse(v.state.fetchCalls[0][1].body);
+  assert.equal(sent.history[0].content,'Preciso de um Pix de R$ 350.');
+  assert.equal(sent.history[1].content,'Sério isso?');
+});
+
+test('[web] V111.85 — a resposta real da IA é naturalizada, não inventada',async()=>{
+  const v=setup();
+  v.window.EducaFreeMode.videoState();
+  // O provedor simulado fornece uma resposta genérica; o proxy não cria novas falas.
+  const response=await v.send('E por que precisa do dinheiro?');
+  assert.equal(response.status,200);
+  const json=await response.json();
+  assert.equal(json.reply,'Continue a conversa.');
+  assert.equal(v.state.fetchCalls.length,1);
+  assert.equal(v.state.clicks.length,0);
 });
