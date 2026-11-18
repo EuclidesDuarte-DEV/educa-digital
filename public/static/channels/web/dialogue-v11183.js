@@ -81,7 +81,11 @@
     const requestedRisk=/\b(?:pix|dinheiro|emprestimo|empresta|emprestar|transferencia|transferir|pagamento|pagar|codigo|senha|chave)\b/.test(recent);
     const consent=/^(?:sim|certo|beleza|ta\s+bom|tudo\s+bem|pode\s+ser|combinado|fechado|ok|claro|vou\s+fazer|pode\s+deixar)(?:\s+(?:pode\s+deixar|eu\s+faco|eu\s+mando|eu\s+pago|vou\s+ajudar|agora|sim|ok))?$/;
     const implicit=requestedRisk&&consent.test(withoutRefusals);
-    const risky=direct||askingKey||committing||implicit;
+    // Frases de concordância que dependem do pedido imediatamente anterior.
+    const helping=requestedRisk&&wantsMoney&&
+      /\b(?:vou|irei|quero|posso|eu\s+vou)\s+(?:(?:te|lhe)\s+)?(?:ajudar|resolver\s+isso|cuidar\s+disso|fazer\s+isso)\b/.test(withoutRefusals)&&
+      !/\b(?:conferir|confirmar|verificar|identificar|denunciar|bloquear|consultar|investigar)\b/.test(withoutRefusals);
+    const risky=direct||askingKey||committing||implicit||helping;
     if(safe&&risky)return 'continue'; // Mensagem contraditória: evite pontuação automática.
     if(safe)return 'safe';
     if(risky)return 'unsafe';
