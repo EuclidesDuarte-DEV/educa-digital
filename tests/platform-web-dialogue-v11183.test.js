@@ -6,7 +6,7 @@ import vm from 'node:vm';
 const dialogue=readFileSync('public/static/channels/web/dialogue-v11183.js','utf8');
 const loader=readFileSync('public/static/channels/web/overrides.js','utf8');
 
-function setup(platform='web'){
+function setup(platform='web', aiReply='Continue a conversa.'){
   const state={active:true,view:'chat',scenario:'family',clicks:[],fetchCalls:[]};
   const nodes={
     freeCallVerify:{click(){state.clicks.push('safe');state.view='free-summary';}},
@@ -26,7 +26,7 @@ function setup(platform='web'){
     EducaFreeMode:{videoState:()=>state.scenario},
     fetch:async(input,opts)=>{
       state.fetchCalls.push([input,opts]);
-      return new Response(JSON.stringify({ok:true,mode:'ia',reply:'Continue a conversa.'}),{status:200});
+      return new Response(JSON.stringify({ok:true,mode:'ia',reply:aiReply}),{status:200});
     }
   };
   vm.runInNewContext(dialogue,{document,window,Response,Promise,queueMicrotask,JSON,Set,String,Math}, {timeout:2000});
@@ -112,7 +112,7 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11184/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11185/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });
@@ -125,12 +125,12 @@ test('[web] V111.83 — feedback contextual não confunde código de SMS com Pix
   assert.match(v.nodes.freeSummaryDetail.textContent,/SMS parecido com mensagem bancária/);
   assert.doesNotMatch(v.nodes.freeSummaryDetail.textContent,/destinatário mostrado/);
 });
-test('[web] V111.83 — nível muda contexto de conversas sem criar questionários',()=>{
-  assert.match(dialogue,/LEVEL_VARIANTS/);
-  assert.match(dialogue,/Math\.floor\(Math\.random\(\)\*phrases\.length\)/);
-  assert.match(dialogue,/ed-web-level-scene/);
-  assert.match(dialogue,/context=scene\.pending\.splice/);
-  assert.doesNotMatch(dialogue,/launchChallenge|ed-modo-option|ed-modo-question/);
+test('[web] V111.85 — conversa pertence à IA, sem mensagens inseridas por roteiro',()=>{
+  assert.doesNotMatch(dialogue,/LEVEL_VARIANTS|ed-web-level-scene|sceneTimer|launchChallenge|ed-modo-option/);
+  assert.doesNotMatch(dialogue,/Você viu meu pedido de Pix fictício/);
+  assert.match(dialogue,/naturalize\(data\.reply\)/);
+  assert.match(dialogue,/payload\.history\.map/);
+  assert.match(dialogue,/function refreshConversations\(/);
 });
 
 
@@ -187,15 +187,69 @@ test('[web] V111.84 — não desconta pontos por dúvida, citação ou hipótese
   ])assert.equal(classify(phrase,'family'),'continue',phrase);
 });
 
-test('[web] V111.84 — mensagens progressivas chegam sem novo questionário',()=>{
-  assert.match(dialogue,/const LEVEL_VARIANTS=/);
-  for(const key of ['family','video','bank','relative','delivery','code','sms-delivery','sms-bank','sms-prize','call-tech'])
-    assert.ok(dialogue.includes(key+':')||dialogue.includes("'"+key+"':"),'cenário '+key);
-  assert.match(dialogue,/freeSmsMessages/);
+test('[web] V111.85 — respostas em WhatsApp, SMS e ligação sem exposição do treinamento',()=>{
+  const clean=setup().window.EducaWebDialogue.naturalize;
+  for(const [original,expected] of [
+    ['Você viu meu pedido de Pix fictício?', 'Você viu meu pedido de Pix?'],
+    ['Pode responder por aqui, por um Pix de treino?', 'Pode responder por aqui, por um Pix?'],
+    ['Sua conta de treinamento tem uma movimentação simulada.', 'Sua conta tem uma movimentação.'],
+    ['SMS DE TREINO: O rastreio fictício está pendente.', 'O rastreio está pendente.'],
+    ['A taxa fictícia é de R$ 12.', 'A taxa é de R$ 12.']
+  ]) assert.equal(clean(original),expected,original);
+  assert.match(dialogue,/O SMS inicial conserva o marcador explícito/);
   assert.match(dialogue,/freeCallTranscript/);
-  assert.match(dialogue,/EducaVideoCall\.reply/);
-  assert.match(dialogue,/sceneTimer=setTimeout/);
-  assert.match(dialogue,/target\.pending\.push\(content\)/);
-  assert.match(dialogue,/context=scene\.pending\.splice/);
   assert.doesNotMatch(dialogue,/QUIZZES|ed-modo-question|launchChallenge/);
+});
+
+
+test('[web] V111.85 — o histórico do personagem é limpo antes de consultar a IA',async()=>{
+  const v=setup();
+  const requestHistory=[
+    {role:'assistant',content:'Preciso de um Pix fictício de R$ 350.'},
+    {role:'user',content:'Sério isso?'}
+  ];
+  await v.window.fetch('/api/modo-livre/conversar',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({scenario:'family',message:'Me conta melhor.',history:requestHistory})
+  });
+  assert.equal(v.state.fetchCalls.length,1);
+  const sent=JSON.parse(v.state.fetchCalls[0][1].body);
+  assert.equal(sent.history[0].content,'Preciso de um Pix de R$ 350.');
+  assert.equal(sent.history[1].content,'Sério isso?');
+});
+
+test('[web] V111.85 — a resposta real da IA é naturalizada, não inventada',async()=>{
+  const v=setup();
+  v.window.EducaFreeMode.videoState();
+  // O provedor simulado fornece uma resposta genérica; o proxy não cria novas falas.
+  const response=await v.send('E por que precisa do dinheiro?');
+  assert.equal(response.status,200);
+  const json=await response.json();
+  assert.equal(json.reply,'Continue a conversa.');
+  assert.equal(v.state.fetchCalls.length,1);
+  assert.equal(v.state.clicks.length,0);
+});
+
+
+test('[web] V111.85 — WhatsApp, SMS, ligação e LIA recebem a resposta real sem termos didáticos',async()=>{
+  for(const channel of ['family','sms-delivery','bank','video']){
+    const v=setup('web','Olha, me ajuda com um Pix de treino? Preciso pagar uma conta fictícia.');
+    const result=await v.send('Por quê?',channel);
+    const data=await result.json();
+    assert.equal(data.mode,'ia');
+    assert.equal(data.reply,'Olha, me ajuda com um Pix? Preciso pagar uma conta.');
+    assert.equal(v.state.fetchCalls.length,1,'uma única chamada ao motor real para '+channel);
+    assert.equal(v.state.clicks.length,0);
+  }
+});
+
+test('[web] V111.85 — a limpeza só altera falas do personagem, não decisões ou alertas da interface',()=>{
+  const v=setup();
+  const clean=v.window.EducaWebDialogue.naturalize;
+  const warning='Não informe dados, códigos, senhas ou links reais.';
+  assert.equal(clean(warning),warning);
+  assert.equal(v.window.EducaWebDialogue.classify('Vou mandar o Pix agora.','family'),'unsafe');
+  assert.equal(v.window.EducaWebDialogue.classify('Não vou enviar o dinheiro.','family'),'safe');
+  assert.equal(v.window.EducaWebDialogue.classify('Sério isso?','family'),'continue');
+  assert.doesNotMatch(dialogue,/setTimeout\s*\(\(\)=>sendVisibleLine|ed-web-level-scene|Pix fictício\? Pode responder/);
 });

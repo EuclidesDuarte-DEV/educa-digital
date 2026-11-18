@@ -155,7 +155,7 @@ test('[web] V111.83 — sem quiz ou pop-up de desafio; pontos somente após resu
 test('[web] dificuldade permanece isolada no canal Web; sem editar núcleo, Android/iOS ou D1',async()=>{
   assert.match(game,/educaPlatform !== 'web'/);
   assert.match(loader,/gamification-v11182\.js\?v=11183/);
-  assert.match(loader,/dialogue-v11183\.js\?v=11184/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11185/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
   const {validate}=await import('../scripts/validar-escopo-plataformas.mjs');
