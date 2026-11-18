@@ -1635,7 +1635,7 @@ html[data-educa-platform="web"] #learningView .ed-modo-level-badge svg {
 html[data-educa-platform="web"] #learningView .ed-modo-level-badge:focus-visible,
 html[data-educa-platform="web"] .ed-modo-close:focus-visible,
 html[data-educa-platform="web"] .ed-modo-option:focus-visible,
-html[data-educa-platform="web"] #edModoChallengeBtn:focus-visible {
+html[data-educa-platform="web"] .ed-modo-start-challenge:focus-visible {
   outline:3px solid #2873D8 !important;
   outline-offset:2px;
 }
@@ -1771,9 +1771,20 @@ html[data-educa-platform="web"] #freeSummaryView .ed-modo-result {
   margin:8px 12px !important;
   text-align:center;
 }
-html[data-educa-platform="web"] #edModoChallengeBtn {
-  min-height:34px;
-  font-size:11px;
+html[data-educa-platform="web"] #phoneScreen .ed-modo-start-challenge {
+  display:block;
+  width:100%;
+  min-height:48px;
+  margin-top:16px;
+  padding:11px 14px;
+  border:0;
+  border-radius:14px;
+  background:#1765C6;
+  color:white;
+  font-size:15px;
+  font-weight:750;
+  line-height:1.35;
+  cursor:pointer;
 }
 html[data-educa-platform="web"].a11y-text-large #learningView .ed-modo-level-badge,
 html[data-educa-platform="web"].a11y-text-extra #learningView .ed-modo-level-badge {
