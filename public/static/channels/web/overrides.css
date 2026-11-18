@@ -1271,16 +1271,18 @@ html[data-educa-platform="web"]
   font-size:0 !important;
   box-shadow:0 0 0 4px #E4F6EC !important;
 }
-/* V111.78 — Check com traço equilibrado e centralização óptica (somente Web).
-   Preserva o estado .is-complete original e não altera progresso ou cliques. */
+/* V111.79 — Posicionamento absoluto do check, igual em Normal, Grande e Muito grande.
+   O numero de lição permanece no DOM, mas não participa do alinhamento do pseudo-elemento. */
 html[data-educa-platform="web"]
 #modulePathView.web-activity-simple .module-lesson-card.is-complete .module-lesson-number::after {
   content:"";
+  position:absolute;
   display:block;
+  inset:0;
   width:22px;
   height:22px;
-  margin:0;
-  place-self:center;
+  margin:auto;
+  transform:none !important;
   pointer-events:none;
   background:#FFF;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5.5 12.5 L9.75 16.5 L18.5 7.75' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
