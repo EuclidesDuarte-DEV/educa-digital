@@ -13,6 +13,20 @@
     'family','bank','video','code','delivery','call-tech','relative',
     'account','prize','sms-delivery','sms-bank','sms-prize'
   ]);
+  const TIPS={
+    family:'Confirme pedidos de familiares usando um número antigo e conhecido.',
+    relative:'Uma pessoa conhecida pode ser imitada: confira por outro contato.',
+    bank:'Bancos não exigem Pix para proteger contas. Use o aplicativo oficial.',
+    video:'Imagem e voz podem ser imitados. Verifique a identidade por um canal independente.',
+    code:'Códigos de confirmação e senhas nunca devem ser enviados a desconhecidos.',
+    'sms-bank':'Mesmo um SMS parecido com mensagem bancária pode ser falso. Abra o aplicativo oficial.',
+    'sms-delivery':'Confira taxas inesperadas diretamente no aplicativo da entrega.',
+    'sms-prize':'Prêmios e cobranças inesperados devem ser verificados em canais oficiais.',
+    account:'Mensagens sobre bloqueio e links devem ser verificadas dentro do serviço oficial.',
+    delivery:'Confirme a entrega e qualquer taxa diretamente no aplicativo oficial.',
+    prize:'Desconfie de promoções inesperadas que pedem pagamento antecipado.',
+    'call-tech':'Não instale aplicativos nem conceda acesso remoto por ligação inesperada.'
+  };
   const asText=s=>String(s||'').toLowerCase().normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'').replace(/[^\p{L}\p{N}\s?]/gu,' ')
     .replace(/\s+/g,' ').trim();
@@ -150,7 +164,8 @@
           :'Nesta simulação, você aceitou uma solicitação arriscada. Nenhum Pix ou envio de dados foi realizado.';
         if(detail)detail.textContent=(verdict==='safe'
           ?'Você identificou sinais de alerta e preferiu se proteger. '
-          :'Pare antes de transferir, clicar ou compartilhar códigos. Confira sempre por outro canal. ')+detail.textContent;
+          :'Pare antes de transferir, clicar ou compartilhar códigos. ')+
+          (TIPS[scenario]||'Confira sempre por um canal independente e confiável.');
       }
     });
     // O encerramento aborta a solicitação local e impede resposta fictícia
