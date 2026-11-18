@@ -112,7 +112,8 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11183/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11184/);
+  assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });
 
@@ -130,4 +131,69 @@ test('[web] V111.83 — nível muda contexto de conversas sem criar questionári
   assert.match(dialogue,/ed-web-level-scene/);
   assert.match(dialogue,/const history=\[\.\.\.payload\.history/);
   assert.doesNotMatch(dialogue,/launchChallenge|ed-modo-option|ed-modo-question/);
+});
+
+
+test('[web] V111.84 — aceitar indiretamente o Pix conta como decisão arriscada',()=>{
+  const classify=setup().window.EducaWebDialogue.classify;
+  for(const phrase of [
+    'Pode mandar a chave Pix.',
+    'Manda sua chave.',
+    'Me passa a chave por favor.',
+    'Deixa que eu pago.',
+    'Deixa comigo.',
+    'Pode contar comigo.',
+    'Vou fazer o pagamento.',
+    'Eu te ajudo com dinheiro.'
+  ])assert.equal(classify(phrase,'family'),'unsafe',phrase);
+  const history=[{role:'assistant',content:'Preciso de R$ 350 por Pix. Você pode me emprestar?'}];
+  for(const phrase of ['Sim','Pode deixar','Beleza','Tá bom','Fechado'])
+    assert.equal(classify(phrase,'family',history),'unsafe',phrase);
+  assert.equal(classify('Beleza','family'),'continue','sem histórico não presume Pix');
+  assert.equal(classify('Claro','code',[{role:'assistant',content:'Posso enviar uma explicação?'}]),'continue');
+});
+
+test('[web] V111.84 — reconhecer golpe, recusar ou verificar é acerto',()=>{
+  const classify=setup().window.EducaWebDialogue.classify;
+  for(const phrase of [
+    'Você não é a pessoa que diz ser! Você é um ladrão.',
+    'Você é um golpista, não vou transferir.',
+    'Não mande a chave.',
+    'Não pode mandar a chave.',
+    'Não vou ajudar com dinheiro.',
+    'Não vou passar minha senha.',
+    'Vou confirmar com meu filho no número antigo.',
+    'Não me engana.',
+    'Cai fora.',
+    'Vou denunciar.'
+  ])assert.equal(classify(phrase,'family'),'safe',phrase);
+});
+
+test('[web] V111.84 — não desconta pontos por dúvida, citação ou hipótese',()=>{
+  const classify=setup().window.EducaWebDialogue.classify;
+  for(const phrase of [
+    'Posso mandar Pix?',
+    'E se eu mandar o Pix?',
+    'Não acredito que vou mandar Pix.',
+    'Ela disse que vou mandar Pix.',
+    'Se eu não mandar o Pix, acontece algo?',
+    'Vou mandar dinheiro depois de confirmar.',
+    'Você quer que eu passe a chave?',
+    'Devo mandar o Pix ou desconfiar?',
+    'Talvez eu mande dinheiro.',
+    'O que é uma chave Pix?'
+  ])assert.equal(classify(phrase,'family'),'continue',phrase);
+});
+
+test('[web] V111.84 — mensagens progressivas chegam sem novo questionário',()=>{
+  assert.match(dialogue,/const LEVEL_VARIANTS=/);
+  for(const key of ['family','video','bank','relative','delivery','code','sms-delivery','sms-bank','sms-prize','call-tech'])
+    assert.ok(dialogue.includes(key+':')||dialogue.includes("'"+key+"':"),'cenário '+key);
+  assert.match(dialogue,/freeSmsMessages/);
+  assert.match(dialogue,/freeCallTranscript/);
+  assert.match(dialogue,/EducaVideoCall\.reply/);
+  assert.match(dialogue,/sceneTimer=setTimeout/);
+  assert.match(dialogue,/target\.pending\.push\(content\)/);
+  assert.match(dialogue,/context=scene\.pending\.splice/);
+  assert.doesNotMatch(dialogue,/QUIZZES|ed-modo-question|launchChallenge/);
 });
