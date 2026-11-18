@@ -73,7 +73,8 @@ test('[web] Android e iOS não recebem CSS de vídeos do canal Web', () => {
 test('[web] V111.81 — topo compacto dos videos mantém títulos e botões acessíveis',()=>{
   const ix=css.indexOf('V111.81 — SOMENTE WEB');
   assert.ok(ix>0,'bloco Web V111.81 presente');
-  const block=css.slice(ix);
+  const end=css.indexOf('V111.82 — SOMENTE WEB',ix);
+  const block=css.slice(ix,end<0?undefined:end);
   const prefix='html[data-educa-platform="web"]'+String.fromCharCode(10);
   function getRule(selector){
     const start=block.indexOf(prefix+selector+' {');
@@ -95,7 +96,8 @@ test('[web] V111.81 — topo compacto dos videos mantém títulos e botões aces
 });
 test('[web] V111.81 — pratica guiada libera area util sem cobrir status ou cortar rolagem',()=>{
   const ix=css.indexOf('V111.81 — SOMENTE WEB');
-  const block=css.slice(ix);
+  const end=css.indexOf('V111.82 — SOMENTE WEB',ix);
+  const block=css.slice(ix,end<0?undefined:end);
   assert.ok(block.includes('#phoneScreen #guidedPracticeView .guided-surface'));
   assert.ok(block.includes('padding-top:36px !important'));
   assert.ok(block.includes('padding-bottom:max(30px, env(safe-area-inset-bottom,0px)) !important'));

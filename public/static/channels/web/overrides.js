@@ -407,6 +407,16 @@
       iconScript.defer = true;
       document.head.appendChild(iconScript);
     }
+    // V111.82 — módulo inteiramente Web. O motor livre compartilhado
+    // e os aplicativos Android/iOS permanecem inalterados.
+    if (document.head && typeof document.createElement === 'function' &&
+        !document.getElementById?.('educa-web-gamification-v11182')) {
+      const gameScript = document.createElement('script');
+      gameScript.id = 'educa-web-gamification-v11182';
+      gameScript.src = '/static/channels/web/gamification-v11182.js?v=11182';
+      gameScript.defer = true;
+      document.head.appendChild(gameScript);
+    }
     // Interface pública de diagnóstico; nunca altera preferência da pessoa.
     window.EducaWebChannel = Object.freeze({
       name:'web',

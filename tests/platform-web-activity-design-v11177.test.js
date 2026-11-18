@@ -222,7 +222,8 @@ test('[web] V111.79 — check absoluto fica no centro nos três tamanhos de font
 test('[web] V111.80 — topo compacto sem reduzir a fonte e sem afetar outras plataformas',()=>{
   const idx=css.indexOf('V111.80 — SOMENTE WEB');
   assert.ok(idx>0,'a melhoria Web deve existir');
-  const part=css.slice(idx);
+  const end=css.indexOf('V111.81 — SOMENTE WEB',idx);
+  const part=css.slice(idx,end<0?undefined:end);
   const scoped='html[data-educa-platform="web"]'+String.fromCharCode(10)+'#modulePathView.web-activity-simple ';
   function rule(selector){
     const at=part.indexOf(scoped+selector+' {');
