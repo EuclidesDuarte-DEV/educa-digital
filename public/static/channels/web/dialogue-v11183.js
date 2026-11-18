@@ -56,6 +56,59 @@
     if(risky)return 'unsafe';
     return 'continue';                 // Conversa aberta: a IA responde normalmente.
   }
+  // Variações curtas e educativas; aparecem como mensagens NORMAIS do
+  // WhatsApp, não como questionário ou alerta. A IA recebe a fala vista.
+  const LEVEL_VARIANTS={
+    family:{
+      2:['Estou usando um celular emprestado, por isso esse número é diferente. Preciso resolver uma despesa fictícia de hoje.',
+         'Meu aparelho antigo parou de funcionar. A conta fictícia está vencendo e estou falando por este número novo.'],
+      3:['Se preferir, posso aparecer em vídeo, mas estou sem acesso ao meu número antigo. A conta de treino está no nome de outra pessoa.',
+         'Sei que parece estranho. Estou usando um número novo e a conta fictícia do Pix é de um conhecido. É importante verificar antes de enviar.']
+    },
+    relative:{
+      2:['Tive que trocar de telefone e ainda não consegui recuperar meu número antigo. Você me reconhece?',
+         'Estou numa correria com uma despesa de treino e mandei mensagem por este número novo.'],
+      3:['Tenho o seu contato do grupo da família. Eu consigo mandar uma foto, mas não consigo atender pelo meu antigo número.',
+         'A conta fictícia para o Pix está no nome de outra pessoa, porque o meu acesso está bloqueado. Você consegue confirmar que sou eu?']
+    },
+    account:{
+      2:['O aviso de segurança diz que sua conta pode ficar indisponível. Você conferiu diretamente no aplicativo?',
+         'Este alerta apareceu com urgência no nosso sistema simulado. Não use dados verdadeiros para responder.'],
+      3:['O aviso apareceu no SMS e no WhatsApp quase ao mesmo tempo. Mesmo assim, verifique pelo aplicativo oficial.',
+         'O número exibido pode parecer o atendimento do banco. Isso por si só não comprova a identidade do contato.']
+    },
+    delivery:{
+      2:['A entrega fictícia teria uma taxa inesperada. Você consegue conferir o pedido no aplicativo oficial?',
+         'Apareceu uma pendência no envio simulado, mas só o serviço oficial pode confirmar.'],
+      3:['O rastreamento parece legítimo, mas a cobrança de treino veio por uma mensagem diferente. Vale conferir a origem.',
+         'Recebi um comprovante de entrega fictício, mas o Pix está em nome diferente da empresa. Isso merece verificação.']
+    }
+  };
+  let scene=null;
+  function updateScene(){
+    const current=phone.dataset.currentView;
+    if(!phone.classList.contains('free-active')||current!=='chat'){
+      scene=null;
+      return;
+    }
+    const scenario=window.EducaFreeMode?.videoState?.();
+    if(scene?.scenario===scenario)return;
+    const level=window.EducaWebGamification?.getSnapshot?.().level||1;
+    const variants=LEVEL_VARIANTS[scenario]?.[level];
+    if(!variants?.length)return; // Novato usa só as mensagens simples originais.
+    const wallpaper=document.getElementById('chatWallpaper');
+    if(!wallpaper)return;
+    const content=variants[Math.floor(Math.random()*variants.length)];
+    scene={scenario,content,injected:false};
+    const bubble=document.createElement('div');
+    bubble.className='message incoming ed-web-level-scene';
+    bubble.textContent=content;
+    bubble.setAttribute('data-educa-training-scene','');
+    wallpaper.appendChild(bubble);
+    wallpaper.scrollTop=wallpaper.scrollHeight;
+  }
+  if(typeof MutationObserver==='function')
+    new MutationObserver(updateScene).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
   const originalFetch=window.fetch.bind(window);
   const nextMicrotask=fn=>typeof queueMicrotask==='function'?queueMicrotask(fn):Promise.resolve().then(fn);
   window.fetch=function(input,options){
@@ -69,7 +122,17 @@
     const scenario=payload?.scenario;
     if(scenario!==window.EducaFreeMode.videoState?.())return originalFetch(input,options);
     const verdict=classify(payload?.message,scenario);
-    if(verdict==='continue')return originalFetch(input,options);
+    if(verdict==='continue'){
+      if(scene&&!scene.injected&&scene.scenario===scenario&&
+         Array.isArray(payload.history)&&payload.history.length<12){
+        scene.injected=true;
+        // O texto já está visível para o participante no chat.
+        // É acrescentado ao histórico somente na primeira resposta.
+        const history=[...payload.history,{role:'assistant',content:scene.content}];
+        return originalFetch(input,{...options,body:JSON.stringify({...payload,history})});
+      }
+      return originalFetch(input,options);
+    }
     // O Modo Livre já desenhou a mensagem da pessoa antes deste fetch.
     // Finalizamos usando as mesmas ações existentes, sem duplicar o resultado.
     const action=document.getElementById(verdict==='safe'?'freeCallVerify':'freePixConfirm');
