@@ -10,9 +10,9 @@ try{
  for(const viewport of viewports){
   const page=await browser.newPage({viewport});
   const requests=[];
-  await page.route('**/api/modo-livre/conversar',async route=>{
+  await page.route(/\/api\/modo-livre\/conversar(?:-web)?(?:\?.*)?$/,async route=>{
    const data=route.request().postDataJSON();
-   requests.push(data);
+   requests.push({...data,__route:route.request().url()});
    await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({ok:true,mode:'ia',reply:'É apenas uma mensagem de treinamento. Verifique sempre pelo aplicativo oficial.'})});
   });
   try{
@@ -95,6 +95,7 @@ try{
    await page.waitForFunction(()=>document.querySelectorAll('#freeSmsMessages .v11153-sms-bubble').length===3,{timeout:7000});
    assert.equal(requests.length,1);
    assert.equal(requests[0].scenario,'sms-delivery');
+   assert.match(requests[0].__route,/\/api\/modo-livre\/conversar-web$/, 'SMS Web deve consultar Neural');
    await page.screenshot({path:'artifacts/modo-livre-v11153/sms-'+viewport.width+'.png'});
    await page.locator('#freeSmsBlock').click();
    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'free-summary');
