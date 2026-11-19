@@ -101,6 +101,10 @@ test('V111.91 — abertura Kokoro cacheada é usada antes da voz do navegador',a
 test('V111.91 — cache guarda só frases fictícias da Web, nunca respostas pessoais',()=>{
  const browser=readFileSync('public/static/js/lia-kokoro-browser.js','utf8');
  assert.match(browser,/WEB_INTRO=new Map/);
+ const segment=vm.runInNewContext(readSegment('function speechSegments(text){','const captionToggle=')+';speechSegments;');
+ const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';
+ for(const text of segment(intro))
+   assert.ok(browser.includes("['"+text+"','lia-"),'trecho fixo fora do cache: '+text);
  assert.match(browser,/\['Oi, sou a Lia\.','lia-hello'\]/);
  assert.match(browser,/hasCachedIntro/);
  assert.match(browser,/document\.documentElement\?\.dataset\?\.educaPlatform==='web'/);
