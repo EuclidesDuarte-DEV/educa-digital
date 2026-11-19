@@ -153,6 +153,20 @@ async function handle(request,db,url){
   }
   return fail(404,'Rota Neural não encontrada.');
 }
+// Diagnóstico público sem dados privados ou credenciais. A equipe pode confirmar
+// se a recuperação de conhecimento revisado está pronta no ambiente publicado.
+export async function neuralReadiness(env){
+  const base={schema_ready:false,published_count:0,ai_enabled:typeof env?.AI?.run==='function',rag_active:false,platform:'web'};
+  if(!env?.DB)return {...base,reason:'DB_MISSING'};
+  try{
+    if(!await schema(env.DB))return {...base,reason:'SCHEMA_REQUIRED'};
+    const result=await sql(env.DB,"SELECT COUNT(*) AS total FROM lia_kb_nodes WHERE status='published' AND visibility='public' AND category<>'memoria'").first();
+    const published_count=Math.max(0,Number(result?.total||0));
+    return {...base,schema_ready:true,published_count,
+      rag_active:published_count>0&&base.ai_enabled,
+      reason:!published_count?'REVIEW_REQUIRED':!base.ai_enabled?'AI_UNAVAILABLE':'READY'};
+  }catch(_){return {...base,reason:'DB_UNAVAILABLE'};}
+}
 /* Busca só documentos deliberadamente publicados pelo administrador.
  * Memórias pessoais e rascunhos não entram em prompts públicos. */
 // V111.88 — vocabulário por situação, inclusive quando a primeira fala

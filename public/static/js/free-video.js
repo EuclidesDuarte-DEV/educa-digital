@@ -56,7 +56,10 @@ function speechSegments(text){
  const flush=()=>{if(buffer){out.push(buffer);buffer='';}};
  // O início deve ser curto; depois usamos frases inteiras para reduzir inferências.
  for(const part of parts){
-  const limit=out.length===0?95:105; // mais prosódia natural na primeira frase, sem esperar pela fala inteira
+  // Web com Kokoro aquecido: primeira frase curta = menos amostras até o 1º som.
+  // Nas plataformas nativas preservamos exatamente a segmentação anterior.
+  const web=typeof document!=='undefined'&&document.documentElement?.dataset?.educaPlatform==='web';
+  const limit=out.length===0?(web?66:95):105;
   if(buffer&&buffer.length+part.length+1<=limit){buffer+=' '+part;continue;}
   flush();
   let rest=part;
@@ -635,7 +638,14 @@ function speak(text){
  const serial=session.serial,whole=String(text||'').trim().slice(0,450);
  if(!whole)return;
  session.lastSpoken=whole;
- const chunks=speechSegments(whole);
+ const web=document.documentElement?.dataset?.educaPlatform==='web';
+ const browser=window.EducaLiaBrowserKokoro;
+ // Se a fala neural ainda não aqueceu, a voz feminina do navegador pode
+ // pronunciar a resposta inteira com prosódia contínua (sem cortes robóticos).
+ // A abertura fixa continua dividida para aproveitar o WAV pf_dora cacheado.
+ const continuousFemale=web&&!session.renderReady&&!browser?.isReady?.()&&
+  Boolean(window.EducaLiaVoice?.choose?.())&&!whole.startsWith('Oi, sou a Lia.');
+ const chunks=continuousFemale?[whole]:speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
  // A mensagem educativa chega ao leitor no mesmo instante. A síntese
  // de voz é independente e pode demorar caso não exista voz feminina local.
