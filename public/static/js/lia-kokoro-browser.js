@@ -5,11 +5,23 @@
  const PREF_KEY='educa-lia-kokoro-device-v11132';
  const INTRO_CACHE='lia-pf-dora-intro-v11132'; // Somente falas fixas; nunca cachear o que o aluno diz.
  const FIXED_INTRO=new Map([['Oi! Sou a Lia.','hello'],['Estou em outro celular.','phone']]);
+ // V111.91: apenas falas FIXAS do exercício Web são salvas. Nenhum áudio
+ // de conversas de participantes, dados pessoais ou mensagens livres.
+ const WEB_INTRO=new Map([
+  ['Oi, sou a Lia.','lia-hello'],
+  ['Troquei de celular e estou precisando de um favor.','lia-phone'],
+  ['Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.','lia-favor']
+ ]);
  const memoryAudio=new Map();
  const inFlight=new Map();
  let seq=0,device='wasm',progress='Modelo não carregado',lastError='',detail={},introPending=null;
  try{if(localStorage.getItem(PREF_KEY)==='webgpu')device='webgpu';}catch(_){}
- function introKey(text,style){const id=style==='natural'&&FIXED_INTRO.get(String(text||'').trim());return id?'/static/lia-pf-dora-cache-'+id+'-11132.wav':null;}
+ function introKey(text,style){
+  const phrase=String(text||'').trim();
+  const onlyWeb=typeof document!=='undefined'&&document.documentElement?.dataset?.educaPlatform==='web';
+  const id=style==='natural'&&(FIXED_INTRO.get(phrase)||(onlyWeb&&WEB_INTRO.get(phrase)));
+  return id?'/static/lia-pf-dora-cache-'+id+'-11132.wav':null;
+ }
  async function readIntro(text,style){
   const key=introKey(text,style);if(!key)return null;
   if(memoryAudio.has(key))return memoryAudio.get(key);
@@ -30,6 +42,7 @@
    void caches.open(INTRO_CACHE).then(cache=>cache.put(key,new Response(result.blob,{headers:{'Content-Type':'audio/wav','X-Lia-Cues':JSON.stringify(result.cues)}}))).catch(()=>{});
   }catch(_){}
  }
+ async function hasCachedIntro(text,style='natural'){return Boolean(await readIntro(text,style));}
  function confirmDevice(){try{localStorage.setItem(PREF_KEY,device);}catch(_){}return device;}
 
  const requests=new Map();
@@ -125,7 +138,7 @@
   device=value;lastError='';progress='Modelo não carregado ('+device+')';detail={};
  }
  window.EducaLiaBrowserKokoro=Object.freeze({
-  prepare,synthesize,prewarmIntro,setDevice,confirmDevice,getStatus:()=>progress,getLastError:()=>lastError,
+  prepare,synthesize,prewarmIntro,hasCachedIntro,setDevice,confirmDevice,getStatus:()=>progress,getLastError:()=>lastError,
   isReady:()=>Boolean(ready&&readyResolve===null&&worker&&lastError===''),
   getDiagnostics:()=>({version:'11157',device,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
   voice:'pf_dora',version:'11157'
