@@ -1,5 +1,8 @@
 # V111.93 — Voz feminina mais natural e rápida (somente Web)
 
+> **Controle de escopo:** o PR usa o prefixo `[all]` somente porque adiciona rotas ao Worker compartilhado e altera carregadores compartilhados. A **nova rota premium é chamada exclusivamente pela Web** (`data-educa-platform="web"`), e Android/iOS não mudam seu fluxo de voz. A equipe mantém os testes nativos para detectar regressões.
+
+
 O objetivo é reduzir a espera percebida sem exigir uma GPU no computador dos participantes.
 
 ## Sempre disponível, sem custo adicional de TTS
