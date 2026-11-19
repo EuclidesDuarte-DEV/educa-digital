@@ -30,7 +30,7 @@ if(ui.view){
  }
  if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
-const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1};
+const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqAbort:null};
 const free=()=>window.EducaFreeMode;
 const status=t=>{if(ui.state)ui.state.textContent=t;};
 const voiceProgress=$('freeVideoVoiceProgress');
@@ -322,6 +322,7 @@ function clearMedia(){
 function abortSpeech(){
  session.serial++;session.speechQueue=[];session.prefetched=null;session.fastVoiceSerial=-1;session.voiceChoiceDoneSerial=-1;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
  session.renderAbort?.abort();session.renderAbort=null;
+ session.hqAbort?.abort();session.hqAbort=null;session.hqVoiceChoiceSerial=-1;
  session.utterance?.pause?.();session.utterance=null;window.speechSynthesis?.cancel();clearMedia();
 }
 function setHandsFree(v){session.micEnabled=!!v;ui.mic?.setAttribute('aria-pressed',String(!!v));if(ui.mic){ui.mic.setAttribute('aria-label',v?'Desativar microfone':'Ativar microfone para conversar');ui.mic.title=v?'Desativar microfone':'Ativar microfone para conversar';}const tag=ui.mic?.querySelector('.v110-mic-label');if(tag)tag.textContent=v?'Desativar':'Conversar';if(!v){clearTimeout(session.listenTimer);session.listenTimer=null;stopRecognition();}}
@@ -565,8 +566,77 @@ async function tryNeural(text,serial){
   status('Voz Kokoro demorou ou ficou indisponível. Tentando voz feminina do navegador.');return false;
  }finally{clearTimeout(synthesisTimer);if(session.renderAbort===controller)session.renderAbort=null;}
 }
+// A opção expressiva da Web só é usada quando habilitada na Cloudflare.
+// Sem consentimento de custo, /status informa disabled e nenhuma síntese é solicitada.
+async function inspectWebHQVoice(){
+ if(document.documentElement?.dataset?.educaPlatform!=='web')return;
+ try{
+  const r=await fetch('/api/lia/voz-web/status',{cache:'no-store',credentials:'same-origin'});
+  const config=await r.json();
+  session.hqVoiceEnabled=r.ok&&config.enabled===true;
+ }catch(_){session.hqVoiceEnabled=false;}
+}
+async function playWebHQVoice(text,serial){
+ const controller=new AbortController();
+ session.hqAbort=controller;
+ let timeout=null;
+ try{
+  // Se a voz expressiva não responder rápido, a voz feminina local fala já.
+  timeout=setTimeout(()=>controller.abort(),2200);
+  const r=await fetch('/api/lia/voz-web/speak',{
+   method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
+   headers:{'Content-Type':'application/json'},body:JSON.stringify({text})
+  });
+  if(!r.ok||!String(r.headers.get('Content-Type')||'').includes('audio/'))return false;
+  const blob=await r.blob();
+  if(blob.size<1024||blob.size>2000000||serial!==session.serial||
+   !session.active||!session.connected||session.waiting)return true;
+  clearTimeout(timeout);timeout=null;
+  clearMedia();
+  const audio=new Audio(),url=URL.createObjectURL(blob);
+  session.mediaUrl=url;session.utterance=audio;audio.src=url;audio.muted=outputMuted;
+  indicator('Lia · voz feminina expressiva em português');
+  audio.onplaying=()=>{if(serial===session.serial){
+   stopVoiceProgress();ui.play.hidden=true;subtitle(text);
+   if(!startSpeechMotion(audio,[]))referenceMotion();
+   status('Voz expressiva da Lia. O movimento labial é ilustrativo, guiado pelo áudio.');
+  }};
+  audio.onended=()=>{if(serial===session.serial)completed();};
+  audio.onerror=()=>{if(serial===session.serial)recoverVoice(serial,text,'Áudio expressivo indisponível.');};
+  try{await audio.play();}catch(_){
+   ui.play.hidden=false;ui.play.textContent='▶ Ouvir voz da Lia';
+   status('Toque em reproduzir para liberar o áudio neste navegador.');
+  }
+  return true;
+ }catch(_){return false;}
+ finally{
+  clearTimeout(timeout);
+  if(session.hqAbort===controller)session.hqAbort=null;
+ }
+}
 function startSpeechChunk(phrase,serial){
  if(serial!==session.serial||!session.active||!session.connected)return;
+ // A versão Web pode tentar uma voz de estúdio com prazo curto.
+ // Em caso de atraso a fala feminina local assume o turno inteiro.
+ if(document.documentElement?.dataset?.educaPlatform==='web'&&
+    selectedEngine()!=='padrao'&&session.hqVoiceEnabled&&
+    session.hqVoiceChoiceSerial!==serial){
+  session.hqVoiceChoiceSerial=serial;
+  session.utterance={kind:'hq-web-loading'};
+  showVoiceProgress('LIA: iniciando voz expressiva…');
+  void playWebHQVoice(phrase,serial).then(ok=>{
+   if(ok||serial!==session.serial||!session.active||!session.connected||session.waiting)return;
+   session.utterance=null;
+   if(window.EducaLiaVoice?.choose?.()){
+    session.fastVoiceSerial=serial;
+    showVoiceProgress('');
+    audioOnly(phrase,serial);
+   }else startSpeechChunk(phrase,serial);
+  }).catch(()=>{
+   if(serial===session.serial&&session.active){session.utterance=null;startSpeechChunk(phrase,serial);}
+  });
+  return;
+ }
  showVoiceProgress('LIA: preparando voz oficial…');
  const start=()=>{
   if(serial!==session.serial||!session.active||!session.connected)return;
@@ -645,7 +715,9 @@ function speak(text){
  // A abertura fixa continua dividida para aproveitar o WAV pf_dora cacheado.
  const continuousFemale=web&&!session.renderReady&&!browser?.isReady?.()&&
   Boolean(window.EducaLiaVoice?.choose?.())&&!whole.startsWith('Oi, sou a Lia.');
- const chunks=continuousFemale?[whole]:speechSegments(whole);
+ // O MP3 expressivo (quando habilitado) preserva a prosódia de toda a frase.
+ const chunks=web&&session.hqVoiceEnabled&&selectedEngine()!=='padrao'?[whole]:
+  continuousFemale?[whole]:speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
  // A mensagem educativa chega ao leitor no mesmo instante. A síntese
  // de voz é independente e pode demorar caso não exista voz feminina local.
@@ -683,6 +755,8 @@ async function configure(){
 }
 function close(){document.body?.classList.remove('lia-call-visible');stopVoiceProgress();if(ui.play)ui.play.hidden=true;if(ui.view?.dataset)ui.view.dataset.captions='off';if(captionSwitch){captionSwitch.setAttribute('aria-pressed','false');captionSwitch.textContent='Ativar legendas';}if(speaker){speaker.hidden=true;}if($('freeVideoMore'))$('freeVideoMore').open=false;session.active=false;session.connected=false;session.waiting=false;session.motorPending=null;setHandsFree(false);abortSpeech();stopRecognition();stopCamera();clearInterval(session.interval);session.interval=null;session.clock=0;stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;indicator('Lia realista • chamada encerrada');}
 function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;if(ui.text){ui.text.hidden=true;ui.text.setAttribute('aria-expanded','false');}free()?.enterVideo?.();session.active=true;ui.name.textContent='Lia';ui.duration.textContent='Videochamada recebida';subtitle('Uma pessoa desconhecida está chamando por vídeo.');status('Chamada educativa com IA. A Lia responde por voz e tenta usar o melhor sincronismo disponível.');indicator('Lia realista • aguardando chamada');session.motorPending=inspectMotor().finally(()=>{session.motorPending=null;});
+ // Lê apenas a configuração; não gera áudio nem inicia cobrança.
+ void inspectWebHQVoice();
  // Pré-aquecimento começa antes de Atender; não depende de serviços pagos ou CMD.
  const browser=window.EducaLiaBrowserKokoro;
  if(browser&&selectedEngine()!=='padrao')void browser.prepare().catch(()=>{});
