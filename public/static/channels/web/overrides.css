@@ -1806,7 +1806,7 @@ html[data-educa-platform="web"].a11y-text-extra #phoneScreen .ed-modo-sheet :is(
 /* V111.89 — SOMENTE WEB: área segura do dock da LIA em telas de computador.
    A moldura inclui a barra de gestos simulada: 6–11px não bastavam para
    separar o dock dos gestos. Não toca fullscreen ou aplicativos nativos. */
-@media (min-width:701px){
+@media (min-width:701px) and (min-height:650px){
   html[data-educa-platform="web"]:not(.educa-fullscreen-active)
   body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-bottom {
     bottom:max(34px,calc(27px + env(safe-area-inset-bottom,0px))) !important;
