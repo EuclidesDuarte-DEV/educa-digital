@@ -22,7 +22,7 @@
   document.documentElement.dataset.educaPlatform = platform;
   document.documentElement.classList.add('educa-platform-' + platform);
   const base = '/static/channels/' + platform + '/';
-  const version = platform === 'web' ? '11189' : '11160';
+  const version = platform === 'web' ? '11190' : '11160';
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = base + 'overrides.css?v=' + version;
