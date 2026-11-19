@@ -11,7 +11,7 @@ const html=read('public/html/index.html');
 
 test('[web] V111.89 — controles da videochamada ficam acima da barra de gestos no desktop',()=>{
   assert.match(css,/V111\.89 — SOMENTE WEB/);
-  const scope=/@media \(min-width:701px\)\{([\s\S]*?)\n\}/.exec(css);
+  const scope=/@media \(min-width:701px\) and \(min-height:650px\)\{([\s\S]*?)\n\}/.exec(css);
   assert.ok(scope,'regra limitada a computadores com viewport a partir de 701px');
   assert.match(scope[1],/html\[data-educa-platform="web"\]/);
   assert.match(scope[1],/body\.lia-call-visible #phoneHardware #freeVideoView:not\(:fullscreen\) \.v110-video-bottom/);
