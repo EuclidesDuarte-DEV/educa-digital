@@ -1803,3 +1803,34 @@ html[data-educa-platform="web"].a11y-text-extra #phoneScreen .ed-modo-sheet :is(
 @media(prefers-reduced-motion:reduce) {
   html[data-educa-platform="web"] #phoneScreen .ed-modo-dialog {scroll-behavior:auto;}
 }
+/* V111.89 — SOMENTE WEB: área segura do dock da LIA em telas de computador.
+   A moldura inclui a barra de gestos simulada: 6–11px não bastavam para
+   separar o dock dos gestos. Não toca fullscreen ou aplicativos nativos. */
+@media (min-width:701px){
+  html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+  body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-bottom {
+    bottom:max(34px,calc(27px + env(safe-area-inset-bottom,0px))) !important;
+    left:8px !important;
+    right:8px !important;
+    box-sizing:border-box !important;
+    max-width:calc(100% - 16px) !important;
+  }
+  html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+  body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar {
+    box-sizing:border-box !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    gap:clamp(3px,1cqw,7px) !important;
+    padding:7px !important;
+    overflow:visible !important;
+  }
+  html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+  body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-selfie {
+    bottom:clamp(120px,36cqw,148px) !important;
+  }
+}
+/* Menus expandem para cima, mas respeitam a altura visível da tela. */
+html[data-educa-platform="web"] #freeVideoView .v112-video-more-content {
+  max-height:min(40dvh,240px) !important;
+  overscroll-behavior:contain;
+}
