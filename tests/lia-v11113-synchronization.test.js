@@ -21,12 +21,13 @@ function makeApp(){
  return {window,els,voice:()=>utterance};
 }
 
-test('Legenda da Lia não antecipa a resposta antes da reprodução de voz',async()=>{
+test('V111.91: legenda mostra o texto ao chegar e áudio inicia quando pronto',async()=>{
  const {window,els,voice}=makeApp();
  window.EducaVideoCall.incoming();els.freeVideoAnswer.on_click();
- assert.match(els.freeVideoSubtitle.textContent,/preparando a fala/i);
+ assert.match(els.freeVideoSubtitle.textContent,/Oi, sou a Lia/);
+ assert.match(els.freeVideoSubtitle.textContent,/R\$ 350/);
  const intro=voice();assert.ok(intro);
- assert.doesNotMatch(els.freeVideoSubtitle.textContent,/trezentos e cinquenta reais/);
+ assert.doesNotMatch(intro.text,/trezentos e cinquenta reais/);
  intro.onstart();
  assert.equal(els.freeVideoSubtitle.textContent,intro.text);
  assert.match(intro.text,/Oi[,!] sou a Lia/i);
@@ -35,7 +36,7 @@ test('Legenda da Lia não antecipa a resposta antes da reprodução de voz',asyn
  window.EducaVideoCall.addLine('assistant','Pode verificar por outro meio.');
  assert.equal(els.freeVideoSubtitle.textContent,'Você: Posso verificar antes?');
  window.EducaVideoCall.reply('Pode verificar por outro meio.');
- assert.match(els.freeVideoSubtitle.textContent,/preparando a fala/i);
+ assert.equal(els.freeVideoSubtitle.textContent,'Pode verificar por outro meio.');
  voice().onstart();
  assert.equal(els.freeVideoSubtitle.textContent,'Pode verificar por outro meio.');
  window.EducaVideoCall.close();
