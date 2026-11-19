@@ -5,6 +5,7 @@ import {webcrypto} from 'node:crypto';
 import {neuralApi,retrieveLiaKnowledge} from '../src/lia-neural.js';
 import {responderModoLivre} from '../src/free-chat.js';
 import {LIA_NEURAL_SEEDS,LIA_NEURAL_SEED_LINKS} from '../src/lia-neural-seeds.js';
+import {LIA_NEURAL_RESEARCH_2026,LIA_NEURAL_RESEARCH_LINKS} from '../src/lia-neural-research-2026.js';
 if(!globalThis.crypto)globalThis.crypto=webcrypto;
 const TOKEN='c'.repeat(40);
 const url='https://educa.example/api/lia/neural';
@@ -164,4 +165,81 @@ test('V111.87 — UI segura, Web isolada, arquivos importados apenas como rascun
   assert.match(worker,/neuralApi\(request,env,url\)/);
   assert.match(migration,/CREATE TABLE IF NOT EXISTS lia_kb_nodes/);
   assert.match(migration,/CREATE TABLE IF NOT EXISTS lia_kb_links/);
+});
+
+
+test('V111.88 — 16 golpes pesquisados e 24 ligações entram no Neural apenas após importação autorizada',async()=>{
+  const st=memoryDb(),env={DB:st.db,LIA_NEURAL_ADMIN_TOKEN:TOKEN};
+  assert.equal(LIA_NEURAL_RESEARCH_2026.length,16);
+  assert.equal(LIA_NEURAL_RESEARCH_LINKS.length,24);
+  assert.ok(LIA_NEURAL_RESEARCH_2026.every(n=>n.status==='draft'&&n.visibility==='private'));
+  assert.ok(LIA_NEURAL_RESEARCH_2026.every(n=>n.source.startsWith('https://')));
+  await neuralApi(request('/seed','POST',{}),env);
+  let result=await neuralApi(request('/seed/research-2026','POST',{}),env);
+  assert.equal(result.status,200);
+  const added=await result.json();
+  assert.equal(added.seeded,16);
+  assert.equal(added.links,24);
+  assert.equal(added.reviewRequired,true);
+  assert.equal(st.notes.size,31);
+  assert.equal(st.links.size,43);
+  result=await neuralApi(request('/seed/research-2026','POST',{}),env);
+  assert.equal(result.status,200);
+  assert.equal(st.notes.size,31);
+  assert.equal(st.links.size,43);
+  assert.equal(await retrieveLiaKnowledge(env,'video','Oi'),'', 'nenhum texto privado alimenta a IA');
+});
+
+test('V111.88 — aprovação explícita permite LIA em vídeo recuperar fontes de deepfake',async()=>{
+  const st=memoryDb(),env={DB:st.db,LIA_NEURAL_ADMIN_TOKEN:TOKEN};
+  await neuralApi(request('/seed','POST',{}),env);
+  await neuralApi(request('/seed/research-2026','POST',{}),env);
+  const deepfake=await neuralApi(request('/nodes/research-deepfake-video-2026','PATCH',{
+    status:'published',visibility:'public'
+  }),env);
+  assert.equal(deepfake.status,200);
+  const context=await retrieveLiaKnowledge(env,'video','Oi');
+  assert.match(context,/Deepfake em videochamada de familiar/);
+  assert.match(context,/confirme a identidade/);
+  assert.doesNotMatch(context,/Memória do participante/);
+  let prompt='';
+  env.AI={run:async(_name,opts)=>{prompt=opts.messages[0].content;return {response:'Confirme comigo usando outro contato.'};}};
+  const req=()=>new Request('https://educa.example/api/modo-livre/conversar-web',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({scenario:'video',message:'Oi',history:[],webChallenge:{level:3,tries:1}})
+  });
+  const response=await responderModoLivre(req(),env,true);
+  assert.equal(response.status,200);
+  assert.match(prompt,/Deepfake em videochamada de familiar/);
+  assert.match(prompt,/Nível Experiente/);
+  prompt='';
+  await responderModoLivre(req(),env,false);
+  assert.doesNotMatch(prompt,/Referências educativas revisadas/,'rota nativa preservada');
+});
+
+test('V111.88 — informações oficiais pesquisadas podem alimentar SMS e ligações sem revelar rascunhos',async()=>{
+  const st=memoryDb(),env={DB:st.db,LIA_NEURAL_ADMIN_TOKEN:TOKEN};
+  await neuralApi(request('/seed','POST',{}),env);
+  await neuralApi(request('/seed/research-2026','POST',{}),env);
+  await neuralApi(request('/nodes/research-central-2026','PATCH',{status:'published',visibility:'public'}),env);
+  await neuralApi(request('/nodes/research-encomenda-sms-2026','PATCH',{status:'published',visibility:'public'}),env);
+  const call=await retrieveLiaKnowledge(env,'bank','Alô');
+  const sms=await retrieveLiaKnowledge(env,'sms-delivery','Oi');
+  assert.match(call,/Falsa central bancária/);
+  assert.match(sms,/Falsa liberação de encomenda/);
+  assert.doesNotMatch(call,/Falsa prova de vida do INSS/,'nota não aprovada deve permanecer privada');
+});
+
+test('V111.88 — grafo de pesquisa no Preview continua somente leitura',()=>{
+  const demo=JSON.parse(readFileSync('public/static/channels/web/lia-neural-v11187-demo.json','utf8'));
+  const ui=readFileSync('public/static/channels/web/lia-neural-v11187.js','utf8');
+  const html=readFileSync('public/static/channels/web/lia-neural-v11187.html','utf8');
+  const dialogue=readFileSync('public/static/channels/web/dialogue-v11183.js','utf8');
+  assert.equal(demo.nodes.length,31);
+  assert.equal(demo.links.length,43);
+  assert.ok(demo.nodes.every(n=>n.visibility==='private'&&n.status==='draft'));
+  assert.match(ui,/seed\/research-2026/);
+  assert.match(html,/researchBtn/);
+  assert.match(dialogue,/const useWebRoute=typeof input==='string'/);
+  assert.match(dialogue,/webChallenge=\{level:challenge.level/);
 });
