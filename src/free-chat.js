@@ -110,8 +110,8 @@ export async function responderModoLivre(request,env,webOnly=false){
   try{
     const model=escolherModelo(env);
     const options=model.includes('gemma-4')
-      ?{messages,max_completion_tokens:webOnly?96:150,temperature:0.52,chat_template_kwargs:{enable_thinking:false}}
-      :{messages,max_tokens:webOnly?96:130,temperature:0.43,repetition_penalty:1.13};
+      ?{messages,max_completion_tokens:webOnly?110:150,temperature:0.52,chat_template_kwargs:{enable_thinking:false}}
+      :{messages,max_tokens:webOnly?110:130,temperature:0.43,repetition_penalty:1.13};
     const generate=async opts=>{
       const result=await env.AI.run(model,opts);
       // Gemma 4 usa formato chat.completions; Llama 3.3 retorna "response".
