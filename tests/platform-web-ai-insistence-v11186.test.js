@@ -62,3 +62,19 @@ test('V111.86 — tentativas enviadas pelo cliente são limitadas no backend',as
   const first=await getPrompt('family',3,0,true);
   assert.doesNotMatch(first,/Faça apenas UMA tentativa adicional/i);
 });
+
+
+test('V111.89 — IA reduz texto apenas na rota Web, sem alterar modelo nativo',async()=>{
+  const run=async web=>{
+    let captured;
+    const env={AI:{run:async(model,options)=>{captured={model,options};return {response:'Pode confirmar por outro contato conhecido.'};}}};
+    const response=await responderModoLivre(fakeRequest('family',1,0,web),env,web);
+    assert.equal(response.status,200);
+    return captured;
+  };
+  const web=await run(true),native=await run(false);
+  assert.equal(web.model,native.model,'modelo não alterado nem substituído');
+  assert.equal(web.options.max_completion_tokens,110);
+  assert.equal(native.options.max_completion_tokens,150);
+  assert.equal(web.options.chat_template_kwargs.enable_thinking,false);
+});
