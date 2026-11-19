@@ -155,18 +155,53 @@ async function handle(request,db,url){
 }
 /* Busca só documentos deliberadamente publicados pelo administrador.
  * Memórias pessoais e rascunhos não entram em prompts públicos. */
+// V111.88 — vocabulário por situação, inclusive quando a primeira fala
+// é apenas "oi" ou "alô": o Neural encontra o assunto da chamada.
+const TOPICS=Object.freeze({
+  family:['pix','filho','familiar','whatsapp'],
+  relative:['pix','familia','whatsapp'],
+  video:['video','deepfake','voz','familiar'],
+  bank:['banco','central','ligacao','pix'],
+  code:['codigo','whatsapp','sms'],
+  delivery:['entrega','encomenda','taxa','sms'],
+  'sms-delivery':['sms','encomenda','entrega'],
+  'sms-bank':['sms','banco','central'],
+  'sms-prize':['sms','premio','promocao'],
+  account:['conta','phishing','whatsapp'],
+  prize:['premio','promocao','taxa'],
+  'call-tech':['suporte','ligacao','acesso'],
+  friend:['seguranca','whatsapp'],
+  daughter:['familia','whatsapp'],
+  'family-group':['whatsapp','familia']
+});
+const STOP_TERMS=new Set(['para','como','voce','quero','isso','estou','pode','sobre','porque','preciso','agora','aqui','tudo','entao','esse','essa','quem']);
+function searchable(value){
+  return String(value||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ');
+}
 export async function retrieveLiaKnowledge(env,scenario,message){
   if(!env?.DB)return '';
-  const raw=String(scenario||'')+' '+String(message||'');
-  const words=[...new Set(raw.toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'').split(/[^a-z0-9]+/)
-    .filter(w=>(w.length>=4||['pix','sms'].includes(w))&&!['para','como','voce','quero','isso','estou','pode','sobre','porque'].includes(w)))].slice(0,5);
-  if(!words.length)return '';
+  const scenarioWords=TOPICS[String(scenario||'')]||[];
+  const userWords=searchable(message).split(/\s+/)
+    .filter(w=>(w.length>=4||['pix','sms'].includes(w))&&!STOP_TERMS.has(w)).slice(0,6);
+  const terms=[...new Set([...scenarioWords,...userWords])].slice(0,11);
+  if(!terms.length)return '';
   try{
     if(!await schema(env.DB))return '';
-    const query="SELECT title,substr(content,1,540) AS content FROM lia_kb_nodes WHERE status='published' AND visibility='public' AND category<>'memoria' AND ("+
-      words.map(()=>"(lower(keywords||' '||title||' '||summary) LIKE ?)").join(' OR ')+') LIMIT 3';
-    const items=(await sql(env.DB,query,...words.map(w=>'%'+w+'%')).all()).results||[];
-    return items.filter(n=>n.content).map(n=>'- '+trim(n.title,90)+': '+trim(n.content,540)).join('\n').slice(0,1500);
-  }catch(_){return '';} // D1 indisponível ou sem migração não quebra o Modo Livre.
+    // Importante: apenas conhecimento PUBLICADO e PÚBLICO, jamais
+    // notas privadas, memórias pessoais ou arquivos sem revisão humana.
+    const query="SELECT title,substr(content,1,540) AS content,keywords,summary,category FROM lia_kb_nodes WHERE status='published' AND visibility='public' AND category<>'memoria' AND ("+
+      terms.map(()=>"(lower(keywords||' '||title||' '||summary) LIKE ?)").join(' OR ')+') LIMIT 35';
+    const rows=(await sql(env.DB,query,...terms.map(w=>'%'+w+'%')).all()).results||[];
+    const priority=(row)=>{
+      const title=searchable(row.title),keys=searchable(row.keywords),summary=searchable(row.summary);
+      return terms.reduce((total,word,index)=>{
+        const scenarioBoost=index<scenarioWords.length?2:1;
+        return total+scenarioBoost*((title.includes(word)?6:0)+(keys.includes(word)?3:0)+(summary.includes(word)?1:0));
+      },0);
+    };
+    const best=rows.filter(r=>r?.content&&r.category!=='memoria')
+      .sort((a,b)=>priority(b)-priority(a)).slice(0,3);
+    return best.map(n=>'- '+trim(n.title,90)+': '+trim(n.content,540)).join('\n').slice(0,1500);
+  }catch(_){return '';} // Falha do Neural não interrompe as simulações.
 }
