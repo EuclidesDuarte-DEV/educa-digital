@@ -25,7 +25,7 @@ function makeCall(platform='web',chosen={lang:'pt-BR'},cached=false){
   }
  };
  const context={window,document:{documentElement:{dataset:{educaPlatform:platform}}},
-  session,selectedEngine:()=>'feminina',showVoiceProgress:x=>calls.progress.push(x),
+  session,selectedEngine:()=>'feminina',selectedStyle:()=>'natural',showVoiceProgress:x=>calls.progress.push(x),
   audioOnly:(text,serial)=>calls.fast.push({text,serial}),
   playBrowserKokoro:(text,serial)=>{calls.neural.push({text,serial});return Promise.resolve(true);},
   indicator:()=>{},status:()=>{},Promise,setTimeout};
