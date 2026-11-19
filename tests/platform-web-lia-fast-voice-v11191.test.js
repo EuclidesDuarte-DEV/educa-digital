@@ -11,14 +11,14 @@ const readSegment=(start,end)=>{
  return video.slice(i,j);
 };
 const startCode=readSegment('function startSpeechChunk(phrase,serial){','function speak(text){');
-function makeCall(platform='web',chosen={lang:'pt-BR'}){
+function makeCall(platform='web',chosen={lang:'pt-BR'},cached=false){
  const calls={fast:[],neural:[],progress:[]};
  const session={serial:5,active:true,connected:true,waiting:false,renderReady:false,
   teamCode:'',fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,motorPending:null,utterance:null};
  let resolveLater=null;
  const window={
   location:{protocol:'http:'},
-  EducaLiaBrowserKokoro:{isReady:()=>false},
+  EducaLiaBrowserKokoro:{isReady:()=>false,hasCachedIntro:async()=>cached},
   EducaLiaVoice:{
    choose:()=>chosen,
    waitForFemale:()=>new Promise(resolve=>{resolveLater=resolve;})
@@ -47,7 +47,7 @@ test('V111.91 — saudação curta inicia a fala sem alterar palavras originais'
 test('V111.91 — Web usa voz feminina local imediatamente enquanto Kokoro carrega',async()=>{
  const s=makeCall();
  s.start('Oi, sou a Lia.',5);
- await Promise.resolve();
+ await new Promise(resolve=>setImmediate(resolve));
  assert.equal(s.calls.fast.length,1);
  assert.equal(s.calls.neural.length,0);
  assert.equal(s.session.fastVoiceSerial,5);
@@ -70,6 +70,7 @@ test('V111.91 — Android e iOS continuam usando o Kokoro original',async()=>{
 test('V111.91 — sem voz feminina o sistema espera Kokoro, nunca seleciona masculina',async()=>{
  const s=makeCall('web',null);
  s.start('Oi, sou a Lia.',5);
+ await new Promise(resolve=>setImmediate(resolve));
  s.resolveVoice(null);
  await new Promise(resolve=>setImmediate(resolve));
  assert.equal(s.calls.fast.length,0);
@@ -80,12 +81,32 @@ test('V111.91 — sem voz feminina o sistema espera Kokoro, nunca seleciona masc
 test('V111.91 — voz antiga não toca após o participante sair da chamada',async()=>{
  const s=makeCall('web',null);
  s.start('Oi, sou a Lia.',5);
+ await new Promise(resolve=>setImmediate(resolve));
  s.session.serial=6;
  s.session.connected=false;
  s.resolveVoice({lang:'pt-BR'});
  await new Promise(resolve=>setImmediate(resolve));
  assert.equal(s.calls.fast.length,0);
  assert.equal(s.calls.neural.length,0);
+});
+
+test('V111.91 — abertura Kokoro cacheada é usada antes da voz do navegador',async()=>{
+ const s=makeCall('web',{lang:'pt-BR'},true);
+ s.start('Oi, sou a Lia.',5);
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(s.calls.fast.length,0);
+ assert.equal(s.calls.neural.length,1);
+ assert.equal(s.session.fastVoiceSerial,-1);
+});
+
+test('V111.91 — cache guarda só frases fictícias da Web, nunca respostas pessoais',()=>{
+ const browser=readFileSync('public/static/js/lia-kokoro-browser.js','utf8');
+ assert.match(browser,/WEB_INTRO=new Map/);
+ assert.match(browser,/\['Oi, sou a Lia\.','lia-hello'\]/);
+ assert.match(browser,/hasCachedIntro/);
+ assert.match(browser,/document\.documentElement\?\.dataset\?\.educaPlatform==='web'/);
+ assert.match(browser,/style==='natural'/);
+ assert.match(html,/lia-kokoro-browser\.js\?v=11157&mirror=2&warm=11191/);
 });
 
 test('V111.91 — transcrição antecipada e cache atualizado só no canal Web',()=>{
