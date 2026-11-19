@@ -47,7 +47,7 @@ test('V111.91 — saudação curta inicia a fala sem alterar palavras originais'
 test('V111.91 — Web usa voz feminina local imediatamente enquanto Kokoro carrega',async()=>{
  const s=makeCall();
  s.start('Oi, sou a Lia.',5);
- await new Promise(resolve=>setImmediate(resolve));
+ for(let i=0;i<20&&!s.calls.fast.length;i++)await new Promise(resolve=>setTimeout(resolve,5));
  assert.equal(s.calls.fast.length,1);
  assert.equal(s.calls.neural.length,0);
  assert.equal(s.session.fastVoiceSerial,5);
@@ -79,13 +79,12 @@ test('V111.91 — sem voz feminina o sistema espera Kokoro, nunca seleciona masc
 });
 
 test('V111.91 — voz antiga não toca após o participante sair da chamada',async()=>{
- const s=makeCall('web',null);
+ const s=makeCall('web',{lang:'pt-BR'},true);
  s.start('Oi, sou a Lia.',5);
- await new Promise(resolve=>setImmediate(resolve));
+ // A conversa foi encerrada enquanto a leitura do CacheStorage aguardava.
  s.session.serial=6;
  s.session.connected=false;
- s.resolveVoice({lang:'pt-BR'});
- await new Promise(resolve=>setImmediate(resolve));
+ await new Promise(resolve=>setTimeout(resolve,15));
  assert.equal(s.calls.fast.length,0);
  assert.equal(s.calls.neural.length,0);
 });
