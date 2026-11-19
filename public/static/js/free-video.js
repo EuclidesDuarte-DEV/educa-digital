@@ -30,7 +30,7 @@ if(ui.view){
  }
  if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
-const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null};
+const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1};
 const free=()=>window.EducaFreeMode;
 const status=t=>{if(ui.state)ui.state.textContent=t;};
 const voiceProgress=$('freeVideoVoiceProgress');
@@ -49,6 +49,10 @@ function stopVoiceProgress(){
 function speechSegments(text){
  const parts=(String(text||'').match(/[^.!?]+[.!?]?/g)||[]).map(t=>t.trim()).filter(Boolean);
  const out=[];let buffer='';
+ // V111.91: dizer a saudação curta primeiro; quando o Kokoro já estiver
+ // quente, apenas ~15 caracteres precisam ser sintetizados para começar.
+ // Não repetir trechos nem trocar o texto original do personagem.
+ if(parts.length>1&&parts[0].length<=42)out.push(parts.shift());
  const flush=()=>{if(buffer){out.push(buffer);buffer='';}};
  // O início deve ser curto; depois usamos frases inteiras para reduzir inferências.
  for(const part of parts){
@@ -313,7 +317,7 @@ function clearMedia(){
  idleMotion();
 }
 function abortSpeech(){
- session.serial++;session.speechQueue=[];session.prefetched=null;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
+ session.serial++;session.speechQueue=[];session.prefetched=null;session.fastVoiceSerial=-1;session.voiceChoiceDoneSerial=-1;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
  session.renderAbort?.abort();session.renderAbort=null;
  session.utterance?.pause?.();session.utterance=null;window.speechSynthesis?.cancel();clearMedia();
 }
@@ -565,7 +569,40 @@ function startSpeechChunk(phrase,serial){
   if(serial!==session.serial||!session.active||!session.connected)return;
   if(!session.renderReady||!session.teamCode){
    if(selectedEngine()==='padrao'){showVoiceProgress('');audioOnly(phrase,serial);return;}
-   if(!window.EducaLiaBrowserKokoro){audioOnly(phrase,serial);return;}
+   if(session.fastVoiceSerial===serial){
+    // Mantém o mesmo timbre feminino até o fim do turno. O Kokoro pode
+    // continuar aquecendo no Worker e assumir uma conversa posterior.
+    showVoiceProgress('');
+    audioOnly(phrase,serial);return;
+   }
+   const localKokoro=window.EducaLiaBrowserKokoro;
+   if(!localKokoro){audioOnly(phrase,serial);return;}
+   // V111.91 — estratégia SOMENTE WEB: não segurar uma voz feminina
+   // instalada enquanto a rede baixa centenas de MB do Kokoro.
+   // As plataformas nativas conservam a escolha original do motor.
+   const webFast=document.documentElement?.dataset?.educaPlatform==='web';
+   if(webFast&&!localKokoro.isReady?.()&&session.voiceChoiceDoneSerial!==serial){
+    session.voiceChoiceDoneSerial=serial;
+    session.utterance={kind:'voice-selecting'};
+    showVoiceProgress('Buscando voz feminina rápida enquanto o Kokoro aquece…');
+    const already=window.EducaLiaVoice?.choose?.();
+    const candidate=already?Promise.resolve(already):
+      (window.EducaLiaVoice?.waitForFemale?.(480)||Promise.resolve(null));
+    void Promise.resolve(candidate).then(voice=>{
+     if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
+     session.utterance=null;
+     if(voice){
+      session.fastVoiceSerial=serial;
+      indicator('Lia · voz feminina rápida; Kokoro aquecendo');
+      audioOnly(phrase,serial);
+     }else{
+      // Se o aparelho não oferece uma voz feminina pt-BR, não selecionar
+      // uma voz masculina por engano. O Kokoro segue como alternativa.
+      startSpeechChunk(phrase,serial);
+     }
+    }).catch(()=>{if(serial===session.serial&&session.active){session.utterance=null;startSpeechChunk(phrase,serial);}});
+    return;
+   }
    void playBrowserKokoro(phrase,serial).then(ok=>{
     if(!ok&&serial===session.serial&&session.active){
      if(selectedEngine()==='padrao')audioOnly(phrase,serial);
@@ -594,7 +631,9 @@ function speak(text){
  session.lastSpoken=whole;
  const chunks=speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
- subtitle('Lia está preparando a fala…');
+ // A mensagem educativa chega ao leitor no mesmo instante. A síntese
+ // de voz é independente e pode demorar caso não exista voz feminina local.
+ subtitle(whole);
  startSpeechChunk(first,serial);
 }
 
