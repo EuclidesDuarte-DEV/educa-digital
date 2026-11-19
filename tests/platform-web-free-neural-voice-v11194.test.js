@@ -114,7 +114,7 @@ test('V111.94 — rota Web entrega respostas menores; rota nativa mantém limite
   body:JSON.stringify({scenario:'video',message:'Quem está falando?',history:[]})
  });
  const web=await responderModoLivre(makeRequest('conversar-web'),env,true);
- assert.equal(web.status,200);assert.equal(prompts[0].max_completion_tokens,96);
+ assert.equal(web.status,200);assert.equal(prompts[0].max_completion_tokens,110);
  const native=await responderModoLivre(makeRequest('conversar'),env,false);
  assert.equal(native.status,200);assert.equal(prompts[1].max_completion_tokens,150);
 });
