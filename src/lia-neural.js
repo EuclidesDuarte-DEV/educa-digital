@@ -141,7 +141,7 @@ export async function retrieveLiaKnowledge(env,scenario,message){
   const raw=String(scenario||'')+' '+String(message||'');
   const words=[...new Set(raw.toLowerCase().normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'').split(/[^a-z0-9]+/)
-    .filter(w=>w.length>=4&&!['para','como','voce','quero','isso','estou','pode','sobre','porque'].includes(w)))].slice(0,5);
+    .filter(w=>(w.length>=4||['pix','sms'].includes(w))&&!['para','como','voce','quero','isso','estou','pode','sobre','porque'].includes(w)))].slice(0,5);
   if(!words.length)return '';
   try{
     if(!await schema(env.DB))return '';
