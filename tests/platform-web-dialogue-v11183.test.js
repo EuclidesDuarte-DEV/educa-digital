@@ -113,7 +113,7 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11186/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11189/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });

@@ -59,7 +59,8 @@ test('V111.52: resposta inicial dividida em poucos trechos, sem dezenas de infer
 });
 
 test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>{
-  assert.match(free,/responseTimer=setTimeout\(\(\)=>\{timedOut=true;abort\.abort\(\);\},17000\)/);
+  assert.match(free,/responseTimer=setTimeout\(\(\)=>\{timedOut=true;abort\.abort\(\);\},responseTimeoutMs\)/);
+  assert.match(free,/educaPlatform==='web'\?32000:17000/);
   assert.match(free,/clearTimeout\(responseTimer\)/);
   assert.match(free,/A IA demorou para responder/);
   const query=new Request('https://educa.example/api/modo-livre/conversar',{
@@ -83,8 +84,8 @@ test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>
 
 test('V111.52: publica apenas scripts e mantém os bancos D1',()=>{
   for(const asset of ['lia-kokoro-browser.js','free-video.js'])
-    assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=111(?:52|54|57)'));
-  assert.match(html,/free-mode\.js\?v=11153/);
+    assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=111(?:52|54|57|91)'));
+  assert.match(html,/free-mode\.js\?v=111(?:53|89)/);
   assert.match(kokoro,/lia-kokoro-worker\.js\?v=11157/);
   assert.match(sw,/educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight|educa-cf11156-lia-voice-viewport/);
   assert.doesNotMatch(sw,/\/api\/.*cache\.put/);

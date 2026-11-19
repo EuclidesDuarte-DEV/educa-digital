@@ -19,10 +19,18 @@ try{
   const engine=window.EducaLiaBrowserKokoro;
   try{
    await engine.prepare();
-   const voice=await engine.synthesize('Oi, sou a Lia. Vamos praticar com segurança.','natural');
+   // V111.91: cenário Web real, voz pf_dora da saudação fixa.
+   // A segunda chamada deve sair do cache local, sem nova inferência ONNX.
+   const phrase='Oi, sou a Lia.';
+   const voice=await engine.synthesize(phrase,'natural');
+   const secondStarted=Date.now();
+   const reused=await engine.synthesize(phrase,'natural');
+   const reuseMs=Date.now()-secondStarted;
    const buf=await voice.blob.slice(0,12).arrayBuffer();
    const head=String.fromCharCode(...new Uint8Array(buf));
-   return {ok:true,voice:voice.voice,size:voice.blob.size,header:head,cues:voice.cues?.length??0,diag:engine.getDiagnostics?.()};
+   return {ok:true,voice:voice.voice,size:voice.blob.size,header:head,
+    cues:voice.cues?.length??0,reuseMs,reuseSize:reused.blob.size,
+    cachedIntro:engine.getDiagnostics?.().cachedIntro??0,diag:engine.getDiagnostics?.()};
   }catch(e){return {ok:false,error:String(e?.stack||e),diag:engine.getDiagnostics?.()};}
  });
  console.log('Kokoro browser diagnostic',JSON.stringify({...out,errors,network:network.slice(-22)}).slice(0,7000));
@@ -31,5 +39,8 @@ try{
  assert.ok(out.size>1024);
  assert.equal(out.header.slice(0,4),'RIFF');
  assert.equal(out.header.slice(8,12),'WAVE');
+ assert.equal(out.reuseSize,out.size,'O cache deve devolver o mesmo WAV pf_dora');
+ assert.ok(out.cachedIntro>=1,'A saudação fixa deveria ser reutilizável no cache');
+ assert.ok(out.reuseMs<1500,'A segunda saudação não pode reinferir o modelo neural: '+out.reuseMs+' ms');
  console.log('Kokoro TTS real OK em Chromium: '+out.size+' bytes, '+((Date.now()-started)/1000).toFixed(1)+'s');
 }finally{await browser.close();}

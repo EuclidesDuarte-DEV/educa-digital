@@ -1803,3 +1803,173 @@ html[data-educa-platform="web"].a11y-text-extra #phoneScreen .ed-modo-sheet :is(
 @media(prefers-reduced-motion:reduce) {
   html[data-educa-platform="web"] #phoneScreen .ed-modo-dialog {scroll-behavior:auto;}
 }
+/* V111.89 — SOMENTE WEB: área segura do dock da LIA em telas de computador.
+   A moldura inclui a barra de gestos simulada: 6–11px não bastavam para
+   separar o dock dos gestos. Não toca fullscreen ou aplicativos nativos. */
+@media (min-width:701px) and (min-height:650px){
+  html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+  body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-bottom {
+    bottom:max(34px,calc(27px + env(safe-area-inset-bottom,0px))) !important;
+    left:8px !important;
+    right:8px !important;
+    box-sizing:border-box !important;
+    max-width:calc(100% - 16px) !important;
+  }
+  html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+  body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar {
+    box-sizing:border-box !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    gap:clamp(3px,1cqw,7px) !important;
+    padding:7px !important;
+    overflow:visible !important;
+  }
+  html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+  body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-selfie {
+    bottom:clamp(120px,36cqw,148px) !important;
+  }
+}
+/* Menus expandem para cima, mas respeitam a altura visível da tela. */
+html[data-educa-platform="web"] #freeVideoView .v112-video-more-content {
+  max-height:min(40dvh,240px) !important;
+  overscroll-behavior:contain;
+}
+
+
+/* V111.90 — LIA WEB: dock proporcional ao CELULAR SIMULADO.
+   As media queries por viewport (ex.: min-width:701px) não bastam: o
+   mockup pode ter 270px mesmo em monitores 1920px. O container #freeVideoView
+   já usa container-type:inline-size (responsive-v11154.css).
+   Todas as regras abaixo são isoladas da tela cheia e dos apps nativos. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) {
+  --lia-dock-inset: clamp(7px, 2.7cqw, 13px);
+  --lia-dock-bottom: clamp(29px, 9.4cqw, 38px);
+  --lia-dock-control: clamp(39px, 12.7cqw, 50px);
+  --lia-dock-height: clamp(55px, 18cqw, 66px);
+  --lia-dock-gap: clamp(4px, 1.7cqw, 9px);
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-bottom {
+  box-sizing: border-box !important;
+  left: var(--lia-dock-inset) !important;
+  right: var(--lia-dock-inset) !important;
+  width: auto !important;
+  bottom: max(var(--lia-dock-bottom), env(safe-area-inset-bottom, 0px)) !important;
+  max-width: calc(100% - 2 * var(--lia-dock-inset)) !important;
+  max-height: min(45%, 255px) !important;
+  gap: clamp(5px, 2cqw, 9px) !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: var(--lia-dock-height) !important;
+  padding: clamp(6px, 2.2cqw, 9px) !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: space-evenly !important;
+  gap: var(--lia-dock-gap) !important;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(76, 70, 65, .86) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: visible !important;
+}
+/* "Mais", atender, encerrar, câmera e microfone continuam clicáveis.
+   Quando os 6 controles de diagnóstico estão visíveis, podem encolher
+   proporcionalmente sem sair do mockup. Na chamada normal são circulares. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v112-video-more {
+  box-sizing: border-box !important;
+  flex: 0 1 var(--lia-dock-control) !important;
+  width: var(--lia-dock-control) !important;
+  min-width: 0 !important;
+  max-width: var(--lia-dock-control) !important;
+  align-self: center !important;
+  display: grid !important;
+  place-items: center !important;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v112-video-more > summary,
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v110-tool:not([hidden]) {
+  box-sizing: border-box !important;
+  flex: 0 1 var(--lia-dock-control) !important;
+  width: var(--lia-dock-control) !important;
+  height: var(--lia-dock-control) !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  max-width: var(--lia-dock-control) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 999px !important;
+  place-items: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+  touch-action: manipulation;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v112-video-more > summary {
+  width: 100% !important;
+  display: grid !important;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar > .v110-tool:not([hidden]) {
+  display: grid !important;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar .wa-icon {
+  width: clamp(19px, 6.2cqw, 24px) !important;
+  height: clamp(19px, 6.2cqw, 24px) !important;
+}
+/* Prévia Você fica acima da barra de gestos + dock, nunca em cima dos botões. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-selfie {
+  box-sizing: border-box !important;
+  position: absolute !important;
+  top: auto !important;
+  right: clamp(9px, 3cqw, 15px) !important;
+  left: auto !important;
+  bottom: calc(var(--lia-dock-bottom) + var(--lia-dock-height) + clamp(17px, 5cqw, 25px)) !important;
+  width: clamp(65px, 24cqw, 94px) !important;
+  height: auto !important;
+  aspect-ratio: 3 / 4 !important;
+  max-height: 23% !important;
+  border-radius: clamp(10px, 3.5cqw, 16px) !important;
+  overflow: hidden !important;
+}
+/* Compacto e altura curta: sempre usar a dimensão do mockup, não do monitor. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) {
+  --lia-dock-inset: 6px;
+  --lia-dock-control: clamp(38px, 12cqw, 44px);
+  --lia-dock-height: 54px;
+  --lia-dock-gap: 3px;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) {
+  --lia-dock-bottom: 30px;
+  --lia-dock-height: 51px;
+}
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) .v110-selfie {
+  max-height: 20% !important;
+}
+/* As opções expandem PARA CIMA e permitem rolagem sem cobrir o dock. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active)
+body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v112-video-more-content {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  max-height: min(40dvh, 225px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}

@@ -53,8 +53,8 @@ test('Web, Android e iOS carregam somente seu canal',()=>{
  ]) {
    const result=run(options);
    assert.equal(result.platform,expected,JSON.stringify(options));
-   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v=11160']);
-   assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v=11160']);
+   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11190':'11160')]);
+   assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v='+(expected==='web'?'11190':'11160')]);
    assert.equal(result.info.platform,expected);
  }
 });
@@ -65,7 +65,7 @@ test('três canais reais e clientes nativos utilizam rotas específicas',()=>{
   assert.ok(existsSync('public/static/channels/'+platform+'/overrides.js'));
  }
  const html=read('public/html/index.html');
- assert.match(html,/platform-channel-v11160\.js\?v=11160/);
+ assert.match(html,/platform-channel-v11160\.js\?v=11190/);
  assert.match(html,/educa-mobile-app/);
  assert.match(read('android-app/app/src/main/java/com/educamaisdigital/educa/MainActivity.java'),/\?app=1&platform=android/);
  assert.match(read('ios-app/EducaDigital/CloudflareTrainingWebView.swift'),/\?app=1&platform=ios/);
