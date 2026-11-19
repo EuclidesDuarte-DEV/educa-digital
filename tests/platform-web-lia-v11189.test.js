@@ -55,3 +55,13 @@ test('[web] V111.89 — versão nova de CSS/JS só para o canal web',()=>{
   run('Mozilla iPhone OS Safari','ios',true);
   assert.match(html,/free-mode\.js\?v=11189&patch=11189/);
 });
+
+
+test('[web] V111.89 — Neural usa rota Web em Novato e cache é renovado',()=>{
+  const dialogue=read('public/static/channels/web/dialogue-v11183.js');
+  const loader=read('public/static/channels/web/overrides.js');
+  assert.match(dialogue,/const useWebRoute=typeof input==='string'/);
+  assert.match(dialogue,/revised\.webChallenge=\{level:challenge\.level,tries:persistence\.refusals\}/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11189/);
+  assert.match(loader,/free-events-v11184\.js\?v=11184/);
+});
