@@ -2,6 +2,7 @@
  * Secret: LIA_NEURAL_ADMIN_TOKEN (mínimo 24 caracteres). Nunca em HTML.
  */
 import {LIA_NEURAL_SEEDS,LIA_NEURAL_SEED_LINKS} from './lia-neural-seeds.js';
+import {LIA_NEURAL_RESEARCH_2026,LIA_NEURAL_RESEARCH_LINKS} from './lia-neural-research-2026.js';
 const HEAD={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const CAT=new Set(['conhecimento','cenario','memoria','aprendizado','decisao']);
 const STAT=new Set(['draft','published','archived']);
@@ -96,6 +97,24 @@ async function handle(request,db,url){
       await sql(db,'INSERT OR IGNORE INTO lia_kb_links(id,source_id,target_id,relation) VALUES(?,?,?,?)',
         l.id,l.source_id,l.target_id,l.relation).run();
     return ok({seeded:LIA_NEURAL_SEEDS.length,links:LIA_NEURAL_SEED_LINKS.length});
+  }
+  // V111.88: carregar pesquisa documentada como rascunhos privados.
+  // Não há publicação automática, e o admin pode revisar cada fonte.
+  if(method==='POST'&&path==='/seed/research-2026'){
+    for(const n of LIA_NEURAL_RESEARCH_2026)
+      await sql(db,'INSERT OR IGNORE INTO lia_kb_nodes (id,title,category,project,summary,content,keywords,source,status,visibility) VALUES(?,?,?,?,?,?,?,?,?,?)',
+        n.id,n.title,n.category,n.project,n.summary,n.content,n.keywords,n.source,n.status,n.visibility).run();
+    // As ligações podem apontar para a base inicial. Primeiro certifique-se
+    // de que a origem e o destino já foram inseridos na biblioteca.
+    let added=0;
+    for(const l of LIA_NEURAL_RESEARCH_LINKS){
+      const found=await sql(db,'SELECT id FROM lia_kb_nodes WHERE id IN (?,?)',l.source_id,l.target_id).all();
+      if((found.results||[]).length!==2)continue;
+      await sql(db,'INSERT OR IGNORE INTO lia_kb_links(id,source_id,target_id,relation) VALUES(?,?,?,?)',
+        l.id,l.source_id,l.target_id,l.relation).run();
+      added++;
+    }
+    return ok({seeded:LIA_NEURAL_RESEARCH_2026.length,links:added,reviewRequired:true});
   }
   if(method==='POST'&&path==='/nodes'){
     const data=await payload(request),problem=validate(data);
