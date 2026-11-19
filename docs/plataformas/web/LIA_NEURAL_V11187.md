@@ -4,7 +4,7 @@ A LIA tem agora um **grafo visual com notas, arquivos, projetos, conexões e rev
 O painel é separado do aplicativo dos participantes:
 
 - **Painel Web:** `/static/channels/web/lia-neural-v11187.html`
-- **Prévia pública:** 15 notas sugeridas e 19 relações, **somente leitura**, mesmo sem banco configurado.
+- **Prévia pública:** 31 notas sugeridas e 43 relações, **somente leitura**, mesmo sem banco configurado (15 da base e 16 pesquisas 2025–2026).
 - **Banco real:** Cloudflare D1, nas tabelas `lia_kb_nodes` e `lia_kb_links`.
 - **Consulta pela IA:** apenas notas com `status='published'`, `visibility='public'` e categoria diferente de `memoria`.
 - **Conteúdos pessoais e histórico de chats:** não são importados nem gravados automaticamente.
@@ -39,14 +39,15 @@ O painel é separado do aplicativo dos participantes:
 1. Abra o painel; o grafo demonstrativo aparece mesmo sem login.
 2. Clique em **Acesso administrativo**, informe o token Cloudflare e abra a biblioteca.
 3. Clique em **Carregar base inicial** para inserir 15 notas educativas **ainda não verificadas pela equipe**, privadas e como rascunho, com 19 conexões (ação idempotente).
-4. Use **Nova nota** ou importe vários arquivos `.md`, `.txt`, `.json`, `.csv` (até 18 KB cada, 40 por lote).
-5. Conecte conhecimentos manualmente ou utilize as relações iniciais. A importação também propõe até 2 ligações por palavras-chave em comum.
-6. Revise títulos, fontes e conteúdo. Para a LIA poder consultar, escolha **Revisado** e **Para a IA** e confirme. `Memória` é sempre privada.
-7. A IA Web recupera até três trechos pertinentes (máximo total 1.500 caracteres) da coleção aprovada. Isso é **recuperação de informação (RAG)**, não retreinamento do modelo.
+4. Clique em **Importar pesquisas de golpes (2026)** para carregar mais 16 notas documentadas e 24 relações, todas como **rascunhos privados** até a revisão da equipe. Consulte `PESQUISA_GOLPES_NEURAL_2026.md` para conferir as fontes.
+5. Use **Nova nota** ou importe vários arquivos `.md`, `.txt`, `.json`, `.csv` (até 18 KB cada, 40 por lote).
+6. Conecte conhecimentos manualmente ou utilize as relações iniciais. A importação também propõe até 2 ligações por palavras-chave em comum.
+7. Revise títulos, fontes e conteúdo. Para a LIA poder consultar, escolha **Revisado** e **Para a IA** e confirme. `Memória` é sempre privada.
+8. A IA Web (incluindo fala transcrita da videochamada LIA, WhatsApp, SMS e ligações) recupera até três trechos pertinentes (máximo total 1.500 caracteres) da coleção aprovada. Isso é **recuperação de informação (RAG)**, não retreinamento do modelo.
 
 ## Limitações e proteção
 
-- O conteúdo de projetos e arquivos é persistido no D1, mas não é sincronizado com o Obsidian instalado no computador.
+- Quando ativado e após revisão, o conteúdo de projetos e arquivos é persistido no D1, mas não é sincronizado com o Obsidian instalado no computador.
 - PDFs, DOCX e imagens **ainda não são importados**; converta o texto para Markdown/TXT antes da primeira versão. Nenhum arquivo binário é enviado para a IA.
 - O painel não memoriza automaticamente as conversas dos idosos. Não armazene dados pessoais sem base legal, informação clara, consentimento quando aplicável e controles de retenção.
 - O token fica apenas na memória da aba; ao atualizar, será solicitado novamente. Seu hash é comparado no servidor. Não habilite autenticação por número de telefone demonstrativo para administrar a biblioteca.
