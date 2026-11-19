@@ -13,10 +13,10 @@ O painel é separado do aplicativo dos participantes:
 ## Preparar Preview — ação administrativa manual
 
 1. Use a conta correta da Cloudflare e confirme que o banco Preview é o `educa-digital-preview`.
-2. Crie um token forte com no mínimo 24 caracteres, aleatório, e configure-o como secret no Worker, **sem colocá-lo em nenhum arquivo**:
+2. Crie um token forte com no mínimo 24 caracteres, aleatório, e configure-o **somente nas configurações de Preview** do Worker, **sem colocá-lo em nenhum arquivo**. A Cloudflare usa um comando separado para segredos de Previews; `wrangler secret put` sem `preview` pode alterar o ambiente de produção:
 
    ```bash
-   npx wrangler secret put LIA_NEURAL_ADMIN_TOKEN
+   npx wrangler preview base-config secret put LIA_NEURAL_ADMIN_TOKEN
    ```
 
 3. Migre primeiro o **banco Preview**, revisando o nome do banco e garantindo que o comando não aponta para produção:
@@ -25,7 +25,7 @@ O painel é separado do aplicativo dos participantes:
    npx wrangler d1 execute educa-digital-preview --remote --file=./banco/lia_neural_v11187.sql
    ```
 
-4. Valide o endpoint `GET /api/lia/neural/status` com `Authorization: Bearer <seu-token>` e abra o painel na URL do Worker Preview. Não copie o token para mensagens, prints, arquivos ou GitHub.
+4. Confira primeiro `GET /api/lia/neural/health` (somente estado; não requer token), depois valide `GET /api/lia/neural/status` com `Authorization: Bearer <seu-token>` e abra o painel na URL do Worker Preview. Não copie o token para mensagens, prints, arquivos ou GitHub.
 5. Após validar os testes e aprovar o rollout, aplique **separadamente** a migração no banco de produção:
 
    ```bash

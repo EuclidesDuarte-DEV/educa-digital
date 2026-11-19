@@ -10,7 +10,7 @@
 ## Verificar o Neural antes de afirmar que está ativo
 1. No **Preview** do PR #44, consultar `/api/lia/neural/health`.
 2. Se `reason=SCHEMA_REQUIRED`, migrar **somente o banco `educa-digital-preview`**, conforme `LIA_NEURAL_V11187.md`.
-3. Configurar o secret `LIA_NEURAL_ADMIN_TOKEN` no ambiente Preview sem colocar seu valor no GitHub, mensagens ou código.
+3. Configurar o secret `LIA_NEURAL_ADMIN_TOKEN` no ambiente Preview com `npx wrangler preview base-config secret put LIA_NEURAL_ADMIN_TOKEN` (ou pelas configurações de Preview no painel Cloudflare). **Não** usar `wrangler secret put` simples, que pode atingir produção. Nunca colocar o valor no GitHub, mensagens ou código.
 4. Importar a base e as pesquisas. Todas começam em `draft/private`. Revisar e aprovar manualmente as notas adequadas, marcando-as `published/public`. Nunca publicar `memoria`.
 5. Conferir `rag_active=true` e testar **quatro canais** com o modelo Workers AI vinculado ao Preview. Caso contrário, a biblioteca não estará alimentando a IA.
 6. Após aprovação dos testes, solicitar separadamente o rollout em produção. Este PR não faz deploy remoto nem migração de produção.
