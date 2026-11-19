@@ -8,6 +8,7 @@
  */
 import { MODULOS } from './catalogo.js';
 import { responderModoLivre } from './free-chat.js';
+import { neuralApi } from './lia-neural.js';
 
 const CODIGOS_ATIVIDADES = new Set(
   MODULOS.flatMap(modulo =>
@@ -545,6 +546,9 @@ async function rotearApi(request, env, url) {
   if (metodo === 'POST' && rota === '/api/modo-livre/conversar-web') {
     return responderModoLivre(request, env, true);
   }
+  // V111.87 — biblioteca Neural somente via credencial administrativa.
+  if (rota === '/api/lia/neural' || rota.startsWith('/api/lia/neural/'))
+    return neuralApi(request,env,url);
   if (metodo === 'GET' && rota === '/api/modo-livre/capacidades') {
     return responder({ok:true,projeto:'Educa+ Digital',conversa:env?.AI?.run?'workers-ai':'aguardando-binding-ai',voz_neural_online:liaConfigured(env)&&liaPublicVoice(env),voz_alternativa:'voz-feminina-pt-br-do-navegador',precisa_cmd:false});
   }
