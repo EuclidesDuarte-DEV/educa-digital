@@ -4,7 +4,7 @@ A LIA tem agora um **grafo visual com notas, arquivos, projetos, conexões e rev
 O painel é separado do aplicativo dos participantes:
 
 - **Painel Web:** `/static/channels/web/lia-neural-v11187.html`
-- **Prévia pública:** 15 notas e 19 relações, **somente leitura**, mesmo sem banco configurado.
+- **Prévia pública:** 15 notas sugeridas e 19 relações, **somente leitura**, mesmo sem banco configurado.
 - **Banco real:** Cloudflare D1, nas tabelas `lia_kb_nodes` e `lia_kb_links`.
 - **Consulta pela IA:** apenas notas com `status='published'`, `visibility='public'` e categoria diferente de `memoria`.
 - **Conteúdos pessoais e histórico de chats:** não são importados nem gravados automaticamente.
@@ -38,7 +38,7 @@ O painel é separado do aplicativo dos participantes:
 
 1. Abra o painel; o grafo demonstrativo aparece mesmo sem login.
 2. Clique em **Acesso administrativo**, informe o token Cloudflare e abra a biblioteca.
-3. Clique em **Carregar base inicial** para inserir 15 notas educativas e 19 conexões (ação idempotente).
+3. Clique em **Carregar base inicial** para inserir 15 notas educativas **ainda não verificadas pela equipe**, privadas e como rascunho, com 19 conexões (ação idempotente).
 4. Use **Nova nota** ou importe vários arquivos `.md`, `.txt`, `.json`, `.csv` (até 18 KB cada, 40 por lote).
 5. Conecte conhecimentos manualmente ou utilize as relações iniciais. A importação também propõe até 2 ligações por palavras-chave em comum.
 6. Revise títulos, fontes e conteúdo. Para a LIA poder consultar, escolha **Revisado** e **Para a IA** e confirme. `Memória` é sempre privada.
