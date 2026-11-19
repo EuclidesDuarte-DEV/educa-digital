@@ -9,9 +9,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "pix,seguranca,pagamento",
     "summary": "Confira destinatário, instituição e valor antes de confirmar qualquer Pix. Em caso de pedido urgente, valide a identidade por outro canal conhecido.",
     "content": "Confira destinatário, instituição e valor antes de confirmar qualquer Pix. Em caso de pedido urgente, valide a identidade por outro canal conhecido.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-whatsapp",
@@ -21,9 +21,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "whatsapp,mensagens,contato",
     "summary": "Número novo, urgência e pedido de transferência são sinais de alerta. Confirme pelo número já conhecido. Evite compartilhar códigos e senhas.",
     "content": "Número novo, urgência e pedido de transferência são sinais de alerta. Confirme pelo número já conhecido. Evite compartilhar códigos e senhas.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-sms",
@@ -33,9 +33,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "sms,mensagens,link",
     "summary": "SMS pode imitar bancos ou entregadoras. Não abra links inesperados; acesse o serviço pelo aplicativo oficial instalado por você.",
     "content": "SMS pode imitar bancos ou entregadoras. Não abra links inesperados; acesse o serviço pelo aplicativo oficial instalado por você.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-video",
@@ -45,9 +45,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "video,lia,voz,identidade",
     "summary": "Imagem e voz podem ser manipuladas ou geradas por IA. Uma videochamada não substitui a confirmação por outro canal confiável.",
     "content": "Imagem e voz podem ser manipuladas ou geradas por IA. Uma videochamada não substitui a confirmação por outro canal confiável.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-falso-filho",
@@ -57,9 +57,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "familia,pix,whatsapp,filho",
     "summary": "Um contato desconhecido alega ser familiar em novo número e pede Pix urgente. A decisão segura é confirmar a identidade no contato antigo antes de qualquer",
     "content": "Um contato desconhecido alega ser familiar em novo número e pede Pix urgente. A decisão segura é confirmar a identidade no contato antigo antes de qualquer transferência.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-falso-banco",
@@ -69,9 +69,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "banco,ligacao,pix",
     "summary": "Uma ligação simula atendimento bancário e pressiona para transferir valores. Encerre o contato e use o aplicativo ou telefone oficial do banco.",
     "content": "Uma ligação simula atendimento bancário e pressiona para transferir valores. Encerre o contato e use o aplicativo ou telefone oficial do banco.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-entrega",
@@ -81,9 +81,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "sms,entrega,cobranca",
     "summary": "Uma mensagem informa taxa inesperada de entrega e tenta direcionar a um pagamento ou link. Confira no app oficial da transportadora.",
     "content": "Uma mensagem informa taxa inesperada de entrega e tenta direcionar a um pagamento ou link. Confira no app oficial da transportadora.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-videochamada",
@@ -93,9 +93,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "lia,video,identidade,fraude",
     "summary": "Cenário educativo no qual alguém em vídeo pede ajuda financeira. O participante deve identificar inconsistências e confirmar a pessoa por meio independente",
     "content": "Cenário educativo no qual alguém em vídeo pede ajuda financeira. O participante deve identificar inconsistências e confirmar a pessoa por meio independente.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-conversa",
@@ -105,9 +105,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "contexto,historico,conversa",
     "summary": "Armazene apenas resumos aprovados e não identificáveis, nunca transcrições pessoais sem consentimento. A LIA usa o contexto imediato da sessão sem persisti",
     "content": "Armazene apenas resumos aprovados e não identificáveis, nunca transcrições pessoais sem consentimento. A LIA usa o contexto imediato da sessão sem persistir a conversa.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-projetos",
@@ -117,9 +117,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "projeto,arquivos,conexao",
     "summary": "Documentos e projetos importados podem ser conectados por tema, decisão, autoria autorizada e versão. Notas privadas não alimentam conversas públicas.",
     "content": "Documentos e projetos importados podem ser conectados por tema, decisão, autoria autorizada e versão. Notas privadas não alimentam conversas públicas.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-aprender",
@@ -129,9 +129,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "fonte,verificacao,aprendizado",
     "summary": "Toda nova informação deve indicar origem e passar por revisão humana antes de ser publicada como conhecimento consultável pela IA.",
     "content": "Toda nova informação deve indicar origem e passar por revisão humana antes de ser publicada como conhecimento consultável pela IA.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-dificuldade",
@@ -141,9 +141,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "nivel,xp,progresso",
     "summary": "Novato, Intermediário e Experiente recebem desafios com complexidade gradual. A dificuldade não deve punir dúvidas ou dificuldades de acessibilidade.",
     "content": "Novato, Intermediário e Experiente recebem desafios com complexidade gradual. A dificuldade não deve punir dúvidas ou dificuldades de acessibilidade.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-recusa",
@@ -153,9 +153,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "recusa,verificar,seguranca",
     "summary": "Recusar envio de dinheiro e confirmar a identidade por outro canal conhecido são decisões seguras; explicações devem ser respeitosas.",
     "content": "Recusar envio de dinheiro e confirmar a identidade por outro canal conhecido são decisões seguras; explicações devem ser respeitosas.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-aceitar-pix",
@@ -165,9 +165,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "pix,pagamento,risco",
     "summary": "Aceitar enviar Pix para um contato não verificado é uma decisão arriscada em simulações. O sistema não deve realizar pagamentos reais.",
     "content": "Aceitar enviar Pix para um contato não verificado é uma decisão arriscada em simulações. O sistema não deve realizar pagamentos reais.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   },
   {
     "id": "seed-codigos",
@@ -177,9 +177,9 @@ export const LIA_NEURAL_SEEDS = [
     "keywords": "senha,sms,codigo,autenticacao",
     "summary": "Códigos recebidos por SMS, senhas e tokens não devem ser enviados a contatos não verificados. Em dúvida, interrompa e consulte o serviço oficial.",
     "content": "Códigos recebidos por SMS, senhas e tokens não devem ser enviados a contatos não verificados. Em dúvida, interrompa e consulte o serviço oficial.",
-    "source": "Base educativa Educa+ Digital · revisão inicial",
-    "status": "published",
-    "visibility": "public"
+    "source": "Conteúdo inicial sugerido · revisão da equipe pendente",
+    "status": "draft",
+    "visibility": "private"
   }
 ];
 export const LIA_NEURAL_SEED_LINKS = [
