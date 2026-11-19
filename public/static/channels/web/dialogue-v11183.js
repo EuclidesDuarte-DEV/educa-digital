@@ -207,8 +207,9 @@
             ?{role:'assistant',content:naturalize(item.content)}
             :item)
         :[];
-      const useWebRoute=challenge.level>1 && eligiblePressure.has(scenario) &&
-        typeof input==='string';
+      // Web usa sua própria rota em todos os níveis. A LIA Neural poderá
+      // consultar notas aprovadas inclusive no Novato após D1 estar ativo.
+      const useWebRoute=typeof input==='string';
       const endpoint=useWebRoute
         ?input.replace('/api/modo-livre/conversar','/api/modo-livre/conversar-web')
         :input;
