@@ -39,7 +39,7 @@ test('V111.54: home desktop compacta, mobile pré-existente intacta',()=>{
  assert.match(css,/padding-top:clamp\(12px,2vw,24px\)/);
  assert.match(html,/responsive-v11154\.css\?v=11155/);
  assert.match(html,/training\.js\?v=11155/);
- assert.match(html,/free-video\.js\?v=11154/);
+ assert.match(html,/free-video\.js\?v=111(?:54|91)/);
  assert.match(sw,/educa-cf11155-bank-spotlight/);
  assert.match(sw,/responsive-v11154\.css/);
 });
