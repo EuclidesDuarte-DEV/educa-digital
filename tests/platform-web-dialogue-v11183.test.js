@@ -315,10 +315,25 @@ test('[web] V111.86 — contato normal e cenário de código não ganham pressã
   const v=setup('web','Oi!',3);
   await v.send('Oi, tudo bem?','friend');
   assert.equal(v.state.fetchCalls.length,1);
-  assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar$/);
+  assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar-web$/);
   const w=setup('web','Entendi.',3);
   await w.send('Não vou passar o código.','code');
   await Promise.resolve();
   assert.deepEqual(w.state.clicks,['safe']);
   assert.equal(w.state.fetchCalls.length,0);
+});
+
+
+test('[web] V111.88 — os quatro canais usam a rota Neural até no Novato',async()=>{
+  for(const [scenario,view] of [
+    ['family','chat'],['sms-delivery','free-sms'],['bank','free-call'],['video','free-video']
+  ]){
+    const v=setup('web','Certo, pode conferir a informação.',1);
+    v.state.view=view;
+    const response=await v.send('Pode explicar melhor?',scenario);
+    assert.equal(response.status,200);
+    assert.equal(v.state.fetchCalls.length,1,scenario);
+    assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar-web$/);
+    assert.equal(JSON.parse(v.state.fetchCalls[0][1].body).webChallenge.level,1);
+  }
 });
