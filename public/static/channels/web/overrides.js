@@ -423,7 +423,7 @@
         !document.getElementById?.('educa-web-dialogue-v11183')) {
       const dialogueScript = document.createElement('script');
       dialogueScript.id = 'educa-web-dialogue-v11183';
-      dialogueScript.src = '/static/channels/web/dialogue-v11183.js?v=11186';
+      dialogueScript.src = '/static/channels/web/dialogue-v11183.js?v=11189';
       dialogueScript.async = false;
       document.head.appendChild(dialogueScript);
     }
