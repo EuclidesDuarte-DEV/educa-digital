@@ -1,0 +1,272 @@
+{
+  "version": "11187",
+  "demo": true,
+  "nodes": [
+    {
+      "id": "seed-pix",
+      "title": "PIX seguro",
+      "category": "conhecimento",
+      "project": "Educa+ Digital",
+      "summary": "Confira destinatário, instituição e valor antes de confirmar qualquer Pix. Em caso de pedido urgente, valide a identidade por outro canal conhecido.",
+      "keywords": "pix,seguranca,pagamento",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-whatsapp",
+      "title": "WhatsApp seguro",
+      "category": "conhecimento",
+      "project": "Educa+ Digital",
+      "summary": "Número novo, urgência e pedido de transferência são sinais de alerta. Confirme pelo número já conhecido. Evite compartilhar códigos e senhas.",
+      "keywords": "whatsapp,mensagens,contato",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-sms",
+      "title": "Mensagens SMS suspeitas",
+      "category": "conhecimento",
+      "project": "Educa+ Digital",
+      "summary": "SMS pode imitar bancos ou entregadoras. Não abra links inesperados; acesse o serviço pelo aplicativo oficial instalado por você.",
+      "keywords": "sms,mensagens,link",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-video",
+      "title": "Vídeo e voz com IA",
+      "category": "conhecimento",
+      "project": "LIA AI",
+      "summary": "Imagem e voz podem ser manipuladas ou geradas por IA. Uma videochamada não substitui a confirmação por outro canal confiável.",
+      "keywords": "video,lia,voz,identidade",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-falso-filho",
+      "title": "Golpe do falso filho",
+      "category": "cenario",
+      "project": "Educa+ Digital",
+      "summary": "Um contato desconhecido alega ser familiar em novo número e pede Pix urgente. A decisão segura é confirmar a identidade no contato antigo antes de qualquer",
+      "keywords": "familia,pix,whatsapp,filho",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-falso-banco",
+      "title": "Golpe da falsa central bancária",
+      "category": "cenario",
+      "project": "Educa+ Digital",
+      "summary": "Uma ligação simula atendimento bancário e pressiona para transferir valores. Encerre o contato e use o aplicativo ou telefone oficial do banco.",
+      "keywords": "banco,ligacao,pix",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-entrega",
+      "title": "Golpe de entrega por SMS",
+      "category": "cenario",
+      "project": "Educa+ Digital",
+      "summary": "Uma mensagem informa taxa inesperada de entrega e tenta direcionar a um pagamento ou link. Confira no app oficial da transportadora.",
+      "keywords": "sms,entrega,cobranca",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-videochamada",
+      "title": "Videochamada LIA",
+      "category": "cenario",
+      "project": "LIA AI",
+      "summary": "Cenário educativo no qual alguém em vídeo pede ajuda financeira. O participante deve identificar inconsistências e confirmar a pessoa por meio independente",
+      "keywords": "lia,video,identidade,fraude",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-conversa",
+      "title": "Contexto da conversa",
+      "category": "memoria",
+      "project": "LIA AI",
+      "summary": "Armazene apenas resumos aprovados e não identificáveis, nunca transcrições pessoais sem consentimento. A LIA usa o contexto imediato da sessão sem persisti",
+      "keywords": "contexto,historico,conversa",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-projetos",
+      "title": "Projetos conectados",
+      "category": "memoria",
+      "project": "LIA AI",
+      "summary": "Documentos e projetos importados podem ser conectados por tema, decisão, autoria autorizada e versão. Notas privadas não alimentam conversas públicas.",
+      "keywords": "projeto,arquivos,conexao",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-aprender",
+      "title": "Aprender com fontes verificadas",
+      "category": "aprendizado",
+      "project": "LIA AI",
+      "summary": "Toda nova informação deve indicar origem e passar por revisão humana antes de ser publicada como conhecimento consultável pela IA.",
+      "keywords": "fonte,verificacao,aprendizado",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-dificuldade",
+      "title": "Dificuldade progressiva",
+      "category": "aprendizado",
+      "project": "Educa+ Digital",
+      "summary": "Novato, Intermediário e Experiente recebem desafios com complexidade gradual. A dificuldade não deve punir dúvidas ou dificuldades de acessibilidade.",
+      "keywords": "nivel,xp,progresso",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-recusa",
+      "title": "Recusar e confirmar por outro canal",
+      "category": "decisao",
+      "project": "Educa+ Digital",
+      "summary": "Recusar envio de dinheiro e confirmar a identidade por outro canal conhecido são decisões seguras; explicações devem ser respeitosas.",
+      "keywords": "recusa,verificar,seguranca",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-aceitar-pix",
+      "title": "Aceite de transferência suspeita",
+      "category": "decisao",
+      "project": "Educa+ Digital",
+      "summary": "Aceitar enviar Pix para um contato não verificado é uma decisão arriscada em simulações. O sistema não deve realizar pagamentos reais.",
+      "keywords": "pix,pagamento,risco",
+      "status": "published",
+      "visibility": "public"
+    },
+    {
+      "id": "seed-codigos",
+      "title": "Não compartilhar códigos",
+      "category": "decisao",
+      "project": "Educa+ Digital",
+      "summary": "Códigos recebidos por SMS, senhas e tokens não devem ser enviados a contatos não verificados. Em dúvida, interrompa e consulte o serviço oficial.",
+      "keywords": "senha,sms,codigo,autenticacao",
+      "status": "published",
+      "visibility": "public"
+    }
+  ],
+  "links": [
+    {
+      "id": "seed-pix-falso-filho",
+      "source_id": "seed-pix",
+      "target_id": "seed-falso-filho",
+      "relation": "aparece-em"
+    },
+    {
+      "id": "seed-pix-aceitar-pix",
+      "source_id": "seed-pix",
+      "target_id": "seed-aceitar-pix",
+      "relation": "risco"
+    },
+    {
+      "id": "seed-whatsapp-falso-filho",
+      "source_id": "seed-whatsapp",
+      "target_id": "seed-falso-filho",
+      "relation": "canal"
+    },
+    {
+      "id": "seed-sms-entrega",
+      "source_id": "seed-sms",
+      "target_id": "seed-entrega",
+      "relation": "canal"
+    },
+    {
+      "id": "seed-video-videochamada",
+      "source_id": "seed-video",
+      "target_id": "seed-videochamada",
+      "relation": "fundamenta"
+    },
+    {
+      "id": "seed-falso-banco-recusa",
+      "source_id": "seed-falso-banco",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "seed-falso-filho-recusa",
+      "source_id": "seed-falso-filho",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "seed-falso-filho-aceitar-pix",
+      "source_id": "seed-falso-filho",
+      "target_id": "seed-aceitar-pix",
+      "relation": "decisao-arriscada"
+    },
+    {
+      "id": "seed-entrega-sms",
+      "source_id": "seed-entrega",
+      "target_id": "seed-sms",
+      "relation": "usa"
+    },
+    {
+      "id": "seed-videochamada-video",
+      "source_id": "seed-videochamada",
+      "target_id": "seed-video",
+      "relation": "usa"
+    },
+    {
+      "id": "seed-conversa-projetos",
+      "source_id": "seed-conversa",
+      "target_id": "seed-projetos",
+      "relation": "contexto"
+    },
+    {
+      "id": "seed-projetos-aprender",
+      "source_id": "seed-projetos",
+      "target_id": "seed-aprender",
+      "relation": "alimenta"
+    },
+    {
+      "id": "seed-aprender-dificuldade",
+      "source_id": "seed-aprender",
+      "target_id": "seed-dificuldade",
+      "relation": "contribui"
+    },
+    {
+      "id": "seed-dificuldade-falso-filho",
+      "source_id": "seed-dificuldade",
+      "target_id": "seed-falso-filho",
+      "relation": "adapta"
+    },
+    {
+      "id": "seed-recusa-codigos",
+      "source_id": "seed-recusa",
+      "target_id": "seed-codigos",
+      "relation": "protege"
+    },
+    {
+      "id": "seed-codigos-sms",
+      "source_id": "seed-codigos",
+      "target_id": "seed-sms",
+      "relation": "aplica"
+    },
+    {
+      "id": "seed-videochamada-recusa",
+      "source_id": "seed-videochamada",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "seed-falso-banco-pix",
+      "source_id": "seed-falso-banco",
+      "target_id": "seed-pix",
+      "relation": "envolve"
+    },
+    {
+      "id": "seed-whatsapp-recusa",
+      "source_id": "seed-whatsapp",
+      "target_id": "seed-recusa",
+      "relation": "reforca"
+    }
+  ]
+}
