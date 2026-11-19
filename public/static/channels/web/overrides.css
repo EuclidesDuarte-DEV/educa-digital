@@ -1957,7 +1957,7 @@ body.lia-call-visible #phoneHardware #freeVideoView[data-lia-layout="compact"]:n
 }
 html[data-educa-platform="web"]:not(.educa-fullscreen-active)
 body.lia-call-visible #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) {
-  --lia-dock-bottom: 26px;
+  --lia-dock-bottom: 30px;
   --lia-dock-height: 51px;
 }
 html[data-educa-platform="web"]:not(.educa-fullscreen-active)
