@@ -207,8 +207,10 @@
             ?{role:'assistant',content:naturalize(item.content)}
             :item)
         :[];
-      const useWebRoute=challenge.level>1 && eligiblePressure.has(scenario) &&
-        typeof input==='string';
+      // V111.88: todos os canais do Modo Livre WEB consultam o Neural,
+      // inclusive o Novato e a videochamada da LIA. O nível regula apenas
+      // a dificuldade, não o acesso ao conhecimento revisado.
+      const useWebRoute=typeof input==='string';
       const endpoint=useWebRoute
         ?input.replace('/api/modo-livre/conversar','/api/modo-livre/conversar-web')
         :input;
