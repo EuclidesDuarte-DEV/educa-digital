@@ -8,6 +8,7 @@
  */
 import { MODULOS } from './catalogo.js';
 import { responderModoLivre } from './free-chat.js';
+import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
 const CODIGOS_ATIVIDADES = new Set(
   MODULOS.flatMap(modulo =>
@@ -531,6 +532,9 @@ async function rotearApi(request, env, url) {
   const metodo = request.method.toUpperCase();
 
   if (metodo === 'GET' && rota.startsWith('/api/lia-model/')) return servirModeloLia(rota.slice('/api/lia-model/'.length));
+  // Voz expressiva opcional V111.93: chamada somente pela Web; desligada por padrão.
+  if (metodo === 'GET' && rota === '/api/lia/voz-web/status') return responder(hqWebVoiceStatus(env));
+  if (metodo === 'POST' && rota === '/api/lia/voz-web/speak') return webHQVoice(request,env);
   if (metodo === 'GET' && rota === '/api/avatar/health') return liaGateway(request,env,'health');
   if (metodo === 'GET' && rota === '/api/avatar/check') return liaGateway(request,env,'check');
   if (metodo === 'POST' && rota === '/api/avatar/preload') return liaGateway(request,env,'preload');
