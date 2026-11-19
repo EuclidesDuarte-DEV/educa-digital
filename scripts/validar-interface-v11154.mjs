@@ -64,11 +64,20 @@ try{
     return {view:r(view),bar:r(bar),self:r(document.querySelector('#freeVideoSelfie')),
       top:r(document.querySelector('#freeVideoView .v110-video-top')),
       controls:[...bar.querySelectorAll('.v110-tool:not([hidden]),.v112-video-more summary')].filter(el=>getComputedStyle(el).display!=='none').map(el=>({id:el.id||'more',...r(el)})),
-      layout:view.dataset.liaLayout};
+      layout:view.dataset.liaLayout,liaVisible:document.body.classList.contains('lia-call-visible')};
    });
    assert.ok(call.view?.width>200,c.w+': celular simulado sem área útil');
    assert.ok(call.bar.left>=call.view.left-1&&call.bar.right<=call.view.right+1,c.w+': barra ultrapassa borda do Android');
    assert.ok(call.bar.top>=call.view.top&&call.bar.bottom<=call.view.bottom+1,c.w+': dock cortado verticalmente');
+   // V111.89: a barra do Android simulado fica na parte inferior da moldura.
+   // O dock precisa reservar espaço acima dela em desktop e tablet altos.
+   if(c.w>=701&&c.h>=650){
+     assert.ok(call.liaVisible,c.w+': modo de chamada sem classe responsiva ativa');
+     assert.ok(call.view.bottom-call.bar.bottom>=27,
+       c.w+': controles invadem a barra de gestos ('+(call.view.bottom-call.bar.bottom).toFixed(1)+'px)');
+     assert.ok(call.self.bottom<=call.bar.top-4,
+       c.w+': miniatura cobre a barra de videochamada');
+   }
    assert.ok(call.self.right<=call.view.right+2&&call.self.left>=call.view.left-2,c.w+': prévia local sai da tela');
    assert.ok(!overlaps(call.self,call.bar),c.w+': prévia "Você" cobre controles');
    assert.ok(call.top.left>=call.view.left-1&&call.top.right<=call.view.right+1,c.w+': cabeçalho Lia fora da tela');

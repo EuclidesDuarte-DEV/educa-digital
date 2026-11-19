@@ -79,7 +79,7 @@ test('V111.53: chamada fictícia escuta somente depois da ação do participante
 });
 test('V111.53: build sem containers pagos e bancos D1 preservados',()=>{
  assert.match(sw,/educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight|educa-cf11156-lia-voice-viewport/);
- assert.match(html,/free-mode\.js\?v=11153/);
+ assert.match(html,/free-mode\.js\?v=111(?:53|89)/);
  assert.match(html,/free-mode\.css\?v=11153/);
  assert.match(config,/database_name = "educa-digital"\s*\ndatabase_id = "25613d89-8073-40f2-af9b-91e751fb28d7"/);
  assert.match(config,/database_name = "educa-digital-preview"\s*\ndatabase_id = "5a3484de-9457-4343-89ff-1b7f455815c4"/);

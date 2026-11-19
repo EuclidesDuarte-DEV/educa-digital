@@ -113,7 +113,7 @@ test('[ios/android] V111.83 — desativado inteiramente fora do canal Web',async
     assert.equal(v.state.fetchCalls.length,1);
     assert.equal(v.state.clicks.length,0);
   }
-  assert.match(loader,/dialogue-v11183\.js\?v=11186/);
+  assert.match(loader,/dialogue-v11183\.js\?v=11189/);
   assert.match(loader,/free-events-v11184\.js\?v=11184/);
   assert.match(loader,/educaPlatform !== 'web'/);
 });
@@ -315,7 +315,7 @@ test('[web] V111.86 — contato normal e cenário de código não ganham pressã
   const v=setup('web','Oi!',3);
   await v.send('Oi, tudo bem?','friend');
   assert.equal(v.state.fetchCalls.length,1);
-  assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar$/);
+  assert.match(v.state.fetchCalls[0][0],/\/api\/modo-livre\/conversar-web$/);
   const w=setup('web','Entendi.',3);
   await w.send('Não vou passar o código.','code');
   await Promise.resolve();
