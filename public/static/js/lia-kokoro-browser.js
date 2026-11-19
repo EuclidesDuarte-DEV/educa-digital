@@ -9,8 +9,8 @@
  // de conversas de participantes, dados pessoais ou mensagens livres.
  const WEB_INTRO=new Map([
   ['Oi, sou a Lia.','lia-hello'],
-  ['Troquei de celular e estou precisando de um favor.','lia-phone'],
-  ['Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.','lia-favor']
+  ['Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino?','lia-phone'],
+  ['Eu devolvo depois.','lia-favor']
  ]);
  const memoryAudio=new Map();
  const inFlight=new Map();
