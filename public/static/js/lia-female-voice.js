@@ -23,7 +23,8 @@
   // Priorizar vozes femininas explicitamente "Natural/Neural" do sistema
   // antes de vozes clássicas robóticas. Nunca inferir gênero por pitch.
   const rank=v=>{const n=normalized(v.name);
-   const natural=/natural|neural|online/.test(n)?-10:0;
+   const onlyWeb=typeof document!=='undefined'&&document.documentElement?.dataset?.educaPlatform==='web';
+   const natural=onlyWeb&&/natural|neural|online/.test(n)?-10:0;
    return natural+(/francisca/.test(n)?0:/luciana/.test(n)?1:/\bmaria\b/.test(n)?2:/google portugues/.test(n)?3:4)+(v.localService?0:.05);
   };
   return candidates.sort((a,b)=>rank(a)-rank(b))[0]||null;
