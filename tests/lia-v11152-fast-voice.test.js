@@ -15,7 +15,12 @@ const sw=read('public/static/sw.js');
 test('V111.52: aquecimento nao gera duas falas e atrasa a primeira resposta',()=>{
   const fn=kokoro.split('function prewarmIntro(){')[1].split('function setDevice')[0];
   assert.match(fn,/introPending=prepare\(\)\.then/);
-  assert.doesNotMatch(fn,/synthesize\(/);
+  // V111.92: somente a saudação fixa curta pode ser preparada após o
+  // modelo ficar pronto, quando nenhuma fala estiver em andamento.
+  assert.match(fn,/const phrase='Oi, sou a Lia\.'/);
+  assert.match(fn,/requests\.size===0&&inFlight\.size===0/);
+  assert.match(fn,/synthesize\(phrase,'natural'\)/);
+  assert.doesNotMatch(fn,/synthesize\('Estou em outro celular\.'/);
   assert.match(kokoro,/SPEAK_LIMIT_MS=45000/);
   assert.match(kokoro,/isReady:\(\)=>Boolean/);
   assert.match(kokoro,/voice:'pf_dora'/);

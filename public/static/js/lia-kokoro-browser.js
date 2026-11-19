@@ -125,9 +125,20 @@
  }
  function prewarmIntro(){
   if(introPending)return introPending;
-  // Pré-aquece somente o motor: as duas falas antigas ocupavam a fila
-  // do Worker e impediam a primeira resposta ao atender a chamada.
-  introPending=prepare().then(()=>true).catch(error=>{introPending=null;throw error;});
+  // Web: após o carregamento, sintetiza apenas a abertura fixa (15 caracteres)
+  // em segundo plano. Quando a videochamada chegar, o WAV pf_dora poderá
+  // tocar do cache sem baixar/carregar novamente o modelo. Nenhuma fala do
+  // participante ou resposta dinâmica é persistida.
+  introPending=prepare().then(()=>{
+   if(typeof document!=='undefined'&&document.documentElement?.dataset?.educaPlatform==='web'){
+    const phrase='Oi, sou a Lia.';
+    void hasCachedIntro(phrase,'natural').then(cached=>{
+     if(!cached&&requests.size===0&&inFlight.size===0)
+      void synthesize(phrase,'natural').catch(()=>{});
+    }).catch(()=>{});
+   }
+   return true;
+  }).catch(error=>{introPending=null;throw error;});
   return introPending;
  }
  function setDevice(value){
