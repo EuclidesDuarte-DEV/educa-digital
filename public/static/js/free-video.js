@@ -585,19 +585,25 @@ function startSpeechChunk(phrase,serial){
     session.voiceChoiceDoneSerial=serial;
     session.utterance={kind:'voice-selecting'};
     showVoiceProgress('Buscando voz feminina rápida enquanto o Kokoro aquece…');
-    const already=window.EducaLiaVoice?.choose?.();
-    const candidate=already?Promise.resolve(already):
-      (window.EducaLiaVoice?.waitForFemale?.(480)||Promise.resolve(null));
-    void Promise.resolve(candidate).then(voice=>{
+    // CacheStorage pode conter a fala fixa pf_dora de uma sessão anterior,
+    // mesmo que o modelo de 82M ainda não esteja carregado neste acesso.
+    // Áudio fixo em cache tem prioridade sobre a voz do sistema.
+    const candidate=Promise.resolve().then(async()=>{
+     if(await localKokoro.hasCachedIntro?.(phrase,selectedStyle()))return {cached:true};
+     const already=window.EducaLiaVoice?.choose?.();
+     return {voice:already||(await window.EducaLiaVoice?.waitForFemale?.(480))||null};
+    });
+    void candidate.then(choice=>{
      if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
      session.utterance=null;
-     if(voice){
+     if(choice.cached){
+      void playBrowserKokoro(phrase,serial).catch(()=>{if(serial===session.serial)recoverVoice(serial,phrase,'Áudio em cache não pôde ser reproduzido.');});
+     }else if(choice.voice){
       session.fastVoiceSerial=serial;
       indicator('Lia · voz feminina rápida; Kokoro aquecendo');
       audioOnly(phrase,serial);
      }else{
-      // Se o aparelho não oferece uma voz feminina pt-BR, não selecionar
-      // uma voz masculina por engano. O Kokoro segue como alternativa.
+      // Sem voz feminina pt-BR, usar Kokoro; nunca substituir por voz masculina.
       startSpeechChunk(phrase,serial);
      }
     }).catch(()=>{if(serial===session.serial&&session.active){session.utterance=null;startSpeechChunk(phrase,serial);}});
