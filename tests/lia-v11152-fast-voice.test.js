@@ -84,7 +84,7 @@ test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>
 
 test('V111.52: publica apenas scripts e mantém os bancos D1',()=>{
   for(const asset of ['lia-kokoro-browser.js','free-video.js'])
-    assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=111(?:52|54|57)'));
+    assert.match(html,new RegExp(asset.replace('.','\\.')+'\\?v=111(?:52|54|57|91)'));
   assert.match(html,/free-mode\.js\?v=111(?:53|89)/);
   assert.match(kokoro,/lia-kokoro-worker\.js\?v=11157/);
   assert.match(sw,/educa-cf11152-lia-kokoro-fluida|educa-cf11153-modo-livre-sms-contextual|educa-cf11154-home-video-cue|educa-cf11155-bank-spotlight|educa-cf11156-lia-voice-viewport/);
