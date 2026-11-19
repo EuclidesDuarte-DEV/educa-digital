@@ -126,6 +126,10 @@ test('V111.87 — memórias pessoais são privadas, e documentos não entram em 
 test('V111.87 — IA Web consulta somente conhecimento publicado; rota nativa fica igual',async()=>{
   const st=memoryDb(),env={DB:st.db,LIA_NEURAL_ADMIN_TOKEN:TOKEN};
   await neuralApi(request('/seed','POST',{}),env);
+  // Nenhum conhecimento sugerido entra na LIA antes de revisão.
+  assert.equal(await retrieveLiaKnowledge(env,'family','Pix inseguro'),'');
+  const approved=await neuralApi(request('/nodes/seed-pix','PATCH',{status:'published',visibility:'public'}),env);
+  assert.equal(approved.status,200);
   let system='';
   env.AI={run:async(_model,options)=>{system=options.messages[0].content;return {response:'Confira por um contato conhecido.'};}};
   const makeReq=()=>new Request('https://educa.example/api/modo-livre/conversar-web',{method:'POST',headers:{'Content-Type':'application/json'},
