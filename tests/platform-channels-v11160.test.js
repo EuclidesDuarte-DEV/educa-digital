@@ -65,7 +65,7 @@ test('três canais reais e clientes nativos utilizam rotas específicas',()=>{
   assert.ok(existsSync('public/static/channels/'+platform+'/overrides.js'));
  }
  const html=read('public/html/index.html');
- assert.match(html,/platform-channel-v11160\.js\?v=11160/);
+ assert.match(html,/platform-channel-v11160\.js\?v=11190/);
  assert.match(html,/educa-mobile-app/);
  assert.match(read('android-app/app/src/main/java/com/educamaisdigital/educa/MainActivity.java'),/\?app=1&platform=android/);
  assert.match(read('ios-app/EducaDigital/CloudflareTrainingWebView.swift'),/\?app=1&platform=ios/);
