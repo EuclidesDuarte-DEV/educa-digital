@@ -272,7 +272,7 @@ function formData(){
   return Object.fromEntries(['title','category','project','summary','content','keywords','source','status','visibility'].map(k=>[k,f.elements[k].value]));
 }
 function controls(enabled){
-  for(const id of ['newNote','seedBtn','fromNode','toNode','addLink','files'])
+  for(const id of ['newNote','seedBtn','researchBtn','fromNode','toNode','addLink','files'])
     byId(id).disabled=!enabled;
   byId('uploadLabel').setAttribute('aria-disabled',String(!enabled));
 }
@@ -398,6 +398,14 @@ byId('seedBtn').addEventListener('click',async()=>{
   if(!real||!confirm('Inserir a base inicial revisada de 15 notas e 19 relações no D1?'))return;
   try{const data=await api('/seed','POST',{});await refresh();feedback('Base carregada: '+data.seeded+' notas e '+data.links+' conexões.');}
   catch(e){feedback(e.message,true);}
+});
+byId('researchBtn').addEventListener('click',async()=>{
+  if(!real||!confirm('Importar 16 pesquisas antifraude de 2025–2026 como rascunhos privados? A equipe deverá revisar as fontes antes de publicar.'))return;
+  try{
+    const data=await api('/seed/research-2026','POST',{});
+    await refresh();
+    feedback(data.seeded+' casos documentados importados e '+data.links+' relações criadas para revisão. Nenhuma nota foi publicada na IA.');
+  }catch(e){feedback(e.message,true);}
 });
 byId('files').addEventListener('change',async e=>{
   await importFiles(e.target.files);
