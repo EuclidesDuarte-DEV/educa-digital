@@ -53,8 +53,8 @@ test('Web, Android e iOS carregam somente seu canal',()=>{
  ]) {
    const result=run(options);
    assert.equal(result.platform,expected,JSON.stringify(options));
-   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11189':'11160')]);
-   assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v='+(expected==='web'?'11189':'11160')]);
+   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11190':'11160')]);
+   assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v='+(expected==='web'?'11190':'11160')]);
    assert.equal(result.info.platform,expected);
  }
 });
