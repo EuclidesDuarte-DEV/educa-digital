@@ -15,7 +15,21 @@
  const memoryAudio=new Map();
  const inFlight=new Map();
  let seq=0,device='wasm',progress='Modelo não carregado',lastError='',detail={},introPending=null;
- try{if(localStorage.getItem(PREF_KEY)==='webgpu')device='webgpu';}catch(_){}
+ let manualDevice=false,autoDevice=false,lastSynthesisMs=null;
+ try{const saved=localStorage.getItem(PREF_KEY);
+  if(saved==='webgpu'||saved==='wasm'){device=saved;manualDevice=true;}
+ }catch(_){}
+ // V111.94: o FP32 neural soa mais natural e acelera a inferência após aquecer
+ // em computadores WebGPU capazes. No celular/PC modesto continua o q8.
+ function canAutoWebGPU(){
+  if(manualDevice||typeof document==='undefined'||
+   document.documentElement?.dataset?.educaPlatform!=='web'||typeof navigator==='undefined')return false;
+  if(!navigator.gpu||Number(navigator.hardwareConcurrency||0)<6||
+   (typeof navigator.deviceMemory==='number'&&navigator.deviceMemory<6)||
+   navigator.connection?.saveData===true)return false;
+  try{if(typeof matchMedia==='function'&&matchMedia('(pointer: coarse)').matches)return false;}catch(_){}
+  return true;
+ }
  function introKey(text,style){
   const phrase=String(text||'').trim();
   const onlyWeb=typeof document!=='undefined'&&document.documentElement?.dataset?.educaPlatform==='web';
@@ -106,6 +120,8 @@
   const phrase=String(text||'').trim();
   if(!phrase)throw Error('Texto vazio');
   const key=style+'\n'+phrase;
+  const warmed=Boolean(ready&&readyResolve===null&&worker);
+  const startedAt=Date.now();
   if(inFlight.has(key))return inFlight.get(key);
   // A proteção contra duplicação vale mesmo se o pré-aquecimento ainda estiver em curso.
   const task=(async()=>{
@@ -121,15 +137,26 @@
    });
   })();
   inFlight.set(key,task);
-  try{return await task;}finally{if(inFlight.get(key)===task)inFlight.delete(key);}
+  try{const result=await task;
+   if(warmed&&!result.cached&&result.voice==='pf_dora')
+    lastSynthesisMs=Date.now()-startedAt;
+   return result;
+  }finally{if(inFlight.get(key)===task)inFlight.delete(key);}
  }
  function prewarmIntro(){
   if(introPending)return introPending;
+  if(!ready&&!worker&&canAutoWebGPU()){device='webgpu';autoDevice=true;}
   // Web: após o carregamento, sintetiza apenas a abertura fixa (15 caracteres)
   // em segundo plano. Quando a videochamada chegar, o WAV pf_dora poderá
   // tocar do cache sem baixar/carregar novamente o modelo. Nenhuma fala do
   // participante ou resposta dinâmica é persistida.
-  introPending=prepare().then(()=>{
+  introPending=prepare().catch(error=>{
+   // WebGPU ausente/falhando não impede a voz gratuita: um único fallback
+   // automático para WASM q8. Preferência manual do usuário é respeitada.
+   if(!autoDevice||device!=='webgpu')throw error;
+   autoDevice=false;device='wasm';lastError='';progress='Tentando Kokoro q8 no navegador…';
+   return prepare();
+  }).then(()=>{
    if(typeof document!=='undefined'&&document.documentElement?.dataset?.educaPlatform==='web'){
     const phrase='Oi, sou a Lia.';
     void hasCachedIntro(phrase,'natural').then(cached=>{
@@ -146,12 +173,14 @@
   if(value===device)return;
   fail('Alteração de mecanismo para '+value+'.');
   introPending=null;memoryAudio.clear();inFlight.clear();
+  manualDevice=true;autoDevice=false;lastSynthesisMs=null;
   device=value;lastError='';progress='Modelo não carregado ('+device+')';detail={};
  }
  window.EducaLiaBrowserKokoro=Object.freeze({
   prepare,synthesize,prewarmIntro,hasCachedIntro,setDevice,confirmDevice,getStatus:()=>progress,getLastError:()=>lastError,
   isReady:()=>Boolean(ready&&readyResolve===null&&worker&&lastError===''),
-  getDiagnostics:()=>({version:'11157',device,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
+  isFast:()=>lastSynthesisMs===null||lastSynthesisMs<=3800,
+  getDiagnostics:()=>({version:'11194',device,autoDevice,lastSynthesisMs,...detail,status:progress,error:lastError,pending:requests.size,cachedIntro:memoryAudio.size}),
   voice:'pf_dora',version:'11157'
  });
 })();
