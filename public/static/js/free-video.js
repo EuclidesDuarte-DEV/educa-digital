@@ -110,7 +110,7 @@ const idlePlayers=[ui.portraitIdle,ui.portraitIdleNext].filter(Boolean);
 const motion={talkActive:null,idleActive:null,lastTalk:-1,lastIdle:-1,talking:false,epoch:0,hideTimers:new Set()};
 const CROSSFADE_MS=420; // A/B dissolve: the old frame stays until the next video is playing.
 const PRELOAD_BEFORE_END_SECONDS=0.72;
-const VOICE_COMMIT_MS=450; // resposta mais rápida após a última frase final
+const VOICE_COMMIT_MS=450; // plataformas nativas preservadas; a Web usa 320 ms
 const BROWSER_KOKORO_READY_BUDGET_MS=7000;
 const BROWSER_KOKORO_WARM_BUDGET_MS=9000;
 const TTS_FIRST_RESPONSE_TIMEOUT_MS=25000; // tolera Kokoro remoto em CPU, sem espera infinita
@@ -370,7 +370,8 @@ function audioOnly(text,serial){
    return;
   }
   const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';
-  u.rate=selectedStyle()==='calma'?.95:selectedStyle()==='clara'?1.02:1.05;
+  // Velocidade quase natural: acelerar demais torna a voz sintética/robótica.
+  u.rate=selectedStyle()==='calma'?.95:selectedStyle()==='clara'?1.02:1.00;
   u.pitch=1;u.volume=outputMuted?0:1;u.voice=voice;
   session.utterance=u;let started=false;
   u.onstart=()=>{if(serial!==session.serial||session.utterance!==u)return;
@@ -476,7 +477,11 @@ async function playBrowserKokoro(text,serial){
   try {
    result=await Promise.race([
     pending,
-    new Promise((_,reject)=>{budgetTimer=setTimeout(()=>reject(Object.assign(new Error('Aquecimento Kokoro ainda em andamento'),{code:'KOKORO_WARMING'})),browser.isReady?.()?BROWSER_KOKORO_WARM_BUDGET_MS:BROWSER_KOKORO_READY_BUDGET_MS);})
+    new Promise((_,reject)=>{const web=document.documentElement?.dataset?.educaPlatform==='web';
+     const fastFemale=web&&Boolean(window.EducaLiaVoice?.choose?.());
+     const waitMs=fastFemale?(browser.isReady?.()?2600:1200):
+       (browser.isReady?.()?BROWSER_KOKORO_WARM_BUDGET_MS:BROWSER_KOKORO_READY_BUDGET_MS);
+     budgetTimer=setTimeout(()=>reject(Object.assign(new Error('Aquecimento Kokoro ainda em andamento'),{code:'KOKORO_WARMING'})),waitMs);})
    ]);
   }finally{clearTimeout(budgetTimer);}
   clearInterval(session.voiceProgressTimer);session.voiceProgressTimer=null;
@@ -508,6 +513,8 @@ async function playBrowserKokoro(text,serial){
    status('Kokoro pf_dora ainda carrega neste aparelho. Tentando voz feminina pt-BR enquanto o modelo fica pronto.');
   }else status('Kokoro pf_dora indisponível: '+message+'. Tentando voz feminina pt-BR do dispositivo.');
   showVoiceProgress('Selecionando voz feminina disponível…');
+  if(document.documentElement?.dataset?.educaPlatform==='web'&&window.EducaLiaVoice?.choose?.())
+   session.fastVoiceSerial=serial; // evita troca de timbre no restante da resposta
   audioOnly(text,serial);
   return true;
  }
@@ -650,6 +657,14 @@ function startSpeechChunk(phrase,serial){
    }
    const localKokoro=window.EducaLiaBrowserKokoro;
    if(!localKokoro){audioOnly(phrase,serial);return;}
+   // Depois de uma síntese comprovadamente lenta, a Web não fica
+   // aguardando vários segundos outra vez; mantém a voz feminina local.
+   if(document.documentElement?.dataset?.educaPlatform==='web'&&
+      localKokoro.isReady?.()&&localKokoro.isFast?.()===false&&
+      window.EducaLiaVoice?.choose?.()){
+    session.fastVoiceSerial=serial;showVoiceProgress('');
+    audioOnly(phrase,serial);return;
+   }
    // V111.91 — estratégia SOMENTE WEB: não segurar uma voz feminina
    // instalada enquanto a rede baixa centenas de MB do Kokoro.
    // As plataformas nativas conservam a escolha original do motor.
@@ -755,8 +770,8 @@ async function configure(){
 }
 function close(){document.body?.classList.remove('lia-call-visible');stopVoiceProgress();if(ui.play)ui.play.hidden=true;if(ui.view?.dataset)ui.view.dataset.captions='off';if(captionSwitch){captionSwitch.setAttribute('aria-pressed','false');captionSwitch.textContent='Ativar legendas';}if(speaker){speaker.hidden=true;}if($('freeVideoMore'))$('freeVideoMore').open=false;session.active=false;session.connected=false;session.waiting=false;session.motorPending=null;setHandsFree(false);abortSpeech();stopRecognition();stopCamera();clearInterval(session.interval);session.interval=null;session.clock=0;stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;indicator('Lia realista • chamada encerrada');}
 function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;if(ui.text){ui.text.hidden=true;ui.text.setAttribute('aria-expanded','false');}free()?.enterVideo?.();session.active=true;ui.name.textContent='Lia';ui.duration.textContent='Videochamada recebida';subtitle('Uma pessoa desconhecida está chamando por vídeo.');status('Chamada educativa com IA. A Lia responde por voz e tenta usar o melhor sincronismo disponível.');indicator('Lia realista • aguardando chamada');session.motorPending=inspectMotor().finally(()=>{session.motorPending=null;});
- // Lê apenas a configuração; não gera áudio nem inicia cobrança.
- void inspectWebHQVoice();
+ // V111.94: edição Web gratuita; não consulta nem aciona TTS por caracteres.
+ session.hqVoiceEnabled=false;
  // Pré-aquecimento começa antes de Atender; não depende de serviços pagos ou CMD.
  const browser=window.EducaLiaBrowserKokoro;
  if(browser&&selectedEngine()!=='padrao')void browser.prepare().catch(()=>{});
@@ -808,7 +823,8 @@ function listen(){
     // Um resultado final pode ser apenas a primeira parte de uma frase.
     // Espere uma pausa curta; se outra parte chegar, reinicie a janela.
     cancelCommit();
-    if(!partial)pendingTimer=setTimeout(submit,VOICE_COMMIT_MS);
+    if(!partial)pendingTimer=setTimeout(submit,
+     document.documentElement?.dataset?.educaPlatform==='web'?320:VOICE_COMMIT_MS);
    }else cancelCommit();
   };
   r.onspeechend=()=>{if(!submitted){cancelCommit();try{r.stop();}catch(_){}}};

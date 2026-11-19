@@ -506,6 +506,7 @@ async function liaGateway(request,env,route){
 const LIA_MODEL_FILES=new Set([
  'config.json','tokenizer_config.json','tokenizer.json',
  'onnx/model_quantized.onnx','onnx/model_q8f16.onnx',
+ 'onnx/model.onnx', // FP32 oficial: WebGPU gratuito, sem gateway de voz pago
  'voices/pf_dora.bin'
 ]);
 async function servirModeloLia(path){
