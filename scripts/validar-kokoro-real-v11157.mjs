@@ -43,4 +43,29 @@ try{
  assert.ok(out.cachedIntro>=1,'A saudação fixa deveria ser reutilizável no cache');
  assert.ok(out.reuseMs<1500,'A segunda saudação não pode reinferir o modelo neural: '+out.reuseMs+' ms');
  console.log('Kokoro TTS real OK em Chromium: '+out.size+' bytes, '+((Date.now()-started)/1000).toFixed(1)+'s');
+
+ // V111.95: a abertura é texto FIXO da simulação. Uma única geração no CI
+ // permite a reprodução imediata no Safari sem baixar 82M parâmetros.
+ // Apenas na branch de preparação: arquivos de participantes jamais são gerados.
+ if(process.env.PREVIEW_BRANCH==='feature/web-lia-ios-kokoro-fast-v11195'){
+  const {writeFileSync,readFileSync}=await import('node:fs');
+  const {execFileSync}=await import('node:child_process');
+  const {createHash}=await import('node:crypto');
+  const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';
+  const wavBytes=await page.evaluate(async text=>{
+   const res=await window.EducaLiaBrowserKokoro.synthesize(text,'natural');
+   if(res.voice!=='pf_dora'||res.blob.size<10000)throw Error('Fala inicial Kokoro inválida');
+   return Array.from(new Uint8Array(await res.blob.arrayBuffer()));
+  },intro);
+  writeFileSync('/tmp/lia-intro-v11195.wav',Buffer.from(wavBytes));
+  execFileSync('ffmpeg',['-y','-hide_banner','-loglevel','error',
+   '-i','/tmp/lia-intro-v11195.wav','-codec:a','libmp3lame','-ar','24000','-ac','1','-b:a','64k',
+   '/tmp/lia-intro-v11195.mp3'],{timeout:60000});
+  const mp3=readFileSync('/tmp/lia-intro-v11195.mp3');
+  assert.ok(mp3.length>5000&&mp3.length<400000,'MP3 fixo fora do limite');
+  const encoded=mp3.toString('base64');
+  console.log('LIA_V11195_META='+JSON.stringify({bytes:mp3.length,hash:createHash('sha256').update(mp3).digest('hex'),chunks:Math.ceil(encoded.length/3500),phrase:intro}));
+  for(let i=0;i<encoded.length;i+=3500)console.log('LIA_V11195_MP3_CHUNK_'+String(i/3500).padStart(3,'0')+'='+encoded.slice(i,i+3500));
+ }
+
 }finally{await browser.close();}
