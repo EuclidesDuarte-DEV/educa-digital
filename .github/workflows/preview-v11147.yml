@@ -135,5 +135,8 @@ jobs:
         run: |
           slug=$(printf '%s' "$PREVIEW_BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g;s/--*/-/g;s/^-//;s/-$//')
           echo "PREVIEW_URL=https://${slug}-educa-digital.educamaisdigital.workers.dev" >> "$GITHUB_ENV"
+      - name: Instalar conversor do audio inicial fixo (somente V111.95)
+        if: startsWith(github.head_ref, 'feature/web-lia-ios-kokoro-fast-v11195')
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
       - name: Sintetizar WAV real Kokoro pf_dora
         run: node scripts/validar-kokoro-real-v11157.mjs
