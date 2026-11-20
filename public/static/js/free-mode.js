@@ -43,10 +43,14 @@ function schedule(min=16000,max=30000){clearTimeout(state.timer);state.timer=nul
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
 function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
- // A pré-síntese acontece DURANTE o WhatsApp, antes da videochamada.
- // Nenhum áudio é tocado e nenhum dado pessoal é enviado ao motor.
+ // V111.95: assim que o participante inicia o Modo Livre Web,
+ // iniciar Kokoro no Worker DURANTE o WhatsApp, antes da videochamada.
+ // É síntese neural gratuita no navegador: nenhum arquivo MP3 pré-gravado.
  if(window.EducaLiaBrowserKokoro&&document.getElementById('freeVideoVoiceEngine')?.value!=='padrao')
   void window.EducaLiaBrowserKokoro.prewarmIntro().catch(()=>{});
+ // A voz feminina do sistema pode ser procurada paralelamente, sem bloquear.
+ if(document.documentElement?.dataset?.educaPlatform==='web')
+  void window.EducaLiaVoice?.waitForFemale?.(500)?.catch?.(()=>{});
  state.finished=0;state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;makeContactRows();show('home');schedule(900,1450);}
 function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
  const list=$('#whatsappView .wa-chat-list');for(const dynamic of document.querySelectorAll('#whatsappView [data-free-scenario]'))dynamic.remove();

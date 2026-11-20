@@ -30,7 +30,7 @@ if(ui.view){
  }
  if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
-const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqAbort:null};
+const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqAbort:null,webAudioGain:null};
 const free=()=>window.EducaFreeMode;
 const status=t=>{if(ui.state)ui.state.textContent=t;};
 const voiceProgress=$('freeVideoVoiceProgress');
@@ -323,13 +323,14 @@ function abortSpeech(){
  session.serial++;session.speechQueue=[];session.prefetched=null;session.fastVoiceSerial=-1;session.voiceChoiceDoneSerial=-1;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
  session.renderAbort?.abort();session.renderAbort=null;
  session.hqAbort?.abort();session.hqAbort=null;session.hqVoiceChoiceSerial=-1;
- session.utterance?.pause?.();session.utterance=null;window.speechSynthesis?.cancel();clearMedia();
+ try{session.utterance?.stop?.();}catch(_){} // AudioBufferSourceNode WebAudio (Safari)
+ session.utterance?.pause?.();session.utterance=null;session.webAudioGain=null;window.speechSynthesis?.cancel();clearMedia();
 }
 function setHandsFree(v){session.micEnabled=!!v;ui.mic?.setAttribute('aria-pressed',String(!!v));if(ui.mic){ui.mic.setAttribute('aria-label',v?'Desativar microfone':'Ativar microfone para conversar');ui.mic.title=v?'Desativar microfone':'Ativar microfone para conversar';}const tag=ui.mic?.querySelector('.v110-mic-label');if(tag)tag.textContent=v?'Desativar':'Conversar';if(!v){clearTimeout(session.listenTimer);session.listenTimer=null;stopRecognition();}}
 function scheduleListen(ms=260){clearTimeout(session.listenTimer);if(session.micEnabled&&session.active&&session.connected&&!session.waiting&&!session.utterance&&!document.hidden)session.listenTimer=setTimeout(listen,ms);}
 function completed(){
  clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
- session.utterance=null;stopSpeechMotion();
+ session.utterance=null;session.webAudioGain=null;stopSpeechMotion();
  // A próxima frase começa automaticamente, sem pedir outra interação do aluno.
  if(session.active&&session.connected&&session.speechQueue.length){
   const next=session.speechQueue.shift(),serial=session.serial;
@@ -428,6 +429,32 @@ function prefetchNextChunk(serial){
  promise.catch(()=>{}); // cancelamentos de turno não devem gerar exceção sem tratamento.
  session.prefetched={serial,text:next,promise};
 }
+// V111.95: no iPhone, desbloquear o AudioContext no toque em Atender
+// permite tocar WAV gerado DINAMICAMENTE pelo Kokoro após o fetch/inferência.
+// Nenhum arquivo MP3 ou fala pré-gravada é servido ao participante.
+async function playDynamicKokoroWebAudio(result,text,serial){
+ if(document.documentElement?.dataset?.educaPlatform!=='web')return false;
+ const ctx=speechMotion.context;
+ if(!ctx||ctx.state!=='running'||typeof ctx.decodeAudioData!=='function')return false;
+ try{
+  const buffer=await ctx.decodeAudioData(await result.blob.arrayBuffer());
+  if(serial!==session.serial||!session.active||!session.connected||session.waiting)return false;
+  const source=ctx.createBufferSource(),gain=ctx.createGain();
+  source.buffer=buffer;gain.gain.value=outputMuted?0:1;
+  source.connect(gain);gain.connect(ctx.destination);
+  session.utterance=source;session.webAudioGain=gain;
+  source.onended=()=>{
+   if(serial===session.serial&&session.utterance===source)completed();
+   try{source.disconnect();gain.disconnect();}catch(_){}
+  };
+  source.start(0);
+  stopVoiceProgress();ui.play.hidden=true;subtitle(text);
+  indicator('Lia · voz feminina neural Kokoro pf_dora');
+  status('Lia falando em áudio neural gerado para esta resposta.');
+  referenceMotion();prefetchNextChunk(serial);
+  return true;
+ }catch(_){return false;}
+}
 async function playBrowserResult(result,text,serial){
  if(serial!==session.serial||!session.active||!session.connected||session.waiting)return false;
  stopRecognition();
@@ -443,9 +470,13 @@ async function playBrowserResult(result,text,serial){
   audio.onended=()=>{if(serial===session.serial)completed();};
   audio.onerror=()=>{if(serial===session.serial){recoverVoice(serial,text,'Falha ao reproduzir Kokoro no navegador.');}};
   try{await audio.play();}catch(_){
-   ui.play.hidden=false;delete ui.play.dataset.retryVoice;ui.play.textContent='▶ Ouvir voz oficial da LIA';
-   showVoiceProgress('Toque em Ouvir voz oficial para liberar o som.');
-   status('Seu navegador pediu uma interação para liberar o áudio neural.');
+   // Safari pode bloquear audio.play() após a inferência assíncrona.
+   // O contexto foi liberado diretamente pelo gesto de Atender e reproduz
+   // o mesmo WAV dinâmico, sem pedir outro toque se estiver ativo.
+   if(await playDynamicKokoroWebAudio(result,text,serial))return true;
+   ui.play.hidden=false;delete ui.play.dataset.retryVoice;ui.play.textContent='▶ Ouvir voz da Lia';
+   showVoiceProgress('Toque em Ouvir voz da Lia para liberar o som.');
+   status('O iPhone pediu autorização para ouvir a voz neural da Lia.');
   }
  return true;
 }
@@ -479,8 +510,11 @@ async function playBrowserKokoro(text,serial){
     pending,
     new Promise((_,reject)=>{const web=document.documentElement?.dataset?.educaPlatform==='web';
      const fastFemale=web&&Boolean(window.EducaLiaVoice?.choose?.());
+     // Se o Safari não oferece voz feminina, não interromper a única voz
+     // possível após 9 segundos: deixar o Kokoro terminar a frase curta.
+     // O próprio motor possui watchdog para falhas reais.
      const waitMs=fastFemale?(browser.isReady?.()?2600:1200):
-       (browser.isReady?.()?BROWSER_KOKORO_WARM_BUDGET_MS:BROWSER_KOKORO_READY_BUDGET_MS);
+       (web?48000:(browser.isReady?.()?BROWSER_KOKORO_WARM_BUDGET_MS:BROWSER_KOKORO_READY_BUDGET_MS));
      budgetTimer=setTimeout(()=>reject(Object.assign(new Error('Aquecimento Kokoro ainda em andamento'),{code:'KOKORO_WARMING'})),waitMs);})
    ]);
   }finally{clearTimeout(budgetTimer);}
@@ -672,14 +706,14 @@ function startSpeechChunk(phrase,serial){
    if(webFast&&!localKokoro.isReady?.()&&session.voiceChoiceDoneSerial!==serial){
     session.voiceChoiceDoneSerial=serial;
     session.utterance={kind:'voice-selecting'};
-    showVoiceProgress('Buscando voz feminina rápida enquanto o Kokoro aquece…');
+    showVoiceProgress('Lia · preparando a voz neural feminina…');
     // CacheStorage pode conter a fala fixa pf_dora de uma sessão anterior,
     // mesmo que o modelo de 82M ainda não esteja carregado neste acesso.
     // Áudio fixo em cache tem prioridade sobre a voz do sistema.
     const candidate=Promise.resolve().then(async()=>{
      if(await localKokoro.hasCachedIntro?.(phrase,selectedStyle()))return {cached:true};
      const already=window.EducaLiaVoice?.choose?.();
-     return {voice:already||(await window.EducaLiaVoice?.waitForFemale?.(480))||null};
+     return {voice:already||(await window.EducaLiaVoice?.waitForFemale?.(160))||null};
     });
     void candidate.then(choice=>{
      if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
@@ -713,6 +747,11 @@ function startSpeechChunk(phrase,serial){
    }
   }).catch(()=>{if(serial===session.serial&&session.active){if(selectedEngine()==='padrao')audioOnly(phrase,serial);else{session.utterance=null;toListening();showVoiceProgress('Erro na voz.');status('Falha no motor de voz. Consulte /testar-voz-lia.html.');}}});
  };
+ if(document.documentElement?.dataset?.educaPlatform==='web'){
+  // Não atrasar a fala dinâmica 900 ms verificando serviço de avatar remoto,
+  // que está desligado no site oficial: o Kokoro local já está aquecendo.
+  start();return;
+ }
  if(session.motorPending&&window.location?.protocol==='https:'){
   status('Conectando a voz oficial da Lia…');
   void Promise.race([session.motorPending,new Promise(resolve=>setTimeout(resolve,MOTOR_CHECK_TIMEOUT_MS))]).then(start,start);
@@ -774,12 +813,17 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  session.hqVoiceEnabled=false;
  // Pré-aquecimento começa antes de Atender; não depende de serviços pagos ou CMD.
  const browser=window.EducaLiaBrowserKokoro;
- if(browser&&selectedEngine()!=='padrao')void browser.prepare().catch(()=>{});
+ if(browser&&selectedEngine()!=='padrao')
+  void (document.documentElement?.dataset?.educaPlatform==='web'
+   ?browser.prewarmIntro():browser.prepare()).catch(()=>{});
  // O aquecimento local acontece após o gesto do aluno; o Worker continua disponível para fallback.
 
  if(/^(localhost|127\.0\.0\.1)$/.test(window.location?.hostname||''))void fetch('/api/modo-livre/preload',{method:'POST',credentials:'same-origin'}).catch(()=>{});
  ui.answer.hidden=false;ui.mic.hidden=true;if(speaker)speaker.hidden=true;ui.repeat.hidden=true;ui.camera.hidden=true;ui.form.hidden=true;ui.actions.hidden=true;window.EducaFreeView?.setView('free-video');if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);}
-async function answer(){if(!session.active||session.connected)return;syncLiaCallLayout();primeSpeechMotion();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
+async function answer(){if(!session.active||session.connected)return;
+ // Desbloqueia WebAudio durante o clique do usuário, antes da síntese ONNX.
+ // No Safari, criar o AudioContext só depois do áudio ficar pronto é tarde.
+ primeSpeechMotion();syncLiaCallLayout();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
  const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';free()?.videoAccepted?.();speak(intro);}
@@ -892,6 +936,7 @@ speaker?.addEventListener('click',()=>{
  const s=session.utterance;
  if(s instanceof HTMLMediaElement)s.muted=outputMuted;
  else if(typeof SpeechSynthesisUtterance!=='undefined'&&s instanceof SpeechSynthesisUtterance){s.volume=outputMuted?0:1;try{if(outputMuted)window.speechSynthesis?.pause();else window.speechSynthesis?.resume();}catch(_){}}
+ if(session.webAudioGain)session.webAudioGain.gain.value=outputMuted?0:1;
  status(outputMuted?'Som da Lia desligado. Toque novamente para ouvir.':'Som da Lia ligado.');
 });
 captionSwitch?.addEventListener('click',()=>{
