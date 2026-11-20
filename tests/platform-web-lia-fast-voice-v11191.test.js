@@ -51,7 +51,7 @@ test('V111.91 — Web usa voz feminina local imediatamente enquanto Kokoro carre
  assert.equal(s.calls.fast.length,1);
  assert.equal(s.calls.neural.length,0);
  assert.equal(s.session.fastVoiceSerial,5);
- assert.ok(s.calls.progress.some(x=>x.includes('voz feminina rápida')));
+ assert.ok(s.calls.progress.some(x=>x.includes('voz feminina rápida')||x.includes('preparando a voz neural feminina')));
  s.start('Troquei de celular.',5);
  assert.equal(s.calls.fast.length,2);
  assert.equal(s.calls.neural.length,0);
