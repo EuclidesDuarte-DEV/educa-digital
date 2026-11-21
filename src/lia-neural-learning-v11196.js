@@ -169,3 +169,38 @@ export async function learningHint(env,scenario){
   return 'Neste cenário, reforce sinais de alerta adequados à alfabetização digital e ofereça oportunidades claras de conferir a identidade por outro canal. Não acrescente pedidos de dados reais nem pressão além do limite pedagógico.';
  }catch(_){return '';}
 }
+
+// Painel administrativo: tendências de treino agrupadas. O limite de 12
+// conclusões consentidas por cenário impede expor decisões individuais.
+export async function trainingInsights(env){
+ if(!env?.DB)return {scenarios:[],message:'Banco de aprendizado indisponível.'};
+ try{
+  const response=await s(env.DB,`SELECT scenario,signal,SUM(total) AS total
+   FROM lia_training_signals WHERE kind='outcome'
+   AND day>=date('now','-30 days') GROUP BY scenario,signal`).all();
+  const grouped=new Map();
+  for(const row of response.results||[]){
+   if(!Object.hasOwn(SCENARIOS,String(row.scenario||'')))continue;
+   if(!['safe','unsafe'].includes(row.signal))continue;
+   const key=row.scenario;
+   const g=grouped.get(key)||{scenario:key,safe:0,unsafe:0};
+   g[row.signal]+=Math.max(0,Number(row.total)||0);
+   grouped.set(key,g);
+  }
+  const scenarios=[...grouped.values()].filter(g=>g.safe+g.unsafe>=12)
+   .map(g=>{
+    const completed=g.safe+g.unsafe,needReview=g.unsafe/completed>=0.3;
+    return {
+     scenario:g.scenario,completed,
+     needs_review:needReview,
+     recommendation:needReview
+      ?'Reforçar sinais de alerta e a verificação independente da identidade antes de avançar.'
+      :'Continuar os exercícios e alternar situações educativas com sinais de alerta distintos.'
+    };
+   }).sort((a,b)=>b.completed-a.completed).slice(0,25);
+  return {scenarios,minimum_group:12,period_days:30,
+   message:scenarios.length
+    ?'Tendências de exercícios consentidos e agregados. Nenhuma conversa ou pessoa é identificada.'
+    :'Ainda não há doze conclusões consentidas por cenário. Os dados individuais não são exibidos.'};
+ }catch(_){return {scenarios:[],message:'Não foi possível calcular os resultados coletivos.'};}
+}

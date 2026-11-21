@@ -200,7 +200,12 @@ function list(){
     select.value=nodes.some(n=>n.id===current)?current:'';
   }
 }
-function renderAll(){list();graph();}
+function renderAll(){
+  list();graph();
+  const published=nodes.filter(n=>n.status==='published'&&n.visibility==='public'&&n.category!=='memoria').length;
+  byId('publishedNodesCount').textContent=published+' de '+nodes.length+
+    ' nós liberados para consulta pela LIA. Notas privadas continuam protegidas.';
+}
 function noteView(node,full=null){
   byId('notePreview').hidden=false;
   byId('noteForm').hidden=true;
@@ -294,8 +299,62 @@ async function showConsentedExamples(){
   block.append(discard);wrap.append(block);
  }
 }
+async function showReviewQueue(){
+ if(!real)return;
+ const data=await api('/review/queue');
+ const wrap=byId('reviewQueue');wrap.hidden=false;wrap.replaceChildren();
+ const eligible=data.candidates.filter(n=>n.eligible);
+ wrap.append(el('p','',eligible.length+' fontes institucionais elegíveis. '+
+   'Leia cada nota antes de selecioná-la. Memórias e rascunhos não oficiais ficam de fora.'));
+ if(!data.candidates.length)return;
+ for(const node of data.candidates){
+  const row=el('div','review-source-row');
+  row.style.cssText='border:1px solid #5555;border-radius:9px;padding:9px;margin:7px 0;overflow-wrap:anywhere';
+  const label=document.createElement('label');
+  label.style.cssText='display:flex;align-items:flex-start;gap:8px';
+  const checked=document.createElement('input');checked.type='checkbox';
+  checked.dataset.reviewNote=node.id;
+  checked.disabled=!node.eligible;
+  checked.setAttribute('aria-label','Aprovar '+node.title);
+  label.append(checked,el('strong','',node.title));row.append(label);
+  row.append(el('small','',node.source||'Fonte não validada para publicação em lote'));
+  const open=el('button','outline','Ler nota');
+  open.type='button';open.addEventListener('click',()=>{void select(node.id);});
+  row.append(open);
+  if(!node.eligible)row.append(el('p','','Requer revisão individual ou fonte oficial verificável.'));
+  wrap.append(row);
+ }
+ const button=el('button','primary','Publicar notas selecionadas para a LIA');
+ button.type='button';
+ button.addEventListener('click',async()=>{
+  const ids=[...wrap.querySelectorAll('input[data-review-note]:checked')].map(n=>n.dataset.reviewNote);
+  if(!ids.length){feedback('Selecione pelo menos uma nota revisada.',true);return;}
+  if(!confirm('Você abriu, conferiu a fonte e revisou o conteúdo de cada uma das '+ids.length+
+     ' notas? Elas ficarão disponíveis para a IA nos treinos de WhatsApp, SMS e LIA.'))return;
+  button.disabled=true;
+  try{
+   const published=await api('/review/publish','POST',{ids});
+   feedback(published.published+' conhecimentos aprovados e liberados para a LIA.');
+   await refresh();await showReviewQueue();
+  }catch(error){feedback(error.message,true);}
+  finally{button.disabled=false;}
+ });
+ wrap.append(button);
+}
+async function showLearningInsights(){
+ if(!real)return;
+ const data=await api('/learning/insights');
+ const wrap=byId('learningInsights');wrap.hidden=false;wrap.replaceChildren();
+ wrap.append(el('p','',data.message));
+ for(const item of data.scenarios){
+  const row=el('div','learning-insight');
+  row.style.cssText='padding:8px;border-bottom:1px solid #5555;overflow-wrap:anywhere';
+  row.append(el('strong','',item.scenario+' · '+item.completed+' exercícios voluntários'));
+  row.append(el('p','',item.recommendation));wrap.append(row);
+ }
+}
 function controls(enabled){
-  for(const id of ['newNote','seedBtn','researchBtn','loadExamples','fromNode','toNode','addLink','files'])
+  for(const id of ['newNote','seedBtn','researchBtn','loadExamples','reviewKnowledge','loadLearningInsights','fromNode','toNode','addLink','files'])
     byId(id).disabled=!enabled;
   byId('uploadLabel').setAttribute('aria-disabled',String(!enabled));
 }
@@ -371,6 +430,12 @@ svg.addEventListener('wheel',evt=>{
 byId('resetGraph').addEventListener('click',()=>{zoom=1;panX=0;panY=0;applyTransform();});
 byId('loadExamples').addEventListener('click',()=>{
  if(real)void showConsentedExamples().catch(error=>feedback(error.message,true));
+});
+byId('reviewKnowledge').addEventListener('click',()=>{
+ if(real)void showReviewQueue().catch(error=>feedback(error.message,true));
+});
+byId('loadLearningInsights').addEventListener('click',()=>{
+ if(real)void showLearningInsights().catch(error=>feedback(error.message,true));
 });
 for(const id of ['search','categoryFilter','projectFilter'])
   byId(id).addEventListener(id==='search'?'input':'change',renderAll);
