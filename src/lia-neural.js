@@ -224,7 +224,19 @@ export async function neuralReadiness(env){
     if(!await schema(env.DB))return {...base,reason:'SCHEMA_REQUIRED'};
     const result=await sql(env.DB,"SELECT COUNT(*) AS total FROM lia_kb_nodes WHERE status='published' AND visibility='public' AND category<>'memoria'").first();
     const published_count=Math.max(0,Number(result?.total||0));
-    return {...base,schema_ready:true,published_count,
+    // Os números são agregados e não expõem conteúdo de notas privadas.
+    let node_count=0,link_count=0,library_bootstrapped=false;
+    try{
+      const [nodes,links,marker]=await Promise.all([
+        sql(env.DB,'SELECT COUNT(*) AS total FROM lia_kb_nodes').first(),
+        sql(env.DB,'SELECT COUNT(*) AS total FROM lia_kb_links').first(),
+        sql(env.DB,"SELECT key FROM lia_kb_bootstrap_jobs WHERE key='neural-full-library-v11200'").first()
+      ]);
+      node_count=Math.max(0,Number(nodes?.total||0));
+      link_count=Math.max(0,Number(links?.total||0));
+      library_bootstrapped=Boolean(marker);
+    }catch(_){/* D1 anterior à versão atual: manter o diagnóstico principal */}
+    return {...base,schema_ready:true,published_count,node_count,link_count,library_bootstrapped,
       rag_active:published_count>0&&base.ai_enabled,
       reason:!published_count?'REVIEW_REQUIRED':!base.ai_enabled?'AI_UNAVAILABLE':'READY'};
   }catch(_){return {...base,reason:'DB_UNAVAILABLE'};}

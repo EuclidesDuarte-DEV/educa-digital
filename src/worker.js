@@ -10,6 +10,7 @@ import { MODULOS } from './catalogo.js';
 import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
+import { populateReviewedNeuralLibrary } from './lia-neural-library-v11200.js';
 import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
 const CODIGOS_ATIVIDADES = new Set(
@@ -674,6 +675,11 @@ export default {
         url.pathname==='/api/lia/training/outcome'||
         url.pathname==='/api/modo-livre/conversar-web';
       if(neuralScope)await setupNeuralDB(env);
+      // Inicialização editorial D1 autorizada pelo mantenedor.
+      // Rodar na consulta de diagnóstico, não durante áudio/WhatsApp para
+      // preservar a latência da LIA. Após a primeira execução fica idempotente.
+      if(url.pathname==='/api/lia/neural/health')
+        await populateReviewedNeuralLibrary(env);
       return await rotearApi(request, env, url, ctx);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');
