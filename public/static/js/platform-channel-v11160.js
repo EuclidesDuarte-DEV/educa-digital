@@ -25,10 +25,10 @@
   const version = platform === 'web' ? '11190' : '11160';
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
-  sheet.href = base + 'overrides.css?v=' + version;
+  sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11201' : '');
   document.head.appendChild(sheet);
   const script = document.createElement('script');
-  script.src = base + 'overrides.js?v=' + version;
+  script.src = base + 'overrides.js?v=' + version + (platform === 'web' ? '&fix=11201' : '');
   script.defer = true;
   document.head.appendChild(script);
   window.EducaReleaseChannel = Object.freeze({
