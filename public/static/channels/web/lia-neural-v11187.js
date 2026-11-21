@@ -41,6 +41,7 @@ const status=(live)=>{
   badge.classList.toggle('live',live);
   badge.lastChild.textContent=live?' Biblioteca D1 conectada':' Prévia de conhecimento';
   byId('loginToggle').textContent=live?'Sair da biblioteca':'Acesso administrativo';
+  byId('neuralQuickstart').hidden=!live;
 };
 async function api(path='',method='GET',body=null){
   if(!token)throw Error('Entre com a credencial administrativa.');
@@ -205,6 +206,12 @@ function renderAll(){
   const published=nodes.filter(n=>n.status==='published'&&n.visibility==='public'&&n.category!=='memoria').length;
   byId('publishedNodesCount').textContent=published+' de '+nodes.length+
     ' nós liberados para consulta pela LIA. Notas privadas continuam protegidas.';
+  if(real){
+    const others=nodes.length-published;
+    byId('quickstartState').textContent=nodes.length+' notas no D1 · '+links.length+
+      ' conexões · '+published+' aprovadas para a LIA · '+others+
+      ' aguardando revisão ou mantidas privadas.';
+  }
 }
 function noteView(node,full=null){
   byId('notePreview').hidden=false;
@@ -354,7 +361,7 @@ async function showLearningInsights(){
  }
 }
 function controls(enabled){
-  for(const id of ['newNote','seedBtn','researchBtn','loadExamples','reviewKnowledge','loadLearningInsights','fromNode','toNode','addLink','files'])
+  for(const id of ['newNote','seedBtn','researchBtn','loadExamples','reviewKnowledge','loadLearningInsights','importFullKnowledge','fromNode','toNode','addLink','files'])
     byId(id).disabled=!enabled;
   byId('uploadLabel').setAttribute('aria-disabled',String(!enabled));
 }
@@ -484,6 +491,29 @@ byId('noteForm').addEventListener('submit',async e=>{
     feedback('Conhecimento salvo no D1.');
     await refresh();await select(result.id);
   }catch(err){feedback(err.message,true);}
+});
+byId('importFullKnowledge').addEventListener('click',async()=>{
+  if(!real)return;
+  if(!confirm('Preparar o D1 com a base inicial (15 notas) e 16 pesquisas de prevenção a golpes, com as conexões do grafo? As pesquisas serão privadas até revisão. A operação não apaga nem duplica conteúdos existentes.'))return;
+  const button=byId('importFullKnowledge');
+  const out=byId('quickstartFeedback');
+  button.disabled=true;
+  out.classList.remove('error');
+  out.textContent='Importando base inicial e relações, sem modificar notas já cadastradas...';
+  try{
+    await api('/seed','POST',{});
+    out.textContent='Base inicial pronta. Importando pesquisas documentadas para revisão...';
+    await api('/seed/research-2026','POST',{});
+    await refresh();
+    const published=nodes.filter(n=>n.status==='published'&&n.visibility==='public'&&n.category!=='memoria').length;
+    out.textContent='Biblioteca preparada: '+nodes.length+' notas, '+links.length+
+      ' conexões, '+published+' publicadas. Revise os rascunhos para ampliar o conhecimento da LIA.';
+    feedback('Conhecimentos importados. Próximo passo: revisar e publicar as notas institucionais aprovadas.');
+    await showReviewQueue();
+  }catch(error){
+    out.classList.add('error');
+    out.textContent='Importação incompleta: '+error.message+'. É seguro repetir: as inserções não duplicam notas.';
+  }finally{button.disabled=false;}
 });
 byId('seedBtn').addEventListener('click',async()=>{
   if(!real||!confirm('Inserir a base inicial revisada de 15 notas e 19 relações no D1?'))return;
