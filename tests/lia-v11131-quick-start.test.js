@@ -9,7 +9,10 @@ test('separa primeira fala em trechos e prossegue após terminar WAV',()=>{
 });
 test('pré-aquece pf_dora sem Ollama ao aparecer videochamada',()=>{
  const s=read('public/static/js/free-video.js');
- assert.match(s,/browser\.prewarmIntro\(\):browser\.prepare\(\)/);
+ // V112.02: a Web não baixa Kokoro pesado durante a chamada.
+ assert.match(s,/document\.documentElement\?\.dataset\?\.educaPlatform!=='web'/);
+ assert.match(s,/void inspectWebHQVoice\(\)/);
+ assert.match(s,/void browser\.prepare\(\)/);
  assert.match(read('public/static/js/free-mode.js'),/EducaLiaBrowserKokoro\.prewarmIntro\(\)/);
 });
 test('progresso de voz aparece na chamada e oferece tentar novamente',()=>{
