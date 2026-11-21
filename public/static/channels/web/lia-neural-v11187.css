@@ -5,3 +5,35 @@
 @media(max-width:840px){.topbar{min-height:78px;gap:10px}.titleblock{padding-left:12px}.titleblock h1{font-size:16px}.brand span:last-child{display:none}.toolbar{flex-wrap:wrap}.toolbar .search{flex-basis:100%}.workspace{grid-template-columns:minmax(0,1fr) 270px}.sidebar{grid-column:1/-1;display:block;padding:12px}.metric-row{display:none}.section-label.spaced{margin-top:9px}.categories{grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}.category{font-size:10px;padding:7px 5px;gap:4px}.category .count,.sidebar .projects,.sidebar-footer,.sidebar .section-label:nth-of-type(2){display:none}.graph-wrap{min-height:470px}.inspector{max-height:none}}
 @media(max-width:650px){.shell{padding:0 9px 12px}.topbar{flex-wrap:wrap;padding:12px 0}.topbar .outline{margin-left:auto}.titleblock{flex:1;min-width:160px}.toolbar{gap:6px}.toolbar select{flex:1;max-width:none;min-width:130px}.workspace{display:flex;flex-direction:column}.sidebar{order:1}.canvas-panel{order:2;min-height:540px}.graph-wrap{min-height:460px}.inspector{order:3}.graph-legend{bottom:12px;padding:8px}.graph-legend span{font-size:9px}.graph-heading .graph-caption{font-size:9px}.categories{grid-template-columns:repeat(3,1fr)}.category{font-size:11px}.inspector{max-height:none}.status{display:none}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+
+/* V111.99 — painel administrativo com leitura confortável no desktop e mobile.
+   Cada controle ocupa linha própria: cabeçalho e botões não se sobrepõem. */
+@media(min-width:1151px){
+  .workspace{grid-template-columns:218px minmax(330px,1fr) 370px}
+}
+@media(min-width:841px) and (max-width:1150px){
+  .workspace{grid-template-columns:180px minmax(260px,1fr) 315px}
+}
+.inspector{min-width:0;overflow-x:hidden;scrollbar-gutter:stable}
+.inspector-header{align-items:flex-start;flex-wrap:wrap}
+.inspector-header h2{overflow-wrap:anywhere}
+.editor-actions{grid-template-columns:minmax(0,1fr);gap:9px}
+.editor-actions>*{grid-column:1/-1;min-width:0;max-width:100%}
+.editor-actions>button,.editor-actions>.upload-btn{width:100%;white-space:normal;text-align:center;overflow-wrap:anywhere;min-height:42px}
+.editor-actions>.section-label{margin:18px 0 0;line-height:1.5}
+.editor-actions>.field-help{margin:0}
+.editor-actions .upload-btn{display:flex!important;align-items:center;justify-content:center}
+.editor-actions #reviewQueue,.editor-actions #exampleList,.editor-actions #learningInsights{width:100%;max-height:430px;overflow:auto;min-width:0}
+.editor-actions #reviewQueue label{display:flex!important;flex-direction:row!important;align-items:flex-start!important;margin:0 0 6px!important;min-width:0}
+.editor-actions #reviewQueue label input{width:18px!important;min-width:18px!important;height:18px;flex:none}
+.editor-actions #reviewQueue button{margin-top:8px;max-width:100%;white-space:normal}
+.neural-quickstart{border:1px solid #385477;background:linear-gradient(140deg,#182a40,#111d2c);padding:16px;border-radius:14px;margin:16px 0 8px}
+.neural-quickstart h3{font-size:16px;line-height:1.35;margin:7px 0 9px}
+.neural-quickstart .primary{width:100%;min-height:46px;white-space:normal;line-height:1.4}
+.neural-quickstart .field-help{margin:10px 0;overflow-wrap:anywhere}
+.neural-quickstart .message{margin:8px 0 0}
+@media(max-width:650px){
+ .inspector{padding:15px}
+ .neural-quickstart{padding:13px}
+ .workspace{min-width:0}
+}

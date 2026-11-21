@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0e1117">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
 <title>LIA Neural · Cérebro de Conhecimento | Educa+ Digital</title>
-<link rel="stylesheet" href="/static/channels/web/lia-neural-v11187.css?v=11187">
-<script src="/static/channels/web/lia-neural-v11187.js?v=11187&examples=11197&graph=11198" defer></script>
+<link rel="stylesheet" href="/static/channels/web/lia-neural-v11187.css?v=11187&library=11199">
+<script src="/static/channels/web/lia-neural-v11187.js?v=11187&examples=11197&graph=11198&library=11199" defer></script>
 </head>
 <body>
 <div class="shell">
@@ -65,6 +65,14 @@
       <p class="field-help">Só notas revisadas e públicas são consultadas pela IA. A área Memória permanece privada.</p>
       <button class="primary" type="submit" id="saveNote">Salvar nota</button>
     </form>
+    <section class="neural-quickstart" id="neuralQuickstart" hidden aria-label="Preparar a biblioteca real do Neural">
+      <span class="eyebrow">BIBLIOTECA DA LIA</span>
+      <h3>Conectar mais conhecimentos</h3>
+      <p class="field-help" id="quickstartState">Consultando a biblioteca D1...</p>
+      <button type="button" id="importFullKnowledge" class="primary" disabled>Preparar biblioteca completa</button>
+      <p class="field-help">Adiciona notas e conexões sem duplicar registros. Pesquisas novas ficam privadas até a equipe revisar e publicar.</p>
+      <p class="message" id="quickstartFeedback" role="status" aria-live="polite"></p>
+    </section>
     <div class="editor-actions">
       <button id="newNote" class="outline" type="button" disabled>+ Nova nota</button>
       <label class="upload-btn" id="uploadLabel" aria-disabled="true">Importar arquivos<input id="files" type="file" multiple accept=".md,.txt,.json,.csv,text/plain,text/markdown,application/json" disabled></label>
