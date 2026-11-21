@@ -271,8 +271,31 @@ function formData(){
   const f=byId('noteForm');
   return Object.fromEntries(['title','category','project','summary','content','keywords','source','status','visibility'].map(k=>[k,f.elements[k].value]));
 }
+async function showConsentedExamples(){
+ if(!real)return;
+ const data=await api('/examples');
+ const wrap=byId('exampleList');wrap.hidden=false;wrap.replaceChildren();
+ wrap.append(el('p','',data.examples.length+
+  ' exemplo(s) de treino, com aceite separado e retenção de 7 dias. Nunca são publicados automaticamente na base RAG.'));
+ for(const item of data.examples){
+  const block=el('div','example-review-item');
+  block.style.cssText='padding:10px;border:1px solid #5555;border-radius:9px;margin:8px 0;overflow-wrap:anywhere';
+  block.append(el('strong','',item.scenario+' · '+item.signal));
+  block.append(el('p','','Participante (trecho filtrado): '+item.participant_excerpt));
+  block.append(el('p','','Personagem (trecho gerado): '+item.character_excerpt));
+  block.append(el('small','','Apaga automaticamente em '+item.expires_at));
+  const discard=el('button','outline','Excluir exemplo');
+  discard.type='button';
+  discard.addEventListener('click',async()=>{
+   try{await api('/examples/'+encodeURIComponent(item.id),'DELETE');
+    block.remove();feedback('Exemplo excluído da biblioteca.');}
+   catch(error){feedback(error.message,true);}
+  });
+  block.append(discard);wrap.append(block);
+ }
+}
 function controls(enabled){
-  for(const id of ['newNote','seedBtn','researchBtn','fromNode','toNode','addLink','files'])
+  for(const id of ['newNote','seedBtn','researchBtn','loadExamples','fromNode','toNode','addLink','files'])
     byId(id).disabled=!enabled;
   byId('uploadLabel').setAttribute('aria-disabled',String(!enabled));
 }
@@ -346,6 +369,9 @@ svg.addEventListener('wheel',evt=>{
   applyTransform();
 },{passive:false});
 byId('resetGraph').addEventListener('click',()=>{zoom=1;panX=0;panY=0;applyTransform();});
+byId('loadExamples').addEventListener('click',()=>{
+ if(real)void showConsentedExamples().catch(error=>feedback(error.message,true));
+});
 for(const id of ['search','categoryFilter','projectFilter'])
   byId(id).addEventListener(id==='search'?'input':'change',renderAll);
 function loginDialog(show){
