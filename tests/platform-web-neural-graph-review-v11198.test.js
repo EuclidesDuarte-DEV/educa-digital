@@ -148,7 +148,7 @@ test('V111.98 — painel exibe diferença entre 31 notas e as efetivamente liber
  assert.match(js,/\/review\/queue/);
  assert.match(js,/\/review\/publish/);
  assert.match(js,/\/learning\/insights/);
- assert.match(js,/await select\(node\.id\)/);
+ assert.match(js,/void select\(node\.id\)/);
  assert.match(js,/conf[eê]riu a fonte e revisou o conte[uú]do/);
  assert.match(js,/n\.status==='published'&&n\.visibility==='public'/);
 });
