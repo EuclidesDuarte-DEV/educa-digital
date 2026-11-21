@@ -39,7 +39,10 @@ test('V111.52: limite de tempo e alternativa exclusivamente feminina em pt-BR',(
   assert.match(video,/audioOnly\(text,serial\)/);
   assert.match(video,/window\.EducaLiaVoice\?\.choose\?\.\(\)/);
   assert.match(video,/waitForFemale\?\.\(1200\)/);
-  assert.match(video,/if\(!voice\|\|!\/\^pt\[-_\]BR\$\/i\.test\(voice\.lang\)\)/);
+  // V112.01: exclusividade feminina persiste nos nativos. Na Web, o Safari
+  // pode falar pt-BR mesmo sem listar vozes, evitando espera de 45 segundos.
+  assert.match(video,/if\\(\\(!voice\\|\\|!\\/\\^pt\\[-_\\]BR\\$\\/i\\.test\\(voice\\.lang\\)\\)\\&\\&!web\\)/);
+  assert.match(video,/startFemale\\(selected\\|\\|alternative\\|\\|null\\)/);
   assert.match(video,/stopVoiceProgress\(\)/);
   assert.match(video,/Tentar voz oficial/);
   assert.match(video,/vídeo original não é neural/);
