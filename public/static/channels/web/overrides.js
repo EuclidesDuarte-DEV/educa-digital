@@ -448,4 +448,14 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, {once:true});
   } else start();
+
+/* V112.01 — dados de treino opcionais não são mais solicitados na home Web.
+ * Evitar que a restauração de formulários do navegador reative uma escolha
+ * invisível. A versão nativa usa seus controles originais. */
+if(document.documentElement?.dataset?.educaPlatform==='web'){
+ for(const id of ['freeLearningConsent','freeExampleConsent']){
+  const consent=document.getElementById(id);
+  if(consent){consent.checked=false;consent.disabled=true;}
+ }
+}
 })();
