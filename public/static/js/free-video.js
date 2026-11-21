@@ -449,7 +449,7 @@ function prefetchNextChunk(serial){
 // V111.95: no iPhone, desbloquear o AudioContext no toque em Atender
 // permite tocar WAV gerado DINAMICAMENTE pelo Kokoro após o fetch/inferência.
 // Nenhum arquivo MP3 ou fala pré-gravada é servido ao participante.
-async function playDynamicKokoroWebAudio(result,text,serial){
+async function playDynamicKokoroWebAudio(result,text,serial,voiceLabel='Kokoro pf_dora'){
  if(document.documentElement?.dataset?.educaPlatform!=='web')return false;
  const ctx=speechMotion.context;
  if(!ctx||ctx.state!=='running'||typeof ctx.decodeAudioData!=='function')return false;
@@ -466,8 +466,8 @@ async function playDynamicKokoroWebAudio(result,text,serial){
   };
   source.start(0);
   stopVoiceProgress();ui.play.hidden=true;subtitle(text);
-  indicator('Lia · voz feminina neural Kokoro pf_dora');
-  status('Lia falando em áudio neural gerado para esta resposta.');
+  indicator('Lia · '+voiceLabel);
+  status('Lia falando com áudio gerado para esta resposta.');
   referenceMotion();prefetchNextChunk(serial);
   return true;
  }catch(_){return false;}
@@ -662,6 +662,9 @@ async function playWebHQVoice(text,serial){
   audio.onended=()=>{if(serial===session.serial)completed();};
   audio.onerror=()=>{if(serial===session.serial)recoverVoice(serial,text,'Áudio expressivo indisponível.');};
   try{await audio.play();}catch(_){
+   // Safari pode bloquear Audio.play() depois da chamada de rede. O contexto
+   // WebAudio já foi liberado no toque em Atender; o MP3 é gerado de verdade.
+   if(await playDynamicKokoroWebAudio({blob},text,serial,'voz natural online'))return true;
    ui.play.hidden=false;ui.play.textContent='▶ Ouvir voz da Lia';
    status('Toque em reproduzir para liberar o áudio neste navegador.');
   }
