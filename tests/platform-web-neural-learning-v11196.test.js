@@ -85,7 +85,7 @@ test('V111.96 — schema D1 só é criado quando explicitamente habilitado',asyn
  const total=db.queries.length;
  await setupNeuralDB({DB:db,LIA_NEURAL_AUTO_SETUP:'true'});
  assert.equal(db.queries.length,total,'não repetir migração em cada requisição');
- assert.equal(NEURAL_SQL.filter(q=>q.startsWith('CREATE TABLE')).length,3);
+ assert.equal(NEURAL_SQL.filter(q=>q.startsWith('CREATE TABLE')).length,4); // V111.97: nova tabela de exemplos consentidos
  assert.ok(!db.queries.some(q=>/\bDROP TABLE\b|\bALTER TABLE\b/i.test(q.query)));
 });
 test('V111.96 — mensagens privadas não são guardadas; só sinal categórico com opt-in',async()=>{

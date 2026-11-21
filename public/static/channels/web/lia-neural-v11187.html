@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
 <title>LIA Neural · Cérebro de Conhecimento | Educa+ Digital</title>
 <link rel="stylesheet" href="/static/channels/web/lia-neural-v11187.css?v=11187">
-<script src="/static/channels/web/lia-neural-v11187.js?v=11187" defer></script>
+<script src="/static/channels/web/lia-neural-v11187.js?v=11187&examples=11197" defer></script>
 </head>
 <body>
 <div class="shell">
@@ -69,6 +69,8 @@
       <label class="upload-btn" id="uploadLabel" aria-disabled="true">Importar arquivos<input id="files" type="file" multiple accept=".md,.txt,.json,.csv,text/plain,text/markdown,application/json" disabled></label>
       <button id="seedBtn" class="muted-btn" type="button" disabled>Carregar base inicial</button>
       <button id="researchBtn" class="muted-btn" type="button" disabled>Importar pesquisas de golpes (2026)</button>
+      <button id="loadExamples" class="outline" type="button" disabled>Exemplos consentidos (7 dias)</button>
+      <div id="exampleList" hidden aria-live="polite"></div>
     </div>
     <div class="link-editor"><div class="section-label">CONECTAR CONHECIMENTOS</div>
       <label>Origem<select id="fromNode" disabled><option value="">Escolher nota</option></select></label>

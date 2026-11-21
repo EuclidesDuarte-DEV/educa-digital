@@ -1,5 +1,6 @@
 import { retrieveLiaKnowledge } from './lia-neural.js';
-import { saveLearningTurn, learningHint } from './lia-neural-learning-v11196.js';
+import { saveLearningTurn, learningHint, classifyTrainingTurn } from './lia-neural-learning-v11196.js';
+import { storeTrainingExample } from './lia-training-examples-v11197.js';
 /** Personagens fictícios do Modo Livre — nunca receber dados bancários reais. */
 const CHARACTERS = Object.freeze({
   family: {name:'Rafael, familiar fictício',premise:'Diz que trocou de número, conversa com naturalidade e pede ajuda financeira fictícia de R$ 350 via Pix de TREINO. Se perguntarem, identifica-se como Rafael. Não forneça chaves reais; o banco simulado exibe a chave CHAVE-TREINO-RAFAEL. O verdadeiro exercício é confirmar a identidade antes de transferir.'},
@@ -156,6 +157,17 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null){
         const save=saveLearningTurn(env,request,parsed.scenario,parsed.message,true);
         if(ctx?.waitUntil)ctx.waitUntil(save.catch(()=>{}));
         else await save.catch(()=>{});
+      }
+      // Não confundir consentimento estatístico com permissão de guardar
+      // trechos de diálogo. A segunda opção é independente e explícita.
+      if(webOnly&&payload?.exampleConsent===true){
+        const example=storeTrainingExample(env,request,{
+          consent:true,scenario:parsed.scenario,
+          participant:parsed.message,character:generated,
+          signal:classifyTrainingTurn(parsed.scenario,parsed.message)
+        });
+        if(ctx?.waitUntil)ctx.waitUntil(example.catch(()=>{}));
+        else await example.catch(()=>{});
       }
       return Response.json({ok:true,reply:generated,mode:'ia'});
     }

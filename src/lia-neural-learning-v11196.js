@@ -1,6 +1,7 @@
 // V111.96 — Knowledge base educativo e aprendizado agregado, SEM chats gravados.
 // Bootstrap intencionalmente aditivo/idempotente; ativado via LIA_NEURAL_AUTO_SETUP=true.
 // Apenas metadados categóricos anônimos e notas oficiais curadas alimentam o D1.
+import { TRAINING_EXAMPLES_SQL } from './lia-training-examples-v11197.js';
 const SCENARIOS=Object.freeze({
  family:'whatsapp',relative:'whatsapp',account:'whatsapp',code:'whatsapp',delivery:'whatsapp',
  prize:'whatsapp',friend:'whatsapp',daughter:'whatsapp','family-group':'whatsapp',
@@ -48,7 +49,8 @@ export const NEURAL_SQL=[
  signal TEXT NOT NULL CHECK(signal IN ('verify','refuse','question','accept','other','safe','unsafe')),
  total INTEGER NOT NULL DEFAULT 0,
  PRIMARY KEY(day,scenario,channel,kind,signal))`,
- "CREATE INDEX IF NOT EXISTS idx_lia_training_retention ON lia_training_signals(day,scenario)"
+ "CREATE INDEX IF NOT EXISTS idx_lia_training_retention ON lia_training_signals(day,scenario)",
+ ...TRAINING_EXAMPLES_SQL
 ];
 const s=(db,query,...args)=>db.prepare(query).bind(...args);
 const pubNotes=()=>CATALOG.length;
@@ -148,7 +150,11 @@ export async function trainingReadiness(env){
  if(!env?.DB)return {learning_ready:false};
  try{
   const t=await s(env.DB,"SELECT name FROM sqlite_master WHERE type='table' AND name='lia_training_signals'").first();
-  return {learning_ready:!!t,learning_mode:'opt-in-aggregates',raw_chat_stored:false};
+  const e=await s(env.DB,"SELECT name FROM sqlite_master WHERE type='table' AND name='lia_training_examples'").first();
+  return {learning_ready:!!t,learning_mode:'opt-in-aggregates',
+    examples_ready:!!e&&env.LIA_EXAMPLES_ENABLED==='true',
+    examples_policy:'consentimento separado · sete dias · revisão administrativa',
+    raw_chat_stored:false};
  }catch(_){return {learning_ready:false};}
 }
 export async function learningHint(env,scenario){

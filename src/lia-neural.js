@@ -3,6 +3,7 @@
  */
 import {LIA_NEURAL_SEEDS,LIA_NEURAL_SEED_LINKS} from './lia-neural-seeds.js';
 import {LIA_NEURAL_RESEARCH_2026,LIA_NEURAL_RESEARCH_LINKS} from './lia-neural-research-2026.js';
+import { listTrainingExamples, deleteTrainingExample, examplePolicy } from './lia-training-examples-v11197.js';
 const HEAD={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const CAT=new Set(['conhecimento','cenario','memoria','aprendizado','decisao']);
 const STAT=new Set(['draft','published','archived']);
@@ -65,6 +66,15 @@ export async function neuralApi(request,env,url=new URL(request.url)){
 async function handle(request,db,url){
   const method=request.method.toUpperCase();
   const path=url.pathname.slice('/api/lia/neural'.length);
+  // Autorização passou por guard(): jamais expor diálogos em rota pública.
+  if(method==='GET'&&path==='/examples'){
+    const examples=await listTrainingExamples({DB:db});
+    return ok({examples,policy:examplePolicy()});
+  }
+  if(method==='DELETE'&&/^\/examples\/[a-f0-9-]{36}$/i.test(path)){
+    await deleteTrainingExample({DB:db},path.slice('/examples/'.length));
+    return ok({deleted:true});
+  }
   if(method==='GET'&&path==='/status'){
     const n=await sql(db,'SELECT COUNT(*) AS total FROM lia_kb_nodes').first();
     const published=await sql(db,"SELECT COUNT(*) AS total FROM lia_kb_nodes WHERE status='published' AND visibility='public'").first();

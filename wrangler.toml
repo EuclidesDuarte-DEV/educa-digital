@@ -29,6 +29,8 @@ LIA_PUBLIC_VOICE_ENABLED = "false"
 LIA_PUBLIC_VIDEO_ENABLED = "false"
 # V111.96: cria apenas tabelas NOVAS do Neural de forma idempotente.
 LIA_NEURAL_AUTO_SETUP = "true"
+# Trechos são opt-in separado, não gravação automática de chats.
+LIA_EXAMPLES_ENABLED = "true"
 
 # Ambiente isolado para Pull Requests / Workers Previews.
 # Nao usar o banco D1 de producao nos previews.
@@ -48,3 +50,5 @@ LIA_PUBLIC_VOICE_ENABLED = "false"
 LIA_PUBLIC_VIDEO_ENABLED = "false"
 # V111.96: cria apenas tabelas NOVAS do Neural de forma idempotente.
 LIA_NEURAL_AUTO_SETUP = "true"
+# Trechos são opt-in separado, não gravação automática de chats.
+LIA_EXAMPLES_ENABLED = "true"
