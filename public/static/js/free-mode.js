@@ -47,10 +47,10 @@ function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
    document.getElementById('freeLearningConsent')?.checked===true;
  state.exampleConsent=document.documentElement?.dataset?.educaPlatform==='web'&&
    document.getElementById('freeExampleConsent')?.checked===true;
- // V111.95: assim que o participante inicia o Modo Livre Web,
- // iniciar Kokoro no Worker DURANTE o WhatsApp, antes da videochamada.
- // É síntese neural gratuita no navegador: nenhum arquivo MP3 pré-gravado.
- if(window.EducaLiaBrowserKokoro&&document.getElementById('freeVideoVoiceEngine')?.value!=='padrao')
+ // V112.02: Web deixa de baixar um modelo pesado de voz no celular.
+ // Android/iOS nativos preservam o aquecimento original do Kokoro.
+ if(window.EducaLiaBrowserKokoro&&document.documentElement?.dataset?.educaPlatform!=='web'&&
+    document.getElementById('freeVideoVoiceEngine')?.value!=='padrao')
   void window.EducaLiaBrowserKokoro.prewarmIntro().catch(()=>{});
  // A voz feminina do sistema pode ser procurada paralelamente, sem bloquear.
  if(document.documentElement?.dataset?.educaPlatform==='web')
