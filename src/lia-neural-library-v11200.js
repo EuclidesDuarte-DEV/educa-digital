@@ -54,8 +54,13 @@ export async function populateReviewedNeuralLibrary(env){
    if(reviewed.length!==VERIFIED_LIBRARY_IDS.length)throw Error('VERIFIED_LIBRARY_MISMATCH');
    let released=0;
    for(const note of reviewed){
-    if(!['conhecimento','cenario','decisao'].includes(note.category)||
-       !/^https:\/\/(?:[^/]+\.)?(?:gov\.br|febraban\.org\.br|nic\.br)\/|^https:\/\/www\.gov\.br\//.test(note.source))
+    let sourceValid=false;
+    try{
+      const url=new URL(note.source);
+      sourceValid=url.protocol==='https:'&&
+        ['www.gov.br','portal.febraban.org.br','nic.br'].includes(url.hostname);
+    }catch(_){sourceValid=false;}
+    if(!['conhecimento','cenario','decisao'].includes(note.category)||!sourceValid)
       throw Error('LIBRARY_SOURCE_NOT_APPROVED');
     const result=await db.prepare(
      "UPDATE lia_kb_nodes SET status='published',visibility='public',updated_at=datetime('now') "+
