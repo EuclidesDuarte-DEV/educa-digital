@@ -27,6 +27,8 @@ LIA_ENABLED = "false"
 # Voice stays STAFF ONLY by default. Enable publicly only after load/security tests.
 LIA_PUBLIC_VOICE_ENABLED = "false"
 LIA_PUBLIC_VIDEO_ENABLED = "false"
+# V111.96: cria apenas tabelas NOVAS do Neural de forma idempotente.
+LIA_NEURAL_AUTO_SETUP = "true"
 
 # Ambiente isolado para Pull Requests / Workers Previews.
 # Nao usar o banco D1 de producao nos previews.
@@ -44,3 +46,5 @@ LIA_CONTAINER_ENABLED = "false"
 LIA_ENABLED = "false"
 LIA_PUBLIC_VOICE_ENABLED = "false"
 LIA_PUBLIC_VIDEO_ENABLED = "false"
+# V111.96: cria apenas tabelas NOVAS do Neural de forma idempotente.
+LIA_NEURAL_AUTO_SETUP = "true"

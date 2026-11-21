@@ -28,7 +28,7 @@ const SCRIPTED_ORDER=Object.freeze(['family','video','bank']);
 const BONUS_ORDER=Object.freeze(['sms-delivery','relative','call-tech','sms-bank','account','sms-prize','prize','code','delivery']);
 const byId=Object.fromEntries(SCENARIOS.map(s=>[s.id,s]));
 const video=()=>window.EducaVideoCall;
-const state={active:false,scenario:null,pending:null,unread:new Set(),conversations:new Map(),delivered:0,seen:[],finished:0,completedSteps:new Set(),timer:null,replying:false,blocked:false,callAccepted:false,lastSpoken:'',recognizer:null,request:null,baseline:null,transitionTimer:null,callHandsFree:false,callUtterance:null};
+const state={active:false,scenario:null,pending:null,unread:new Set(),conversations:new Map(),delivered:0,seen:[],finished:0,completedSteps:new Set(),timer:null,replying:false,blocked:false,callAccepted:false,lastSpoken:'',recognizer:null,request:null,baseline:null,transitionTimer:null,callHandsFree:false,callUtterance:null,learningConsent:false};
 const els={phone:$('#phoneScreen'),notice:$('#freeEventNotice'),noticeTitle:$('#freeEventTitle'),noticeText:$('#freeEventText'),noticeIcon:$('#freeEventIcon'),tools:$('#freeHomeTools'),floating:$('#freeFloatingHome'),solved:$('#freeSolved'),wallpaper:$('#chatWallpaper'),form:$('#freeOriginalComposer'),input:$('#freeOriginalInput'),send:$('#freeOriginalSend'),status:$('#freeOriginalAiStatus'),typing:$('#freeOriginalTyping'),familyActions:$('#freeFamilyActions'),callName:$('#freeCallName'),callLine:$('#freeCallLine'),callLog:$('#freeCallTranscript'),callForm:$('#freeCallForm'),callInput:$('#freeCallInput'),answer:$('#freeCallAnswer'),smsMessages:$('#freeSmsMessages'),smsSender:$('#freeSmsSender'),smsForm:$('#freeSmsForm'),smsInput:$('#freeSmsInput'),smsSend:$('#freeSmsSend'),smsStatus:$('#freeSmsStatus')};
 const bridge=()=>window.EducaFreeView;
 const visible=()=>els.phone?.getAttribute('data-current-view')||'';
@@ -43,6 +43,8 @@ function schedule(min=16000,max=30000){clearTimeout(state.timer);state.timer=nul
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
 function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
+ state.learningConsent=document.documentElement?.dataset?.educaPlatform==='web'&&
+   document.getElementById('freeLearningConsent')?.checked===true;
  // V111.95: assim que o participante inicia o Modo Livre Web,
  // iniciar Kokoro no Worker DURANTE o WhatsApp, antes da videochamada.
  // É síntese neural gratuita no navegador: nenhum arquivo MP3 pré-gravado.
@@ -52,7 +54,7 @@ function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
  if(document.documentElement?.dataset?.educaPlatform==='web')
   void window.EducaLiaVoice?.waitForFemale?.(500)?.catch?.(()=>{});
  state.finished=0;state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;makeContactRows();show('home');schedule(900,1450);}
-function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
+function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
  const list=$('#whatsappView .wa-chat-list');for(const dynamic of document.querySelectorAll('#whatsappView [data-free-scenario]'))dynamic.remove();
  if(list&&state.baseline)for(const {row,preview,time,badgeHidden} of state.baseline){row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
  els.phone?.classList.remove('free-active','free-family-chat');if(els.notice)els.notice.hidden=true;if(els.form)els.form.hidden=true;setStatus('');syncUI();}
@@ -105,7 +107,8 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
  const responseTimeoutMs=document.documentElement?.dataset?.educaPlatform==='web'?32000:17000; // V111.89: Web suporta a segunda inferência; Android/iOS mantêm 17s
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},responseTimeoutMs); // sempre limitar a espera para evitar "em andamento" infinito
- try{const response=await fetch('/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
+ try{const response=await fetch('/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist,
+  learningConsent:state.learningConsent===true}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
  catch(ex){err=timedOut?'A IA demorou para responder. Tente novamente com uma frase curta.':ex.name==='AbortError'?'A conexão com a IA foi interrompida.':/Failed to fetch|Failed to execute|NetworkError|fetch failed/i.test(String(ex.message))?'Não foi possível conectar à IA. Confira Ollama no Educa+ local ou o Workers AI na Cloudflare.':String(ex.message||'Não foi possível falar com a IA.');}
  finally{clearTimeout(responseTimer);if(state.request===abort)state.request=null;state.replying=false;els.send.disabled=false;if(els.smsSend)els.smsSend.disabled=false;els.typing.hidden=true;}
  if(!state.active||state.scenario?.id!==current||(abort.signal.aborted&&!timedOut))return;
@@ -113,6 +116,13 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent='SMS simulado · responda ou escolha uma ação segura';}
 function finish(kind='safe',reason=''){
  if(!state.active)return;const s=state.scenario||state.pending;if(!s){home();return;}
+ // Nunca enviar texto, histórico, telefone, email ou identidade.
+ if(state.learningConsent===true&&document.documentElement?.dataset?.educaPlatform==='web'){
+   void fetch('/api/lia/training/outcome',{method:'POST',credentials:'same-origin',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({consent:true,scenario:s.id,outcome:kind==='unsafe'?'unsafe':'safe'})
+   }).catch(()=>{});
+ }
  clearRequest();video()?.close?.();stopVoice();const safe=kind!=='unsafe';if(safe)state.finished++;
  if(SCRIPTED_ORDER.includes(s.id)||BONUS_ORDER.includes(s.id))state.completedSteps.add(s.id);
  state.blocked=true;state.pending=null;clearTimeout(state.timer);els.notice.hidden=true;

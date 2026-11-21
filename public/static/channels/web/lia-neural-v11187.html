@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e1117">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
+<title>LIA Neural · Cérebro de Conhecimento | Educa+ Digital</title>
+<link rel="stylesheet" href="/static/channels/web/lia-neural-v11187.css?v=11187">
+<script src="/static/channels/web/lia-neural-v11187.js?v=11187" defer></script>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+  <a class="brand" href="/" aria-label="Voltar ao Educa+ Digital"><span class="brand-mark">✣</span><span>EDUCA+ <strong>DIGITAL</strong></span></a>
+  <div class="titleblock"><span class="eyebrow">LIA AI / MEMÓRIA</span><h1>Cérebro de Conhecimento</h1></div>
+  <span class="status" id="onlineBadge"><span class="status-dot"></span>Prévia de conhecimento</span>
+  <button class="outline" id="loginToggle" type="button">Acesso administrativo</button>
+</header>
+<div class="toolbar">
+  <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Pesquisar nós, ideias ou arquivos..." aria-label="Pesquisar conhecimentos"></label>
+  <select id="projectFilter" aria-label="Filtrar projeto"><option value="">Todos os projetos</option></select>
+  <select id="categoryFilter" aria-label="Filtrar categoria">
+    <option value="">Todas as áreas</option><option value="conhecimento">Conhecimentos</option><option value="cenario">Cenários</option><option value="memoria">Memória</option><option value="aprendizado">Aprendizado</option><option value="decisao">Decisões</option>
+  </select>
+  <button id="resetGraph" class="outline" type="button">Centralizar grafo</button>
+</div>
+<div class="workspace">
+  <aside class="sidebar" aria-label="Biblioteca de conhecimento">
+    <div class="section-label">BIBLIOTECA</div>
+    <div class="metric-row"><div><b id="totalCount">31</b><small>Nós</small></div><div><b id="linksCount">43</b><small>Conexões</small></div></div>
+    <div class="section-label spaced">ÁREAS DO CONHECIMENTO</div>
+    <div class="categories" id="categoryList"></div>
+    <div class="section-label spaced">PROJETOS</div>
+    <ul class="projects" id="projectList"></ul>
+    <div class="sidebar-footer"><span class="muted">Memória verificável, não retreinamento automático.</span></div>
+  </aside>
+  <section class="canvas-panel" aria-label="Mapa interativo do conhecimento">
+    <div class="graph-heading"><div><div class="eyebrow">VISUALIZAÇÃO INTERATIVA</div><strong>Mapa Neural</strong></div><span class="graph-caption" id="graphHint">Arraste pontos • role para aproximar</span></div>
+    <div class="graph-wrap" id="graphWrap">
+      <svg id="neuralGraph" viewBox="0 0 940 630" role="img" aria-label="Grafo de conhecimentos da LIA: selecione um ponto para ver a nota">
+        <g id="viewport"><g id="networkLines"></g><g id="networkNodes"></g><g id="networkLabels"></g></g>
+      </svg>
+      <div class="graph-legend"><span><i class="dot knowledge"></i> Conhecimentos</span><span><i class="dot scenarios"></i> Cenários</span><span><i class="dot memory"></i> Memória</span><span><i class="dot learning"></i> Aprendizado</span><span><i class="dot decisions"></i> Decisões</span></div>
+    </div>
+    <div class="canvas-foot"><span id="graphMessage">Os conhecimentos são conectados por relações verificáveis.</span><span>V111.87</span></div>
+  </section>
+  <aside class="inspector" aria-label="Detalhes e edição de conhecimento">
+    <div class="inspector-header"><div><span class="eyebrow">EXPLORADOR</span><h2 id="panelHeading">Selecionar conhecimento</h2></div><span class="pill" id="noteState">Prévia</span></div>
+    <div id="notePreview" class="note-preview">
+      <div class="empty-icon">✦</div><p>Selecione um ponto no grafo ou um tópico à esquerda para explorar as conexões da LIA.</p>
+    </div>
+    <form id="noteForm" hidden>
+      <label>Título<input name="title" maxlength="120" required placeholder="Ex.: Golpe por ligação"></label>
+      <label>Área<select name="category">
+        <option value="conhecimento">Conhecimentos</option><option value="cenario">Cenários</option><option value="memoria">Memória</option><option value="aprendizado">Aprendizado</option><option value="decisao">Decisões</option></select></label>
+      <label>Projeto<input name="project" maxlength="120" required placeholder="Ex.: Educa+ Digital"></label>
+      <label>Resumo<textarea name="summary" rows="3" maxlength="700" placeholder="Contexto em poucas palavras"></textarea></label>
+      <label>Conhecimento em Markdown ou texto<textarea name="content" rows="8" maxlength="18000" placeholder="Documentação revisada, decisões, referências..."></textarea></label>
+      <label>Palavras-chave<input name="keywords" maxlength="420" placeholder="pix, família, verificação"></label>
+      <label>Fonte ou arquivo<input name="source" maxlength="240" placeholder="Ex.: material/aula.md"></label>
+      <div class="split"><label>Estado<select name="status"><option value="draft">Rascunho</option><option value="published">Revisado</option><option value="archived">Arquivado</option></select></label>
+      <label>Visibilidade<select name="visibility"><option value="private">Privado</option><option value="public">Para a IA</option></select></label></div>
+      <p class="field-help">Só notas revisadas e públicas são consultadas pela IA. A área Memória permanece privada.</p>
+      <button class="primary" type="submit" id="saveNote">Salvar nota</button>
+    </form>
+    <div class="editor-actions">
+      <button id="newNote" class="outline" type="button" disabled>+ Nova nota</button>
+      <label class="upload-btn" id="uploadLabel" aria-disabled="true">Importar arquivos<input id="files" type="file" multiple accept=".md,.txt,.json,.csv,text/plain,text/markdown,application/json" disabled></label>
+      <button id="seedBtn" class="muted-btn" type="button" disabled>Carregar base inicial</button>
+      <button id="researchBtn" class="muted-btn" type="button" disabled>Importar pesquisas de golpes (2026)</button>
+    </div>
+    <div class="link-editor"><div class="section-label">CONECTAR CONHECIMENTOS</div>
+      <label>Origem<select id="fromNode" disabled><option value="">Escolher nota</option></select></label>
+      <label>Destino<select id="toNode" disabled><option value="">Escolher nota</option></select></label>
+      <label>Relação<input id="relation" value="relacionado" maxlength="70"></label>
+      <button class="outline" id="addLink" type="button" disabled>Criar conexão</button>
+    </div>
+    <p class="message" id="feedback" role="status" aria-live="polite"></p>
+  </aside>
+</div>
+</div>
+<div class="login-overlay" id="loginOverlay" hidden>
+  <div class="login-box" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button type="button" id="closeLogin" class="login-close" aria-label="Fechar">×</button>
+    <div class="login-icon">✦</div><span class="eyebrow">SOMENTE EQUIPE AUTORIZADA</span>
+    <h2 id="loginTitle">Acesso ao Cérebro da LIA</h2>
+    <p>Informe o token administrativo configurado como secret na Cloudflare. Ele não fica salvo no navegador.</p>
+    <form id="loginForm"><label>Token administrativo<input type="password" id="adminToken" autocomplete="off" minlength="24" required placeholder="Token de acesso"></label><button class="primary" type="submit">Abrir biblioteca</button></form>
+    <p class="login-feedback" id="loginMessage" role="status"></p>
+  </div>
+</div>
+</body>
+</html>
