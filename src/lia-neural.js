@@ -4,6 +4,7 @@
 import {LIA_NEURAL_SEEDS,LIA_NEURAL_SEED_LINKS} from './lia-neural-seeds.js';
 import {LIA_NEURAL_RESEARCH_2026,LIA_NEURAL_RESEARCH_LINKS} from './lia-neural-research-2026.js';
 import { listTrainingExamples, deleteTrainingExample, examplePolicy } from './lia-training-examples-v11197.js';
+import { trainingInsights } from './lia-neural-learning-v11196.js';
 const HEAD={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const CAT=new Set(['conhecimento','cenario','memoria','aprendizado','decisao']);
 const STAT=new Set(['draft','published','archived']);
@@ -13,6 +14,19 @@ const fail=(status,message,code='ERROR')=>Response.json({ok:false,message,code},
 const trim=(x,max=180)=>String(x??'').trim().slice(0,max);
 const sql=(db,q,...args)=>db.prepare(q).bind(...args);
 const sensitive=x=>/\b(?:\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}|[\w.+-]+@[\w.-]+\.[a-z]{2,})\b/i.test(x);
+// Publicação em lote exige confirmação humana e fonte institucional conhecida.
+// Memória, aprendizado pessoal, arquivos não revisados e fontes desconhecidas
+// não entram automaticamente no RAG, mesmo que apareçam no grafo.
+const TRUSTED_REVIEW_HOSTS=['gov.br','bcb.gov.br','cert.br','nic.br','febraban.org.br'];
+function reviewEligible(node){
+ if(!node||node.status!=='draft'||node.visibility!=='private'||
+    !['conhecimento','cenario','decisao'].includes(node.category))return false;
+ let host='';
+ try{const url=new URL(node.source);if(url.protocol!=='https:')return false;host=url.hostname.toLowerCase();}
+ catch(_){return false;}
+ if(!TRUSTED_REVIEW_HOSTS.some(d=>host===d||host.endsWith('.'+d)))return false;
+ return !validate({...node,status:'published',visibility:'public'});
+}
 async function payload(request){
   if(Number(request.headers.get('content-length')||0)>26000)throw Error('TOO_LARGE');
   const text=await request.text();
@@ -74,6 +88,44 @@ async function handle(request,db,url){
   if(method==='DELETE'&&/^\/examples\/[a-f0-9-]{36}$/i.test(path)){
     await deleteTrainingExample({DB:db},path.slice('/examples/'.length));
     return ok({deleted:true});
+  }
+  // Fila autenticada: a equipe seleciona apenas fontes institucionais que
+  // já revisou; sem autorização, as notas privadas continuam isoladas.
+  if(method==='GET'&&path==='/learning/insights')
+    return ok(await trainingInsights({DB:db}));
+  if(method==='GET'&&path==='/review/queue'){
+    const rows=(await sql(db,`SELECT id,title,category,project,summary,content,source,status,visibility
+       FROM lia_kb_nodes WHERE status='draft' AND visibility='private'
+       AND category IN ('conhecimento','cenario','decisao')
+       ORDER BY updated_at DESC LIMIT 150`).all()).results||[];
+    const candidates=rows.map(x=>({
+      id:x.id,title:x.title,category:x.category,summary:x.summary,source:x.source,
+      eligible:reviewEligible(x),
+      // Mesmo quando a fonte é elegível, revisão humana do conteúdo é exigida.
+      requires_manual_review:true
+    }));
+    return ok({candidates,published_only:true});
+  }
+  if(method==='POST'&&path==='/review/publish'){
+    const data=await payload(request),ids=data?.ids;
+    if(!Array.isArray(ids)||!ids.length||ids.length>25||
+      !ids.every(id=>typeof id==='string'&&/^[\w-]{4,90}$/.test(id))||
+      new Set(ids).size!==ids.length)
+      return fail(422,'Selecione de 1 a 25 notas diferentes para revisão.','VALIDATION');
+    // Toda nota passa por validação integral de conteúdo no Worker,
+    // além da escolha explícita feita na interface autenticada.
+    const approved=[];
+    for(const id of ids){
+      const note=await sql(db,'SELECT * FROM lia_kb_nodes WHERE id=?',id).first();
+      if(!reviewEligible(note))
+        return fail(422,'Revisão obrigatória: fonte ou conteúdo não elegível para publicação.','REVIEW_REQUIRED');
+      approved.push(note.id);
+    }
+    for(const id of approved)
+      await sql(db,`UPDATE lia_kb_nodes SET status='published',
+        visibility='public',updated_at=datetime('now')
+        WHERE id=? AND status='draft' AND visibility='private'`,id).run();
+    return ok({published:approved.length,manual_review:true});
   }
   if(method==='GET'&&path==='/status'){
     const n=await sql(db,'SELECT COUNT(*) AS total FROM lia_kb_nodes').first();
@@ -214,7 +266,7 @@ export async function retrieveLiaKnowledge(env,scenario,message){
     if(!await schema(env.DB))return '';
     // Importante: apenas conhecimento PUBLICADO e PÚBLICO, jamais
     // notas privadas, memórias pessoais ou arquivos sem revisão humana.
-    const query="SELECT title,substr(content,1,540) AS content,keywords,summary,category FROM lia_kb_nodes WHERE status='published' AND visibility='public' AND category<>'memoria' AND ("+
+    const query="SELECT title,substr(content,1,540) AS content,keywords,summary,category,id FROM lia_kb_nodes WHERE status='published' AND visibility='public' AND category<>'memoria' AND ("+
       terms.map(()=>"(lower(keywords||' '||title||' '||summary) LIKE ?)").join(' OR ')+') LIMIT 35';
     const rows=(await sql(env.DB,query,...terms.map(w=>'%'+w+'%')).all()).results||[];
     const priority=(row)=>{
@@ -226,6 +278,30 @@ export async function retrieveLiaKnowledge(env,scenario,message){
     };
     const best=rows.filter(r=>r?.content&&r.category!=='memoria')
       .sort((a,b)=>priority(b)-priority(a)).slice(0,3);
-    return best.map(n=>'- '+trim(n.title,90)+': '+trim(n.content,540)).join('\n').slice(0,1500);
+    // As arestas do grafo podem enriquecer uma explicação, mas apenas se
+    // o conhecimento vizinho TAMBÉM for publicado e não for uma memória.
+    let related=[];
+    const ids=best.map(r=>r.id).filter(id=>typeof id==='string'&&id.length>0);
+    if(ids.length){
+      try{
+        const marks=ids.map(()=>'?').join(',');
+        const queryLinks=`SELECT DISTINCT n.id,n.title,substr(n.content,1,300) AS content,
+           n.keywords,n.summary,n.category
+           FROM lia_kb_links l JOIN lia_kb_nodes n ON
+           ((l.source_id IN (${marks}) AND n.id=l.target_id)
+            OR (l.target_id IN (${marks}) AND n.id=l.source_id))
+           WHERE n.status='published' AND n.visibility='public'
+             AND n.category<>'memoria' LIMIT 18`;
+        const neighbors=(await sql(env.DB,queryLinks,...ids,...ids).all()).results||[];
+        const chosen=new Set(ids);
+        related=neighbors.filter(x=>x?.content&&!chosen.has(x.id))
+          .sort((a,b)=>priority(b)-priority(a)).slice(0,1);
+      }catch(_){/* conexão ausente não interrompe a conversa */}
+    }
+    const citations=[
+      ...best.map(n=>'- '+trim(n.title,90)+': '+trim(n.content,420)),
+      ...related.map(n=>'- [Conhecimento conectado e revisado] '+trim(n.title,90)+': '+trim(n.content,300))
+    ];
+    return citations.join('\n').slice(0,1500);
   }catch(_){return '';} // Falha do Neural não interrompe as simulações.
 }

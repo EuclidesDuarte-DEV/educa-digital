@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
 <title>LIA Neural · Cérebro de Conhecimento | Educa+ Digital</title>
 <link rel="stylesheet" href="/static/channels/web/lia-neural-v11187.css?v=11187">
-<script src="/static/channels/web/lia-neural-v11187.js?v=11187&examples=11197" defer></script>
+<script src="/static/channels/web/lia-neural-v11187.js?v=11187&examples=11197&graph=11198" defer></script>
 </head>
 <body>
 <div class="shell">
@@ -29,6 +29,7 @@
   <aside class="sidebar" aria-label="Biblioteca de conhecimento">
     <div class="section-label">BIBLIOTECA</div>
     <div class="metric-row"><div><b id="totalCount">31</b><small>Nós</small></div><div><b id="linksCount">43</b><small>Conexões</small></div></div>
+    <p id="publishedNodesCount" class="muted" aria-live="polite" style="font-size:.78rem;margin-top:8px">Somente conhecimentos publicados alimentam a LIA.</p>
     <div class="section-label spaced">ÁREAS DO CONHECIMENTO</div>
     <div class="categories" id="categoryList"></div>
     <div class="section-label spaced">PROJETOS</div>
@@ -71,6 +72,13 @@
       <button id="researchBtn" class="muted-btn" type="button" disabled>Importar pesquisas de golpes (2026)</button>
       <button id="loadExamples" class="outline" type="button" disabled>Exemplos consentidos (7 dias)</button>
       <div id="exampleList" hidden aria-live="polite"></div>
+      <div class="section-label spaced">ATIVAR CONHECIMENTOS PARA A IA</div>
+      <p class="field-help">A LIA usa somente notas públicas e aprovadas. Revise as fontes antes de publicar.</p>
+      <button id="reviewKnowledge" class="outline" type="button" disabled>Revisar notas para LIA e WhatsApp</button>
+      <div id="reviewQueue" hidden aria-live="polite"></div>
+      <div class="section-label spaced">APRENDIZADO DOS TREINOS</div>
+      <button id="loadLearningInsights" class="outline" type="button" disabled>Ver dificuldades coletivas</button>
+      <div id="learningInsights" hidden aria-live="polite"></div>
     </div>
     <div class="link-editor"><div class="section-label">CONECTAR CONHECIMENTOS</div>
       <label>Origem<select id="fromNode" disabled><option value="">Escolher nota</option></select></label>
