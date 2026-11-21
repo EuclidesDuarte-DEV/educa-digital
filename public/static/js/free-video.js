@@ -76,6 +76,12 @@ const captionToggle=$('freeVideoCaptionToggle');
 const speaker=$('freeVideoSpeaker'),captionSwitch=$('freeVideoCaptionsSwitch'),expand=$('freeVideoExpand');
 const voiceStyle=$('freeVideoVoiceStyle'),voiceEngine=$('freeVideoVoiceEngine'),latencyMode=$('freeVideoLatencyMode');
 const selectedEngine=()=>voiceEngine?.value==='padrao'?'padrao':'feminina';
+// Web V112.01: no anúncio da voz, descrever o fallback real sem prometer
+// Kokoro em dispositivos onde o modelo ainda não foi preparado.
+if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.options?.length){
+ voiceEngine.options[0].textContent='Automática · voz rápida (Kokoro quando pronto)';
+ voiceEngine.options[1].textContent='Voz do aparelho · sem aguardar Kokoro';
+}
 const lipSyncWaitMs=()=>latencyMode?.value==='sinc' ? 40000 : 1100;
 const selectedStyle=()=>['natural','calma','clara'].includes(voiceStyle?.value)?voiceStyle.value:'natural';
 let outputMuted=false;
@@ -355,8 +361,10 @@ function recoverVoice(serial,text,message){
  // Se não há áudio, a mensagem fictícia deve permanecer legível para o aluno.
  if(ui.view?.dataset)ui.view.dataset.captions='on';
  if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
- status(message+' Você ainda pode responder por texto ou tentar a voz novamente.');
- if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz oficial';}
+ const web=document.documentElement?.dataset?.educaPlatform==='web';
+ status(web?message+' Toque em “Ouvir a Lia” para liberar a voz no aparelho. Você também pode responder por texto.':
+   message+' Você ainda pode responder por texto ou tentar a voz novamente.');
+ if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent=web?'▶ Ouvir a Lia':'↻ Tentar voz oficial';}
  scheduleListen(400);
 }
 function audioOnly(text,serial){
@@ -365,7 +373,10 @@ function audioOnly(text,serial){
  if(!window.SpeechSynthesisUtterance||!window.speechSynthesis){recoverVoice(serial,text,'A voz não está disponível neste navegador.');return;}
  const startFemale=voice=>{
   if(serial!==session.serial||!session.active||!session.connected)return;
-  if(!voice||!/^pt[-_]BR$/i.test(voice.lang)){
+  const web=document.documentElement?.dataset?.educaPlatform==='web';
+  // Safari/Web Speech pode expor zero vozes ao iniciar, mesmo suportando
+  // SpeechSynthesisUtterance com lang=pt-BR. Não bloquear a chamada.
+  if((!voice||!/^pt[-_]BR$/i.test(voice.lang))&&!web){
    indicator('Lia · voz feminina indisponível neste aparelho');
    recoverVoice(serial,text,'Não foi encontrada uma voz feminina pt-BR. O Kokoro pode continuar carregando.');
    return;
@@ -373,7 +384,7 @@ function audioOnly(text,serial){
   const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';
   // Velocidade quase natural: acelerar demais torna a voz sintética/robótica.
   u.rate=selectedStyle()==='calma'?.95:selectedStyle()==='clara'?1.02:1.00;
-  u.pitch=1;u.volume=outputMuted?0:1;u.voice=voice;
+  u.pitch=1;u.volume=outputMuted?0:1;if(voice&&/^pt[-_]BR$/i.test(voice.lang))u.voice=voice;
   session.utterance=u;let started=false;
   u.onstart=()=>{if(serial!==session.serial||session.utterance!==u)return;
    started=true;stopVoiceProgress();clearTimeout(session.voiceStartTimer);session.voiceStartTimer=null;
@@ -394,6 +405,12 @@ function audioOnly(text,serial){
   }catch(_){recoverVoice(serial,text,'Não foi possível iniciar a voz feminina.');}
  };
  const selected=window.EducaLiaVoice?.choose?.();
+ // Web: tentar IMEDIATAMENTE a síntese do dispositivo. A lista feminina
+ // pode estar vazia no iPhone; a seleção pt-BR padrão ainda pode funcionar.
+ if(document.documentElement?.dataset?.educaPlatform==='web'){
+  const alternative=window.EducaLiaVoice?.voices?.().find(v=>!window.EducaLiaVoice?.male?.(v));
+  startFemale(selected||alternative||null);return;
+ }
  if(selected){startFemale(selected);return;}
  session.utterance={kind:'voice-loading'};
  status('Procurando uma voz feminina pt-BR neste aparelho…');
@@ -678,6 +695,22 @@ function startSpeechChunk(phrase,serial){
   });
   return;
  }
+ // V112.01 — Somente Web: o modelo local de 82M pode demorar dezenas
+ // de segundos no Safari. Sem WAV preparado e comprovadamente rápido,
+ // pronunciar diretamente pelo sintetizador do aparelho, sem spinner.
+ // Nativos Android/iOS mantêm seu comportamento anterior.
+ const isWeb=document.documentElement?.dataset?.educaPlatform==='web';
+ const canTalkNow=isWeb&&typeof window.SpeechSynthesisUtterance==='function'&&
+  typeof window.speechSynthesis?.speak==='function';
+ if(canTalkNow&&!session.renderReady){
+  const local=window.EducaLiaBrowserKokoro;
+  const ms=Number(local?.getDiagnostics?.()?.lastSynthesisMs||0);
+  const neuralFast=selectedEngine()!=='padrao'&&local?.isReady?.()&&ms>0&&ms<=2800;
+  if(!neuralFast){
+   session.fastVoiceSerial=serial;showVoiceProgress('');
+   audioOnly(phrase,serial);return;
+  }
+ }
  showVoiceProgress('LIA: preparando voz oficial…');
  const start=()=>{
   if(serial!==session.serial||!session.active||!session.connected)return;
@@ -769,9 +802,15 @@ function speak(text){
  // A abertura fixa continua dividida para aproveitar o WAV pf_dora cacheado.
  const continuousFemale=web&&!session.renderReady&&!browser?.isReady?.()&&
   Boolean(window.EducaLiaVoice?.choose?.())&&!whole.startsWith('Oi, sou a Lia.');
- // O MP3 expressivo (quando habilitado) preserva a prosódia de toda a frase.
+ const lastMs=Number(browser?.getDiagnostics?.()?.lastSynthesisMs||0);
+ const neuralFast=selectedEngine()!=='padrao'&&browser?.isReady?.()&&lastMs>0&&lastMs<=2800;
+ const immediateDevice=web&&!session.renderReady&&
+  typeof window.SpeechSynthesisUtterance==='function'&&
+  typeof window.speechSynthesis?.speak==='function'&&!neuralFast;
+ // Um único enunciado contínuo soa mais natural e evita bloqueios do
+ // Safari entre várias partes; os nativos preservam o fluxo por trechos.
  const chunks=web&&session.hqVoiceEnabled&&selectedEngine()!=='padrao'?[whole]:
-  continuousFemale?[whole]:speechSegments(whole);
+  immediateDevice?[whole]:continuousFemale?[whole]:speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
  // A mensagem educativa chega ao leitor no mesmo instante. A síntese
  // de voz é independente e pode demorar caso não exista voz feminina local.

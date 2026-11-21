@@ -1973,3 +1973,11 @@ body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v112-video
   overflow-y: auto !important;
   overscroll-behavior: contain;
 }
+
+/* V112.01 — interface Web limpa: opções de coleta opt-in não pertencem à
+ * tela de atividades. Permanecem desligadas e sem interação no Web.
+ * Não modificar a apresentação dos aplicativos Android/iOS nativos. */
+html[data-educa-platform="web"] #learningView .free-learning-consent,
+html[data-educa-platform="web"] #learningView .free-example-consent {
+  display: none !important;
+}
