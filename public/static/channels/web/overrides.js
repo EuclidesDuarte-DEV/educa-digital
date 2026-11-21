@@ -455,7 +455,7 @@
 function disableHiddenWebConsents(){
  if(document.documentElement?.dataset?.educaPlatform!=='web')return;
  for(const id of ['freeLearningConsent','freeExampleConsent']){
-  const consent=document.getElementById(id);
+  const consent=document.getElementById?.(id);
   if(consent){consent.checked=false;consent.disabled=true;}
  }
 }
