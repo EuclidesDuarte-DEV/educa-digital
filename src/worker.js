@@ -8,6 +8,8 @@
  */
 import { MODULOS } from './catalogo.js';
 import { responderModoLivre } from './free-chat.js';
+import { neuralApi, neuralReadiness } from './lia-neural.js';
+import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
 import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
 const CODIGOS_ATIVIDADES = new Set(
@@ -528,7 +530,7 @@ async function servirModeloLia(path){
  }
 }
 
-async function rotearApi(request, env, url) {
+async function rotearApi(request, env, url, ctx) {
   const rota = url.pathname;
   const metodo = request.method.toUpperCase();
 
@@ -548,8 +550,14 @@ async function rotearApi(request, env, url) {
   }
   // V111.86: rota opcional do simulador Web, sem mudar o endpoint nativo.
   if (metodo === 'POST' && rota === '/api/modo-livre/conversar-web') {
-    return responderModoLivre(request, env, true);
+    return responderModoLivre(request, env, true, ctx);
   }
+  if (metodo === 'POST' && rota === '/api/lia/training/outcome')
+    return trainingOutcome(request,env);
+  if (metodo === 'GET' && rota === '/api/lia/neural/health')
+    return responder({ok:true,...await neuralReadiness(env),...await trainingReadiness(env)});
+  if (rota === '/api/lia/neural' || rota.startsWith('/api/lia/neural/'))
+    return neuralApi(request,env,url);
   if (metodo === 'GET' && rota === '/api/modo-livre/capacidades') {
     return responder({ok:true,projeto:'Educa+ Digital',conversa:env?.AI?.run?'workers-ai':'aguardando-binding-ai',voz_neural_online:liaConfigured(env)&&liaPublicVoice(env),voz_alternativa:'voz-feminina-pt-br-do-navegador',precisa_cmd:false});
   }
@@ -638,7 +646,7 @@ async function garantirBancoDeTeste(env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname === '/treino') {
@@ -660,7 +668,13 @@ export default {
 
     try {
       if (!rotaPublica) await garantirBancoDeTeste(env);
-      return await rotearApi(request, env, url);
+      // D1 Neural: apenas novas tabelas e fontes educativas oficiais.
+      // Repetição idempotente, condicionada à flag explícita do Wrangler.
+      const neuralScope=url.pathname.startsWith('/api/lia/neural')||
+        url.pathname==='/api/lia/training/outcome'||
+        url.pathname==='/api/modo-livre/conversar-web';
+      if(neuralScope)await setupNeuralDB(env);
+      return await rotearApi(request, env, url, ctx);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');
       if (falha instanceof SyntaxError) {

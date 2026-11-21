@@ -1,0 +1,576 @@
+{
+  "version": "11188",
+  "demo": true,
+  "nodes": [
+    {
+      "id": "seed-pix",
+      "title": "PIX seguro",
+      "category": "conhecimento",
+      "project": "Educa+ Digital",
+      "summary": "Confira destinatário, instituição e valor antes de confirmar qualquer Pix. Em caso de pedido urgente, valide a identidade por outro canal conhecido.",
+      "keywords": "pix,seguranca,pagamento",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-whatsapp",
+      "title": "WhatsApp seguro",
+      "category": "conhecimento",
+      "project": "Educa+ Digital",
+      "summary": "Número novo, urgência e pedido de transferência são sinais de alerta. Confirme pelo número já conhecido. Evite compartilhar códigos e senhas.",
+      "keywords": "whatsapp,mensagens,contato",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-sms",
+      "title": "Mensagens SMS suspeitas",
+      "category": "conhecimento",
+      "project": "Educa+ Digital",
+      "summary": "SMS pode imitar bancos ou entregadoras. Não abra links inesperados; acesse o serviço pelo aplicativo oficial instalado por você.",
+      "keywords": "sms,mensagens,link",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-video",
+      "title": "Vídeo e voz com IA",
+      "category": "conhecimento",
+      "project": "LIA AI",
+      "summary": "Imagem e voz podem ser manipuladas ou geradas por IA. Uma videochamada não substitui a confirmação por outro canal confiável.",
+      "keywords": "video,lia,voz,identidade",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-falso-filho",
+      "title": "Golpe do falso filho",
+      "category": "cenario",
+      "project": "Educa+ Digital",
+      "summary": "Um contato desconhecido alega ser familiar em novo número e pede Pix urgente. A decisão segura é confirmar a identidade no contato antigo antes de qualquer",
+      "keywords": "familia,pix,whatsapp,filho",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-falso-banco",
+      "title": "Golpe da falsa central bancária",
+      "category": "cenario",
+      "project": "Educa+ Digital",
+      "summary": "Uma ligação simula atendimento bancário e pressiona para transferir valores. Encerre o contato e use o aplicativo ou telefone oficial do banco.",
+      "keywords": "banco,ligacao,pix",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-entrega",
+      "title": "Golpe de entrega por SMS",
+      "category": "cenario",
+      "project": "Educa+ Digital",
+      "summary": "Uma mensagem informa taxa inesperada de entrega e tenta direcionar a um pagamento ou link. Confira no app oficial da transportadora.",
+      "keywords": "sms,entrega,cobranca",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-videochamada",
+      "title": "Videochamada LIA",
+      "category": "cenario",
+      "project": "LIA AI",
+      "summary": "Cenário educativo no qual alguém em vídeo pede ajuda financeira. O participante deve identificar inconsistências e confirmar a pessoa por meio independente",
+      "keywords": "lia,video,identidade,fraude",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-conversa",
+      "title": "Contexto da conversa",
+      "category": "memoria",
+      "project": "LIA AI",
+      "summary": "Armazene apenas resumos aprovados e não identificáveis, nunca transcrições pessoais sem consentimento. A LIA usa o contexto imediato da sessão sem persisti",
+      "keywords": "contexto,historico,conversa",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-projetos",
+      "title": "Projetos conectados",
+      "category": "memoria",
+      "project": "LIA AI",
+      "summary": "Documentos e projetos importados podem ser conectados por tema, decisão, autoria autorizada e versão. Notas privadas não alimentam conversas públicas.",
+      "keywords": "projeto,arquivos,conexao",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-aprender",
+      "title": "Aprender com fontes verificadas",
+      "category": "aprendizado",
+      "project": "LIA AI",
+      "summary": "Toda nova informação deve indicar origem e passar por revisão humana antes de ser publicada como conhecimento consultável pela IA.",
+      "keywords": "fonte,verificacao,aprendizado",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-dificuldade",
+      "title": "Dificuldade progressiva",
+      "category": "aprendizado",
+      "project": "Educa+ Digital",
+      "summary": "Novato, Intermediário e Experiente recebem desafios com complexidade gradual. A dificuldade não deve punir dúvidas ou dificuldades de acessibilidade.",
+      "keywords": "nivel,xp,progresso",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-recusa",
+      "title": "Recusar e confirmar por outro canal",
+      "category": "decisao",
+      "project": "Educa+ Digital",
+      "summary": "Recusar envio de dinheiro e confirmar a identidade por outro canal conhecido são decisões seguras; explicações devem ser respeitosas.",
+      "keywords": "recusa,verificar,seguranca",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-aceitar-pix",
+      "title": "Aceite de transferência suspeita",
+      "category": "decisao",
+      "project": "Educa+ Digital",
+      "summary": "Aceitar enviar Pix para um contato não verificado é uma decisão arriscada em simulações. O sistema não deve realizar pagamentos reais.",
+      "keywords": "pix,pagamento,risco",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "seed-codigos",
+      "title": "Não compartilhar códigos",
+      "category": "decisao",
+      "project": "Educa+ Digital",
+      "summary": "Códigos recebidos por SMS, senhas e tokens não devem ser enviados a contatos não verificados. Em dúvida, interrompa e consulte o serviço oficial.",
+      "keywords": "senha,sms,codigo,autenticacao",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-advogado-2026",
+      "title": "Golpe do falso advogado por mensagem ou vídeo",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Confirme com seu advogado por contato previamente conhecido e verifique sua inscrição nos canais oficiais. Não pague taxas recebidas por mensagem sem confirmar.",
+      "keywords": "whatsapp,ligacao,video,suposta vitória judicial,cobrança antecipada,identidade profissional simulada,Golpe do falso advogado por mensagem ou vídeo",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-central-2026",
+      "title": "Falsa central bancária com número aparentando ser oficial",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Desligue e procure seu banco pelo aplicativo ou número oficial obtido independentemente. Bancos não exigem Pix para teste de segurança.",
+      "keywords": "ligacao,whatsapp,sms,alegação de movimentação suspeita,urgência para agir,identificador de chamada não comprova origem,Falsa central bancária com número aparentando ser oficial",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-inss-prova-2026",
+      "title": "Falsa prova de vida do INSS",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Confira diretamente no Meu INSS ou na Central 135. Não forneça documentos e códigos por contatos inesperados.",
+      "keywords": "sms,ligacao,whatsapp,ameaça de interrupção do benefício,pedido não solicitado de atualização,identidade institucional não confirmada,Falsa prova de vida do INSS",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-inss-biometria-2026",
+      "title": "Boato de bloqueio por biometria do INSS",
+      "category": "conhecimento",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Confirme no Meu INSS e canais oficiais antes de tomar providências ou compartilhar documentos.",
+      "keywords": "sms,whatsapp,suposto bloqueio urgente,confusão entre biometria e prova de vida,mensagens não oficiais,Boato de bloqueio por biometria do INSS",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-encomenda-sms-2026",
+      "title": "Falsa liberação de encomenda por SMS ou QR Code",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Verifique o rastreamento no aplicativo da transportadora ou dos Correios; para importações, consulte o Minhas Importações.",
+      "keywords": "sms,whatsapp,taxa inesperada,link de rastreamento não solicitado,QR Code recebido fora do aplicativo,Falsa liberação de encomenda por SMS ou QR Code",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-pix-devolucao-2026",
+      "title": "Golpe do Pix enviado por engano",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Consulte o extrato e utilize a opção oficial Devolver do Pix original em vez de criar uma nova transferência para chave fornecida por mensagem.",
+      "keywords": "whatsapp,ligacao,comprovante inesperado,pedido insistente de devolução,titular ou valor diferente no extrato,Golpe do Pix enviado por engano",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-deepfake-video-2026",
+      "title": "Deepfake em videochamada de familiar",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Mesmo vendo rosto e ouvindo voz familiar, confirme a identidade por contato antigo, pergunta combinada ou verificação presencial quando possível.",
+      "keywords": "video,whatsapp,imagem ou voz parecida com familiar,pedido inesperado de dinheiro,ausência de confirmação independente,Deepfake em videochamada de familiar",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-clonagem-voz-2026",
+      "title": "Clonagem de voz em ligação pedindo ajuda",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Encerre o contato e ligue para a pessoa usando número previamente conhecido antes de qualquer decisão financeira.",
+      "keywords": "ligacao,video,voz semelhante à conhecida,urgência emocional,número não reconhecido,Clonagem de voz em ligação pedindo ajuda",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-phishing-multicanal-2026",
+      "title": "Phishing entre SMS, WhatsApp e ligações",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Não conclua que canais combinados são prova de legitimidade. Digite o endereço do serviço diretamente ou abra seu aplicativo oficial.",
+      "keywords": "whatsapp,sms,ligacao,mesma história em diferentes canais,mensagem urgente,pedido de clique ou cadastro,Phishing entre SMS, WhatsApp e ligações",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-falsa-venda-2026",
+      "title": "Loja falsa ou oferta de marketplace",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Confira reputação e domínio da loja, não pague fora do sistema protegido e desconfie de ofertas e perfis recém-criados.",
+      "keywords": "whatsapp,sms,preço muito baixo,pagamento fora da plataforma,vendedor sem histórico verificável,Loja falsa ou oferta de marketplace",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-falso-boleto-2026",
+      "title": "Boleto falso ou cobrança adulterada",
+      "category": "conhecimento",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Confronte nome do beneficiário e dados de pagamento com documento e aplicativo oficial antes de confirmar.",
+      "keywords": "sms,whatsapp,beneficiário inesperado,dados de cobrança divergentes,urgência para pagar,Boleto falso ou cobrança adulterada",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-falsa-taxa-2026",
+      "title": "Taxa falsa de entrega nacional",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Acompanhe a entrega diretamente no canal oficial e desconfie de cobrança adicional enviada por SMS.",
+      "keywords": "sms,whatsapp,taxa inesperada por mensagem,endereço de pagamento alheio ao pedido,pressão para liberar encomenda,Taxa falsa de entrega nacional",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-codigo-whatsapp-2026",
+      "title": "Pedido de código de confirmação do WhatsApp",
+      "category": "cenario",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Não compartilhe códigos de acesso com nenhuma pessoa; verifique mensagens diretamente no aplicativo.",
+      "keywords": "whatsapp,sms,código de verificação solicitado por terceiro,mensagem urgente sobre conta,contato conhecido não verificado,Pedido de código de confirmação do WhatsApp",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-qr-falso-2026",
+      "title": "QR Code não solicitado em embalagem",
+      "category": "conhecimento",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Não escaneie QR Code de encomenda não reconhecida; confirme diretamente com a empresa ou transportadora.",
+      "keywords": "sms,whatsapp,pacote desconhecido,pedido para escanear QR Code,redirecionamento para página não verificada,QR Code não solicitado em embalagem",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-falso-advogado-conferencia-2026",
+      "title": "Validação de identidade de advogado ou escritório",
+      "category": "decisao",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Use contato independente já conhecido do escritório e fontes oficiais para verificar a identidade profissional. Não trate vídeo como prova suficiente.",
+      "keywords": "whatsapp,video,ligacao,foto profissional copiada,referência a processo real,pedido de custas antecipadas,Validação de identidade de advogado ou escritório",
+      "status": "draft",
+      "visibility": "private"
+    },
+    {
+      "id": "research-verificar-antes-2026",
+      "title": "Método Desconfie, Informe-se e Verifique",
+      "category": "aprendizado",
+      "project": "Pesquisa antifraudes 2026",
+      "summary": "Pare, informe-se e verifique por canais independentes; avalie a origem da solicitação antes de clicar, pagar ou compartilhar informação.",
+      "keywords": "todos,senso de urgência,excesso de confiança na aparência,ausência de confirmação,Método Desconfie, Informe-se e Verifique",
+      "status": "draft",
+      "visibility": "private"
+    }
+  ],
+  "links": [
+    {
+      "id": "seed-pix-falso-filho",
+      "source_id": "seed-pix",
+      "target_id": "seed-falso-filho",
+      "relation": "aparece-em"
+    },
+    {
+      "id": "seed-pix-aceitar-pix",
+      "source_id": "seed-pix",
+      "target_id": "seed-aceitar-pix",
+      "relation": "risco"
+    },
+    {
+      "id": "seed-whatsapp-falso-filho",
+      "source_id": "seed-whatsapp",
+      "target_id": "seed-falso-filho",
+      "relation": "canal"
+    },
+    {
+      "id": "seed-sms-entrega",
+      "source_id": "seed-sms",
+      "target_id": "seed-entrega",
+      "relation": "canal"
+    },
+    {
+      "id": "seed-video-videochamada",
+      "source_id": "seed-video",
+      "target_id": "seed-videochamada",
+      "relation": "fundamenta"
+    },
+    {
+      "id": "seed-falso-banco-recusa",
+      "source_id": "seed-falso-banco",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "seed-falso-filho-recusa",
+      "source_id": "seed-falso-filho",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "seed-falso-filho-aceitar-pix",
+      "source_id": "seed-falso-filho",
+      "target_id": "seed-aceitar-pix",
+      "relation": "decisao-arriscada"
+    },
+    {
+      "id": "seed-entrega-sms",
+      "source_id": "seed-entrega",
+      "target_id": "seed-sms",
+      "relation": "usa"
+    },
+    {
+      "id": "seed-videochamada-video",
+      "source_id": "seed-videochamada",
+      "target_id": "seed-video",
+      "relation": "usa"
+    },
+    {
+      "id": "seed-conversa-projetos",
+      "source_id": "seed-conversa",
+      "target_id": "seed-projetos",
+      "relation": "contexto"
+    },
+    {
+      "id": "seed-projetos-aprender",
+      "source_id": "seed-projetos",
+      "target_id": "seed-aprender",
+      "relation": "alimenta"
+    },
+    {
+      "id": "seed-aprender-dificuldade",
+      "source_id": "seed-aprender",
+      "target_id": "seed-dificuldade",
+      "relation": "contribui"
+    },
+    {
+      "id": "seed-dificuldade-falso-filho",
+      "source_id": "seed-dificuldade",
+      "target_id": "seed-falso-filho",
+      "relation": "adapta"
+    },
+    {
+      "id": "seed-recusa-codigos",
+      "source_id": "seed-recusa",
+      "target_id": "seed-codigos",
+      "relation": "protege"
+    },
+    {
+      "id": "seed-codigos-sms",
+      "source_id": "seed-codigos",
+      "target_id": "seed-sms",
+      "relation": "aplica"
+    },
+    {
+      "id": "seed-videochamada-recusa",
+      "source_id": "seed-videochamada",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "seed-falso-banco-pix",
+      "source_id": "seed-falso-banco",
+      "target_id": "seed-pix",
+      "relation": "envolve"
+    },
+    {
+      "id": "seed-whatsapp-recusa",
+      "source_id": "seed-whatsapp",
+      "target_id": "seed-recusa",
+      "relation": "reforca"
+    },
+    {
+      "id": "research-link-001",
+      "source_id": "research-advogado-2026",
+      "target_id": "seed-videochamada",
+      "relation": "aplica-se-a"
+    },
+    {
+      "id": "research-link-002",
+      "source_id": "research-advogado-2026",
+      "target_id": "seed-falso-banco",
+      "relation": "compara-se-a"
+    },
+    {
+      "id": "research-link-003",
+      "source_id": "research-central-2026",
+      "target_id": "seed-falso-banco",
+      "relation": "exemplo"
+    },
+    {
+      "id": "research-link-004",
+      "source_id": "research-inss-prova-2026",
+      "target_id": "seed-codigos",
+      "relation": "protege"
+    },
+    {
+      "id": "research-link-005",
+      "source_id": "research-inss-biometria-2026",
+      "target_id": "research-inss-prova-2026",
+      "relation": "contexto"
+    },
+    {
+      "id": "research-link-006",
+      "source_id": "research-encomenda-sms-2026",
+      "target_id": "seed-entrega",
+      "relation": "exemplo"
+    },
+    {
+      "id": "research-link-007",
+      "source_id": "research-pix-devolucao-2026",
+      "target_id": "seed-pix",
+      "relation": "prevencao"
+    },
+    {
+      "id": "research-link-008",
+      "source_id": "research-deepfake-video-2026",
+      "target_id": "seed-videochamada",
+      "relation": "aprofundamento"
+    },
+    {
+      "id": "research-link-009",
+      "source_id": "research-clonagem-voz-2026",
+      "target_id": "seed-video",
+      "relation": "aprofundamento"
+    },
+    {
+      "id": "research-link-010",
+      "source_id": "research-phishing-multicanal-2026",
+      "target_id": "seed-sms",
+      "relation": "multicanal"
+    },
+    {
+      "id": "research-link-011",
+      "source_id": "research-falsa-venda-2026",
+      "target_id": "seed-pix",
+      "relation": "risco"
+    },
+    {
+      "id": "research-link-012",
+      "source_id": "research-falso-boleto-2026",
+      "target_id": "seed-pix",
+      "relation": "verificacao"
+    },
+    {
+      "id": "research-link-013",
+      "source_id": "research-falsa-taxa-2026",
+      "target_id": "seed-entrega",
+      "relation": "exemplo"
+    },
+    {
+      "id": "research-link-014",
+      "source_id": "research-codigo-whatsapp-2026",
+      "target_id": "seed-codigos",
+      "relation": "contexto"
+    },
+    {
+      "id": "research-link-015",
+      "source_id": "research-qr-falso-2026",
+      "target_id": "seed-sms",
+      "relation": "verificacao"
+    },
+    {
+      "id": "research-link-016",
+      "source_id": "research-falso-advogado-conferencia-2026",
+      "target_id": "research-advogado-2026",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "research-link-017",
+      "source_id": "research-verificar-antes-2026",
+      "target_id": "seed-recusa",
+      "relation": "metodo"
+    },
+    {
+      "id": "research-link-018",
+      "source_id": "research-verificar-antes-2026",
+      "target_id": "seed-aprender",
+      "relation": "fundamento"
+    },
+    {
+      "id": "research-link-019",
+      "source_id": "research-deepfake-video-2026",
+      "target_id": "seed-recusa",
+      "relation": "decisao-segura"
+    },
+    {
+      "id": "research-link-020",
+      "source_id": "research-inss-prova-2026",
+      "target_id": "research-phishing-multicanal-2026",
+      "relation": "sinal-comum"
+    },
+    {
+      "id": "research-link-021",
+      "source_id": "research-central-2026",
+      "target_id": "seed-aceitar-pix",
+      "relation": "risco"
+    },
+    {
+      "id": "research-link-022",
+      "source_id": "research-falsa-venda-2026",
+      "target_id": "research-qr-falso-2026",
+      "relation": "canal"
+    },
+    {
+      "id": "research-link-023",
+      "source_id": "research-clonagem-voz-2026",
+      "target_id": "research-deepfake-video-2026",
+      "relation": "mesma-ameaca"
+    },
+    {
+      "id": "research-link-024",
+      "source_id": "research-falso-boleto-2026",
+      "target_id": "seed-aceitar-pix",
+      "relation": "confira-destinatario"
+    }
+  ]
+}

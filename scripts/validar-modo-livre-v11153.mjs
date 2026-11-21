@@ -95,7 +95,7 @@ try{
    await page.waitForFunction(()=>document.querySelectorAll('#freeSmsMessages .v11153-sms-bubble').length===3,{timeout:7000});
    assert.equal(requests.length,1);
    assert.equal(requests[0].scenario,'sms-delivery');
-    assert.match(requests[0].__route,/\/api\/modo-livre\/conversar-web$/,'SMS Web consulta rota isolada da IA');
+   assert.match(requests[0].__route,/\/api\/modo-livre\/conversar-web$/, 'SMS Web deve consultar Neural');
    await page.screenshot({path:'artifacts/modo-livre-v11153/sms-'+viewport.width+'.png'});
    await page.locator('#freeSmsBlock').click();
    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'free-summary');
