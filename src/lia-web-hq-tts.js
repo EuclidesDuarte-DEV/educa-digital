@@ -40,7 +40,7 @@ function limit(request){
 async function elevenLabsFlash(text,env){
  const id=String(env.LIA_ELEVENLABS_VOICE_ID);
  const url='https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(id)+
-  '/stream?output_format=mp3_22050_32';
+  '/stream?output_format=mp3_44100_128';
  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),4500);
  try{
   const res=await fetch(url,{method:'POST',redirect:'error',signal:ctrl.signal,
