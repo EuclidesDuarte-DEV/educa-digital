@@ -531,11 +531,31 @@ async function servirModeloLia(path){
  }
 }
 
+// V112.06: apenas dois arquivos públicos do Paradee-8M Pt-BR (Apache-2.0).
+// O browser baixa os pesos uma vez, sintetiza localmente e não manda falas
+// dos participantes a terceiros. Não criar endpoints com path livre/SSRF.
+const LIA_FREE_MODEL_PATHS=new Set(['config.json','onnx/paradee_dora_int8.onnx']);
+async function servirModeloLiaGratis(path){
+ if(!LIA_FREE_MODEL_PATHS.has(path))return erro(404,'Modelo neural não encontrado.');
+ const source='https://huggingface.co/eraldohug/Paradee-8M-PtBr/resolve/main/'+path;
+ try{
+  const upstream=await fetch(source,{redirect:'follow',cf:{cacheEverything:true,cacheTtl:604800}});
+  if(!upstream.ok||!upstream.body)return erro(503,'Modelo gratuito indisponível no repositório.');
+  const bytes=Number(upstream.headers.get('content-length')||0);
+  if(bytes>12000000)return erro(502,'Modelo acima do limite esperado.');
+  return new Response(upstream.body,{status:200,headers:{
+   'Content-Type':path.endsWith('.json')?'application/json':'application/octet-stream',
+   'Cache-Control':'public,max-age=604800','X-Content-Type-Options':'nosniff'
+  }});
+ }catch(_){return erro(503,'Não foi possível carregar o modelo gratuito.');}
+}
+
 async function rotearApi(request, env, url, ctx) {
   const rota = url.pathname;
   const metodo = request.method.toUpperCase();
 
   if (metodo === 'GET' && rota.startsWith('/api/lia-model/')) return servirModeloLia(rota.slice('/api/lia-model/'.length));
+  if (metodo === 'GET' && rota.startsWith('/api/lia-free-model/')) return servirModeloLiaGratis(rota.slice('/api/lia-free-model/'.length));
   // Voz expressiva opcional V111.93: chamada somente pela Web; desligada por padrão.
   if (metodo === 'GET' && rota === '/api/lia/voz-web/status') return responder(hqWebVoiceStatus(env));
   if (metodo === 'POST' && rota === '/api/lia/voz-web/speak') return webHQVoice(request,env);
@@ -662,7 +682,7 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    const rotaPublica = (request.method === 'GET' && url.pathname.startsWith('/api/lia-model/')) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (['/api/modo-livre/conversar','/api/modo-livre/conversar-web'].includes(url.pathname) && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
+    const rotaPublica = (request.method === 'GET' && (url.pathname.startsWith('/api/lia-model/') || url.pathname.startsWith('/api/lia-free-model/'))) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (['/api/modo-livre/conversar','/api/modo-livre/conversar-web'].includes(url.pathname) && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
     if (!env.DB && !rotaPublica) {
       return erro(503, 'Banco D1 não configurado. Consulte as instruções de publicação.');
     }
