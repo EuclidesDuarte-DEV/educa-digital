@@ -36,11 +36,16 @@ try {
     const composer=document.querySelector('#freeOriginalComposer');
     const wall=document.querySelector('#chatWallpaper');
     const phone=document.querySelector('#phoneScreen');
+    const chat=document.querySelector('#chatView');
+    const surface=chat.querySelector('.chat-surface');
+    const sr=surface.getBoundingClientRect(),cr=chat.getBoundingClientRect();
     const br=img.getBoundingClientRect(), cb=composer.getBoundingClientRect(),pr=phone.getBoundingClientRect();
     const w=wall.getBoundingClientRect();
     const vv=window.visualViewport;
     return {naturalW:img.naturalWidth,naturalH:img.naturalHeight,
       photoH:br.height,photoW:br.width,bubbleW:bubble.getBoundingClientRect().width,
+      viewH:cr.height,viewBottom:cr.bottom,surfaceH:sr.height,surfaceBottom:sr.bottom,
+      gridRows:getComputedStyle(surface).gridTemplateRows,
       composeH:cb.height,composeBottom:cb.bottom,phoneBottom:pr.bottom,
       wallpaperBottom:w.bottom,wallHeight:wall.clientHeight,
       wallScrollHeight:wall.scrollHeight,scrollY:window.scrollY,
