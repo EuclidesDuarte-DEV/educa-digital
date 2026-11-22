@@ -132,7 +132,7 @@ function renderPhoto(s){
  photo.src=s.photoUrl;
  photo.onerror=()=>{photo.onerror=null;photo.src='/static/img/free-family-photo-v11212.jpg';};
  photo.alt='Foto ilustrativa sintética enviada pelo contato que afirma ser familiar';
- photo.loading='eager';photo.decoding='async';photo.width=600;photo.height=730;photo.className='free-contact-photo-trigger';photo.tabIndex=0;photo.setAttribute('role','button');photo.setAttribute('aria-label','Ampliar foto recebida nesta simulação');
+ photo.loading='eager';photo.decoding='async';photo.width=520;photo.height=632;photo.className='free-contact-photo-trigger';photo.tabIndex=0;photo.setAttribute('role','button');photo.setAttribute('aria-label','Ampliar foto recebida nesta simulação');
  const stamp=document.createElement('small');stamp.textContent='Foto recebida · simulação';
  bubble.append(photo,stamp);els.wallpaper.append(bubble);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;
 }
