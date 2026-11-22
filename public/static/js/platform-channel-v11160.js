@@ -25,7 +25,7 @@
   const version = platform === 'web' ? '11190' : '11160';
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
-  sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11201' : '');
+  sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11208' : '');
   document.head.appendChild(sheet);
   const script = document.createElement('script');
   script.src = base + 'overrides.js?v=' + version + (platform === 'web' ? '&fix=11201' : '');
