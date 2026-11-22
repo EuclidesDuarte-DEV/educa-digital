@@ -51,6 +51,7 @@ test('V112.05 — longer deadline and no robotic TTS on neural failure',()=>{
  const video=readFileSync('public/static/js/free-video.js','utf8');
  const server=readFileSync('src/lia-web-hq-tts.js','utf8');
  const page=readFileSync('public/testar-voz-roberta.html','utf8');
+ const html=readFileSync('public/html/index.html','utf8');
  assert.match(video,/timeout=setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
  assert.match(server,/setTimeout\(\(\)=>ctrl\.abort\(\),10000\)/);
  const branch=video.split('function startSpeechChunk(phrase,serial)')[1]
@@ -59,6 +60,7 @@ test('V112.05 — longer deadline and no robotic TTS on neural failure',()=>{
  assert.match(branch,/Tentar Roberta novamente/);
  assert.doesNotMatch(branch,/audioOnly\(phrase,serial\)/);
  assert.match(page,/Testar a voz natural da Roberta/);
+ assert.match(html,/free-video\.js\?v=11191[^\"]*&robertareal=11205/);
  assert.match(page,/api\/lia\/voz-web\/speak/);
  assert.doesNotMatch(page,/xi-api-key|LIA_ELEVENLABS_API_KEY/);
 });
