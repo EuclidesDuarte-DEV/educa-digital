@@ -24,7 +24,7 @@ test('[web] V111.89 — controles da videochamada ficam acima da barra de gestos
 });
 
 test('[web] V111.89 — timeout do chat admite inferência lenta; nativos preservados',()=>{
-  assert.match(sharedChat,/educaPlatform==='web'\?32000:17000/);
+  assert.match(sharedChat,/educaPlatform==='web'\?18000:17000/);
   assert.match(sharedChat,/responseTimer=setTimeout\(\(\)=>\{timedOut=true;abort.abort\(\);\},responseTimeoutMs\)/);
   assert.match(sharedChat,/clearTimeout\(responseTimer\)/);
   assert.match(sharedChat,/state\.scenario\?\.id!==current/);
