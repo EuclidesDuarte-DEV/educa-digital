@@ -12,6 +12,9 @@ on:
       - 'public/static/css/web-gmail-light-v11217.css'
       - 'scripts/validar-web-gmail-v11217.mjs'
       - 'tests/web-gmail-light-v11217.test.js'
+      - 'public/static/css/web-apps-light-notices-v11218.css'
+      - 'scripts/validar-web-apps-light-notices-v11218.mjs'
+      - 'tests/web-apps-light-notices-v11218.test.js'
       - '.github/workflows/web-apps-v11216.yml'
 permissions:
   contents: read
@@ -41,6 +44,10 @@ jobs:
         run: |
           node --test tests/web-gmail-light-v11217.test.js
           node scripts/validar-web-gmail-v11217.mjs
+      - name: Fotos, Gmail, SMS e Camera claros com notificacao tocavel V112.18
+        run: |
+          node --test tests/web-apps-light-notices-v11218.test.js
+          node scripts/validar-web-apps-light-notices-v11218.mjs
       - name: Imagens da auditoria
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,4 +56,5 @@ jobs:
           path: |
             artifacts/web-apps-v11216/
             artifacts/web-gmail-v11217/
+            artifacts/web-apps-light-v11218/
           if-no-files-found: ignore
