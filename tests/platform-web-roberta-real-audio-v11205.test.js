@@ -60,8 +60,9 @@ test('V112.05 — longer deadline and no robotic TTS on neural failure',()=>{
  assert.match(branch,/Tentar voz neural gratuita/);
  assert.doesNotMatch(branch,/Tentar Roberta novamente/);
  assert.doesNotMatch(branch,/audioOnly\(phrase,serial\)/);
- assert.match(page,/Testar a voz natural da Roberta/);
+ assert.match(page,/A Roberta foi retirada da LIA Web/);
  assert.match(html,/free-video\.js\?v=11191[^\"]*&robertareal=11205/);
- assert.match(page,/api\/lia\/voz-web\/speak/);
+ assert.doesNotMatch(page,/api\/lia\/voz-web\/speak/);
+ assert.match(page,/testar-voz-neural-gratis\.html/);
  assert.doesNotMatch(page,/xi-api-key|LIA_ELEVENLABS_API_KEY/);
 });
