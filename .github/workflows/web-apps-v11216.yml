@@ -9,6 +9,9 @@ on:
       - 'public/html/index.html'
       - 'scripts/validar-web-apps-v11216.mjs'
       - 'tests/web-apps-v11216.test.js'
+      - 'public/static/css/web-gmail-light-v11217.css'
+      - 'scripts/validar-web-gmail-v11217.mjs'
+      - 'tests/web-gmail-light-v11217.test.js'
       - '.github/workflows/web-apps-v11216.yml'
 permissions:
   contents: read
@@ -34,10 +37,16 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public > /tmp/educa-web-apps-v11216.log 2>&1 &
           node scripts/validar-web-apps-v11216.mjs
+      - name: Gmail V112.17 claro e clicável com teclado iPhone
+        run: |
+          node --test tests/web-gmail-light-v11217.test.js
+          node scripts/validar-web-gmail-v11217.mjs
       - name: Imagens da auditoria
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: web-apps-v11216-screens
-          path: artifacts/web-apps-v11216/
+          path: |
+            artifacts/web-apps-v11216/
+            artifacts/web-gmail-v11217/
           if-no-files-found: ignore

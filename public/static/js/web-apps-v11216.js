@@ -108,6 +108,22 @@ function gmailHeader(){
  return '<header class="webx-mail-toolbar"><button aria-label="Abrir pastas" data-webx="mail-menu">☰</button><label><span class="sr-only">Pesquisar mensagens fictícias</span><input type="search" id="webxMailSearch" placeholder="Pesquisar no e-mail" value="'+esc(gmailSearch)+'"></label><button aria-label="Informações da conta simulada" data-webx="mail-info">E</button></header>';
 }
 function gmailFooter(){return '<nav class="webx-mail-tabs"><button data-webx="mail-folder" data-value="inbox" aria-current="'+(folder==='inbox'?'page':'false')+'">✉ <small>E-mail</small></button><button data-webx="mail-folder" data-value="all">▤ <small>Todos</small></button></nav>';}
+/* Filtrar os itens existentes sem recriar o input evita perder foco e teclado no iOS Safari. */
+function filterGmailInPlace(){
+ if(active!=='gmail'||gmailView!=='list')return;
+ const search=gmailSearch.trim().toLocaleLowerCase('pt-BR');
+ let count=0;
+ body.querySelectorAll('.webx-mail-row').forEach(row=>{
+  const id=Number(row.querySelector('[data-webx="mail-open"]')?.dataset.id);
+  const m=mail.find(item=>item.id===id);
+  const visible=Boolean(m)&&(!search||(m.sender+' '+m.subject+' '+m.preview).toLocaleLowerCase('pt-BR').includes(search));
+  row.hidden=!visible;if(visible)count++;
+ });
+ const label=body.querySelector('.webx-mail-label small');
+ if(label)label.textContent='Mensagens fictícias · '+count;
+ const empty=body.querySelector('.webx-mail-empty');
+ if(empty)empty.hidden=count>0;
+}
 function renderGmail(){
  if(active!=='gmail')return;
  const panel=gmailSidebar();
@@ -121,10 +137,11 @@ function renderGmail(){
   host('gmail','<div class="webx-mail-compose"><header><button data-webx="mail-back" aria-label="Voltar">‹</button><strong>Escrever</strong><button data-webx="mail-save-draft" type="button">Rascunho</button></header><form id="webxMailForm"><label>Para<input name="to" type="email" required inputmode="email" autocomplete="off" placeholder="contato@exemplo.com" value="'+esc(draft?.to||'')+'"></label><label>Assunto<input name="subject" maxlength="100" placeholder="Assunto" value="'+esc(draft?.subject||'')+'"></label><textarea name="message" rows="7" placeholder="Escreva sua mensagem de exemplo">'+esc(draft?.message||'')+'</textarea><p>Nenhum e-mail é enviado pelo Educa+. Você poderá abrir o aplicativo de e-mail do aparelho para confirmar o envio.</p><button type="submit">Preparar no aplicativo de e-mail</button></form></div>');return;
  }
  const k=gmailSearch.trim().toLocaleLowerCase('pt-BR');
- const list=mail.filter(m=>gmailFolder(m)&&(!k||(m.sender+' '+m.subject+' '+m.preview).toLocaleLowerCase('pt-BR').includes(k)));
+ const list=mail.filter(m=>gmailFolder(m));
  const label=folders.find(x=>x[0]===folder)?.[1]||'Caixa de entrada';
  const rows=list.map(m=>'<div class="webx-mail-row '+(m.unread?'unread':'')+'"><button class="webx-mail-message" data-webx="mail-open" data-id="'+m.id+'"><span class="webx-mail-avatar" style="background:'+m.color+'">'+esc(m.sender[0])+'</span><span class="webx-mail-copy"><strong>'+esc(m.sender)+'</strong><b>'+esc(m.subject)+'</b><small>'+esc(m.preview)+'</small></span><span class="webx-mail-time">'+esc(m.time)+'</span></button><button class="webx-mail-star" aria-label="Marcar com estrela" data-webx="mail-star" data-id="'+m.id+'">'+(m.star?'★':'☆')+'</button></div>').join('');
- host('gmail',gmailHeader()+'<div class="webx-mail-label"><strong>'+esc(label)+'</strong><small>Mensagens fictícias · '+list.length+'</small></div><main class="webx-mail-scroll">'+(rows||'<div class="webx-mail-empty">✉<strong>Nenhuma mensagem nesta pasta</strong></div>')+'</main><button class="webx-mail-fab" data-webx="mail-compose">✎ <span>Escrever</span></button>'+gmailFooter()+panel);
+ host('gmail',gmailHeader()+'<div class="webx-mail-label"><strong>'+esc(label)+'</strong><small>Mensagens fictícias · '+list.length+'</small></div><main class="webx-mail-scroll">'+rows+'<div class="webx-mail-empty" hidden><span aria-hidden="true">✉</span><strong>Nenhuma mensagem nesta pasta ou pesquisa</strong></div></main><button class="webx-mail-fab" data-webx="mail-compose">✎ <span>Escrever</span></button>'+gmailFooter()+panel);
+ filterGmailInPlace();
 }
 function renderSms(){
  if(active!=='messages')return;
@@ -198,7 +215,7 @@ body.addEventListener('change',async e=>{
 body.addEventListener('input',e=>{
  if(active==='photos'&&e.target.id==='webxPhotoSearch'){term=e.target.value; // conservar foco e cursor durante a pesquisa
   const saved=term;renderPhotos();const input=$('#webxPhotoSearch');if(input){input.focus();input.setSelectionRange(saved.length,saved.length);}return;}
- if(active==='gmail'&&e.target.id==='webxMailSearch'){gmailSearch=e.target.value;renderGmail();const input=$('#webxMailSearch');if(input){input.focus();input.setSelectionRange(gmailSearch.length,gmailSearch.length);}return;}
+ if(active==='gmail'&&e.target.id==='webxMailSearch'){gmailSearch=e.target.value;filterGmailInPlace();return;}
  if(active==='messages'&&e.target.id==='webxSmsSearch'){smsSearch=e.target.value;renderSms();const input=$('#webxSmsSearch');if(input){input.focus();input.setSelectionRange(smsSearch.length,smsSearch.length);}return;}
 });
 body.addEventListener('submit',e=>{

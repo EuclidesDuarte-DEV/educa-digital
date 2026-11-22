@@ -9,7 +9,7 @@ const css=readFileSync('public/static/css/web-apps-v11216.css','utf8');
 const web=readFileSync('public/static/js/web-real.js','utf8');
 test('V112.16: Web carrega Fototeca, Gmail e SMS sem alterar aplicativos nativos',()=>{
  assert.match(html,/web-apps-v11216\.css\?v=11216/);
- assert.match(html,/web-apps-v11216\.js\?v=11216/);
+ assert.match(html,/web-apps-v11216\.js\?v=1121[67]/);
  assert.match(web,/EducaWebAppsV11216\?\.open\?\./);
  assert.match(web,/EducaWebAppsV11216\?\.close\?\./);
  assert.match(ui,/dataset\.educaPlatform!=='web'/);

@@ -70,17 +70,17 @@ try{
 
    await open('gmail');
    assert.match(await page.locator('.webx-mail-label strong').innerText(),/Caixa de entrada/);
-   assert.ok(await page.locator('.webx-mail-row').count()>=3);
+   assert.ok(await page.locator('.webx-mail-row:not([hidden])').count()>=3);
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-gmail-entrada.png'});
    await page.locator('.webx-mail-toolbar [data-webx="mail-menu"]').click();
    assert.equal(await page.locator('.webx-mail-drawer').isVisible(),true);
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-gmail-menu.png'});
    await page.locator('[data-webx="mail-folder"][data-value="promotions"]').first().click();
    assert.match(await page.locator('.webx-mail-label').innerText(),/Promoções/);
-   assert.equal(await page.locator('.webx-mail-row').count(),1);
+   assert.equal(await page.locator('.webx-mail-row:not([hidden])').count(),1);
    await page.locator('[data-webx="mail-folder"][data-value="inbox"]').first().click();
    await page.locator('#webxMailSearch').fill('Banco');
-   assert.equal(await page.locator('.webx-mail-row').count(),1);
+   assert.equal(await page.locator('.webx-mail-row:not([hidden])').count(),1);
    await page.locator('#webxMailSearch').fill('');
    await page.locator('[data-webx="mail-open"]').first().click();
    assert.equal(await page.locator('.webx-mail-detail').count(),1);
@@ -92,7 +92,7 @@ try{
    await page.locator('#webxMailForm [name="message"]').fill('Mensagem de teste, sem envio real.');
    await page.locator('[data-webx="mail-save-draft"]').click();
    assert.match(await page.locator('.webx-mail-label strong').innerText(),/Rascunhos/);
-   assert.equal(await page.locator('.webx-mail-row').count(),1);
+   assert.equal(await page.locator('.webx-mail-row:not([hidden])').count(),1);
    await page.locator('[data-webx="mail-open"]').first().click();
    assert.equal(await page.locator('#webxMailForm [name="subject"]').inputValue(),'Treinamento');
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-gmail-rascunho.png'});
