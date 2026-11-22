@@ -15,7 +15,7 @@ html[data-educa-platform="web"] #webRealView.webx-active #webRealBody{
  padding:0!important;overflow:hidden!important;overscroll-behavior:contain;min-height:0;
 }
 html[data-educa-platform="web"] #webRealView .webx-app{
- display:flex;flex-direction:column;height:100%;width:100%;min-width:0;min-height:0;
+ position:relative;display:flex;flex-direction:column;height:100%;width:100%;min-width:0;min-height:0;
  box-sizing:border-box;overflow:hidden;background:#0d0e11;color:#f1f1f5;
  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
@@ -331,4 +331,11 @@ html[data-educa-platform="web"] #webRealView .webx-sms-bubble{
 }
 @media(prefers-reduced-motion:reduce){
  html[data-educa-platform="web"] #webRealView .webx-app *{scroll-behavior:auto!important;}
+}
+html[data-educa-platform="web"] #webRealView .webx-search-empty{
+ padding:26px 14px;text-align:center;color:#aab1bd;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webx-app .sr-only{
+ position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+ overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
