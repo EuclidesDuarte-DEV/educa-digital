@@ -127,6 +127,17 @@ function action(name,node){
   showPane('profile');announce('Configuração simulada: '+temp+'. Nenhuma mensagem real será apagada.');return;
  }
  if(name==='pix'){announce('Este Pix é apenas fictício. Confirme a identidade por outro canal antes de enviar dinheiro.');return;}
+ const demonstrations={
+  storage:'Só existe uma foto fictícia nesta conversa. Nenhum arquivo do seu celular será apagado.',
+  save:'Demonstração: nenhuma imagem será salva na galeria real.',
+  transcribe:'Idioma ilustrativo: português (Brasil). Nenhum áudio real será transcrito.',
+  lock:'Trancar conversa é apenas ilustrado; não altera o WhatsApp verdadeiro.',
+  restricted:'A conversa restrita está desativada nesta simulação.',
+  encryption:'Esta conversa é do Educa+ Digital, não do WhatsApp real. Não representa criptografia de ponta a ponta entre pessoas.',
+  group:'Nenhum grupo real é consultado. Não acessamos seus contatos.',
+  share:'Compartilhar o contato é somente demonstrativo; nenhum telefone real é enviado.'
+ };
+ if(Object.hasOwn(demonstrations,name)){announce(demonstrations[name]);return;}
  if(name==='call'||name==='video'){
   close();$('#chatView .chat-header-actions button[aria-label="'+(name==='call'?'Ligação':'Videochamada')+'"]')?.click();return;
  }
