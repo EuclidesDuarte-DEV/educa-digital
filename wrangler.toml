@@ -33,6 +33,12 @@ LIA_NEURAL_AUTO_SETUP = "true"
 LIA_NEURAL_LIBRARY_BOOTSTRAP = "true"
 # Trechos são opt-in separado, não gravação automática de chats.
 LIA_EXAMPLES_ENABLED = "true"
+# V112.03: Roberta, voz feminina brasileira aprovada para a LIA Web.
+# O ID é público; a chave ElevenLabs deve ser um SECRET no Worker.
+# Mantém geração com custo desligada até instalar a chave e liberar uso.
+LIA_WEB_HQ_TTS_PROVIDER = "elevenlabs"
+LIA_ELEVENLABS_VOICE_ID = "RGymW84CSmfVugnA5tvA"
+LIA_WEB_HQ_TTS_ENABLED = "false"
 
 # Ambiente isolado para Pull Requests / Workers Previews.
 # Nao usar o banco D1 de producao nos previews.
@@ -56,3 +62,9 @@ LIA_NEURAL_AUTO_SETUP = "true"
 LIA_NEURAL_LIBRARY_BOOTSTRAP = "true"
 # Trechos são opt-in separado, não gravação automática de chats.
 LIA_EXAMPLES_ENABLED = "true"
+# V112.03: Roberta, voz feminina brasileira aprovada para a LIA Web.
+# O ID é público; a chave ElevenLabs deve ser um SECRET no Worker.
+# Mantém geração com custo desligada até instalar a chave e liberar uso.
+LIA_WEB_HQ_TTS_PROVIDER = "elevenlabs"
+LIA_ELEVENLABS_VOICE_ID = "RGymW84CSmfVugnA5tvA"
+LIA_WEB_HQ_TTS_ENABLED = "false"
