@@ -100,6 +100,9 @@ try{
    assert.equal(await page.locator('.webx-sms-list button').count(),3);
    await page.locator('#webxSmsSearch').fill('Banco');
    assert.equal(await page.locator('.webx-sms-list button').count(),1);
+   // Aviso surpresa não captura toques nas mensagens.
+   await page.evaluate(()=>{const note=document.querySelector('#freeEventNotice');if(note)note.hidden=false;});
+   assert.equal(await page.locator('#freeEventNotice').evaluate(el=>getComputedStyle(el).pointerEvents),'none');
    await page.locator('[data-webx="sms-open"]').click();
    assert.match(await page.locator('.webx-sms-demo').innerText(),/fictício/);
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-sms-treino.png'});
