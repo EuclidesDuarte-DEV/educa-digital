@@ -76,6 +76,20 @@ try{
        console.log('DIAG_JOURNEY_HIT '+name+' '+JSON.stringify(result));
        if(!result.ok && result.visible)fail++;
      }
+     // Simula o bug no Safari: pointerdown+pointerup sem click posterior.
+     // O handler recupera UMA vez após o atraso de segurança.
+     const fallback=await page.evaluate(()=>{
+       const button=document.querySelector('#freeCallAnswer'),r=button.getBoundingClientRect();
+       const x=r.left+r.width/2,y=r.top+r.height/2;
+       const init={bubbles:true,cancelable:true,pointerType:'touch',pointerId:87,isPrimary:true,clientX:x,clientY:y};
+       button.dispatchEvent(new PointerEvent('pointerdown',init));
+       button.dispatchEvent(new PointerEvent('pointerup',init));
+       return {eventSent:true,answerBefore:button.hidden};
+     });
+     await page.waitForTimeout(480);
+     const accepted=await page.locator('#freeCallAnswer').isHidden();
+     console.log('DIAG_FALLBACK_ANSWER '+name+' '+JSON.stringify({...fallback,accepted}));
+     if(!accepted)fail++;
      await page.locator('#freeCallHangup').tap({timeout:7000});
      const view=await page.locator('#phoneScreen').getAttribute('data-current-view');
      console.log('DIAG_JOURNEY_RESULT '+name+' '+view);
