@@ -135,5 +135,7 @@ jobs:
         run: |
           slug=$(printf '%s' "$PREVIEW_BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g;s/--*/-/g;s/^-//;s/-$//')
           echo "PREVIEW_URL=https://${slug}-educa-digital.educamaisdigital.workers.dev" >> "$GITHUB_ENV"
+      - name: Provar áudio ONNX real da Dora, sem Roberta nem API paga
+        run: node scripts/validar-dora-neural-real-v11207.mjs
       - name: Sintetizar WAV real Kokoro pf_dora
         run: node scripts/validar-kokoro-real-v11157.mjs
