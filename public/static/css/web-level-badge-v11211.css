@@ -1,0 +1,46 @@
+/* V112.11 — somente Web: indicador de nível proporcional ao cabeçalho.
+   Não altera XP, diálogo de progresso, cards, Android ou iOS nativos. */
+html[data-educa-platform="web"] #learningView .learning-header .ed-modo-level-badge {
+  box-sizing: border-box !important;
+  top: 1px !important;
+  right: 2px !important;
+  min-width: 0 !important;
+  width: max-content !important;
+  height: 29px !important;
+  min-height: 29px !important;
+  padding: 3px 8px !important;
+  gap: 4px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+}
+/* A área de toque continua confortável, mesmo com a peça visual menor. */
+html[data-educa-platform="web"] #learningView .learning-header .ed-modo-level-badge::before {
+  content: "";
+  position: absolute;
+  inset: -7px -5px;
+}
+html[data-educa-platform="web"] #learningView .learning-header .ed-modo-level-badge svg {
+  width: 15px !important;
+  height: 15px !important;
+  flex: none;
+}
+html[data-educa-platform="web"] #learningView .learning-header .ed-modo-level-badge span {
+  font-size: inherit !important;
+  line-height: 1.2 !important;
+  white-space: nowrap;
+}
+/* Fontes grandes continuam legíveis sem restaurar o badge exagerado. */
+html[data-educa-platform="web"].a11y-text-large #learningView .learning-header .ed-modo-level-badge,
+html[data-educa-platform="web"].a11y-text-extra #learningView .learning-header .ed-modo-level-badge {
+  height: 32px !important;
+  min-height: 32px !important;
+  padding-inline: 9px !important;
+  font-size: 12px !important;
+}
+html[data-educa-platform="web"].a11y-text-large #learningView .learning-header .ed-modo-level-badge svg,
+html[data-educa-platform="web"].a11y-text-extra #learningView .learning-header .ed-modo-level-badge svg {
+  width: 16px !important;
+  height: 16px !important;
+}

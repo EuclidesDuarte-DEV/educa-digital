@@ -32,6 +32,8 @@ jobs:
         run: node scripts/validar-summary-scroll-v11208.mjs
       - name: V112.10 — erro encerra rodada sem esperar IA e resultado compacto com pontos
         run: node scripts/validar-quick-result-v11210.mjs
+      - name: V112.11 — nível compacto em celular normal, fonte extra e desktop
+        run: node scripts/validar-level-badge-v11211.mjs
       - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
         run: node scripts/validar-modo-livre-v11175.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
@@ -68,4 +70,5 @@ jobs:
             artifacts/free-reflow-v11175/
             artifacts/summary-scroll-v11208/
             artifacts/quick-result-v11210/
+            artifacts/level-badge-v11211/
           if-no-files-found: ignore
