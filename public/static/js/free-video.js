@@ -1082,7 +1082,7 @@ voiceEngine?.addEventListener('change',()=>{
   status('Voz alternativa do próprio dispositivo selecionada.');
  }
 });
-window.addEventListener('educa-lia-free-neural-progress',event=>{
+if(typeof window.addEventListener==='function')window.addEventListener('educa-lia-free-neural-progress',event=>{
  if(document.documentElement?.dataset?.educaPlatform==='web'&&session.active&&selectedEngine()==='gratuita'){
   const stage=String(event.detail?.stage||'').slice(0,95);
   if(!session.connected||session.utterance?.kind==='neural-gratis-loading')
