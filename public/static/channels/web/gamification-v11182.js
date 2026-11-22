@@ -15,7 +15,7 @@
     {name:'Experiente',min:210,next:null}
   ];
   const SCAM_IDS=new Set([
-    'family','bank','video','code','delivery','call-tech','relative',
+    'family','family-photo','bank','video','code','delivery','call-tech','relative',
     'account','prize','sms-delivery','sms-bank','sms-prize'
   ]);
   const clamp=n=>Math.max(0,Math.min(MAX_XP,Math.floor(Number(n)||0)));
