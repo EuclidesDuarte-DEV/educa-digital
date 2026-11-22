@@ -30,7 +30,7 @@ if(ui.view){
  }
  if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
-const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqVoiceFailedSerial:-1,hqAbort:null,webAudioGain:null};
+const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqVoiceFailedSerial:-1,hqVoiceCheck:null,hqAbort:null,webAudioGain:null};
 const free=()=>window.EducaFreeMode;
 const status=t=>{if(ui.state)ui.state.textContent=t;};
 const voiceProgress=$('freeVideoVoiceProgress');
@@ -79,7 +79,7 @@ const selectedEngine=()=>voiceEngine?.value==='padrao'?'padrao':'feminina';
 // Web V112.01: no anúncio da voz, descrever o fallback real sem prometer
 // Kokoro em dispositivos onde o modelo ainda não foi preparado.
 if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.options?.length){
- voiceEngine.options[0].textContent='Automática · voz natural rápida quando disponível';
+ voiceEngine.options[0].textContent='Roberta · voz natural (aguardando ativação)';
  voiceEngine.options[1].textContent='Voz do aparelho · sem aguardar Kokoro';
 }
 const lipSyncWaitMs=()=>latencyMode?.value==='sinc' ? 40000 : 1100;
@@ -628,11 +628,19 @@ async function tryNeural(text,serial){
 // Sem consentimento de custo, /status informa disabled e nenhuma síntese é solicitada.
 async function inspectWebHQVoice(){
  if(document.documentElement?.dataset?.educaPlatform!=='web')return;
+ // Captura o turno para ignorar resposta de uma chamada já encerrada.
+ const turn=session.serial;
+ let enabled=false;
  try{
   const r=await fetch('/api/lia/voz-web/status',{cache:'no-store',credentials:'same-origin'});
   const config=await r.json();
-  session.hqVoiceEnabled=r.ok&&config.enabled===true;
- }catch(_){session.hqVoiceEnabled=false;}
+  enabled=r.ok&&config.enabled===true&&config.provider==='elevenlabs-flash-v2.5';
+ }catch(_){}
+ if(turn!==session.serial||!session.active)return;
+ session.hqVoiceEnabled=enabled;
+ if(voiceEngine?.options?.length)voiceEngine.options[0].textContent=enabled
+  ?'Roberta · voz natural brasileira'
+  :'Roberta indisponível · voz rápida do aparelho';
 }
 async function playWebHQVoice(text,serial){
  const controller=new AbortController();
@@ -640,7 +648,7 @@ async function playWebHQVoice(text,serial){
  let timeout=null;
  try{
   // Se a voz expressiva não responder rápido, a voz feminina local fala já.
-  timeout=setTimeout(()=>controller.abort(),2200);
+  timeout=setTimeout(()=>controller.abort(),2800);
   const r=await fetch('/api/lia/voz-web/speak',{
    method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
    headers:{'Content-Type':'application/json'},body:JSON.stringify({text})
@@ -851,9 +859,9 @@ function close(){document.body?.classList.remove('lia-call-visible');stopVoicePr
 function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;if(ui.text){ui.text.hidden=true;ui.text.setAttribute('aria-expanded','false');}free()?.enterVideo?.();session.active=true;ui.name.textContent='Lia';ui.duration.textContent='Videochamada recebida';subtitle('Uma pessoa desconhecida está chamando por vídeo.');status('Chamada educativa com IA. A Lia responde por voz e tenta usar o melhor sincronismo disponível.');indicator('Lia realista • aguardando chamada');session.motorPending=inspectMotor().finally(()=>{session.motorPending=null;});
  // A voz online só é consultada quando o operador a habilitou no Worker.
  // A Web não baixa o Kokoro pesado no iPhone durante o treino.
- session.hqVoiceEnabled=false;
+ session.hqVoiceEnabled=false;session.hqVoiceCheck=null;
  if(document.documentElement?.dataset?.educaPlatform==='web')
-  void inspectWebHQVoice();
+  session.hqVoiceCheck=inspectWebHQVoice();
  const browser=window.EducaLiaBrowserKokoro;
  if(browser&&selectedEngine()!=='padrao'&&
     document.documentElement?.dataset?.educaPlatform!=='web')
@@ -868,7 +876,15 @@ async function answer(){if(!session.active||session.connected)return;
  primeSpeechMotion();syncLiaCallLayout();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
- const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';free()?.videoAccepted?.();speak(intro);}
+ const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';
+ // Safari: aguardar no máximo uma fração de segundo pela consulta gratuita de
+ // status para não começar com voz robótica por uma corrida de inicialização.
+ const web=document.documentElement?.dataset?.educaPlatform==='web';
+ if(web&&session.hqVoiceCheck)await Promise.race([
+  session.hqVoiceCheck,new Promise(resolve=>setTimeout(resolve,650))
+ ]);
+ if(!session.active||!session.connected)return;
+ free()?.videoAccepted?.();speak(intro);}
 function listen(){
  if(!session.active||!session.connected||session.waiting||session.rec||session.utterance||document.hidden)return;
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
