@@ -82,8 +82,8 @@ const selectedEngine=()=>{
 // Web V112.01: no anúncio da voz, descrever o fallback real sem prometer
 // Kokoro em dispositivos onde o modelo ainda não foi preparado.
 if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.options?.length){
- voiceEngine.options[0].textContent='Roberta · voz natural (aguardando ativação)';
- voiceEngine.options[1].textContent='Voz do aparelho · sem aguardar Kokoro';
+ voiceEngine.querySelector('option[value="feminina"]').textContent='Roberta · voz natural (aguardando ativação)';
+ voiceEngine.querySelector('option[value="padrao"]').textContent='Voz do aparelho · sem aguardar Kokoro';
  // Somente WEB: a opção gratuita neural é padrão. Nada muda nos apps nativos.
  if(!voiceEngine.querySelector('option[value="gratuita"]')){
   const freeOption=document.createElement('option');freeOption.value='gratuita';
@@ -649,9 +649,10 @@ async function inspectWebHQVoice(){
  if(turn!==session.serial||!session.active)return;
  session.hqVoiceEnabled=enabled;
  if(enabled){indicator('Lia · Roberta ElevenLabs configurada');status('Roberta selecionada. A voz natural será testada quando você atender.');}
- if(voiceEngine?.options?.length)voiceEngine.options[0].textContent=enabled
+ const robertaOption=voiceEngine?.querySelector('option[value="feminina"]');
+ if(robertaOption)robertaOption.textContent=enabled
   ?'Roberta · voz natural brasileira'
-  :'Roberta indisponível · voz rápida do aparelho';
+  :'Roberta indisponível · voz do aparelho disponível separadamente';
 }
 async function playWebHQVoice(text,serial){
  const controller=new AbortController();
