@@ -444,15 +444,20 @@ html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
 html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
  #webRealView .webx-app .webx-mail-copy :is(strong,b,small){max-width:100%;}
 
-/* Notificações surpresa do Modo Livre não devem roubar o toque do app aberto.
-   O aviso continua visível; ao voltar à Home a interação do aviso é restabelecida. */
+/* V112.18: aviso não modal: fundo não intercepta os toques nos apps.
+   "Abrir" e "Dispensar" continuam acessíveis mesmo sobre Gmail, Fotos ou SMS. */
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
  .free-event-notice:not([hidden]) {
  pointer-events:none!important;
 }
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
- .free-event-notice:not([hidden]) * {
- pointer-events:none!important;
+ .free-event-notice:not([hidden]) button {
+ pointer-events:auto!important;
+ touch-action:manipulation!important;
+ position:relative;
+ z-index:1;
+ min-width:44px;
+ min-height:44px;
 }
 
 /* Feedback do app (foto salva/erro) é informativo, não uma janela modal.
