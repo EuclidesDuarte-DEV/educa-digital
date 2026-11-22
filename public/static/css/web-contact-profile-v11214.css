@@ -159,3 +159,23 @@ html[data-educa-platform="web"] #chatView .fc-nav button:focus-visible{
  html[data-educa-platform="web"] #chatView .fc-big-avatar{width:100px;height:100px;}
  html[data-educa-platform="web"] #chatView .fc-shortcuts b{width:39px;height:39px;}
 }
+
+/* Chamadas demonstrativas permanecem no contato; LIA só vem após o resultado. */
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="outgoing"]{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ min-height:60%;text-align:center;padding:20px 10px 30px;
+}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="outgoing"][hidden]{display:none!important;}
+html[data-educa-platform="web"] #chatView .fc-outgoing-image{
+ width:135px;height:135px;border-radius:50%;overflow:hidden;background:#263c40;margin:8px auto 22px;
+}
+html[data-educa-platform="web"] #chatView .fc-outgoing-avatar{
+ display:block;width:100%;height:100%;object-fit:cover;object-position:center 35%;
+}
+html[data-educa-platform="web"] #chatView .fc-outgoing-status{
+ color:#d5e0e0;font-size:15px;line-height:1.45;margin:14px 6px;
+}
+html[data-educa-platform="web"] #chatView .fc-hangup{
+ box-sizing:border-box;display:block;min-height:49px;width:min(240px,100%);padding:11px 18px;
+ background:#a9283b;border:0;border-radius:30px;color:white;font-weight:750;font-size:15px;cursor:pointer;
+}
