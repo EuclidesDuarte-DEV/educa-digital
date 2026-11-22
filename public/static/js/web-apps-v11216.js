@@ -34,7 +34,7 @@ let active='',api=null,photos=[],tab='library',period='all',chosen=new Set(),pho
     galleryUrls=[],term='',folder='inbox',gmailSearch='',gmailView='list',messageOpen=null,side=false,
     mail=demo.map(m=>({...m})),draft=null,smsOpen=null,smsSearch='';
 function revoke(){for(const u of galleryUrls)URL.revokeObjectURL(u);galleryUrls=[];}
-function close(){revoke();active='';api=null;photoOpen=null;chosen.clear();view.classList.remove('webx-active','webx-photos','webx-gmail','webx-messages');}
+function close(){revoke();active='';api=null;photoOpen=null;chosen.clear();body.classList.remove('webx-selecting');view.classList.remove('webx-active','webx-photos','webx-gmail','webx-messages');}
 function host(name,html){body.innerHTML='<div class="webx-app webx-'+name+'">'+html+'</div>';}
 function imageUrl(blob){const url=URL.createObjectURL(blob);galleryUrls.push(url);return url;}
 function galleryHeader(){
@@ -76,7 +76,7 @@ function renderPhotos(){
   tiles='<div class="webx-collection-card"><span>▧</span><strong>Fotos adicionadas</strong><small>'+photos.length+' imagem(ns)</small></div>';
  }
  if(tab==='search')tiles+='<label class="webx-photo-search">⌕<input id="webxPhotoSearch" type="search" value="'+esc(term)+'" placeholder="Buscar por mês ou ano" aria-label="Buscar fotos por período"></label>';
- if(!items.length)tiles+=albumEmpty();
+ if(!items.length)tiles+=photos.length?'<p class="webx-search-empty">Nenhuma foto corresponde à pesquisa.</p>':albumEmpty();
  else{
   const groups=new Map();
   for(const p of items){
@@ -175,12 +175,12 @@ body.addEventListener('click',async e=>{
  }
  if(action==='mail-menu'){side=!side;renderGmail();return;}
  if(action==='mail-folder'){folder=value;gmailView='list';side=false;renderGmail();return;}
- if(action==='mail-open'){messageOpen=id;gmailView='message';const m=mail.find(x=>x.id===id);if(m)m.unread=false;renderGmail();return;}
+ if(action==='mail-open'){messageOpen=id;const m=mail.find(x=>x.id===id);if(m){m.unread=false;if(m.folder==='drafts'){draft={to:m.to||'',subject:m.subject==='(Sem assunto)'?'':m.subject,message:m.body||''};gmailView='compose';renderGmail();return;}}gmailView='message';renderGmail();return;}
  if(action==='mail-back'){gmailView='list';messageOpen=null;renderGmail();return;}
  if(action==='mail-star'){const m=mail.find(x=>x.id===id);if(m)m.star=!m.star;renderGmail();return;}
  if(action==='mail-trash'||action==='mail-archive'){const m=mail.find(x=>x.id===id);if(m)m.folder=action==='mail-trash'?'trash':'all';gmailView='list';renderGmail();return;}
  if(action==='mail-compose'){gmailView='compose';renderGmail();return;}
- if(action==='mail-save-draft'){const form=$('#webxMailForm');if(form){const fd=new FormData(form);draft={to:fd.get('to'),subject:fd.get('subject'),message:fd.get('message')};}gmailView='list';folder='drafts';renderGmail();showStatus('Rascunho salvo apenas nesta sessão de treinamento.');return;}
+ if(action==='mail-save-draft'){const form=$('#webxMailForm');if(form){const fd=new FormData(form);draft={to:String(fd.get('to')||''),subject:String(fd.get('subject')||''),message:String(fd.get('message')||'')};mail=mail.filter(m=>m.id!==1001);mail.unshift({id:1001,folder:'drafts',sender:'Rascunho',subject:draft.subject||'(Sem assunto)',preview:draft.message.slice(0,90)||'Rascunho não enviado',time:'Agora',body:draft.message,to:draft.to,color:'#4e627e',star:false,unread:false});}gmailView='list';folder='drafts';renderGmail();showStatus('Rascunho salvo apenas nesta sessão de treinamento.');return;}
  if(action==='mail-info'){showStatus('Gmail de treinamento: sem acesso à sua conta, senha ou mensagens reais.');return;}
  if(action==='mail-official'){window.open('https://mail.google.com/','_blank','noopener,noreferrer');return;}
  if(action==='sms-open'){smsOpen=id;renderSms();return;}
