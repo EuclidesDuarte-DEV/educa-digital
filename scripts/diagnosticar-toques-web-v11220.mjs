@@ -95,6 +95,31 @@ try{
      console.log('DIAG_JOURNEY_RESULT '+name+' '+view);
      if(view!=='free-summary')fail++;
    }catch(err){console.log('DIAG_JOURNEY_FAIL '+name+' '+String(err).slice(0,1400));fail++;}
+   // Auditoria das principais telas depois da chamada: botões por toque real.
+   const otherApps=[
+    {id:'photos',steps:async()=>{await page.locator('[data-webx="photo-tab"][data-value="collections"]').tap({timeout:7000});
+      await page.locator('[data-webx="photo-tab"][data-value="library"]').tap({timeout:7000});}},
+    {id:'gmail',steps:async()=>{await page.locator('.webx-mail-message').first().tap({timeout:7000});
+      await page.locator('[data-webx="mail-back"]').tap({timeout:7000});
+      await page.locator('#webxMailSearch').tap({timeout:7000});}},
+    {id:'messages',steps:async()=>{await page.locator('[data-webx="sms-open"]').first().tap({timeout:7000});
+      await page.locator('[data-webx="sms-back"]').tap({timeout:7000});}},
+    {id:'camera',steps:async()=>{await page.locator('[data-wr="open-photos"]').tap({timeout:7000});}},
+    {id:'youtube',steps:async()=>{await page.locator('[data-wv="video"]').first().tap({timeout:7000});
+      await page.locator('[data-wv="yt-back"]').tap({timeout:7000});}},
+    {id:'maps',steps:async()=>{await page.locator('.webv-map-marker[data-spot="library"]').tap({timeout:7000});
+      await page.locator('[data-wv="map-route"]').tap({timeout:7000});}},
+    {id:'calendar',steps:async()=>{await page.locator('[data-wv="cal-add"]').first().tap({timeout:7000});
+      await page.locator('[data-wv="cal-cancel"]').tap({timeout:7000});}}
+   ];
+   for(const entry of otherApps){
+    try{
+     await page.evaluate(id=>window.EducaWebReal.openApp(id),entry.id);
+     await entry.steps();
+     await page.locator('#webRealBack').tap({timeout:7000});
+     console.log('DIAG_APP_OK '+name+' '+entry.id);
+    }catch(err){console.log('DIAG_APP_FAIL '+name+' '+entry.id+' '+String(err).slice(0,1000));fail++;}
+   }
 
   }finally{await ctx.close()}
  }
