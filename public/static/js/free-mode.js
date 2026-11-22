@@ -308,8 +308,8 @@ document.addEventListener('click',e=>{if(!state.active)return;
  if(e.target.closest('#gestureHome')){e.preventDefault();e.stopImmediatePropagation();home();return;}
  const row=e.target.closest('#whatsappView .wa-chat-list .chat-row');if(row){e.preventDefault();e.stopImmediatePropagation();const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;openChat(byId[id]);return;}
  const app=e.target.closest('#homeView [data-open-app]');if(app&&app.dataset.openApp==='whatsapp'){e.preventDefault();e.stopImmediatePropagation();show('whatsapp');return;}
- const vcall=e.target.closest('#chatView .chat-header-actions button[aria-label="Videochamada"]');if(vcall){e.preventDefault();e.stopImmediatePropagation();video()?.incoming(byId.video);return;}
- const call=e.target.closest('#chatView .chat-header-actions button[aria-label="Ligação"]');if(call){e.preventDefault();e.stopImmediatePropagation();showIncomingCall({...state.scenario||byId.family,channel:'call'});return;}
+ const vcall=e.target.closest('#chatView .chat-header-actions button[aria-label="Videochamada"]');if(vcall){e.preventDefault();e.stopImmediatePropagation();if(isWebTraining()&&state.scenario?.id==='family-photo')window.EducaWebContactProfile?.openCall?.('video');else video()?.incoming(byId.video);return;}
+ const call=e.target.closest('#chatView .chat-header-actions button[aria-label="Ligação"]');if(call){e.preventDefault();e.stopImmediatePropagation();if(isWebTraining()&&state.scenario?.id==='family-photo')window.EducaWebContactProfile?.openCall?.('call');else showIncomingCall({...state.scenario||byId.family,channel:'call'});return;}
  const pay=e.target.closest('#bankSendPixBtn');if(pay){e.preventDefault();e.stopImmediatePropagation();openPix();return;}
  if(e.target.closest('#chatView .android-back')){clearRequest();setStatus('');}
 },true);
