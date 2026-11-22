@@ -19,9 +19,10 @@ try{
   try{
    await page.addInitScript(()=>localStorage.setItem('educaWebModoLivreNivelV11182',JSON.stringify({xp:220})));
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
-   await page.waitForSelector('#edModoLevelBadge',{timeout:12000});
+   await page.waitForSelector('#edModoLevelBadge',{state:'attached',timeout:12000});
+   await page.waitForFunction(()=>Boolean(window.EducaFreeView),{timeout:12000});
    await page.evaluate(font=>{
-    window.EducaFreeView?.setView?.('learning');
+    window.EducaFreeView.setView('learning');
     if(font!=='normal')window.EducaAccessibility?.update?.({text:font});
    },c.font);
    const badge=page.locator('#edModoLevelBadge');
