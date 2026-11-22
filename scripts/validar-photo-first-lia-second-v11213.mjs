@@ -47,7 +47,7 @@ try{
       assert.equal(aiCalls,0,label+': aceitar Pix fictício não deve esperar IA');
     }
     await page.locator('#freeSummaryNext').click({timeout:4000});
-    await page.waitForFunction(()=>document.querySelector('#phoneScreen')?.dataset.currentView==='free-video',{timeout:2500});
+    await page.waitForFunction(()=>document.querySelector('#phoneScreen')?.dataset.currentView==='free-video',null,{timeout:2500});
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.videoState()),'video',label+': próximo desafio não foi a LIA');
     assert.match(await page.locator('#freeVideoName').innerText(),/Lia/i);
     await page.screenshot({path:'artifacts/photo-first-lia-second-v11213/'+label+'-lia.png'});
