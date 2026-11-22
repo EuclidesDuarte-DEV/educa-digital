@@ -7,6 +7,7 @@ const selectors=['#freeCallAnswer','#freeCallHangup','#freeCallVerify','#freeCal
  '#freeEventOpen','#freeEventDismiss','#freeSummaryNext','#freeSummaryHome',
  '#freeFamilyBlock','#freeFamilyVerify','#webRealBack','#gestureHome'];
 async function check(page,sel){
+ await page.locator(sel).scrollIntoViewIfNeeded({timeout:4000}).catch(()=>{});
  return page.evaluate(selector=>{
   const el=document.querySelector(selector);if(!el)return {selector,missing:true};
   const rect=el.getBoundingClientRect(),x=rect.left+rect.width/2,y=rect.top+rect.height/2;
@@ -55,6 +56,31 @@ try{
     await page.locator('#freeCallVerify').tap({timeout:3000});
     console.log('DIAG_VERIFY '+name+' '+JSON.stringify({view:await page.locator('#phoneScreen').getAttribute('data-current-view')}));
    }catch(err){console.log('DIAG_VERIFY_FAIL '+name+' '+String(err).slice(0,900));fail++;}
+   // Perfeito percurso do participante: WhatsApp com foto -> LIA -> chamada do banco.
+   // Sem criar contas, ligar de verdade ou efetuar Pix.
+   try{
+     await page.evaluate(()=>{window.EducaFreeMode.stop();window.EducaFreeMode.start();window.EducaFreeMode.triggerEvent();});
+     await page.locator('#freeEventOpen').tap({timeout:8000});
+     console.log('DIAG_JOURNEY_WHATSAPP '+name+' '+await page.locator('#phoneScreen').getAttribute('data-current-view'));
+     await page.locator('#freeFamilyBlock').tap({timeout:8000});
+     await page.locator('#freeSummaryNext').tap({timeout:8000});
+     await page.locator('#freeVideoView.is-active').waitFor({state:'visible',timeout:8000});
+     await page.locator('#freeVideoHangup').tap({timeout:8000});
+     await page.locator('#freeSummaryNext').tap({timeout:8000});
+     await page.locator('#freeCallView.is-active').waitFor({state:'visible',timeout:8000});
+     const bank=await page.locator('#freeCallName').innerText();
+     console.log('DIAG_JOURNEY_CALL '+name+' '+bank);
+     for(const sel of ['#freeCallAnswer','#freeCallHangup','#freeCallVerify']){
+       const result=await check(page,sel);
+       console.log('DIAG_JOURNEY_HIT '+name+' '+JSON.stringify(result));
+       if(!result.ok && result.visible)fail++;
+     }
+     await page.locator('#freeCallHangup').tap({timeout:7000});
+     const view=await page.locator('#phoneScreen').getAttribute('data-current-view');
+     console.log('DIAG_JOURNEY_RESULT '+name+' '+view);
+     if(view!=='free-summary')fail++;
+   }catch(err){console.log('DIAG_JOURNEY_FAIL '+name+' '+String(err).slice(0,1400));fail++;}
+
   }finally{await ctx.close()}
  }
 }finally{await browser.close()}
