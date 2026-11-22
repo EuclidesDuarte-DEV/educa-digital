@@ -44,7 +44,8 @@ function clearTransition(){clearTimeout(state.transitionTimer);state.transitionT
 // insuficientes para alcançar a terceira ação no mockup pequeno.
 function pauseSummaryTransition(){
  if(document.documentElement?.dataset?.educaPlatform!=='web'||
-    !state.active||visible()!=='free-summary'||!state.transitionTimer)return;
+    !state.active||visible()!=='free-summary'||!state.transitionTimer||
+    $('#freeSummaryView')?.classList.contains('web-quick-risk'))return;
  clearTransition();
  const notice=$('#freeSummaryAuto');
  if(notice){
@@ -68,22 +69,11 @@ function riskyTrainingPromise(s,message){
  return /\b(pix|dinheiro|valor|pagar|despesa|emprest|transfer|taxa)\b/.test(context);
 }
 function registerWebRisk(s,message){
- if(!riskyTrainingPromise(s,message)||state.riskyScenarios.has(s.id))return;
+ if(!riskyTrainingPromise(s,message)||state.riskyScenarios.has(s.id))return false;
  state.riskyScenarios.add(s.id);
  state.score=Math.max(0,state.score-15);
- if(visible()==='chat'&&els.wallpaper){
-  const note=document.createElement('p');note.className='free-risk-feedback';
-  note.setAttribute('role','status');
-  note.textContent='⚠️ Decisão de risco: −15 pontos. Prometer enviar dinheiro sem confirmar a identidade pode ser o primeiro passo do golpe. Nenhum Pix real foi feito.';
-  els.wallpaper.append(note);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;
- }else if(visible()==='free-sms'&&els.smsStatus){
-  els.smsStatus.textContent='⚠️ Decisão de risco: −15 pontos. Confirme pelo canal oficial.';
- }else if(visible()==='free-call'&&els.callLine){
-  els.callLine.textContent='⚠️ Decisão de risco: −15 pontos. Verifique o contato.';
- }
- const subtitle=$('#scenarioSubtitle');
- if(subtitle&&visible()==='chat')subtitle.textContent='Contato fictício · '+state.score+' pontos';
  syncUI();
+ return true;
 }
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
@@ -151,7 +141,15 @@ function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,
 function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;state.callHandsFree=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){const warning='Não informe dados, códigos, senhas ou links reais. Use somente textos fictícios.';setStatus(warning);if(visible()==='free-call')els.callLine.textContent=warning;if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=warning;return;}
- const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');registerWebRisk(s,message);state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
+ const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');
+  // V112.10: decisão explícita -> resultado curto e próximo desafio SEM aguardar Workers AI.
+  // Não exibir aviso gigante dentro da conversa e não confundir promessa com Pix realizado.
+  if(isWebTraining()&&riskyTrainingPromise(s,message)){
+   registerWebRisk(s,message);
+   finish('risk');
+   return;
+  }
+  state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
  const responseTimeoutMs=document.documentElement?.dataset?.educaPlatform==='web'?32000:17000; // V111.89: Web suporta a segunda inferência; Android/iOS mantêm 17s
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},responseTimeoutMs); // sempre limitar a espera para evitar "em andamento" infinito
  try{const response=await fetch(isWebTraining()?'/api/modo-livre/conversar-web':'/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist,
@@ -163,37 +161,57 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  if(err){if(visible()==='chat')setStatus(err);else if(visible()==='free-video')video()?.error(err);else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=err;else els.callLine.textContent=err;return;}
  append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent='SMS simulado · responda ou escolha uma ação segura';}
 function finish(kind='safe',reason=''){
- if(!state.active)return;const s=state.scenario||state.pending;if(!s){home();return;}
- // Nunca enviar texto, histórico, telefone, email ou identidade.
- if(state.learningConsent===true&&document.documentElement?.dataset?.educaPlatform==='web'){
-   void fetch('/api/lia/training/outcome',{method:'POST',credentials:'same-origin',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({consent:true,scenario:s.id,outcome:kind==='unsafe'?'unsafe':'safe'})
-   }).catch(()=>{});
+ if(!state.active)return;
+ const s=state.scenario||state.pending;
+ if(!s){home();return;}
+ const quickRisk=isWebTraining()&&kind==='risk';
+ const unsafe=kind==='unsafe'||kind==='risk';
+ const safe=!unsafe;
+ const commitmentLoss=isWebTraining()&&state.riskyScenarios.has(s.id)?15:0;
+ // -15 já é aplicado na mensagem; somente CONFIRMAR Pix deduz mais 25.
+ const pixLoss=isWebTraining()&&kind==='unsafe'?(commitmentLoss?25:40):0;
+ if(pixLoss)state.score=Math.max(0,state.score-pixLoss);
+ // Apenas sinais agregados consentidos são enviados, nunca as conversas.
+ if(state.learningConsent===true&&isWebTraining()){
+  void fetch('/api/lia/training/outcome',{method:'POST',credentials:'same-origin',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({consent:true,scenario:s.id,outcome:unsafe?'unsafe':'safe'})
+  }).catch(()=>{});
  }
- clearRequest();video()?.close?.();stopVoice();const safe=kind!=='unsafe';
-  const commitmentLoss=isWebTraining()&&state.riskyScenarios.has(s.id)?15:0;
-  const pixLoss=isWebTraining()&&!safe?(commitmentLoss?25:40):0;
-  if(pixLoss)state.score=Math.max(0,state.score-pixLoss);
-  if(safe)state.finished++;
+ clearRequest();video()?.close?.();stopVoice();
+ if(safe)state.finished++;
  if(SCRIPTED_ORDER.includes(s.id)||BONUS_ORDER.includes(s.id))state.completedSteps.add(s.id);
- state.blocked=true;state.pending=null;clearTimeout(state.timer);els.notice.hidden=true;
- $('#freeSummaryIcon').textContent=safe&&!commitmentLoss?'✓':'!';$('#freeSummaryTitle').textContent=safe&&!commitmentLoss?'Situação concluída':'Atenção à decisão';
- const message=safe?'Você concluiu esta situação do treino.':'Você confirmou um Pix FICTÍCIO. Nenhum dinheiro verdadeiro foi enviado.';
+ state.blocked=true;state.pending=null;clearTimeout(state.timer);state.timer=null;
+ if(els.notice)els.notice.hidden=true;
+ const summaryView=$('#freeSummaryView');
+ summaryView?.classList.toggle('web-quick-risk',quickRisk);
  const next=nextScriptedScenario();
- $('#freeSummaryText').textContent=message+(s.id==='family'&&next?.id==='video'?' A seguir, uma videochamada com IA: ver um rosto não garante a identidade.':'')+(isWebTraining()?` Pontuação: ${state.score} pontos.${pixLoss?` (−${pixLoss} pontos pelo Pix fictício confirmado.)`:commitmentLoss?' (−15 pontos por aceitar enviar antes de verificar.)':''}`:'');
- $('#freeSummaryDetail').textContent=(commitmentLoss?'Você assumiu risco ao concordar em enviar dinheiro sem confirmar a identidade. ':'')+(reason?reason+' ':'')+s.tips;
- // A próxima etapa inicia SOZINHA; "Avançar agora" é apenas um atalho opcional.
- // Um resumo curto permite perceber o feedback sem precisar confirmar nada.
- const nextButton=$('#freeSummaryNext');if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
- const transition=$('#freeSummaryAuto');if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}
- if(document.documentElement?.dataset?.educaPlatform==='web'){
-  const summary=$('#freeSummaryView .v106-summary');
-  if(summary)summary.scrollTop=0;
+ const icon=$('#freeSummaryIcon'),title=$('#freeSummaryTitle'),text=$('#freeSummaryText');
+ const detail=$('#freeSummaryDetail'),nextButton=$('#freeSummaryNext'),transition=$('#freeSummaryAuto');
+ if(quickRisk){
+  if(icon)icon.textContent='−15';
+  if(title)title.textContent='Você perdeu 15 pontos';
+  if(text)text.textContent='Você aceitou um Pix suspeito. Restam '+state.score+' pontos.';
+  if(detail)detail.textContent='Antes de enviar dinheiro, confirme a identidade pelo número antigo.';
+  if(nextButton){nextButton.hidden=false;nextButton.textContent='Ir para o próximo desafio';}
+  if(transition){transition.hidden=true;transition.textContent='';}
+ }else{
+  if(icon)icon.textContent=safe&&!commitmentLoss?'✓':'!';
+  if(title)title.textContent=safe&&!commitmentLoss?'Situação concluída':'Atenção à decisão';
+  const message=safe?'Você concluiu esta situação do treino.':'Você confirmou um Pix FICTÍCIO. Nenhum dinheiro verdadeiro foi enviado.';
+  if(text)text.textContent=message+(s.id==='family'&&next?.id==='video'?' A seguir, uma videochamada com IA: ver um rosto não garante a identidade.':'')+(isWebTraining()?' Pontuação: '+state.score+' pontos.'+(pixLoss?' (−'+pixLoss+' pontos pelo Pix fictício confirmado.)':commitmentLoss?' (−15 pontos por aceitar enviar antes de verificar.)':''):'');
+  if(detail)detail.textContent=(commitmentLoss?'Você assumiu risco ao concordar em enviar dinheiro sem confirmar a identidade. ':'')+(reason?reason+' ':'')+s.tips;
+  if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
+  if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}
+ }
+ if(isWebTraining()){
+  const panel=$('#freeSummaryView .v106-summary');
+  if(panel)panel.scrollTop=0;
  }
  show('free-summary');
  clearTransition();
- state.transitionTimer=setTimeout(()=>{state.transitionTimer=null;continueTraining();},2800);
+ // Resultado curto não pausa ao rolar; participante pode avançar imediatamente.
+ state.transitionTimer=setTimeout(()=>{state.transitionTimer=null;continueTraining();},quickRisk?3200:2800);
 }
 function continueTraining(){
  if(!state.active||visible()!=='free-summary')return;
