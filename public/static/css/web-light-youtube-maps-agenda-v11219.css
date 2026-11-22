@@ -1,0 +1,319 @@
+/* V112.19 — somente canal Web. Aparência clara independente de prefers-color-scheme.
+   Perfil do WhatsApp corrigido sem alterar ações educativas nem conversa. */
+html[data-educa-platform="web"] #phoneScreen {color-scheme:light!important;}
+html[data-educa-platform="web"] #phoneScreen :is(input,textarea,select){color-scheme:light;}
+html[data-educa-platform="web"] #chatView .fc-layer{
+ background:#f6f8fb!important;color:#22344a!important;color-scheme:light!important;
+}
+html[data-educa-platform="web"] #chatView .fc-nav {
+ background:#fff!important;border-bottom:1px solid #e1e8f0!important;color:#23364b!important;
+}
+html[data-educa-platform="web"] #chatView .fc-nav button{color:#175eaa!important;min-height:44px!important;touch-action:manipulation;}
+html[data-educa-platform="web"] #chatView .fc-nav small{
+ color:#617387!important;background:#eef3f9!important;border-color:#dce7f3!important;
+}
+html[data-educa-platform="web"] #chatView .fc-scroll{background:#f6f8fb!important;}
+html[data-educa-platform="web"] #chatView .fc-pane h2 {color:#203249!important;}
+html[data-educa-platform="web"] #chatView .fc-number {color:#5f7287!important;}
+html[data-educa-platform="web"] #chatView .fc-unsaved {
+ background:#e9f0f8!important;color:#45617b!important;
+}
+html[data-educa-platform="web"] #chatView .fc-big-avatar{
+ background:#e8eff8!important;box-shadow:0 0 0 4px #fff,0 2px 14px #15325b19;
+}
+html[data-educa-platform="web"] #chatView .fc-shortcuts button {
+ color:#2b4258!important;min-height:59px!important;touch-action:manipulation!important;
+}
+html[data-educa-platform="web"] #chatView .fc-shortcuts b{
+ color:#1970bc!important;background:#fff!important;border-color:#dbe5ef!important;
+ box-shadow:0 1px 5px #18395c15!important;
+}
+html[data-educa-platform="web"] #chatView .fc-group {
+ background:#fff!important;border:1px solid #e1e8f1!important;
+ box-shadow:0 2px 10px #1e385a0a!important;
+}
+html[data-educa-platform="web"] #chatView .fc-group button {
+ color:#25384f!important;background:#fff!important;border-bottom-color:#edf1f6!important;
+ min-height:51px!important;touch-action:manipulation!important;
+}
+html[data-educa-platform="web"] #chatView .fc-group button small{color:#5b6e85!important;}
+html[data-educa-platform="web"] #chatView .fc-group button b{color:#8a9aab!important;}
+html[data-educa-platform="web"] #chatView .fc-group button.fc-danger{color:#b82a43!important;}
+html[data-educa-platform="web"] #chatView .fc-group button:hover,
+html[data-educa-platform="web"] #chatView .fc-group button:focus-visible{background:#eef6ff!important;}
+html[data-educa-platform="web"] #chatView .fc-hint,
+html[data-educa-platform="web"] #chatView .fc-photo-view p,
+html[data-educa-platform="web"] #chatView .fc-outgoing-status{color:#63768b!important;}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="search"] label{color:#283e53!important;}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="search"] input{
+ color:#20384c!important;background:#fff!important;border-color:#cad8e7!important;font-size:16px!important;
+}
+html[data-educa-platform="web"] #chatView .fc-search-results button{
+ background:#fff!important;border-color:#d9e4ef!important;color:#263b55!important;
+}
+html[data-educa-platform="web"] #chatView #fcMediaPhoto {background:#edf3f9!important;}
+html[data-educa-platform="web"] #chatView .fc-photo-view{background:#f6f8fb!important;}
+html[data-educa-platform="web"] #chatView .fc-status{
+ background:#e4f6ed!important;color:#165e43!important;border-top:1px solid #c3e8d5!important;
+}
+html[data-educa-platform="web"] #chatView .fc-menu{
+ background:#fff!important;color:#28394d!important;border:1px solid #dce5ed!important;
+ box-shadow:0 10px 28px #17324d2b!important;
+}
+html[data-educa-platform="web"] #chatView .fc-menu button{
+ color:#28394d!important;min-height:44px!important;touch-action:manipulation;
+}
+html[data-educa-platform="web"] #chatView .fc-menu button:hover,
+html[data-educa-platform="web"] #chatView .fc-menu button:focus-visible{background:#ebf4ff!important;}
+html[data-educa-platform="web"] #chatView .fc-outgoing-image{background:#e7f0f8!important;}
+html[data-educa-platform="web"] #chatView .fc-hangup {background:#b52c3c!important;color:#fff!important;}
+/* O modo claro padrão do WhatsApp prevalece sobre a preferência escura do sistema.
+   O botão explícito de tema da conversa continua funcionando quando selecionado. */
+html[data-educa-platform="web"] #whatsappView,
+html[data-educa-platform="web"] #waSettingsView{color-scheme:light!important;}
+/* Superfície comum dos aplicativos Web: não herdar modo escuro do telefone. */
+html[data-educa-platform="web"] #webRealView,
+html[data-educa-platform="web"] #webRealView #webRealBody,
+html[data-educa-platform="web"] #webRealView .webv-app{
+ color-scheme:light!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app {
+ background:#f7f9fd!important;color:#203149!important;padding:0!important;
+ display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView.webv-active .webreal-header{
+ background:#fff!important;border-color:#e2e9f2!important;
+}
+html[data-educa-platform="web"] #webRealView.webv-active .webreal-header :is(strong,small) {
+ color:#293e58!important;
+}
+html[data-educa-platform="web"] #webRealView.webv-active #webRealBody{
+ background:#f7f9fd!important;padding:0!important;overflow:hidden!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app *{box-sizing:border-box;}
+html[data-educa-platform="web"] #webRealView .webv-app button,
+html[data-educa-platform="web"] #webRealView .webv-app input{
+ font-family:inherit;touch-action:manipulation;
+}
+html[data-educa-platform="web"] #webRealView .webv-app button{
+ min-height:44px;border:0;color:inherit;background:transparent;cursor:pointer;
+}
+html[data-educa-platform="web"] #webRealView .webv-app :is(button,input,textarea):focus-visible{
+ outline:3px solid #1b75d0;outline-offset:1px;
+}
+html[data-educa-platform="web"] #webRealView .webv-app input{
+ background:#fff;color:#27364b;border:1px solid #d3dfeb;
+ min-height:44px;padding:10px 12px;border-radius:13px;font-size:16px;
+}
+html[data-educa-platform="web"] #webRealView .webv-app input::placeholder{color:#728296;opacity:1;}
+html[data-educa-platform="web"] #webRealView .webv-app h2,
+html[data-educa-platform="web"] #webRealView .webv-app h3,
+html[data-educa-platform="web"] #webRealView .webv-app strong{color:#22354e;}
+html[data-educa-platform="web"] #webRealView .webv-scroll{
+ flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;
+ -webkit-overflow-scrolling:touch;touch-action:pan-y;padding:13px 12px 24px;
+}
+html[data-educa-platform="web"] #webRealView .webv-head{
+ display:flex;gap:8px;align-items:center;justify-content:space-between;
+ padding:10px 12px;background:#fff;border-bottom:1px solid #e5ebf4;flex:0 0 auto;
+}
+html[data-educa-platform="web"] #webRealView .webv-head h2{
+ font-size:19px;margin:0;letter-spacing:-.4px;
+}
+html[data-educa-platform="web"] #webRealView .webv-head button.webv-icon-btn{
+ min-width:44px;min-height:44px;color:#32648f;border-radius:12px;background:#eef4fa;
+ font-size:21px;
+}
+html[data-educa-platform="web"] #webRealView .webv-note{
+ font-size:11px;line-height:1.5;margin:7px 0 11px;color:#60738b;
+}
+html[data-educa-platform="web"] #webRealView .webv-search{
+ display:flex;align-items:center;gap:7px;padding:9px 11px;background:#fff;
+ border-bottom:1px solid #e8edf4;
+}
+html[data-educa-platform="web"] #webRealView .webv-search input{flex:1;min-width:0;}
+html[data-educa-platform="web"] #webRealView .webv-search button{
+ flex:0 0 auto;background:#e9f2ff;color:#165da6;border-radius:12px;
+ padding:8px 11px;font-size:12px;font-weight:750;
+}
+html[data-educa-platform="web"] #webRealView .webv-tabs{
+ flex:0 0 61px;display:flex;justify-content:space-around;align-items:center;
+ background:#fff;border-top:1px solid #e0e7f0;padding:2px 3px;
+}
+html[data-educa-platform="web"] #webRealView .webv-tabs button{
+ display:flex;flex:1;align-items:center;justify-content:center;flex-direction:column;
+ gap:2px;font-size:11px;min-width:0;min-height:48px;color:#64768b;
+}
+html[data-educa-platform="web"] #webRealView .webv-tabs button[aria-current="page"] {
+ color:#1665b5;font-weight:760;
+}
+html[data-educa-platform="web"] #webRealView .webv-tabs button span{font-size:20px;}
+html[data-educa-platform="web"] #webRealView .webv-primary{
+ background:#1a6ac3!important;color:#fff!important;border-radius:12px!important;
+ padding:10px 14px!important;font-weight:750;font-size:13px;
+}
+html[data-educa-platform="web"] #webRealView .webv-secondary{
+ background:#ecf3fb!important;color:#1a5d9e!important;border-radius:12px!important;
+ padding:10px 13px!important;border:1px solid #dbe5f3!important;
+}
+/* YouTube simulado: cards claros e seção de aula sem player falsificado. */
+html[data-educa-platform="web"] #webRealView .webv-chips{
+ display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:0 0 auto;
+ padding:9px 11px;background:#fff;border-bottom:1px solid #f0f3f8;
+}
+html[data-educa-platform="web"] #webRealView .webv-chips button{
+ flex:0 0 auto;min-height:35px;padding:6px 13px;border-radius:22px;
+ background:#eef2f8;color:#415773;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webv-chips button.active{background:#203955;color:#fff;}
+html[data-educa-platform="web"] #webRealView .webv-video-card {
+ display:block;width:100%;padding:0;margin:0 0 13px;text-align:left;
+ border:1px solid #e2eaf3!important;border-radius:16px;
+ background:#fff!important;overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView .webv-video-art {
+ height:116px;position:relative;display:flex;align-items:center;justify-content:center;
+ background:linear-gradient(135deg,#deecff,#c4dcff);color:#215895;font-size:32px;
+}
+html[data-educa-platform="web"] #webRealView .webv-video-art.wv-green{background:linear-gradient(125deg,#d8f5e8,#b2e6d2);color:#196f59;}
+html[data-educa-platform="web"] #webRealView .webv-video-art.wv-rose{background:linear-gradient(125deg,#ffe5e8,#f9c5d3);color:#a33b5b;}
+html[data-educa-platform="web"] #webRealView .webv-video-art small{
+ position:absolute;right:9px;bottom:7px;padding:4px 6px;background:#ffffffdf;color:#27364a;
+ font-size:10px;font-weight:700;border-radius:6px;
+}
+html[data-educa-platform="web"] #webRealView .webv-video-copy{
+ display:flex;flex-direction:column;padding:11px 12px;gap:4px;color:#203149;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webv-video-copy strong{font-size:13px;line-height:1.35;}
+html[data-educa-platform="web"] #webRealView .webv-video-copy small{font-size:11px;color:#6a7c90;}
+html[data-educa-platform="web"] #webRealView .webv-lesson{
+ border-radius:18px;background:#fff;border:1px solid #e2e8f0;overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView .webv-lesson .webv-video-art{height:170px;}
+html[data-educa-platform="web"] #webRealView .webv-lesson-content{padding:15px;line-height:1.55;}
+html[data-educa-platform="web"] #webRealView .webv-lesson-content h3{font-size:18px;margin:0 0 8px;}
+html[data-educa-platform="web"] #webRealView .webv-lesson-content p,
+html[data-educa-platform="web"] #webRealView .webv-lesson-content li{
+ color:#465d76;font-size:12px;line-height:1.55;
+}
+html[data-educa-platform="web"] #webRealView .webv-lesson-content ul{padding-left:18px;}
+html[data-educa-platform="web"] #webRealView .webv-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px;}
+/* Maps demonstrativo: mapa esquemático, nunca posição ou rotas reais. */
+html[data-educa-platform="web"] #webRealView .webv-map-surface{
+ position:relative;height:205px;flex:0 0 205px;overflow:hidden;
+ background:linear-gradient(110deg,#e1f4e9 0 29%,#eff4ec 29% 51%,#e2f0e9 51%),
+ repeating-linear-gradient(0deg,transparent 0 19px,#cbd7d2 20px 23px);
+ border-bottom:1px solid #cfdeda;
+}
+html[data-educa-platform="web"] #webRealView .webv-map-surface::before{
+ content:"";position:absolute;inset:-40px;transform:rotate(-18deg);
+ background:repeating-linear-gradient(90deg,transparent 0 57px,#fff 58px 68px,transparent 69px 93px),
+ repeating-linear-gradient(0deg,transparent 0 49px,#fff 50px 61px,transparent 62px 86px);
+ pointer-events:none;
+}
+html[data-educa-platform="web"] #webRealView .webv-map-surface::after{
+ content:"MAPA ILUSTRATIVO";position:absolute;bottom:7px;left:10px;
+ color:#64798c;font-size:10px;font-weight:850;letter-spacing:.04em;pointer-events:none;
+}
+html[data-educa-platform="web"] #webRealView .webv-map-marker{
+ position:absolute;z-index:2;display:flex;align-items:center;justify-content:center;
+ border-radius:50%!important;width:40px;min-width:40px!important;height:40px;min-height:40px!important;
+ background:#fff!important;color:#1768ac!important;border:2px solid #2e77ad!important;
+ box-shadow:0 2px 9px #1d4b7440;font-size:18px;transform:translate(-50%,-50%);
+}
+html[data-educa-platform="web"] #webRealView .webv-map-marker.active{
+ background:#1768ac!important;color:#fff!important;outline:3px solid #fff!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-map-marker[data-spot="library"]{top:36%;left:24%;}
+html[data-educa-platform="web"] #webRealView .webv-map-marker[data-spot="clinic"]{top:47%;left:69%;}
+html[data-educa-platform="web"] #webRealView .webv-map-marker[data-spot="park"]{top:72%;left:43%;}
+html[data-educa-platform="web"] #webRealView .webv-places{display:flex;flex-direction:column;gap:7px;}
+html[data-educa-platform="web"] #webRealView .webv-place-card {
+ width:100%;display:flex;align-items:center;gap:10px;padding:10px;
+ background:#fff!important;color:#273b52!important;
+ border:1px solid #dfe8f1!important;border-radius:14px;text-align:left;min-height:68px!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-place-card .webv-place-icon{
+ width:43px;height:43px;flex:0 0 43px;border-radius:12px;background:#eef6ff;
+ color:#2365a2;display:grid;place-items:center;font-size:21px;
+}
+html[data-educa-platform="web"] #webRealView .webv-place-card span:nth-child(2){
+ flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;
+}
+html[data-educa-platform="web"] #webRealView .webv-place-card small{font-size:11px;color:#657990;}
+html[data-educa-platform="web"] #webRealView .webv-place-detail{
+ margin:8px 0 12px;padding:12px;border-radius:15px;background:#e9f3ff;color:#344b68;
+ border:1px solid #d7e6f9;
+}
+html[data-educa-platform="web"] #webRealView .webv-place-detail h3{margin:0 0 7px;font-size:15px;}
+html[data-educa-platform="web"] #webRealView .webv-place-detail p{font-size:12px;line-height:1.5;}
+/* Agenda: mês/dia, eventos locais e formulário legível com o teclado iOS. */
+html[data-educa-platform="web"] #webRealView .webv-cal-controls{
+ display:flex;gap:5px;align-items:center;justify-content:space-between;
+ padding:8px 10px;background:#fff;border-bottom:1px solid #e7edf5;
+}
+html[data-educa-platform="web"] #webRealView .webv-cal-controls button{
+ min-width:41px;border-radius:10px!important;background:#edf4fd!important;color:#2366aa!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-cal-controls strong{font-size:13px;}
+html[data-educa-platform="web"] #webRealView .webv-calendar-grid{
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;
+ background:#fff;border:1px solid #e5ebf2;border-radius:15px;padding:8px 5px;margin-bottom:12px;
+}
+html[data-educa-platform="web"] #webRealView .webv-calendar-grid .webv-weekday{
+ display:grid;place-items:center;min-height:23px;font-size:10px;color:#789;font-weight:750;
+}
+html[data-educa-platform="web"] #webRealView .webv-calendar-grid button{
+ border-radius:10px;font-size:12px;min-height:39px!important;position:relative;color:#2d4057;
+}
+html[data-educa-platform="web"] #webRealView .webv-calendar-grid button[aria-pressed="true"]{
+ background:#226ac1!important;color:#fff!important;font-weight:800;
+}
+html[data-educa-platform="web"] #webRealView .webv-calendar-grid button.webv-has-event::after{
+ content:"";position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+ width:4px;height:4px;border-radius:50%;background:#29a66f;
+}
+html[data-educa-platform="web"] #webRealView .webv-calendar-grid button[aria-pressed="true"]::after{background:#fff;}
+html[data-educa-platform="web"] #webRealView .webv-event-card{
+ padding:10px 12px;border-left:3px solid #2575c8;border-radius:10px;
+ background:#fff;border-top:1px solid #e3e9f0;border-right:1px solid #e3e9f0;border-bottom:1px solid #e3e9f0;
+ margin:7px 0;display:flex;gap:9px;align-items:center;
+}
+html[data-educa-platform="web"] #webRealView .webv-event-card div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+html[data-educa-platform="web"] #webRealView .webv-event-card small{color:#6b7e91;}
+html[data-educa-platform="web"] #webRealView .webv-event-card button{
+ min-width:44px;min-height:44px;color:#9b2e3d;
+}
+html[data-educa-platform="web"] #webRealView .webv-empty{
+ margin:12px 0;padding:15px;border-radius:12px;background:#f0f5fb;color:#62758a;
+ font-size:12px;line-height:1.5;
+}
+html[data-educa-platform="web"] #webRealView .webv-event-form{
+ display:flex;flex-direction:column;gap:9px;background:#fff;padding:12px;border-radius:15px;
+ border:1px solid #e1e9f1;
+}
+html[data-educa-platform="web"] #webRealView .webv-event-form label{
+ display:flex;flex-direction:column;gap:5px;font-size:12px;color:#475f79;font-weight:710;
+}
+html[data-educa-platform="web"] #webRealView .webv-event-form input{width:100%;min-width:0;}
+html[data-educa-platform="web"] #webRealView .webv-day-list{
+ display:flex;flex-direction:column;gap:7px;
+}
+html[data-educa-platform="web"] #webRealView .webv-day-hour {
+ display:flex;align-items:start;gap:11px;min-height:41px;
+ border-bottom:1px solid #e5ebf2;padding:7px 2px;font-size:12px;color:#718299;
+}
+html[data-educa-platform="web"] #webRealView .webv-day-hour>span{flex:0 0 42px;}
+html[data-educa-platform="web"] #webRealView .webv-day-hour>strong{
+ background:#dcebff;border-radius:8px;padding:7px;color:#1b588c;flex:1;min-width:0;
+}
+@media(max-width:365px) {
+ html[data-educa-platform="web"] #webRealView .webv-head{padding:8px;}
+ html[data-educa-platform="web"] #webRealView .webv-scroll{padding:9px;}
+ html[data-educa-platform="web"] #webRealView .webv-video-art{height:98px;}
+ html[data-educa-platform="web"] #webRealView .webv-map-surface{height:175px;flex-basis:175px;}
+ html[data-educa-platform="web"] #chatView .fc-scroll{padding:10px;}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-educa-platform="web"] #webRealView .webv-app *{transition:none!important;animation:none!important;}
+}
