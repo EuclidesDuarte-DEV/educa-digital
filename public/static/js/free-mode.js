@@ -201,7 +201,7 @@ function finish(kind='safe',reason=''){
  }
  clearRequest();video()?.close?.();stopVoice();
  if(safe)state.finished++;
- if(SCRIPTED_ORDER.includes(s.id)||BONUS_ORDER.includes(s.id))state.completedSteps.add(s.id);
+ if(SCRIPTED_ORDER.includes(s.id)||BONUS_ORDER.includes(s.id)||(isWebTraining()&&s.id==='family-photo'))state.completedSteps.add(s.id);
  state.blocked=true;state.pending=null;clearTimeout(state.timer);state.timer=null;
  if(els.notice)els.notice.hidden=true;
  const summaryView=$('#freeSummaryView');
