@@ -16,7 +16,8 @@ export function hqWebVoiceStatus(env){
  const enabled=env?.LIA_WEB_HQ_TTS_ENABLED==='true'&&(eleven||grok);
  return {ok:true,enabled,language:'pt-BR',voice:enabled?(eleven?'voz-pt-BR-configurada':'ara'):'desativado',
   provider:enabled?(eleven?'elevenlabs-flash-v2.5':'grok-tts'):'desativado',
-  note:enabled?'Voz online de terceiros; a reprodução pode gerar cobrança por caracteres.':
+  verified:false,
+  note:enabled?'Serviço configurado, mas geração de áudio ainda requer teste real e pode consumir créditos.':
    'Voz natural online desativada; alternativa gratuita imediata do aparelho.'};
 }
 function allowedMediaURL(url){
@@ -41,7 +42,7 @@ async function elevenLabsFlash(text,env){
  const id=String(env.LIA_ELEVENLABS_VOICE_ID);
  const url='https://api.elevenlabs.io/v1/text-to-speech/'+encodeURIComponent(id)+
   '/stream?output_format=mp3_44100_128';
- const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),4500);
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),10000);
  try{
   const res=await fetch(url,{method:'POST',redirect:'error',signal:ctrl.signal,
    headers:{'xi-api-key':env.LIA_ELEVENLABS_API_KEY,'Content-Type':'application/json',
@@ -50,15 +51,27 @@ async function elevenLabsFlash(text,env){
     voice_settings:{stability:0.46,similarity_boost:0.82,style:0,
      use_speaker_boost:false,speed:1.04}})
   });
-  if(!res.ok||!res.body||!String(res.headers.get('content-type')||'').includes('audio/'))
-   return reject(502,'Serviço de voz natural indisponível.');
+  // V112.05: informar apenas a categoria HTTP, nunca resposta de terceiro,
+  // credenciais ou texto de conversa. O painel e a UI exibem o diagnóstico
+  // em vez de trocar silenciosamente para a voz robótica do navegador.
+  if(!res.ok){
+   const reason={
+    400:'Requisição de voz rejeitada',401:'Chave ElevenLabs não autorizada',
+    402:'Plano ou créditos ElevenLabs insuficientes para esta voz',
+    403:'Acesso à voz negado pela ElevenLabs',404:'Voz Roberta não disponível para esta conta',
+    422:'Configuração de voz rejeitada',429:'Limite de geração ElevenLabs atingido'
+   }[res.status]||'Serviço de voz ElevenLabs indisponível';
+   return reject(502,reason+' (HTTP '+res.status+').');
+  }
+  if(!res.body||!String(res.headers.get('content-type')||'').includes('audio/'))
+   return reject(502,'ElevenLabs não retornou áudio MP3.');
   const size=Number(res.headers.get('content-length')||0);
   if(size>2000000)return reject(502,'Áudio acima do limite seguro.');
   // Entrega o fluxo MP3 à Web sem criar nem guardar arquivos de conversas.
   // A chamada não lê o corpo todo no Worker.
   return new Response(res.body,{status:200,headers:{...HEAD,
    'Content-Type':'audio/mpeg','Vary':'Origin'}});
- }catch(_){return reject(503,'Voz natural não respondeu. Usando voz do aparelho.');}
+ }catch(_){return reject(503,'ElevenLabs não respondeu no tempo esperado.');}
  finally{clearTimeout(timer);}
 }
 export async function webHQVoice(request,env){
