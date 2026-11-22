@@ -454,3 +454,11 @@ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webr
  .free-event-notice:not([hidden]) * {
  pointer-events:none!important;
 }
+
+/* Feedback do app (foto salva/erro) é informativo, não uma janela modal.
+   Nunca deve bloquear os botões da Fototeca nem os controles da Câmera. */
+html[data-educa-platform="web"] #webRealView #webRealStatus:not([hidden]) {
+ pointer-events:none!important;
+ max-height:min(84px,20%)!important;
+ overflow:hidden!important;
+}
