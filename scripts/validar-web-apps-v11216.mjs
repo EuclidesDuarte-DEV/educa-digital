@@ -56,6 +56,7 @@ try{
    await page.locator('[data-webx="photo-tab"][data-value="library"]').click();
    await page.locator('[data-webx="photo-open"]').click();
    assert.equal(await page.locator('.webx-photo-stage img').count(),1);
+   await page.waitForFunction(()=>document.querySelector('.webx-photo-stage img')?.naturalWidth>0,null,{timeout:4000});
    const photo=await page.locator('.webx-photo-stage img').evaluate(img=>({naturalWidth:img.naturalWidth,width:img.getBoundingClientRect().width}));
    assert.ok(photo.naturalWidth>0&&photo.width>0);
    await page.locator('[data-webx="photo-back"]').click();
