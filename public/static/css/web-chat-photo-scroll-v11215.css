@@ -1,0 +1,101 @@
+/* V112.15 — Web somente.
+   Foto HD preservada no arquivo e no zoom do perfil, mas balão compacto no WhatsApp.
+   A rolagem do chat não deve capturar o gesto que precisa alcançar o teclado do site. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #chatWallpaper .message.incoming.free-training-photo {
+  width:min(58%,168px)!important;
+  max-width:calc(100% - 30px)!important;
+  height:auto!important;
+  padding:5px 5px 7px!important;
+  margin:7px auto 9px 0!important;
+  overflow:hidden!important;
+  box-sizing:border-box!important;
+  white-space:normal!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #chatWallpaper .free-training-photo img {
+  display:block!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:134px!important;
+  max-height:134px!important;
+  aspect-ratio:5/4!important;
+  object-fit:cover!important;
+  object-position:center 34%!important;
+  border-radius:8px;
+  cursor:zoom-in!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #chatWallpaper .free-training-photo small {
+  font-size:clamp(10px, var(--ed-chat-note,11px), 13px)!important;
+  line-height:1.25!important;
+  padding:5px 2px 0!important;
+  white-space:normal!important;
+}
+/* O chat completo deve caber DENTRO do vidro do celular; o scroll fica só nas mensagens. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView {
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #chatView .chat-surface {
+  display:grid!important;
+  grid-template-rows:minmax(55px,auto) minmax(0,1fr) auto auto!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:100%!important;
+  width:100%!important;
+  inset:0!important;
+  overflow:hidden!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #chatWallpaper {
+  min-height:0!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  touch-action:pan-y!important;
+  overscroll-behavior-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+  scroll-padding-bottom:14px;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #freeOriginalComposer:not([hidden]) {
+  display:flex!important;
+  grid-column:1;
+  grid-row:4;
+  position:relative!important;
+  min-height:60px!important;
+  z-index:36;
+  overflow:visible;
+  visibility:visible!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #freeOriginalInput {
+  min-width:0!important;
+  min-height:44px!important;
+  font-size:max(16px,var(--ed-chat-input,16px))!important; /* Safari sem zoom, respeita letras maiores. */
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+ #freeOriginalSend {
+  flex-shrink:0!important;
+  min-width:44px!important;
+  min-height:44px!important;
+}
+@media(max-height:680px) {
+ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+  #chatWallpaper .free-training-photo img {
+   height:112px!important;
+   max-height:112px!important;
+ }
+ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
+  #chatWallpaper .message.incoming.free-training-photo {
+   width:min(54%,150px)!important;
+ }
+}
