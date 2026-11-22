@@ -10,7 +10,7 @@ test('V109 tem uma tela única de recursos reais sem substituir o Android origin
  assert.match(html,/data-view="webreal"/);
  assert.match(html,/data-view="whatsapp"/);
  assert.match(html,/data-view="chat"/);
- assert.match(html,/web-real\.js\?v=109/);
+ assert.match(html,/web-real\.js\?v=(?:109|11219)/);
  assert.match(js,/isFree\(\)/);
 });
 test('Camera solicita permissão e termina tracks ao sair',()=>{
