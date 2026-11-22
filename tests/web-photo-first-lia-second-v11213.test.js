@@ -36,7 +36,7 @@ test('V112.13 — Web inicia com foto do falso familiar e depois a LIA em videoc
  assert.match(free,/Próximo: videochamada com a LIA/);
  assert.match(free,/\['family','family-photo'\]\.includes\(s\.id\)&&next\?\.id==='video'/);
  assert.match(free,/if\(next\?\.id==='video'\)\{[\s\S]*?video\(\)\.incoming\(next\)/);
- assert.match(html,/free-mode\.js\?[^"]*&familyphoto=11212&flow=11213/);
+ assert.match(html,/free-mode\.js\?[^"]*&familyphoto=11212&flow=11214/);
 });
 test('V112.13 — Android e iOS preservam família antiga como primeiro desafio',()=>{
  assert.equal(next(false),'family');
