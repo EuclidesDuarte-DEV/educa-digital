@@ -6,7 +6,7 @@ if(document.documentElement.dataset.educaPlatform!=='web')return;
 const $=(s,root=document)=>root.querySelector(s);
 const chat=$('#chatView'),surface=$('#chatView .chat-surface');
 if(!chat||!surface)return;
-const PHOTO='/static/img/free-family-photo-v11214.avif';
+const PHOTO='/static/img/free-family-photo-v11214.webp';
 const FALLBACK='/static/img/free-family-photo-v11212.jpg';
 const webScenario=()=>window.EducaFreeMode?.isActive?.()&&window.EducaFreeMode?.currentScenario?.()==='family-photo'&&$('#phoneScreen')?.dataset.currentView==='chat';
 let current='profile',previous='profile',mute=false,favorite=false,theme='light',temp='Desativadas',focusBefore=null;
