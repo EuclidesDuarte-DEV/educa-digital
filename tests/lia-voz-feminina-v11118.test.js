@@ -16,7 +16,7 @@ test('V111.52 prioriza voz feminina Kokoro na videochamada',()=>{
  // acrescenta voz neural brasileira grátis sem alterar o contrato nativo.
  assert.match(js,/const selectedEngine=\(\)=>\{/);
  assert.match(js,/return voiceEngine\?\.value==='padrao'\?'padrao':'feminina'/);
- assert.match(js,/educaPlatform==='web'&&voiceEngine\?\.value==='gratuita'/);
+ assert.match(js,/return voiceEngine\?\.value==='padrao'\?'padrao':'gratuita'/);
 });
 test('Worker valida a opção de voz e não permite parâmetros arbitrários',()=>{
  assert.match(worker,/\['feminina','padrao'\]/);

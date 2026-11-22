@@ -28,7 +28,7 @@ test('V112.01 — Web esconde as duas opções sem desativar os controles nativo
 });
 
 function makeStart(platform='web',neuralLatency=null){
- const audio=[],kokoro=[],progress=[];
+ const audio=[],kokoro=[],dora=[],progress=[];
  const session={serial:1,active:true,connected:true,waiting:false,renderReady:false,
   teamCode:'',fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,utterance:null,motorPending:null,hqVoiceEnabled:false};
  const browser={isReady:()=>neuralLatency!==null,getDiagnostics:()=>({lastSynthesisMs:neuralLatency}),
@@ -37,32 +37,36 @@ function makeStart(platform='web',neuralLatency=null){
   EducaLiaBrowserKokoro:browser,EducaLiaVoice:{choose:()=>null,waitForFemale:async()=>null},
   location:{protocol:'https:'}};
  const context={window,document:{documentElement:{dataset:{educaPlatform:platform}}},
- session,selectedEngine:()=>'feminina',selectedStyle:()=>'natural',
+ session,selectedEngine:()=>platform==='web'?'gratuita':'feminina',selectedStyle:()=>'natural',
  showVoiceProgress:x=>progress.push(x),audioOnly:(text)=>audio.push(text),
  playBrowserKokoro:text=>{kokoro.push(text);return Promise.resolve(true);},
+ playFreeNeuralVoice:text=>{dora.push(text);return Promise.resolve(true);},
  indicator(){},status(){},Promise,setTimeout,clearTimeout};
  const fn=vm.runInNewContext(slice('function startSpeechChunk(phrase,serial){','function speak(text){')+';startSpeechChunk;',context);
- return {fn,session,audio,kokoro,progress};
+ return {fn,session,audio,kokoro,dora,progress};
 }
 
-test('V112.01 — Safari Web fala sem esperar o download do Kokoro e sem voz cadastrada',()=>{
+test('V112.07 — Safari Web usa Dora neural e nunca voz robótica sem seleção manual',()=>{
  const t=makeStart('web');
  t.fn('Oi, sou a Lia.',1);
- assert.deepEqual(t.audio,['Oi, sou a Lia.']);
+ assert.equal(t.audio.length,0);
+ assert.deepEqual(t.dora,['Oi, sou a Lia.']);
  assert.equal(t.kokoro.length,0);
- assert.equal(t.session.fastVoiceSerial,1);
- assert.ok(!t.progress.some(x=>x.includes('preparando voz oficial')));
+ assert.equal(t.session.fastVoiceSerial,-1);
+ assert.ok(t.progress.some(x=>x.includes('Dora neural gratuita')));
 });
 
-test('V112.01 — Kokoro Web só tem prioridade se desempenho real comprovado',async()=>{
+test('V112.07 — Dora neural Web funciona sem depender de Kokoro pesado',async()=>{
  const ready=makeStart('web',2000);
  ready.fn('Olá.',1);
  await Promise.resolve();
  assert.equal(ready.audio.length,0);
- assert.equal(ready.kokoro.length,1);
+ assert.equal(ready.dora.length,1);
+ assert.equal(ready.kokoro.length,0);
  const slow=makeStart('web',9000);
  slow.fn('Olá.',1);
- assert.equal(slow.audio.length,1);
+ assert.equal(slow.audio.length,0);
+ assert.equal(slow.dora.length,1);
  assert.equal(slow.kokoro.length,0);
 });
 

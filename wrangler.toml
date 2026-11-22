@@ -33,15 +33,11 @@ LIA_NEURAL_AUTO_SETUP = "true"
 LIA_NEURAL_LIBRARY_BOOTSTRAP = "true"
 # Trechos são opt-in separado, não gravação automática de chats.
 LIA_EXAMPLES_ENABLED = "true"
-# V112.03: Roberta, voz feminina brasileira aprovada para a LIA Web.
-# O ID é público; a chave ElevenLabs deve ser um SECRET no Worker.
-# Web oficial: recurso preparado, só opera quando o segredo de API está instalado.
-# A chave fica EXCLUSIVAMENTE no Secret LIA_ELEVENLABS_API_KEY da Cloudflare.
-# Sem o segredo, GET /api/lia/voz-web/status permanece enabled:false.
-# Usar apenas uma chave ElevenLabs restrita a TTS, com limite de créditos.
+# V112.07: Roberta/ElevenLabs DESATIVADA na Web e em quaisquer endpoints.
+# A voz neural Dora roda no navegador, sem terceiros e sem cobrança por fala.
+# Um segredo antigo no painel Cloudflare não habilita a ElevenLabs sem esta flag.
 LIA_WEB_HQ_TTS_PROVIDER = "elevenlabs"
-LIA_ELEVENLABS_VOICE_ID = "RGymW84CSmfVugnA5tvA"
-LIA_WEB_HQ_TTS_ENABLED = "true"
+LIA_WEB_HQ_TTS_ENABLED = "false"
 
 # Ambiente isolado para Pull Requests / Workers Previews.
 # Nao usar o banco D1 de producao nos previews.
@@ -65,9 +61,6 @@ LIA_NEURAL_AUTO_SETUP = "true"
 LIA_NEURAL_LIBRARY_BOOTSTRAP = "true"
 # Trechos são opt-in separado, não gravação automática de chats.
 LIA_EXAMPLES_ENABLED = "true"
-# V112.03: Roberta, voz feminina brasileira aprovada para a LIA Web.
-# O ID é público; a chave ElevenLabs deve ser um SECRET no Worker.
-# Mantém geração com custo desligada até instalar a chave e liberar uso.
+# V112.07: geração paga também desligada no Preview.
 LIA_WEB_HQ_TTS_PROVIDER = "elevenlabs"
-LIA_ELEVENLABS_VOICE_ID = "RGymW84CSmfVugnA5tvA"
 LIA_WEB_HQ_TTS_ENABLED = "false"

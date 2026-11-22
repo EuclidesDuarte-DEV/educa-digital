@@ -56,11 +56,14 @@ test('V112.05 — longer deadline and no robotic TTS on neural failure',()=>{
  assert.match(server,/setTimeout\(\(\)=>ctrl\.abort\(\),10000\)/);
  const branch=video.split('function startSpeechChunk(phrase,serial)')[1]
    .split('// V112.01 — Somente Web:')[0];
- assert.match(branch,/session\.hqVoiceFailedSerial=serial/);
- assert.match(branch,/Tentar Roberta novamente/);
- assert.doesNotMatch(branch,/audioOnly\(phrase,serial\)/);
- assert.match(page,/Testar a voz natural da Roberta/);
+ assert.match(branch,/playFreeNeuralVoice\(phrase,serial\)/);
+ assert.match(branch,/Tentar voz neural gratuita/);
+ assert.doesNotMatch(branch,/Tentar Roberta novamente/);
+ assert.match(branch,/if\(selectedEngine\(\)==='padrao'\)\{/);
+ assert.match(branch,/audioOnly\(phrase,serial\);return/);
+ assert.match(page,/A Roberta foi retirada da LIA Web/);
  assert.match(html,/free-video\.js\?v=11191[^\"]*&robertareal=11205/);
- assert.match(page,/api\/lia\/voz-web\/speak/);
+ assert.doesNotMatch(page,/api\/lia\/voz-web\/speak/);
+ assert.match(page,/testar-voz-neural-gratis\.html/);
  assert.doesNotMatch(page,/xi-api-key|LIA_ELEVENLABS_API_KEY/);
 });
