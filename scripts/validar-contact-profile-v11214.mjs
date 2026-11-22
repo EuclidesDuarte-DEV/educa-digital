@@ -42,6 +42,12 @@ try {
    const report=overlay.locator('[data-fc="report"]');
    await report.scrollIntoViewIfNeeded();
    assert.equal(await report.isVisible(),true,name+': denunciar não alcançável');
+   // Opções adicionais vistas no vídeo: demonstrativas, mas clicáveis.
+   for(const action of ['storage','save','transcribe','lock','restricted','encryption','group','share']){
+    await overlay.locator('[data-fc="'+action+'"]').click();
+    const message=await overlay.locator('#fcStatus').innerText();
+    assert.ok(message.length>25,name+': opção '+action+' não explicou a simulação');
+   }
    await overlay.locator('[data-fc="media"]').click();
    assert.equal(await overlay.locator('[data-pane="media"]').isVisible(),true);
    await overlay.locator('#fcMediaPhoto').click();
