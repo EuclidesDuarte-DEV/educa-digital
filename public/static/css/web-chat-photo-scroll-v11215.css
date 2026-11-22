@@ -80,7 +80,7 @@ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat
  #freeOriginalInput {
   min-width:0!important;
   min-height:44px!important;
-  font-size:16px!important; /* iOS Safari: evitar zoom automático ao focar. */
+  font-size:max(16px,var(--ed-chat-input,16px))!important; /* Safari sem zoom, respeita letras maiores. */
 }
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
  #freeOriginalSend {
