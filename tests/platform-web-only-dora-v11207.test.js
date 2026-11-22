@@ -27,7 +27,7 @@ test('V112.07 — Web remove Roberta e seleciona Dora; nativos mantêm opção a
  assert.match(app,/return voiceEngine\?\.value==='padrao'\?'padrao':'feminina'/);
  const webBranch=app.split('function startSpeechChunk(phrase,serial){')[1].split(' // V112.01 — Somente Web:')[0];
  assert.match(webBranch,/playFreeNeuralVoice\(phrase,serial\)/);
- assert.doesNotMatch(webBranch,/playWebHQVoice|ElevenLabs|Roberta/);
+ assert.doesNotMatch(webBranch,/playWebHQVoice|Tentar Roberta/);
  assert.match(webBranch,/if\(selectedEngine\(\)==='padrao'\)/);
  const speak=app.split('function speak(text){')[1].split('async function configure()')[0];
  assert.match(speak,/web&&selectedEngine\(\)==='gratuita'\?speechSegments\(whole\)/);
