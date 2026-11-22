@@ -70,7 +70,7 @@ try{
    assert.match(await page.locator('.webx-mail-label strong').innerText(),/Caixa de entrada/);
    assert.ok(await page.locator('.webx-mail-row').count()>=3);
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-gmail-entrada.png'});
-   await page.locator('[data-webx="mail-menu"]').click();
+   await page.locator('.webx-mail-toolbar [data-webx="mail-menu"]').click();
    assert.equal(await page.locator('.webx-mail-drawer').isVisible(),true);
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-gmail-menu.png'});
    await page.locator('[data-webx="mail-folder"][data-value="promotions"]').first().click();
