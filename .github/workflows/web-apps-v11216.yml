@@ -1,0 +1,43 @@
+name: V112.16 — Fotos Gmail Mensagens Web
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/static/js/web-apps-v11216.js'
+      - 'public/static/css/web-apps-v11216.css'
+      - 'public/static/js/web-real.js'
+      - 'public/html/index.html'
+      - 'scripts/validar-web-apps-v11216.mjs'
+      - 'tests/web-apps-v11216.test.js'
+      - '.github/workflows/web-apps-v11216.yml'
+permissions:
+  contents: read
+jobs:
+  apps-web:
+    name: Interação Fotos Gmail SMS e Câmera no navegador
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Testes de lógica e privacidade
+        run: node --test tests/web-apps-v11216.test.js
+      - name: Preparar Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Testar Foto, Gmail, SMS e Camera em 3 resoluções
+        run: |
+          python3 -m http.server 8789 --directory public > /tmp/educa-web-apps-v11216.log 2>&1 &
+          node scripts/validar-web-apps-v11216.mjs
+      - name: Imagens da auditoria
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-apps-v11216-screens
+          path: artifacts/web-apps-v11216/
+          if-no-files-found: ignore
