@@ -63,9 +63,9 @@ try {
    const full=await overlay.locator('.fc-full-image').evaluate(img=>({w:img.naturalWidth,h:img.naturalHeight}));
    assert.ok(full.w>=500&&full.h>=600);
    await page.screenshot({path:'artifacts/contact-profile-v11214/'+name+'-foto.png'});
-   await overlay.locator('[data-fc="back"]').click();
+   await overlay.locator('.fc-nav [data-fc="back"]').click();
    assert.equal(await overlay.locator('[data-pane="media"]').isVisible(),true);
-   await overlay.locator('[data-fc="back"]').click();
+   await overlay.locator('.fc-nav [data-fc="back"]').click();
    await overlay.locator('[data-fc="favorite"]').click();
    assert.match(await overlay.locator('#fcFavorite').innerText(),/Adicionado/);
    await overlay.locator('[data-fc="mute"]').click();
@@ -80,8 +80,8 @@ try {
    assert.equal(await overlay.isVisible(),false);
    await img.click();
    assert.equal(await overlay.locator('[data-pane="photo"]').isVisible(),true);
-   await overlay.locator('[data-fc="back"]').click();
-   await overlay.locator('[data-fc="back"]').click();
+   await overlay.locator('.fc-nav [data-fc="back"]').click();
+   await overlay.locator('.fc-nav [data-fc="back"]').click();
    // Ícones do cabeçalho também abrem apenas uma chamada fictícia deste contato.
    for(const label of ['Ligação','Videochamada']){
     await page.locator('#chatView .chat-header-actions button[aria-label="'+label+'"]').click();
