@@ -59,7 +59,7 @@ test('V112.03 — API realmente endereça a voz Roberta e usa Flash v2.5',async(
 test('V112.03 — Safari aguarda brevemente o status para não começar robótico',()=>{
  assert.match(video,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
  assert.match(video,/await Promise\.race\(\[/);
- assert.match(video,/session\.hqVoiceCheck,new Promise\(resolve=>setTimeout\(resolve,650\)\)/);
+ assert.match(video,/session\.hqVoiceCheck,new Promise\(resolve=>setTimeout\(resolve,2000\)\)/);
  assert.match(video,/turn!==session\.serial\|\|!session\.active/);
  assert.match(video,/timeout=setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
  assert.match(video,/session\.hqVoiceFailedSerial=serial/);
