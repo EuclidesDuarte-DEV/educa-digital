@@ -58,7 +58,7 @@ test('V112.05 — longer deadline and no robotic TTS on neural failure',()=>{
  assert.match(branch,/session\.hqVoiceFailedSerial=serial/);
  assert.match(branch,/Tentar Roberta novamente/);
  assert.doesNotMatch(branch,/audioOnly\(phrase,serial\)/);
- assert.match(page,/testar-voz-roberta/i);
+ assert.match(page,/Testar a voz natural da Roberta/);
  assert.match(page,/api\/lia\/voz-web\/speak/);
  assert.doesNotMatch(page,/xi-api-key|LIA_ELEVENLABS_API_KEY/);
 });
