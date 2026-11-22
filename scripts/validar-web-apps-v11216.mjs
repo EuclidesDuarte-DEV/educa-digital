@@ -104,6 +104,13 @@ try{
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-sms-treino.png'});
    await page.locator('[data-webx="sms-back"]').click();
 
+   await page.evaluate(()=>window.EducaWebReal.openApp('camera'));
+   assert.equal(await page.locator('#webRealCameraVideo').count(),1);
+   assert.equal(await page.locator('[data-wr="camera-start"]').count(),1);
+   assert.equal(await page.locator('[data-wr="camera-capture"]').count(),1);
+   const shutter=await page.locator('[data-wr="camera-capture"]').evaluate(b=>({width:b.getBoundingClientRect().width,height:b.getBoundingClientRect().height}));
+   assert.ok(shutter.width>=55&&shutter.height>=55,tag+': botão capturar reduzido');
+   await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-camera.png'});
    console.log('OK '+tag+' — Fotos, Gmail e SMS navegáveis, com foto local, pesquisa e rascunho');
   }finally{await page.close();}
  }
