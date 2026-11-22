@@ -7,6 +7,7 @@
 const $=s=>document.querySelector(s);
 const SCENARIOS=[
  {id:'family',channel:'whatsapp',name:'Filho — número novo',icon:'F',intro:'Oi, sou o Rafael. Troquei de número. Preciso pagar uma conta urgente. Você consegue me mandar R$ 350 por Pix? Te devolvo depois.',notification:'Nova mensagem no WhatsApp',kind:'pix',tips:'Pedidos urgentes de dinheiro de um número novo devem ser confirmados pelo telefone antigo ou pessoalmente. O destinatário do Pix fictício não correspondia ao nome informado.'},
+ {id:'family-photo',channel:'whatsapp',name:'Filho — foto e número novo',icon:'F',intro:'Oi! Sou o Rafael, seu filho. Troquei de número. Olha a foto que tirei agora para você saber que sou eu.',photoUrl:'/static/img/free-family-photo-v11212.jpg',photoAsk:'Estou precisando pagar uma conta hoje, mas fiquei sem limite. Consegue me emprestar R$ 650 por Pix? Te devolvo depois.',notification:'WhatsApp · foto recebida de número novo',kind:'pix',tips:'Receber uma foto não comprova quem está falando. Imagens podem ser copiadas ou geradas com IA. Confirme pelo número antigo ou pessoalmente antes de enviar dinheiro.'},
  {id:'bank',channel:'call',name:'Central de segurança',icon:'B',intro:'Boa tarde. Sou do seu banco. Detectamos uma transferência suspeita e precisamos da sua ajuda agora.',notification:'Ligação de número desconhecido',kind:'pix',tips:'Desligue e procure o banco no canal oficial. Bancos não pedem Pix para supostamente proteger uma conta.'},
  {id:'video',channel:'video',name:'Lia · videochamada inesperada',icon:'L',intro:'Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.',notification:'Videochamada de contato desconhecido',kind:'pix',tips:'Até vídeo e voz podem ser produzidos ou manipulados por IA. Verifique a identidade por um contato independente e conhecido antes de transferir dinheiro.'},
  {id:'code',channel:'whatsapp',name:'Contato desconhecido',icon:'?',intro:'Olá. Você pode me ajudar com uma confirmação de acesso? Recebeu algum código no seu celular?',notification:'WhatsApp · contato desconhecido',kind:'code',tips:'Nunca compartilhe códigos ou senhas reais, mesmo se quem escreve parecer conhecido.'},
@@ -99,7 +100,7 @@ function exit(){stop();bridge()?.openLearningHub();}
 function home(){if(!state.active)return;clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
 function makeContactRows(){const list=$('#whatsappView .wa-chat-list');if(!list)return;
   for(const old of list.querySelectorAll('[data-free-scenario]'))old.remove();
-  for(const s of [byId.delivery,byId.relative,byId.account,byId.prize,byId.friend]){
+  for(const s of [...(isWebTraining()?[byId['family-photo']]:[]),byId.delivery,byId.relative,byId.account,byId.prize,byId.friend]){
     const btn=document.createElement('button');btn.type='button';btn.className='chat-row training-chat';btn.dataset.freeScenario=s.id;
     const avatar=document.createElement('span');avatar.className='avatar wa-avatar green';avatar.textContent=s.icon;
     const copy=document.createElement('span');copy.className='chat-copy';const strong=document.createElement('strong');strong.textContent=s.name;const small=document.createElement('small');small.textContent='Toque para conversar';copy.append(strong,small);
@@ -107,8 +108,8 @@ function makeContactRows(){const list=$('#whatsappView .wa-chat-list');if(!list)
   }
 }
 function updatePreview(s){const row=$(`#whatsappView [data-scenario="${s.id}"],#whatsappView [data-free-scenario="${s.id}"],#whatsappView [data-normal-chat="${s.id}"]`);if(!row)return;const m=state.conversations.get(s.id)?.at(-1);row.querySelector('.chat-copy small').textContent=(m?.content||s.intro).slice(0,55);const clock=row.querySelector('.chat-meta small');if(clock)clock.textContent=now();row.parentNode?.prepend(row);updateUnread();}
-function nextScriptedScenario(){return byId[SCRIPTED_ORDER.find(id=>!state.completedSteps.has(id))||BONUS_ORDER.find(id=>!state.completedSteps.has(id))]||null;}
-function chooseScenario(){let s=nextScriptedScenario();if(!s){const pool=[byId.code,byId.delivery,byId.relative,byId.account,byId.prize,byId['sms-bank'],byId['sms-delivery'],byId['sms-prize'],byId['call-tech'],byId.friend,byId.family,byId.bank,byId.video].filter(x=>!state.seen.slice(-3).includes(x.id));s=pool[Math.floor(Math.random()*pool.length)];}state.delivered++;state.seen.push(s.id);return s;}
+function nextScriptedScenario(){return byId[SCRIPTED_ORDER.find(id=>!state.completedSteps.has(id))||(isWebTraining()&&!state.completedSteps.has('family-photo')?'family-photo':null)||BONUS_ORDER.find(id=>!state.completedSteps.has(id))]||null;}
+function chooseScenario(){let s=nextScriptedScenario();if(!s){const pool=[...(isWebTraining()?[byId['family-photo']]:[]),byId.code,byId.delivery,byId.relative,byId.account,byId.prize,byId['sms-bank'],byId['sms-delivery'],byId['sms-prize'],byId['call-tech'],byId.friend,byId.family,byId.bank,byId.video].filter(x=>!state.seen.slice(-3).includes(x.id));s=pool[Math.floor(Math.random()*pool.length)];}state.delivered++;state.seen.push(s.id);return s;}
 function triggerEvent(){if(!state.active)return;if(state.blocked||visible()==='free-pix'||visible()==='free-call'||visible()==='free-video'||visible()==='free-sms'||visible()==='chat'){schedule(12000,22000);return;}const s=chooseScenario();state.pending=s;
  if(s.channel==='whatsapp'||s.channel==='sms'){const list=state.conversations.get(s.id)||[];if(!list.length)list.push({role:'assistant',content:s.intro});state.conversations.set(s.id,list.slice(-14));state.unread.add(s.id);updatePreview(s);}
  els.noticeIcon.textContent=s.channel==='call'?'☎':s.channel==='video'?'▣':s.channel==='sms'?'✉':'●';els.noticeTitle.textContent=s.notification;els.noticeText.textContent=s.name+': '+s.intro.slice(0,82);els.notice.hidden=false;updateUnread();clearTimeout(state.timer);state.timer=null;
@@ -117,6 +118,16 @@ function triggerEvent(){if(!state.active)return;if(state.blocked||visible()==='f
 function dismiss(){els.notice.hidden=true;state.pending=null;schedule(18000,28000);}
 function openPending(){const s=state.pending;state.pending=null;els.notice.hidden=true;if(!s)return;schedule(28000,48000);if(s.channel==='call')showIncomingCall(s);else if(s.channel==='video')video()?.incoming(s);else if(s.channel==='sms')openSms(s);else openChat(s);}
 function renderBubble(role,text){const div=document.createElement('div');div.className='message '+(role==='user'?'outgoing':'incoming');div.append(document.createTextNode(text));const tm=document.createElement('time');tm.textContent=now();div.append(tm);els.wallpaper.append(div);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;}
+function renderPhoto(s){
+ if(!isWebTraining()||!s?.photoUrl||!els.wallpaper)return;
+ const bubble=document.createElement('div');bubble.className='message incoming free-training-photo';
+ const photo=document.createElement('img');
+ photo.src=s.photoUrl;
+ photo.alt='Foto ilustrativa sintética enviada pelo contato que afirma ser familiar';
+ photo.loading='eager';photo.decoding='async';photo.width=192;photo.height=136;
+ const stamp=document.createElement('small');stamp.textContent='Foto recebida · simulação';
+ bubble.append(photo,stamp);els.wallpaper.append(bubble);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;
+}
 function append(role,text){const s=state.scenario;if(!s)return;const t=String(text).slice(0,350);let hist=state.conversations.get(s.id)||[];hist.push({role,content:t});hist=hist.slice(-16);state.conversations.set(s.id,hist);updatePreview(s);if(visible()==='chat')renderBubble(role,t);else if(visible()==='free-video'){video()?.addLine(role,t);}else if(visible()==='free-sms'){renderSmsBubble(role,t);}else if(visible()==='free-call'){const p=document.createElement('p');const strong=document.createElement('strong');strong.textContent=role==='assistant'?s.name+': ':'Você: ';p.append(strong,document.createTextNode(t));els.callLog.append(p);els.callLog.scrollTop=els.callLog.scrollHeight;}if(role==='assistant')state.lastSpoken=t;}
 function renderSmsBubble(role,text){
  if(!els.smsMessages)return;
@@ -137,7 +148,12 @@ function openSms(s){
 }
 function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,48000);clearRequest();state.scenario=s;state.blocked=false;state.unread.delete(s.id);state.pending=null;els.notice.hidden=true;updateUnread();$('#scenarioTitle').textContent=s.name;$('#scenarioAvatar').textContent=s.icon;$('#scenarioAvatar').className='avatar blue small';$('#scenarioSubtitle').textContent=isWebTraining()?`Contato fictício · ${state.score} pontos`:'Contato fictício · simulação';els.wallpaper.replaceChildren();const badge=document.createElement('span');badge.className='chat-day';badge.textContent='Hoje · Ambiente de treinamento';els.wallpaper.append(badge);let hist=state.conversations.get(s.id);
  if(!hist?.length){hist=[{role:'assistant',content:s.intro}];state.conversations.set(s.id,hist);}
- show('chat');for(const row of hist)renderBubble(row.role,row.content);setStatus('');}
+ // A foto é um asset local fictício; o histórico contém apenas textos, nunca bytes ou dados pessoais.
+ if(isWebTraining()&&s.photoUrl&&s.photoAsk&&!hist.some(row=>row.role==='assistant'&&row.content===s.photoAsk)){
+  hist.splice(1,0,{role:'assistant',content:s.photoAsk});
+  state.conversations.set(s.id,hist.slice(-16));
+ }
+ show('chat');for(const row of hist){renderBubble(row.role,row.content);if(row.role==='assistant'&&row.content===s.intro)renderPhoto(s);}setStatus('');}
 function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;state.callHandsFree=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){const warning='Não informe dados, códigos, senhas ou links reais. Use somente textos fictícios.';setStatus(warning);if(visible()==='free-call')els.callLine.textContent=warning;if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=warning;return;}
