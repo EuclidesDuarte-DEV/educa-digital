@@ -30,7 +30,7 @@ if(ui.view){
  }
  if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
-const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqVoiceFailedSerial:-1,hqVoiceCheck:null,hqAbort:null,webAudioGain:null};
+const session={speechQueue:[],prefetched:null,voiceProgressTimer:null,health:null,active:false,connected:false,waiting:false,micEnabled:false,rec:null,stream:null,utterance:null,interval:null,listenTimer:null,voiceStartTimer:null,clock:0,serial:0,renderAbort:null,mediaUrl:null,teamCode:'',renderReady:false,lastSpoken:'',motionSerial:-1,talkTurn:0,motorPending:null,fastVoiceSerial:-1,voiceChoiceDoneSerial:-1,hqVoiceEnabled:false,hqVoiceChoiceSerial:-1,hqVoiceFailedSerial:-1,hqVoiceCheck:null,hqAbort:null,hqVoiceLastError:'',webAudioGain:null};
 const free=()=>window.EducaFreeMode;
 const status=t=>{if(ui.state)ui.state.textContent=t;};
 const voiceProgress=$('freeVideoVoiceProgress');
@@ -638,6 +638,7 @@ async function inspectWebHQVoice(){
  }catch(_){}
  if(turn!==session.serial||!session.active)return;
  session.hqVoiceEnabled=enabled;
+ if(enabled){indicator('Lia · Roberta ElevenLabs configurada');status('Roberta selecionada. A voz natural será testada quando você atender.');}
  if(voiceEngine?.options?.length)voiceEngine.options[0].textContent=enabled
   ?'Roberta · voz natural brasileira'
   :'Roberta indisponível · voz rápida do aparelho';
@@ -647,13 +648,19 @@ async function playWebHQVoice(text,serial){
  session.hqAbort=controller;
  let timeout=null;
  try{
-  // Se a voz expressiva não responder rápido, a voz feminina local fala já.
-  timeout=setTimeout(()=>controller.abort(),2800);
+  // O limite anterior de 2,8 s cancelava o MP3 antes do download terminar.
+  // Aguarde a resposta neural sem trocar silenciosamente para TTS robótico.
+  timeout=setTimeout(()=>controller.abort(),8500);
   const r=await fetch('/api/lia/voz-web/speak',{
    method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
    headers:{'Content-Type':'application/json'},body:JSON.stringify({text})
   });
-  if(!r.ok||!String(r.headers.get('Content-Type')||'').includes('audio/'))return false;
+  if(!r.ok){
+   const detail=await r.json().catch(()=>null);
+   throw Error((detail?.message||'ElevenLabs indisponível')+' [Worker HTTP '+r.status+']');
+  }
+  if(!String(r.headers.get('Content-Type')||'').includes('audio/'))
+   throw Error('ElevenLabs não retornou áudio MP3.');
   const blob=await r.blob();
   if(blob.size<1024||blob.size>2000000||serial!==session.serial||
    !session.active||!session.connected||session.waiting)return true;
@@ -677,7 +684,14 @@ async function playWebHQVoice(text,serial){
    status('Toque em reproduzir para liberar o áudio neste navegador.');
   }
   return true;
- }catch(_){return false;}
+ }catch(e){
+  if(serial===session.serial){
+   session.hqVoiceLastError=controller.signal.aborted
+    ?'A resposta de áudio demorou mais de 8,5 segundos.'
+    :String(e?.message||'Erro inesperado na geração de áudio.').slice(0,170);
+  }
+  return false;
+ }
  finally{
   clearTimeout(timeout);
   if(session.hqAbort===controller)session.hqAbort=null;
@@ -685,8 +699,8 @@ async function playWebHQVoice(text,serial){
 }
 function startSpeechChunk(phrase,serial){
  if(serial!==session.serial||!session.active||!session.connected)return;
- // A versão Web pode tentar uma voz de estúdio com prazo curto.
- // Em caso de atraso a fala feminina local assume o turno inteiro.
+ // V112.05: a versão Web prioriza Roberta quando o Worker a configurou.
+ // Não substitui silenciosamente a voz escolhida pela voz robótica.
  if(document.documentElement?.dataset?.educaPlatform==='web'&&
     selectedEngine()!=='padrao'&&session.hqVoiceEnabled&&
     session.hqVoiceFailedSerial!==serial){
@@ -695,9 +709,18 @@ function startSpeechChunk(phrase,serial){
   showVoiceProgress('LIA: iniciando voz expressiva…');
   const fallback=()=>{
    if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
-   // Mantém o mesmo timbre neste turno e evita voltar a cobrar após erro.
-   session.hqVoiceFailedSerial=serial;session.fastVoiceSerial=serial;
-   session.utterance=null;showVoiceProgress('');audioOnly(phrase,serial);
+   // Não disfarçar erro 402, 404 ou timeout com fala robótica.
+   // O usuário pode repetir explicitamente ou escolher a voz do aparelho.
+   session.hqVoiceFailedSerial=serial;
+   session.speechQueue=[];
+   session.utterance=null;
+   stopVoiceProgress();
+   indicator('Lia · Roberta ElevenLabs indisponível nesta tentativa');
+   status('Roberta não conseguiu falar: '+(session.hqVoiceLastError||
+    'Não foi possível obter o áudio.')+' Toque em Tentar Roberta novamente.');
+   if(ui.view?.dataset)ui.view.dataset.captions='on';
+   if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
+   if(ui.play){ui.play.dataset.retryVoice='true';ui.play.hidden=false;ui.play.textContent='↻ Tentar Roberta novamente';}
   };
   void playWebHQVoice(phrase,serial).then(ok=>{if(!ok)fallback();}).catch(fallback);
   return;
@@ -801,7 +824,7 @@ function speak(text){
  if(!session.active||!session.connected)return;abortSpeech();stopRecognition();
  const serial=session.serial,whole=String(text||'').trim().slice(0,450);
  if(!whole)return;
- session.lastSpoken=whole;
+ session.lastSpoken=whole;session.hqVoiceLastError='';
  const web=document.documentElement?.dataset?.educaPlatform==='web';
  const browser=window.EducaLiaBrowserKokoro;
  // Se a fala neural ainda não aqueceu, a voz feminina do navegador pode
@@ -973,6 +996,9 @@ async function inspectMotor(){
   } else if(r.enabled&&r.video_enabled){
    indicator('Motor neural detectado · autenticação necessária');
    status('Motor de voz e MuseTalk disponíveis. Use Verificar avatar com IA para liberar a geração neural.');
+  } else if(document.documentElement?.dataset?.educaPlatform==='web'&&session.hqVoiceEnabled){
+   indicator('Lia · Roberta ElevenLabs configurada');
+   status('Roberta selecionada. A voz natural será testada ao atender.');
   } else {
    indicator('Educa+ online · voz do navegador');
    status('A IA do Educa+ já está disponível. A voz feminina depende das vozes instaladas no navegador; sincronização labial neural requer serviço online próprio.');
@@ -1025,7 +1051,9 @@ ui.play?.addEventListener('click',()=>{
   return;
  }
  const media=session.utterance instanceof HTMLMediaElement?session.utterance:ui.portraitVideo;
- media?.play().then(()=>{ui.play.hidden=true;showVoiceProgress('LIA falando · voz pf_dora');}).catch(()=>{showVoiceProgress('Áudio bloqueado: confira o som.');status('Não foi possível liberar a reprodução.');});});
+ media?.play().then(()=>{ui.play.hidden=true;showVoiceProgress(
+  session.hqVoiceEnabled?'LIA falando · Roberta ElevenLabs':'LIA falando · voz pf_dora'
+ );}).catch(()=>{showVoiceProgress('Áudio bloqueado: confira o som.');status('Não foi possível liberar a reprodução.');});});
 ui.form?.addEventListener('submit',e=>{e.preventDefault();const t=ui.input.value.trim();if(!t||!session.active||!session.connected||session.waiting)return;ui.input.value='';ui.form.hidden=true;ui.text?.setAttribute('aria-expanded','false');abortSpeech();free()?.sendVideo?.(t);});
 document.addEventListener('pointerdown',e=>{
  const menu=$('freeVideoMore');if(menu?.open&&!menu.contains(e.target))menu.open=false;
