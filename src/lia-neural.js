@@ -247,6 +247,7 @@ export async function neuralReadiness(env){
 // é apenas "oi" ou "alô": o Neural encontra o assunto da chamada.
 const TOPICS=Object.freeze({
   family:['pix','filho','familiar','whatsapp'],
+  'family-photo':['foto','imagem','familiar','pix','whatsapp','deepfake'],
   relative:['pix','familia','whatsapp'],
   video:['video','deepfake','voz','familiar'],
   bank:['banco','central','ligacao','pix'],
