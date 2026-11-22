@@ -59,7 +59,7 @@ try{
    await page.screenshot({path:root+'/'+name+'-whatsapp-claro.png'});
 
    await page.evaluate(()=>window.EducaWebReal.openApp('youtube'));
-   await page.locator('.webv-youtube').waitFor({state:'visible'});
+   await page.locator('#webRealView .webv-app.webv-youtube').waitFor({state:'visible'});
    let colors=await getColors(page);
    assert.equal(colors.background,'rgb(247, 249, 253)',name+': YouTube escuro');
    assert.equal(colors.header,'rgb(255, 255, 255)',name+': YouTube cabecalho escuro');
@@ -77,7 +77,7 @@ try{
    await page.screenshot({path:root+'/'+name+'-youtube-claro.png'});
 
    await page.evaluate(()=>window.EducaWebReal.openApp('maps'));
-   await page.locator('.webv-maps').waitFor({state:'visible'});
+   await page.locator('#webRealView .webv-app.webv-maps').waitFor({state:'visible'});
    colors=await getColors(page);
    assert.equal(colors.background,'rgb(247, 249, 253)',name+': Maps escuro');
    assert.equal(await page.locator('.webv-map-marker').count(),3,name+': mapa demonstrativo sem pinos');
@@ -91,7 +91,7 @@ try{
    await page.screenshot({path:root+'/'+name+'-maps-claro.png'});
 
    await page.evaluate(()=>window.EducaWebReal.openApp('calendar'));
-   await page.locator('.webv-calendar').waitFor({state:'visible'});
+   await page.locator('#webRealView .webv-app.webv-calendar').waitFor({state:'visible'});
    colors=await getColors(page);
    assert.equal(colors.background,'rgb(247, 249, 253)',name+': Agenda escura');
    assert.equal(await page.locator('.webv-calendar-grid button').count()>27,true);
