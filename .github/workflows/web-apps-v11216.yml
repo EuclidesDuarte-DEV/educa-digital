@@ -59,6 +59,10 @@ jobs:
           node scripts/validar-web-more-apps-v11219.mjs
       - name: V112.20 diagnostico de toques em chamadas Web
         run: node scripts/diagnosticar-toques-web-v11220.mjs
+      - name: V112.20 iPhone Safari WebKit - toque real no fluxo WhatsApp LIA ligacao
+        run: |
+          npx playwright install --with-deps webkit
+          EDUCA_BROWSER=webkit node scripts/diagnosticar-toques-web-v11220.mjs
       - name: Imagens da auditoria
         if: always()
         uses: actions/upload-artifact@v4
