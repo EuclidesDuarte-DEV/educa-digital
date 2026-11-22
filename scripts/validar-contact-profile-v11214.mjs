@@ -39,6 +39,14 @@ try {
    const avatar=await page.locator('#freeContactProfileLayer .fc-portrait').evaluate(img=>({w:img.naturalWidth,h:img.naturalHeight}));
    assert.ok(avatar.w>=500&&avatar.h>=600,name+': foto do perfil não está nítida');
    await page.screenshot({path:'artifacts/contact-profile-v11214/'+name+'-perfil.png'});
+   // Ligar/Vídeo do perfil não podem abrir LIA antes da conclusão do golpe.
+   for(const action of ['call','video']){
+    await overlay.locator('[data-fc="'+action+'"]').click();
+    assert.equal(await overlay.locator('[data-pane="outgoing"]').isVisible(),true);
+    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'chat');
+    await overlay.locator('.fc-nav [data-fc="back"]').click();
+    assert.equal(await overlay.locator('[data-pane="profile"]').isVisible(),true);
+   }
    const report=overlay.locator('[data-fc="report"]');
    await report.scrollIntoViewIfNeeded();
    assert.equal(await report.isVisible(),true,name+': denunciar não alcançável');
