@@ -104,6 +104,17 @@ try{
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-sms-treino.png'});
    await page.locator('[data-webx="sms-back"]').click();
 
+   // Fonte super grande: legível sem aumentar ícones e sem barra horizontal.
+   await page.evaluate(()=>document.documentElement.classList.add('a11y-text-extra'));
+   await page.evaluate(()=>window.EducaWebReal.openApp('gmail'));
+   const large=await page.locator('.webx-mail-copy strong').first().evaluate(el=>({
+     size:parseFloat(getComputedStyle(el).fontSize),
+     overflow:document.querySelector('#webRealBody').scrollWidth-document.querySelector('#webRealBody').clientWidth
+   }));
+   assert.ok(large.size>=16,tag+': Gmail não respeitou fonte extra grande');
+   assert.ok(large.overflow<=5,tag+': Gmail criou rolagem horizontal');
+   await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-gmail-extra.png'});
+   await page.evaluate(()=>document.documentElement.classList.remove('a11y-text-extra'));
    await page.evaluate(()=>window.EducaWebReal.openApp('camera'));
    assert.equal(await page.locator('#webRealCameraVideo').count(),1);
    assert.equal(await page.locator('[data-wr="camera-start"]').count(),1);
