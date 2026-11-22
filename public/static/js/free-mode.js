@@ -28,14 +28,14 @@ const SCRIPTED_ORDER=Object.freeze(['family','video','bank']);
 const BONUS_ORDER=Object.freeze(['sms-delivery','relative','call-tech','sms-bank','account','sms-prize','prize','code','delivery']);
 const byId=Object.fromEntries(SCENARIOS.map(s=>[s.id,s]));
 const video=()=>window.EducaVideoCall;
-const state={active:false,scenario:null,pending:null,unread:new Set(),conversations:new Map(),delivered:0,seen:[],finished:0,completedSteps:new Set(),timer:null,replying:false,blocked:false,callAccepted:false,lastSpoken:'',recognizer:null,request:null,baseline:null,transitionTimer:null,callHandsFree:false,callUtterance:null,learningConsent:false,exampleConsent:false};
+const state={active:false,scenario:null,pending:null,unread:new Set(),conversations:new Map(),delivered:0,seen:[],finished:0,completedSteps:new Set(),timer:null,replying:false,blocked:false,callAccepted:false,lastSpoken:'',recognizer:null,request:null,baseline:null,transitionTimer:null,callHandsFree:false,callUtterance:null,learningConsent:false,exampleConsent:false,score:100,riskyScenarios:new Set()};
 const els={phone:$('#phoneScreen'),notice:$('#freeEventNotice'),noticeTitle:$('#freeEventTitle'),noticeText:$('#freeEventText'),noticeIcon:$('#freeEventIcon'),tools:$('#freeHomeTools'),floating:$('#freeFloatingHome'),solved:$('#freeSolved'),wallpaper:$('#chatWallpaper'),form:$('#freeOriginalComposer'),input:$('#freeOriginalInput'),send:$('#freeOriginalSend'),status:$('#freeOriginalAiStatus'),typing:$('#freeOriginalTyping'),familyActions:$('#freeFamilyActions'),callName:$('#freeCallName'),callLine:$('#freeCallLine'),callLog:$('#freeCallTranscript'),callForm:$('#freeCallForm'),callInput:$('#freeCallInput'),answer:$('#freeCallAnswer'),smsMessages:$('#freeSmsMessages'),smsSender:$('#freeSmsSender'),smsForm:$('#freeSmsForm'),smsInput:$('#freeSmsInput'),smsSend:$('#freeSmsSend'),smsStatus:$('#freeSmsStatus')};
 const bridge=()=>window.EducaFreeView;
 const visible=()=>els.phone?.getAttribute('data-current-view')||'';
 const now=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 const privateData=t=>/(?:\d[\s.-]?){6,}|https?:\/\/|www\.|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(t);
 function show(name){bridge()?.setView(name);syncUI();}
-function syncUI(){const familyChat=state.active&&visible()==='chat'&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal';if(els.familyActions)els.familyActions.hidden=!familyChat;els.phone?.classList.toggle('free-family-chat',familyChat);if(els.tools)els.tools.hidden=!state.active||visible()!=='home';if(els.floating)els.floating.hidden=!state.active||['home','whatsapp','chat','normal-chat'].includes(visible())||visible().startsWith('free-');if(els.solved)els.solved.textContent=`${state.finished} situações`;if(els.form)els.form.hidden=!state.active||visible()!=='chat';updateUnread();}
+function syncUI(){const familyChat=state.active&&visible()==='chat'&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal';if(els.familyActions)els.familyActions.hidden=!familyChat;els.phone?.classList.toggle('free-family-chat',familyChat);if(els.tools)els.tools.hidden=!state.active||visible()!=='home';if(els.floating)els.floating.hidden=!state.active||['home','whatsapp','chat','normal-chat'].includes(visible())||visible().startsWith('free-');if(els.solved)els.solved.textContent=isWebTraining()?`${state.finished} situações · ${state.score} pontos`:`${state.finished} situações`;if(els.form)els.form.hidden=!state.active||visible()!=='chat';updateUnread();}
 function stopVoice(){state.callHandsFree=false;state.callUtterance=null;try{window.speechSynthesis?.cancel();}catch(_){}try{state.recognizer?.stop();}catch(_){}state.recognizer=null;}
 function clearRequest(){state.request?.abort();state.request=null;state.replying=false;if(els.typing)els.typing.hidden=true;if(els.send)els.send.disabled=false;}
 function clearTransition(){clearTimeout(state.transitionTimer);state.transitionTimer=null;}
@@ -53,6 +53,38 @@ function pauseSummaryTransition(){
  }
 }
 function schedule(min=16000,max=30000){clearTimeout(state.timer);state.timer=null;if(state.active)state.timer=setTimeout(triggerEvent,min+Math.random()*(max-min));}
+function isWebTraining(){return document.documentElement?.dataset?.educaPlatform==='web';}
+// V112.09: análise local de decisão, sem guardar mensagem e sem Pix real.
+function riskyTrainingPromise(s,message){
+ if(!isWebTraining()||!s||s.kind!=='pix')return false;
+ const clean=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+ const t=clean(message);
+ // Condicional, recusa e verificação não representam aceite de pagamento.
+ if(/\b(nao|nunca|jamais|sem|primeiro|antes de|so depois|quando|depois que|se)\b/.test(t)||
+    /\b(conferir|verificar|confirmar|validar|identidade|canal oficial|numero antigo)\b/.test(t))return false;
+ const accepted=/\b(?:vou|irei)\s+(?:(?:te|lhe)\s+)?(?:mandar|enviar|transferir|pagar)\b|\b(?:vou|irei)\s+(?:fazer|realizar|enviar)\s+(?:o|um)?\s*pix\b|\b(?:eu\s+)?(?:pago|transfiro|envio)\s+(?:agora|ja|pra voce|para voce)\b|\b(?:ja\s+)?(?:fiz|enviei|mandei|transferi)\s+(?:o\s+)?(?:pix|dinheiro|valor)\b/.test(t);
+ if(!accepted)return false;
+ const context=clean([s.intro,...(state.conversations.get(s.id)||[]).filter(r=>r.role==='assistant').map(r=>r.content)].join(' '));
+ return /\b(pix|dinheiro|valor|pagar|despesa|emprest|transfer|taxa)\b/.test(context);
+}
+function registerWebRisk(s,message){
+ if(!riskyTrainingPromise(s,message)||state.riskyScenarios.has(s.id))return;
+ state.riskyScenarios.add(s.id);
+ state.score=Math.max(0,state.score-15);
+ if(visible()==='chat'&&els.wallpaper){
+  const note=document.createElement('p');note.className='free-risk-feedback';
+  note.setAttribute('role','status');
+  note.textContent='⚠️ Decisão de risco: −15 pontos. Prometer enviar dinheiro sem confirmar a identidade pode ser o primeiro passo do golpe. Nenhum Pix real foi feito.';
+  els.wallpaper.append(note);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;
+ }else if(visible()==='free-sms'&&els.smsStatus){
+  els.smsStatus.textContent='⚠️ Decisão de risco: −15 pontos. Confirme pelo canal oficial.';
+ }else if(visible()==='free-call'&&els.callLine){
+  els.callLine.textContent='⚠️ Decisão de risco: −15 pontos. Verifique o contato.';
+ }
+ const subtitle=$('#scenarioSubtitle');
+ if(subtitle&&visible()==='chat')subtitle.textContent='Contato fictício · '+state.score+' pontos';
+ syncUI();
+}
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
 function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
@@ -68,7 +100,7 @@ function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
  // A voz feminina do sistema pode ser procurada paralelamente, sem bloquear.
  if(document.documentElement?.dataset?.educaPlatform==='web')
   void window.EducaLiaVoice?.waitForFemale?.(500)?.catch?.(()=>{});
- state.finished=0;state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;makeContactRows();show('home');schedule(900,1450);}
+ state.finished=0;state.score=100;state.riskyScenarios.clear();state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;makeContactRows();show('home');schedule(900,1450);}
 function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.exampleConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
  const list=$('#whatsappView .wa-chat-list');for(const dynamic of document.querySelectorAll('#whatsappView [data-free-scenario]'))dynamic.remove();
  if(list&&state.baseline)for(const {row,preview,time,badgeHidden} of state.baseline){row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
@@ -113,17 +145,18 @@ function openSms(s){
  show('free-sms');for(const m of history)renderSmsBubble(m.role,m.content);
  if(els.smsStatus){els.smsStatus.textContent='SMS fictício · nenhum link é necessário';}
 }
-function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,48000);clearRequest();state.scenario=s;state.blocked=false;state.unread.delete(s.id);state.pending=null;els.notice.hidden=true;updateUnread();$('#scenarioTitle').textContent=s.name;$('#scenarioAvatar').textContent=s.icon;$('#scenarioAvatar').className='avatar blue small';$('#scenarioSubtitle').textContent='Contato fictício · simulação';els.wallpaper.replaceChildren();const badge=document.createElement('span');badge.className='chat-day';badge.textContent='Hoje · Ambiente de treinamento';els.wallpaper.append(badge);let hist=state.conversations.get(s.id);
+function openChat(s){if(!s||!state.active)return;if(!state.timer)schedule(28000,48000);clearRequest();state.scenario=s;state.blocked=false;state.unread.delete(s.id);state.pending=null;els.notice.hidden=true;updateUnread();$('#scenarioTitle').textContent=s.name;$('#scenarioAvatar').textContent=s.icon;$('#scenarioAvatar').className='avatar blue small';$('#scenarioSubtitle').textContent=isWebTraining()?`Contato fictício · ${state.score} pontos`:'Contato fictício · simulação';els.wallpaper.replaceChildren();const badge=document.createElement('span');badge.className='chat-day';badge.textContent='Hoje · Ambiente de treinamento';els.wallpaper.append(badge);let hist=state.conversations.get(s.id);
  if(!hist?.length){hist=[{role:'assistant',content:s.intro}];state.conversations.set(s.id,hist);}
  show('chat');for(const row of hist)renderBubble(row.role,row.content);setStatus('');}
 function showIncomingCall(s){if(!state.active)return;clearRequest();state.pending=null;state.scenario=s;state.callAccepted=false;state.callHandsFree=false;els.notice.hidden=true;els.callName.textContent=s.name;els.callLine.textContent='Chamada simulada recebida';els.callLog.replaceChildren();els.callForm.hidden=true;els.answer.hidden=false;$('#freeCallHangup').textContent='Recusar / encerrar';show('free-call');}
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){const warning='Não informe dados, códigos, senhas ou links reais. Use somente textos fictícios.';setStatus(warning);if(visible()==='free-call')els.callLine.textContent=warning;if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=warning;return;}
- const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
+ const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');registerWebRisk(s,message);state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
  const responseTimeoutMs=document.documentElement?.dataset?.educaPlatform==='web'?32000:17000; // V111.89: Web suporta a segunda inferência; Android/iOS mantêm 17s
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},responseTimeoutMs); // sempre limitar a espera para evitar "em andamento" infinito
- try{const response=await fetch('/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist,
-  learningConsent:state.learningConsent===true,exampleConsent:state.exampleConsent===true}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
+ try{const response=await fetch(isWebTraining()?'/api/modo-livre/conversar-web':'/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist,
+  learningConsent:state.learningConsent===true,exampleConsent:state.exampleConsent===true,
+  ...(isWebTraining()?{webChallenge:{level:Math.min(3,1+Math.floor((state.finished+state.riskyScenarios.size)/2)),tries:Math.min(2,oldHist.filter(m=>m.role==='user'&&/n[aã]o|desconfio|golpe|bloquear|canal oficial/i.test(m.content)).length)}}:{})}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
  catch(ex){err=timedOut?'A IA demorou para responder. Tente novamente com uma frase curta.':ex.name==='AbortError'?'A conexão com a IA foi interrompida.':/Failed to fetch|Failed to execute|NetworkError|fetch failed/i.test(String(ex.message))?'Não foi possível conectar à IA. Confira Ollama no Educa+ local ou o Workers AI na Cloudflare.':String(ex.message||'Não foi possível falar com a IA.');}
  finally{clearTimeout(responseTimer);if(state.request===abort)state.request=null;state.replying=false;els.send.disabled=false;if(els.smsSend)els.smsSend.disabled=false;els.typing.hidden=true;}
  if(!state.active||state.scenario?.id!==current||(abort.signal.aborted&&!timedOut))return;
@@ -138,14 +171,18 @@ function finish(kind='safe',reason=''){
     body:JSON.stringify({consent:true,scenario:s.id,outcome:kind==='unsafe'?'unsafe':'safe'})
    }).catch(()=>{});
  }
- clearRequest();video()?.close?.();stopVoice();const safe=kind!=='unsafe';if(safe)state.finished++;
+ clearRequest();video()?.close?.();stopVoice();const safe=kind!=='unsafe';
+  const commitmentLoss=isWebTraining()&&state.riskyScenarios.has(s.id)?15:0;
+  const pixLoss=isWebTraining()&&!safe?(commitmentLoss?25:40):0;
+  if(pixLoss)state.score=Math.max(0,state.score-pixLoss);
+  if(safe)state.finished++;
  if(SCRIPTED_ORDER.includes(s.id)||BONUS_ORDER.includes(s.id))state.completedSteps.add(s.id);
  state.blocked=true;state.pending=null;clearTimeout(state.timer);els.notice.hidden=true;
- $('#freeSummaryIcon').textContent=safe?'✓':'!';$('#freeSummaryTitle').textContent=safe?'Situação concluída':'Atenção à decisão';
+ $('#freeSummaryIcon').textContent=safe&&!commitmentLoss?'✓':'!';$('#freeSummaryTitle').textContent=safe&&!commitmentLoss?'Situação concluída':'Atenção à decisão';
  const message=safe?'Você concluiu esta situação do treino.':'Você confirmou um Pix FICTÍCIO. Nenhum dinheiro verdadeiro foi enviado.';
  const next=nextScriptedScenario();
- $('#freeSummaryText').textContent=message+(s.id==='family'&&next?.id==='video'?' A seguir, uma videochamada com IA: ver um rosto não garante a identidade.':'');
- $('#freeSummaryDetail').textContent=(reason?reason+' ':'')+s.tips;
+ $('#freeSummaryText').textContent=message+(s.id==='family'&&next?.id==='video'?' A seguir, uma videochamada com IA: ver um rosto não garante a identidade.':'')+(isWebTraining()?` Pontuação: ${state.score} pontos.${pixLoss?` (−${pixLoss} pontos pelo Pix fictício confirmado.)`:commitmentLoss?' (−15 pontos por aceitar enviar antes de verificar.)':''}`:'');
+ $('#freeSummaryDetail').textContent=(commitmentLoss?'Você assumiu risco ao concordar em enviar dinheiro sem confirmar a identidade. ':'')+(reason?reason+' ':'')+s.tips;
  // A próxima etapa inicia SOZINHA; "Avançar agora" é apenas um atalho opcional.
  // Um resumo curto permite perceber o feedback sem precisar confirmar nada.
  const nextButton=$('#freeSummaryNext');if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
