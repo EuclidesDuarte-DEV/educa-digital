@@ -38,7 +38,7 @@ function close(){revoke();active='';api=null;photoOpen=null;chosen.clear();body.
 function host(name,html){body.innerHTML='<div class="webx-app webx-'+name+'">'+html+'</div>';}
 function imageUrl(blob){const url=URL.createObjectURL(blob);galleryUrls.push(url);return url;}
 function galleryHeader(){
- return '<div class="webx-photos-head"><div class="webx-photos-heading"><div><strong>Fototeca</strong><small>Imagens deste navegador · simulação</small></div><button data-webx="photo-select" type="button" aria-pressed="'+String(chosen.size>0)+'">'+(chosen.size?'Cancelar':'Selecionar')+'</button></div>'+
+ return '<div class="webx-photos-head"><div class="webx-photos-heading"><div><strong>Fototeca</strong><small>Imagens deste navegador · simulação</small></div><button data-webx="photo-select" type="button" aria-pressed="'+String(body.classList.contains('webx-selecting'))+'">'+(body.classList.contains('webx-selecting')?'Cancelar':'Selecionar')+'</button></div>'+
  '<div class="webx-photos-period" role="group" aria-label="Período"><button data-webx="period" data-value="years" aria-pressed="'+(period==='years')+'">Anos</button><button data-webx="period" data-value="months" aria-pressed="'+(period==='months')+'">Meses</button><button data-webx="period" data-value="all" aria-pressed="'+(period==='all')+'">Tudo</button></div></div>';
 }
 function galleryFooter(){
@@ -102,7 +102,7 @@ function gmailFolder(m){
 }
 function gmailSidebar(){
  const counts={};for(const [id] of folders)counts[id]=mail.filter(m=>(id==='starred'?m.star:id==='all'?m.folder!=='trash'&&m.folder!=='spam':m.folder===id)&&m.unread).length;
- return '<div class="webx-mail-drawer'+(side?' open':'')+'" '+(side?'':'hidden')+'><div class="webx-mail-drawer-head">Gmail <small>Treinamento</small></div>'+folders.map(([id,label,icon])=>'<button data-webx="mail-folder" data-value="'+id+'" class="'+(id===folder?'active':'')+'">'+icon+' <span>'+label+'</span><small>'+(counts[id]||'')+'</small></button>').join('')+'<button data-webx="mail-official">↗ <span>Abrir Gmail oficial</span></button></div>';
+ return '<div class="webx-mail-drawer'+(side?' open':'')+'" '+(side?'':'hidden')+'><div class="webx-mail-drawer-head">Gmail <small>Treinamento</small><button type="button" data-webx="mail-menu" aria-label="Fechar menu">×</button></div>'+folders.map(([id,label,icon])=>'<button data-webx="mail-folder" data-value="'+id+'" class="'+(id===folder?'active':'')+'">'+icon+' <span>'+label+'</span><small>'+(counts[id]||'')+'</small></button>').join('')+'<button data-webx="mail-official">↗ <span>Abrir Gmail oficial</span></button></div>';
 }
 function gmailHeader(){
  return '<header class="webx-mail-toolbar"><button aria-label="Abrir pastas" data-webx="mail-menu">☰</button><label><span class="sr-only">Pesquisar mensagens fictícias</span><input type="search" id="webxMailSearch" placeholder="Pesquisar no e-mail" value="'+esc(gmailSearch)+'"></label><button aria-label="Informações da conta simulada" data-webx="mail-info">E</button></header>';
