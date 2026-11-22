@@ -7,7 +7,7 @@ import {classifyTrainingTurn} from '../src/lia-neural-learning-v11196.js';
 const free=readFileSync('public/static/js/free-mode.js','utf8');
 const ai=readFileSync('src/free-chat.js','utf8');
 const html=readFileSync('public/html/index.html','utf8');
-const css=readFileSync('public/static/css/web-score-v11209.css','utf8');
+const css=readFileSync('public/static/css/web-quick-result-v11210.css','utf8');
 const body=name=>{
  const anchor='function '+name+'(';
  const start=free.indexOf(anchor);
@@ -53,19 +53,19 @@ test('V112.09 — desconto uma vez por cenário, sem transação real',()=>{
  assert.ok(sandbox.state.riskyScenarios.has('family'));
  apply(fake,'vou te mandar');
  assert.equal(sandbox.state.score,85);
- assert.match(free,/const pixLoss=isWebTraining\(\)&&!safe\?\(commitmentLoss\?25:40\):0/);
- assert.match(free,/Pontuação: \$\{state\.score\} pontos/);
- assert.match(free,/Nenhum Pix real foi feito/);
+ assert.match(free,/const pixLoss=isWebTraining\(\)&&kind==='unsafe'\?\(commitmentLoss\?25:40\):0/);
+ assert.match(free,/Restam '\+state\.score\+' pontos/);
+ assert.match(free,/Nenhum dinheiro verdadeiro foi enviado/);
 });
 test('V112.09 — Web usa RAG Neural e dificuldade; nativos mantêm a rota antiga',()=>{
  assert.match(free,/fetch\(isWebTraining\(\)\?'\/api\/modo-livre\/conversar-web':'\/api\/modo-livre\/conversar'/);
  assert.match(free,/webChallenge:\{level:Math\.min\(3,/);
- assert.match(ai,/const remembered=webOnly\?await retrieveLiaKnowledge/);
- assert.match(ai,/const focus=webOnly\?await learningHint/);
+ assert.match(ai,/const \[remembered,focus\]=webOnly/);
+ assert.match(ai,/Promise\.all\(\[/);
  assert.match(ai,/const paymentCue=paymentAcceptance/);
- assert.match(html,/free-mode\.js\?v=11189[^"]*&summaryscroll=11208&score=11209/);
- assert.match(html,/web-score-v11209\.css\?v=11209/);
- assert.match(css,/html\[data-educa-platform="web"\] #chatWallpaper \.free-risk-feedback/);
+ assert.match(html,/free-mode\.js\?v=11189[^"]*&summaryscroll=11208&score=11210/);
+ assert.match(html,/web-quick-result-v11210\.css\?v=11210/);
+ assert.match(css,/html\[data-educa-platform="web"\] #phoneScreen #freeSummaryView\.web-quick-risk/);
 });
 test('V112.09 — aprendizado Web classifica aceite explicitamente, sem gravar texto bruto',()=>{
  assert.equal(classifyTrainingTurn('family','vou te mandar'),'accept');

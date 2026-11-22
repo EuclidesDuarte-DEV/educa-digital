@@ -17,7 +17,7 @@ test('V111.12: o rosto ocupa a chamada com controles secundários recolhidos',()
 });
 
 test('V111.12: WhatsApp, vídeo e ligação avançam sem botão obrigatório',()=>{
- assert.match(mode,/setTimeout\(\(\)=>\{state\.transitionTimer=null;continueTraining\(\);\},2800\)/);
+ assert.match(mode,/setTimeout\(\(\)=>\{state\.transitionTimer=null;continueTraining\(\);\},quickRisk\?3200:2800\)/);
  assert.match(mode,/if\(next\?\.id==='video'\)/);
  assert.match(mode,/if\(next\?\.id==='bank'\)/);
  assert.match(mode,/function stop\(\)\{clearTransition\(\)/);

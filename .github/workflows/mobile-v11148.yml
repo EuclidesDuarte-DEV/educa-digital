@@ -30,6 +30,8 @@ jobs:
           node scripts/validar-interface-v11154.mjs
       - name: V112.08 — tela de conclusão rolável com terceiro botão visível no celular normal
         run: node scripts/validar-summary-scroll-v11208.mjs
+      - name: V112.10 — erro encerra rodada sem esperar IA e resultado compacto com pontos
+        run: node scripts/validar-quick-result-v11210.mjs
       - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
         run: node scripts/validar-modo-livre-v11175.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
@@ -65,4 +67,5 @@ jobs:
             artifacts/whatsapp-v11174/
             artifacts/free-reflow-v11175/
             artifacts/summary-scroll-v11208/
+            artifacts/quick-result-v11210/
           if-no-files-found: ignore
