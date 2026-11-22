@@ -42,6 +42,8 @@ jobs:
         run: node scripts/validar-contact-profile-v11214.mjs
       - name: V112.15 — foto compacta, rolagem iPhone e campo de mensagem alcançável
         run: node scripts/validar-web-chat-scroll-v11215.mjs
+      - name: V112.16 — Fototeca, Gmail e SMS estilo nativo com dados fictícios
+        run: node scripts/validar-web-apps-v11216.mjs
       - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
         run: node scripts/validar-modo-livre-v11175.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
@@ -83,4 +85,5 @@ jobs:
             artifacts/photo-first-lia-second-v11213/
             artifacts/contact-profile-v11214/
             artifacts/web-chat-scroll-v11215/
+            artifacts/web-apps-v11216/
           if-no-files-found: ignore
