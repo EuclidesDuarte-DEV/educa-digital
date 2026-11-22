@@ -662,8 +662,9 @@ async function playWebHQVoice(text,serial){
   if(!String(r.headers.get('Content-Type')||'').includes('audio/'))
    throw Error('ElevenLabs não retornou áudio MP3.');
   const blob=await r.blob();
-  if(blob.size<1024||blob.size>2000000||serial!==session.serial||
-   !session.active||!session.connected||session.waiting)return true;
+  if(blob.size<1024||blob.size>2000000)
+   throw Error('MP3 da Roberta vazio ou acima do limite.');
+  if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
   clearTimeout(timeout);timeout=null;
   clearMedia();
   const audio=new Audio(),url=URL.createObjectURL(blob);
@@ -904,7 +905,7 @@ async function answer(){if(!session.active||session.connected)return;
  // status para não começar com voz robótica por uma corrida de inicialização.
  const web=document.documentElement?.dataset?.educaPlatform==='web';
  if(web&&session.hqVoiceCheck)await Promise.race([
-  session.hqVoiceCheck,new Promise(resolve=>setTimeout(resolve,650))
+  session.hqVoiceCheck,new Promise(resolve=>setTimeout(resolve,2000))
  ]);
  if(!session.active||!session.connected)return;
  free()?.videoAccepted?.();speak(intro);}
