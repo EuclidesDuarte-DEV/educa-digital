@@ -31,6 +31,10 @@ html[data-educa-platform="web"] #webRealView .webx-app :is(input,textarea)::plac
 html[data-educa-platform="web"] #webRealView .webx-app :is(button,input,textarea):focus-visible {
   outline:3px solid #276fd2!important;outline-offset:-2px;
 }
+/* Gmail preserva as melhorias da V112.17, inclusive foco da pesquisa. */
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-app.webx-gmail {
+  background:#fff!important;color:#202124!important;color-scheme:light;
+}
 /* Fotos: biblioteca, periodos, colecoes, busca, visualizacao individual. */
 html[data-educa-platform="web"] #webRealView.webx-photos :is(
   .webx-photos-head,.webx-photo-topactions,.webx-photos-scroll,
