@@ -32,12 +32,25 @@ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat
   padding:5px 2px 0!important;
   white-space:normal!important;
 }
+/* O chat completo deve caber DENTRO do vidro do celular; o scroll fica só nas mensagens. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView {
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+}
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
  #chatView .chat-surface {
   display:grid!important;
   grid-template-rows:minmax(55px,auto) minmax(0,1fr) auto auto!important;
   min-height:0!important;
   height:100%!important;
+  max-height:100%!important;
+  width:100%!important;
+  inset:0!important;
   overflow:hidden!important;
 }
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"]
