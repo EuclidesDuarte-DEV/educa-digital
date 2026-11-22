@@ -40,6 +40,10 @@ overlay.innerHTML=[
 '<p class="fc-hint">Este contato, número e foto são fictícios. Uma foto de perfil não comprova identidade.</p>',
 '</section>',
 '<section class="fc-pane" data-pane="photo" hidden><div class="fc-photo-view"><div id="fcFullPhoto"></div><p>Imagem sintética · ambiente de treinamento</p></div></section>',
+'<section class="fc-pane" data-pane="outgoing" hidden><div class="fc-outgoing-image" id="fcOutgoingPhoto"></div><h2>Rafael</h2>',
+'<p class="fc-outgoing-status" id="fcOutgoingStatus">Chamada simulada</p>',
+'<p class="fc-hint">Contato fictício: ver o rosto ou ouvir a voz não comprova identidade.</p>',
+'<button class="fc-hangup" type="button" data-fc="back">Encerrar chamada</button></section>',
 '<section class="fc-pane" data-pane="media" hidden><h2>Mídia, links e docs</h2><p class="fc-hint">1 foto recebida</p>',
 '<button type="button" data-fc="photo" id="fcMediaPhoto" aria-label="Abrir foto em tamanho grande"></button>',
 '<p class="fc-hint">Nenhum link ou documento recebido.</p></section>',
@@ -70,11 +74,11 @@ function img(cls){
 }
 $('.fc-big-avatar',overlay).append(img('fc-portrait'));
 $('#fcFullPhoto',overlay).append(img('fc-full-image'));
-$('#fcMediaPhoto',overlay).append(img('fc-thumb-image'));
+$('#fcMediaPhoto',overlay).append(img('fc-thumb-image')); $('#fcOutgoingPhoto',overlay).append(img('fc-outgoing-avatar'));
 function showPane(which){
  current=which;
  for(const p of overlay.querySelectorAll('[data-pane]'))p.hidden=p.dataset.pane!==which;
- const names={profile:'Dados do contato',photo:'Foto recebida',media:'Mídia, links e docs',search:'Pesquisar mensagens',theme:'Tema da conversa',temporary:'Mensagens temporárias'};
+ const names={profile:'Dados do contato',photo:'Foto recebida',media:'Mídia, links e docs',search:'Pesquisar mensagens',theme:'Tema da conversa',temporary:'Mensagens temporárias',outgoing:'Chamada fictícia'};
  $('#fcTitle',overlay).textContent=names[which]||'Dados do contato';
  $('#fcFavorite',overlay).textContent=favorite?'Adicionado':'Nenhuma';
  $('#fcMuted',overlay).textContent=mute?'Silenciadas':'Ativadas';
@@ -139,7 +143,12 @@ function action(name,node){
  };
  if(Object.hasOwn(demonstrations,name)){announce(demonstrations[name]);return;}
  if(name==='call'||name==='video'){
-  close();$('#chatView .chat-header-actions button[aria-label="'+(name==='call'?'Ligação':'Videochamada')+'"]')?.click();return;
+  showPane('outgoing');
+  $('#fcTitle',overlay).textContent=name==='call'?'Ligação fictícia':'Videochamada fictícia';
+  $('#fcOutgoingStatus',overlay).textContent=name==='call'
+   ?'Chamando o contato fictício... Esta ligação não se conecta.'
+   :'Videochamada de treinamento: nenhum contato verdadeiro será chamado.';
+  return;
  }
  if(name==='verify'){close();$('#freeFamilyVerify')?.click();return;}
  if(name==='block'){close();$('#freeFamilyBlock')?.click();return;}
