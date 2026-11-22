@@ -59,7 +59,7 @@ test('[web] V111.93 — o frontend isola HQ na Web e retorna para fala feminina 
  const html=readFileSync('public/html/index.html','utf8');
  assert.match(src,/educaPlatform==='web'&&\s*selectedEngine\(\)!=='padrao'&&session\.hqVoiceEnabled/);
  // V112.03: permitir pequena margem adicional ao áudio natural da Roberta.
- assert.match(src,/setTimeout\(\(\)=>controller\.abort\(\),2800\)/);
+ assert.match(src,/setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
  assert.match(src,/audioOnly\(phrase,serial\)/);
  assert.match(src,/session\.hqAbort\?\.abort\(\)/);
  assert.match(src,/const chunks=web&&session\.hqVoiceEnabled/);
