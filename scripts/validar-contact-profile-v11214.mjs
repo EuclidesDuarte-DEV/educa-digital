@@ -82,6 +82,15 @@ try {
    assert.equal(await overlay.locator('[data-pane="photo"]').isVisible(),true);
    await overlay.locator('[data-fc="back"]').click();
    await overlay.locator('[data-fc="back"]').click();
+   // Ícones do cabeçalho também abrem apenas uma chamada fictícia deste contato.
+   for(const label of ['Ligação','Videochamada']){
+    await page.locator('#chatView .chat-header-actions button[aria-label="'+label+'"]').click();
+    assert.equal(await overlay.locator('[data-pane="outgoing"]').isVisible(),true,name+': '+label+' pulou a primeira atividade');
+    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'chat');
+    await overlay.locator('.fc-nav [data-fc="back"]').click();
+    await overlay.locator('.fc-nav [data-fc="back"]').click();
+    assert.equal(await overlay.isVisible(),false);
+   }
    await page.locator('#chatView .chat-header-actions button[aria-label="Menu"]').click();
    const menu=page.locator('#freeContactMoreMenu');
    await menu.waitFor({state:'visible'});
