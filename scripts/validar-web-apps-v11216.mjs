@@ -46,6 +46,7 @@ try{
    await page.locator('#webRealUpload').setInputFiles({name:'foto-exemplo.png',mimeType:'image/png',buffer:png});
    await page.waitForFunction(()=>document.querySelectorAll('.webx-photo-grid img').length===1,null,{timeout:8000});
    assert.equal(await page.locator('.webx-photo-grid button').count(),1);
+   assert.equal(await page.locator('#webRealStatus').evaluate(el=>getComputedStyle(el).pointerEvents),'none',tag+': aviso de foto salva bloqueia grade');
    const images=await page.locator('.webx-photo-grid img').evaluateAll(nodes=>nodes.map(img=>({width:img.naturalWidth,height:img.naturalHeight})));
    assert.ok(images[0].width>0&&images[0].height>0);
    await page.screenshot({path:'artifacts/web-apps-v11216/'+tag+'-fotos-grade.png'});
