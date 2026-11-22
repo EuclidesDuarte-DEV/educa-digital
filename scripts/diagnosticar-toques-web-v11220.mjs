@@ -1,7 +1,8 @@
 /* V112.20 — diagnostico real de hit-test nos controles do Modo Livre Web
    COM tema escuro do dispositivo, toque e viewport mobile. */
-import {chromium} from 'playwright';
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+import {chromium,webkit} from 'playwright';
+const isWebkit=process.env.EDUCA_BROWSER==='webkit';
+const browser=await (isWebkit?webkit:chromium).launch(isWebkit?{headless:true}:{headless:true,args:['--no-sandbox']});
 const selectors=['#freeCallAnswer','#freeCallHangup','#freeCallVerify','#freeCallSpeak','#freeCallMic',
  '#freeVideoAnswer','#freeVideoReject','#freeSmsVerify','#freeSmsBlock',
  '#freeEventOpen','#freeEventDismiss','#freeSummaryNext','#freeSummaryHome',
