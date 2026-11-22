@@ -150,7 +150,7 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
    return;
   }
   state.replying=true;els.send.disabled=true;if(els.smsSend)els.smsSend.disabled=true;if(els.smsStatus&&visible()==='free-sms')els.smsStatus.textContent='O contato fictício está respondendo…';els.typing.hidden=visible()!=='chat';const abort=new AbortController();state.request=abort;let err='';let reply='';let timedOut=false;
- const responseTimeoutMs=document.documentElement?.dataset?.educaPlatform==='web'?32000:17000; // V111.89: Web suporta a segunda inferência; Android/iOS mantêm 17s
+ const responseTimeoutMs=document.documentElement?.dataset?.educaPlatform==='web'?18000:17000; // V112.10: limite Web 18s, nativos preservam 17s
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},responseTimeoutMs); // sempre limitar a espera para evitar "em andamento" infinito
  try{const response=await fetch(isWebTraining()?'/api/modo-livre/conversar-web':'/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist,
   learningConsent:state.learningConsent===true,exampleConsent:state.exampleConsent===true,
@@ -162,6 +162,8 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent='SMS simulado · responda ou escolha uma ação segura';}
 function finish(kind='safe',reason=''){
  if(!state.active)return;
+ // V112.10: uma vez encerrada por erro, esta rodada nunca pode virar um acerto.
+ if(isWebTraining()&&state.blocked&&visible()==='free-summary')return;
  const s=state.scenario||state.pending;
  if(!s){home();return;}
  const quickRisk=isWebTraining()&&kind==='risk';
