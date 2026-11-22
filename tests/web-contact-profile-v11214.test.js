@@ -38,6 +38,8 @@ test('V112.14: perfil é script Web independente, com menu, busca, ações e ace
  assert.match(profile,/data-pane="outgoing"/);
  assert.match(profile,/if\(name==='call'\|\|name==='video'\)/);
  assert.match(profile,/showPane\('outgoing'\)/);
+ assert.match(free,/EducaWebContactProfile\?\.openCall\?\.\('video'\)/);
+ assert.match(free,/EducaWebContactProfile\?\.openCall\?\.\('call'\)/);
   assert.match(profile,/reportContact/);
  assert.match(profile,/event.*Escape|e\.key==='Escape'/);
  assert.match(profile,/role','dialog'/);
