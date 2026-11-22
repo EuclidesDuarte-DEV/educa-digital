@@ -11,7 +11,7 @@ test('pré-aquece pf_dora sem Ollama ao aparecer videochamada',()=>{
  const s=read('public/static/js/free-video.js');
  // V112.02: a Web não baixa Kokoro pesado durante a chamada.
  assert.match(s,/document\.documentElement\?\.dataset\?\.educaPlatform!=='web'/);
- assert.match(s,/void inspectWebHQVoice\(\)/);
+ assert.match(s,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
  assert.match(s,/void browser\.prepare\(\)/);
  assert.match(read('public/static/js/free-mode.js'),/EducaLiaBrowserKokoro\.prewarmIntro\(\)/);
 });

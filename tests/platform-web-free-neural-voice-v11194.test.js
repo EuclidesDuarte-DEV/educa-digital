@@ -98,7 +98,7 @@ test('V111.94 — LIA Web reduz espera sem cair em TTS cobrado',()=>{
  const incoming=video.split('function incoming(){')[1].split('async function answer(){')[0];
  // V112.02: consulta de status não cobra; síntese só com flag/credenciais.
  assert.match(incoming,/inspectWebHQVoice\(/);
- assert.match(video,/session\.hqVoiceEnabled=r\.ok&&config\.enabled===true/);
+ assert.match(video,/session\.hqVoiceEnabled=enabled/);
  assert.match(video,/localKokoro\.isFast\?\.\(\)===false/);
  assert.match(video,/selectedStyle\(\)==='clara'\?1\.02:1\.00/);
  assert.match(html,/lia-kokoro-browser\.js\?v=11157&mirror=2&warm=11191&intro=11192&free=11194/);
