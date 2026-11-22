@@ -52,13 +52,25 @@ try{
    assert.equal(before.overflow,'auto',name+': overflow-y bloqueado pela regra genérica');
    assert.ok(before.scrollHeight>before.height+15,name+': tela não tem overflow esperado: '+JSON.stringify(before));
    const panel=page.locator(selector);
+   // Em telas móveis, o mockup pode começar ABAIXO do topo da página inicial.
+   // Primeiro traga o celular para o viewport; senão a rolagem do mouse cai
+   // no body e não no conteúdo do telefone.
+   await panel.scrollIntoViewIfNeeded({timeout:12000});
    const rect=await panel.boundingBox();
    assert.ok(rect&&rect.height>120,name+': painel de conclusão não visível');
-   await page.mouse.move(rect.x+Math.min(rect.width-24,rect.width/2),rect.y+rect.height/2);
+   const mx=Math.min(config.width-14,Math.max(14,rect.x+rect.width/2));
+   const my=Math.min(config.height-14,Math.max(14,rect.y+Math.min(rect.height/2,config.height*.65)));
+   const hit=await page.evaluate(([x,y])=>{
+    const el=document.elementFromPoint(x,y);
+    return {tag:el?.tagName,id:el?.id,inside:!!el?.closest('#freeSummaryView')};
+   },[mx,my]);
+   assert.ok(hit.inside,name+': ponteiro não está dentro do resumo: '+JSON.stringify({rect,mx,my,hit}));
+   await page.mouse.move(mx,my);
    await page.mouse.wheel(0,950);
-   await page.waitForTimeout(150);
+   await page.waitForTimeout(170);
    const afterWheel=await panel.evaluate(e=>e.scrollTop);
-   assert.ok(afterWheel>8,name+': mouse/touchpad não rola dentro do celular, scrollTop='+afterWheel);
+   assert.ok(afterWheel>8,name+': mouse/touchpad não rola dentro do celular, scrollTop='+afterWheel
+    +' rect='+JSON.stringify(rect)+' hit='+JSON.stringify(hit));
    const bottom=await page.evaluate(selector=>{
     const panel=document.querySelector(selector),button=document.getElementById('freeSummaryExit');
     panel.scrollTop=panel.scrollHeight;
