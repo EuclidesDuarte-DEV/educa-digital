@@ -1,0 +1,223 @@
+/* Educa+ Digital V112.17 — Gmail claro e interativo APENAS na Web.
+   As outras telas (Fotos, SMS, Câmera) continuam inalteradas. */
+html[data-educa-platform="web"] #webRealView.webx-gmail {
+ background:#fff!important;color:#202124!important;color-scheme:light;
+ isolation:isolate;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webreal-header {
+ background:#fff!important;border-color:#e6e8eb!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webreal-header :is(strong,small) {
+ color:#30343b!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webreal-header small {color:#6d7784!important;}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webreal-header>button {
+ color:#4c5565!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail #webRealBody {
+ background:#fff!important;
+ overscroll-behavior-y:contain!important;
+ -webkit-overflow-scrolling:touch;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-app.webx-gmail {
+ background:#fff!important;color:#202124!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-app.webx-gmail button {
+ color:#313742!important;
+ cursor:pointer;
+ touch-action:manipulation;
+ -webkit-tap-highlight-color:rgba(30,92,180,.14);
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar {
+ background:#e9eef6!important;
+ border:1px solid #dfe6f1!important;
+ box-shadow:none!important;
+ margin:8px 10px 6px!important;
+ border-radius:26px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar button {
+ color:#4b5563!important;
+ min-width:42px;min-height:44px;display:grid;place-items:center;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar button:last-child {
+ background:#457ed2!important;color:white!important;
+ border-radius:50%!important;flex-basis:36px;
+ min-height:36px;width:36px;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar label {
+ min-height:44px;display:flex!important;align-items:center;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar input {
+ color:#253149!important;
+ background:transparent!important;border:0!important;
+ min-height:44px!important;font-size:16px!important;
+ box-shadow:none!important;outline-offset:0!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar input::placeholder {
+ color:#616a7b!important;opacity:1;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-label {
+ background:#fff!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-label strong {
+ color:#455368!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-label small {
+ color:#6d7584!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-scroll {
+ background:#fff!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ touch-action:pan-y!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-row {
+ background:#fff!important;
+ border-bottom:1px solid #f0f1f3!important;
+ min-height:76px;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-row.unread {
+ background:#f5f8fd!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-row[hidden],
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-empty[hidden],
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer[hidden] {
+ display:none!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-message {
+ color:#222a38!important;
+ min-height:65px!important;
+ touch-action:manipulation!important;
+ position:relative;
+ z-index:1;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-copy strong {
+ color:#20232b!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-copy b {
+ color:#363f4c!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-copy small {
+ color:#646f7f!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-time {
+ color:#6c7686!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-star {
+ color:#7f8794!important;
+ min-width:42px;min-height:48px;
+ position:relative;z-index:1;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-fab {
+ background:#dce8fc!important;color:#174477!important;
+ box-shadow:0 4px 13px #30435822!important;
+ min-height:50px!important;
+ bottom:73px!important;right:12px!important;
+ z-index:4!important;
+ touch-action:manipulation;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-tabs {
+ background:#f7f9fc!important;
+ border-top:1px solid #dfe4ef!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-tabs button {
+ color:#707985!important;
+ min-height:52px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-tabs button[aria-current="page"] {
+ color:#185cb3!important;font-weight:720!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer {
+ background:#fff!important;color:#282e39!important;
+ border-right:1px solid #dde3ec!important;
+ box-shadow:9px 0 30px #29374f35!important;
+ z-index:10!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer-head {
+ color:#e44235!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer-head small {
+ color:#697383!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer button {
+ color:#344154!important;
+ min-height:47px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer button.active {
+ color:#a82f2d!important;background:#fde8e5!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-drawer button:hover {
+ background:#eff3f9!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-detail,
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-compose {
+ background:#fff!important;color:#2b313d!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-detail h2 {
+ color:#202b3b!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-detail>small,
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-sender small {
+ color:#67758a!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-detail p,
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-sender strong {
+ color:#313846!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-detailhead,
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-compose header {
+ background:#fff!important;border-bottom:1px solid #e8ecf2!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-detailhead button,
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-compose header button {
+ min-height:46px!important;min-width:44px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-notice {
+ background:#f0f5fd!important;color:#2e547e!important;
+ border:1px solid #dce9f8!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail #webxMailForm {
+ background:#fff!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail #webxMailForm label {
+ color:#526074!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail #webxMailForm :is(input,textarea) {
+ color:#273243!important;background:#fff!important;
+ border:1px solid #cfd8e6!important;border-radius:10px!important;
+ font-size:16px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail #webxMailForm p {
+ color:#647285!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail #webxMailForm button {
+ color:#fff!important;background:#216bc7!important;
+ min-height:48px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-empty {
+ color:#687889!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-empty strong {
+ color:#657185!important;
+}
+/* Os avisos sobrepostos não são diálogos: nunca bloqueiam interações. */
+html[data-educa-platform="web"] #phoneScreen[data-current-view="webreal"]
+ #webRealView.webx-gmail ~ .free-event-notice,
+html[data-educa-platform="web"] #phoneScreen[data-current-view="webreal"]
+ #webRealStatus:not([hidden]) {
+ pointer-events:none!important;
+}
+@media(max-width:390px) {
+ html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-message {
+  grid-template-columns:36px minmax(0,1fr) 40px!important;
+  gap:6px!important;
+ }
+ html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-row {
+  grid-template-columns:minmax(0,1fr) 38px!important;
+ }
+ html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-fab {
+  bottom:73px!important;right:8px!important;
+ }
+}
