@@ -7,7 +7,7 @@
 const $=s=>document.querySelector(s);
 const SCENARIOS=[
  {id:'family',channel:'whatsapp',name:'Filho — número novo',icon:'F',intro:'Oi, sou o Rafael. Troquei de número. Preciso pagar uma conta urgente. Você consegue me mandar R$ 350 por Pix? Te devolvo depois.',notification:'Nova mensagem no WhatsApp',kind:'pix',tips:'Pedidos urgentes de dinheiro de um número novo devem ser confirmados pelo telefone antigo ou pessoalmente. O destinatário do Pix fictício não correspondia ao nome informado.'},
- {id:'family-photo',channel:'whatsapp',name:'Filho — foto e número novo',icon:'F',intro:'Oi, é o Rafa. Troquei de número, salva esse aqui pra mim.',photoUrl:'/static/img/free-family-photo-v11212.jpg',photoAsk:'Mãe, tô com uma conta pra pagar hoje e meu Pix ficou limitado. Consegue me emprestar R$ 650? Te devolvo depois.',notification:'WhatsApp · foto recebida de número novo',kind:'pix',tips:'Receber uma foto não comprova quem está falando. Imagens podem ser copiadas ou geradas com IA. Confirme pelo número antigo ou pessoalmente antes de enviar dinheiro.'},
+ {id:'family-photo',channel:'whatsapp',name:'Filho — foto e número novo',icon:'F',intro:'Oi, é o Rafa. Troquei de número, salva esse aqui pra mim.',photoUrl:'/static/img/free-family-photo-v11214.webp',photoAsk:'Mãe, tô com uma conta pra pagar hoje e meu Pix ficou limitado. Consegue me emprestar R$ 650? Te devolvo depois.',notification:'WhatsApp · foto recebida de número novo',kind:'pix',tips:'Receber uma foto não comprova quem está falando. Imagens podem ser copiadas ou geradas com IA. Confirme pelo número antigo ou pessoalmente antes de enviar dinheiro.'},
  {id:'bank',channel:'call',name:'Central de segurança',icon:'B',intro:'Boa tarde. Sou do seu banco. Detectamos uma transferência suspeita e precisamos da sua ajuda agora.',notification:'Ligação de número desconhecido',kind:'pix',tips:'Desligue e procure o banco no canal oficial. Bancos não pedem Pix para supostamente proteger uma conta.'},
  {id:'video',channel:'video',name:'Lia · videochamada inesperada',icon:'L',intro:'Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.',notification:'Videochamada de contato desconhecido',kind:'pix',tips:'Até vídeo e voz podem ser produzidos ou manipulados por IA. Verifique a identidade por um contato independente e conhecido antes de transferir dinheiro.'},
  {id:'code',channel:'whatsapp',name:'Contato desconhecido',icon:'?',intro:'Olá. Você pode me ajudar com uma confirmação de acesso? Recebeu algum código no seu celular?',notification:'WhatsApp · contato desconhecido',kind:'code',tips:'Nunca compartilhe códigos ou senhas reais, mesmo se quem escreve parecer conhecido.'},
@@ -130,8 +130,9 @@ function renderPhoto(s){
  const bubble=document.createElement('div');bubble.className='message incoming free-training-photo';
  const photo=document.createElement('img');
  photo.src=s.photoUrl;
+ photo.onerror=()=>{photo.onerror=null;photo.src='/static/img/free-family-photo-v11212.jpg';};
  photo.alt='Foto ilustrativa sintética enviada pelo contato que afirma ser familiar';
- photo.loading='eager';photo.decoding='async';photo.width=720;photo.height=875;photo.className='free-contact-photo-trigger';photo.tabIndex=0;photo.setAttribute('role','button');photo.setAttribute('aria-label','Ampliar foto recebida nesta simulação');
+ photo.loading='eager';photo.decoding='async';photo.width=600;photo.height=730;photo.className='free-contact-photo-trigger';photo.tabIndex=0;photo.setAttribute('role','button');photo.setAttribute('aria-label','Ampliar foto recebida nesta simulação');
  const stamp=document.createElement('small');stamp.textContent='Foto recebida · simulação';
  bubble.append(photo,stamp);els.wallpaper.append(bubble);els.wallpaper.scrollTop=els.wallpaper.scrollHeight;
 }
