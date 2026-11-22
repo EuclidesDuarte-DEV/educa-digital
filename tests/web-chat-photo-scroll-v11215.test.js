@@ -25,7 +25,7 @@ test('V112.15: mensagens rolam e campo permanece na linha do composer no Web',()
  assert.match(css,/overscroll-behavior-y:auto!important/);
  assert.match(css,/#freeOriginalComposer:not\(\[hidden\]\)/);
  assert.match(css,/grid-row:4/);
- assert.match(css,/font-size:max\\(16px,var\\(--ed-chat-input,16px\\)\\)!important/);
+ assert.match(css,/font-size:max\(16px,var\(--ed-chat-input,16px\)\)!important/);
  assert.match(js,/visualViewport/);
  assert.match(js,/window\.scrollBy/);
  assert.match(js,/input\.addEventListener\('focus'/);
