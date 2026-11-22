@@ -75,12 +75,22 @@ function speechSegments(text){
 const captionToggle=$('freeVideoCaptionToggle');
 const speaker=$('freeVideoSpeaker'),captionSwitch=$('freeVideoCaptionsSwitch'),expand=$('freeVideoExpand');
 const voiceStyle=$('freeVideoVoiceStyle'),voiceEngine=$('freeVideoVoiceEngine'),latencyMode=$('freeVideoLatencyMode');
-const selectedEngine=()=>voiceEngine?.value==='padrao'?'padrao':'feminina';
+const selectedEngine=()=>{
+ if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.value==='gratuita')return 'gratuita';
+ return voiceEngine?.value==='padrao'?'padrao':'feminina';
+};
 // Web V112.01: no anúncio da voz, descrever o fallback real sem prometer
 // Kokoro em dispositivos onde o modelo ainda não foi preparado.
 if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.options?.length){
  voiceEngine.options[0].textContent='Roberta · voz natural (aguardando ativação)';
  voiceEngine.options[1].textContent='Voz do aparelho · sem aguardar Kokoro';
+ // Somente WEB: a opção gratuita neural é padrão. Nada muda nos apps nativos.
+ if(!voiceEngine.querySelector('option[value="gratuita"]')){
+  const freeOption=document.createElement('option');freeOption.value='gratuita';
+  freeOption.textContent='Neural brasileira gratuita · Dora (experimental)';
+  voiceEngine.insertBefore(freeOption,voiceEngine.options[0]);
+ }
+ voiceEngine.value='gratuita';
 }
 const lipSyncWaitMs=()=>latencyMode?.value==='sinc' ? 40000 : 1100;
 const selectedStyle=()=>['natural','calma','clara'].includes(voiceStyle?.value)?voiceStyle.value:'natural';
@@ -698,8 +708,53 @@ async function playWebHQVoice(text,serial){
   if(session.hqAbort===controller)session.hqAbort=null;
  }
 }
+// V112.06 — Web: ONNX de 8.46 MB gera a fala neural dentro do navegador.
+// Sem token pago nem enviar texto a ElevenLabs. O primeiro carregamento pode demorar.
+async function playFreeNeuralVoice(text,serial){
+ const local=window.EducaLiaFreeNeural;
+ if(!local)throw Error('O motor neural gratuito não foi carregado.');
+ status('Preparando voz neural feminina brasileira. Na primeira chamada, baixe o modelo de aproximadamente 8 MB.');
+ const result=await local.speak(text,{speed:selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05});
+ if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
+ if(!result?.blob||result.blob.size<1024)throw Error('O modelo gratuito não gerou áudio.');
+ clearMedia();
+ const audio=new Audio(),url=URL.createObjectURL(result.blob);
+ session.mediaUrl=url;session.utterance=audio;audio.src=url;audio.muted=outputMuted;
+ indicator('Lia · Dora neural gratuita, português do Brasil');
+ status('Voz neural gratuita gerada no seu aparelho, sem consumo de créditos.');
+ audio.onplaying=()=>{if(serial===session.serial){
+  stopVoiceProgress();ui.play.hidden=true;subtitle(text);
+  if(!startSpeechMotion(audio,[]))referenceMotion();
+  status('Voz neural brasileira reproduzindo (modelo local; boca ilustrativa).');
+ }};
+ audio.onended=()=>{if(serial===session.serial)completed();};
+ audio.onerror=()=>{if(serial===session.serial)recoverVoice(serial,text,'Falha ao tocar a voz neural gratuita.');};
+ try{await audio.play();}catch(_){
+  // A chamada inicial desbloqueia o AudioContext. Em Safari, WAV também
+  // pode ser reproduzido pelo contexto sem enviar áudio a um servidor.
+  if(await playDynamicKokoroWebAudio(result,text,serial,'voz neural brasileira gratuita'))return true;
+  if(ui.play){ui.play.hidden=false;ui.play.textContent='▶ Ouvir voz neural';delete ui.play.dataset.retryVoice;}
+  status('Toque em Ouvir voz neural para liberar o áudio neste navegador.');
+ }
+ return true;
+}
 function startSpeechChunk(phrase,serial){
  if(serial!==session.serial||!session.active||!session.connected)return;
+ // Nova opção Web, pré-aquecida assim que a chamada aparece.
+ if(document.documentElement?.dataset?.educaPlatform==='web'&&selectedEngine()==='gratuita'){
+  session.utterance={kind:'neural-gratis-loading'};
+  showVoiceProgress('LIA · preparando voz neural brasileira gratuita…');
+  void playFreeNeuralVoice(phrase,serial).catch(e=>{
+   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
+   session.speechQueue=[];session.utterance=null;stopVoiceProgress();
+   indicator('Lia · voz gratuita indisponível neste aparelho');
+   status('Voz neural gratuita não pôde falar: '+String(e?.message||e).slice(0,150)+'.');
+   if(ui.view?.dataset)ui.view.dataset.captions='on';
+   if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
+   if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz neural gratuita';}
+  });
+  return;
+ }
  // V112.05: a versão Web prioriza Roberta quando o Worker a configurou.
  // Não substitui silenciosamente a voz escolhida pela voz robótica.
  if(document.documentElement?.dataset?.educaPlatform==='web'&&
@@ -886,6 +941,9 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  session.hqVoiceEnabled=false;session.hqVoiceCheck=null;
  if(document.documentElement?.dataset?.educaPlatform==='web')
   session.hqVoiceCheck=inspectWebHQVoice();
+ // Baixar/preparar a voz local antes de o usuário apertar Atender.
+ if(document.documentElement?.dataset?.educaPlatform==='web'&&selectedEngine()==='gratuita')
+  void window.EducaLiaFreeNeural?.prepare?.().catch(()=>{});
  const browser=window.EducaLiaBrowserKokoro;
  if(browser&&selectedEngine()!=='padrao'&&
     document.documentElement?.dataset?.educaPlatform!=='web')
@@ -1007,6 +1065,29 @@ async function inspectMotor(){
  }catch(_){session.health={enabled:false};}
 }
 
+// A escolha fica explícita. A voz do aparelho só é utilizada se a pessoa selecioná-la.
+voiceEngine?.addEventListener('change',()=>{
+ if(document.documentElement?.dataset?.educaPlatform!=='web')return;
+ abortSpeech();
+ if(selectedEngine()==='gratuita'){
+  indicator('Lia · voz neural gratuita pt-BR');
+  status('Dora neural gratuita selecionada. O modelo prepara no aparelho sem cobrança.');
+  void window.EducaLiaFreeNeural?.prepare?.().catch(()=>{});
+ }else if(selectedEngine()==='feminina'){
+  indicator('Lia · Roberta ElevenLabs');
+  status('Roberta escolhida: a síntese ElevenLabs usa créditos se o serviço responder.');
+ }else{
+  indicator('Lia · voz do navegador');
+  status('Voz alternativa do próprio dispositivo selecionada.');
+ }
+});
+window.addEventListener('educa-lia-free-neural-progress',event=>{
+ if(document.documentElement?.dataset?.educaPlatform==='web'&&session.active&&selectedEngine()==='gratuita'){
+  const stage=String(event.detail?.stage||'').slice(0,95);
+  if(!session.connected||session.utterance?.kind==='neural-gratis-loading')
+   showVoiceProgress('LIA · '+stage);
+ }
+});
 ui.answer?.addEventListener('click',()=>{void answer();});ui.hang?.addEventListener('click',()=>free()?.hangupVideo?.());ui.setup?.addEventListener('click',()=>{void configure();});
  $('freeVideoVoiceSettings')?.addEventListener('click',()=>{abortSpeech();window.EducaLiaVoice?.openSettings?.();});
 ui.mic?.addEventListener('click',()=>{if(session.micEnabled){setHandsFree(false);status('Microfone desativado.');}else{primeSpeechMotion();setHandsFree(true);abortSpeech();listen();}});
