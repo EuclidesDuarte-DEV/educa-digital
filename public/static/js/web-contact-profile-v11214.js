@@ -143,7 +143,7 @@ function action(name,node){
  };
  if(Object.hasOwn(demonstrations,name)){announce(demonstrations[name]);return;}
  if(name==='call'||name==='video'){
-  showPane('outgoing');
+  if(overlay.hidden)open('outgoing');else showPane('outgoing');
   $('#fcTitle',overlay).textContent=name==='call'?'Ligação fictícia':'Videochamada fictícia';
   $('#fcOutgoingStatus',overlay).textContent=name==='call'
    ?'Chamando o contato fictício... Esta ligação não se conecta.'
@@ -213,5 +213,5 @@ document.addEventListener('keydown',e=>{
 const phone=$('#phoneScreen');
 if(phone)new MutationObserver(()=>{if(webScenario())decorate();else clear();}).observe(phone,{attributes:true,attributeFilter:['data-current-view']});
 new MutationObserver(()=>{if(webScenario())decorate();}).observe($('#whatsappView'),{childList:true,subtree:true});
-window.EducaWebContactProfile=Object.freeze({isOpen:()=>!overlay.hidden,open:()=>open('profile')});
+window.EducaWebContactProfile=Object.freeze({isOpen:()=>!overlay.hidden,open:()=>open('profile'),openCall:type=>action(type==='video'?'video':'call')});
 })();
