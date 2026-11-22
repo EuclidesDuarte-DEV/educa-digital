@@ -1,0 +1,181 @@
+/* V112.14 — apenas Web: perfil realista de contato fictício dentro do celular simulado. */
+html[data-educa-platform="web"] #chatView,
+html[data-educa-platform="web"] #chatView .chat-surface{position:relative!important;}
+html[data-educa-platform="web"] #chatView .fc-layer[hidden],
+html[data-educa-platform="web"] #chatView .fc-menu[hidden],
+html[data-educa-platform="web"] #chatView .fc-pane[hidden]{display:none!important;}
+html[data-educa-platform="web"] #chatView .fc-layer{
+ box-sizing:border-box;position:absolute;inset:0;z-index:105;
+ color:#f7f8f9;background:#111315;font-family:inherit;display:flex;flex-direction:column;
+ min-height:0;overflow:hidden;border-radius:inherit;
+}
+html[data-educa-platform="web"] #chatView .fc-nav{
+ flex:0 0 57px;display:flex;align-items:center;gap:10px;
+ background:#101214;border-bottom:1px solid #24272b;padding:4px 12px;
+}
+html[data-educa-platform="web"] #chatView .fc-nav button{
+ color:white;background:transparent;border:0;font-size:34px;
+ width:42px;height:45px;flex:0 0 42px;cursor:pointer;
+}
+html[data-educa-platform="web"] #chatView .fc-nav strong{flex:1;font-size:17px;text-align:center;}
+html[data-educa-platform="web"] #chatView .fc-nav small{
+ font-size:9px;color:#a5bbc6;padding:4px 5px;border:1px solid #424952;border-radius:5px;
+}
+html[data-educa-platform="web"] #chatView .fc-scroll{
+ flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain;
+ -webkit-overflow-scrolling:touch;touch-action:pan-y;padding:14px 14px 34px;
+}
+html[data-educa-platform="web"] #chatView .fc-pane{max-width:550px;margin:0 auto;}
+html[data-educa-platform="web"] #chatView .fc-big-avatar{
+ display:flex;align-items:center;justify-content:center;margin:8px auto 8px;
+ padding:0;width:126px;height:126px;border:0;border-radius:50%;
+ background:#29363d;overflow:hidden;cursor:pointer;
+}
+html[data-educa-platform="web"] #chatView .fc-portrait{
+ width:100%;height:100%;object-fit:cover;object-position:50% 38%;
+}
+html[data-educa-platform="web"] #chatView .fc-pane h2{
+ margin:9px 0 4px;text-align:center;font-size:clamp(23px,5vw,27px);
+ line-height:1.25;color:#f8f9fa;font-weight:780;
+}
+html[data-educa-platform="web"] #chatView .fc-number{
+ text-align:center;color:#a9afb6;margin:0 0 8px;font-size:15px;
+}
+html[data-educa-platform="web"] #chatView .fc-unsaved{
+ display:block;width:max-content;max-width:95%;margin:0 auto 16px;
+ border-radius:20px;background:#292d31;color:#bdc6cd;padding:6px 12px;
+ text-align:center;font-size:12px;
+}
+html[data-educa-platform="web"] #chatView .fc-shortcuts{
+ display:flex;gap:8px;justify-content:center;margin:10px 0 17px;
+}
+html[data-educa-platform="web"] #chatView .fc-shortcuts button{
+ flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:7px;
+ border:0;color:#e9edef;background:transparent;font-size:11px;
+ padding:6px 2px;cursor:pointer;line-height:1.2;
+}
+html[data-educa-platform="web"] #chatView .fc-shortcuts b{
+ width:43px;height:43px;border-radius:50%;display:grid;place-items:center;
+ border:1px solid #353b40;background:#1c2024;font-size:20px;font-weight:500;
+}
+html[data-educa-platform="web"] #chatView .fc-group{
+ margin:13px 0 0;padding:2px 0;background:#202225;border-radius:16px;overflow:hidden;
+}
+html[data-educa-platform="web"] #chatView .fc-group button{
+ border:0;border-bottom:1px solid #303236;background:transparent;min-height:51px;width:100%;
+ display:flex;align-items:center;gap:10px;padding:11px 15px;
+ color:#e8eaeb;text-align:left;font-size:13px;line-height:1.35;cursor:pointer;
+}
+html[data-educa-platform="web"] #chatView .fc-group button:last-child{border-bottom:0;}
+html[data-educa-platform="web"] #chatView .fc-group button span{flex:1;}
+html[data-educa-platform="web"] #chatView .fc-group button small{color:#a4abb1;font-size:11px;}
+html[data-educa-platform="web"] #chatView .fc-group button b{color:#87939c;font-size:21px;font-weight:400;}
+html[data-educa-platform="web"] #chatView .fc-group button.fc-danger{color:#ff6f76;}
+html[data-educa-platform="web"] #chatView .fc-hint{
+ font-size:12px;color:#aab6be;line-height:1.5;margin:18px 5px 12px;
+}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="search"] label{
+ display:block;margin:12px 0;color:#eaf3f4;font-size:15px;font-weight:650;
+}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="search"] input{
+ width:100%;border:1px solid #424950;border-radius:12px;background:#22272a;
+ padding:13px 14px;color:white;font-size:15px;box-sizing:border-box;
+}
+html[data-educa-platform="web"] #chatView .fc-search-results{
+ display:flex;flex-direction:column;gap:8px;margin-top:12px;
+}
+html[data-educa-platform="web"] #chatView .fc-search-results button{
+ text-align:left;white-space:normal;overflow-wrap:anywhere;padding:11px;border-radius:10px;
+ border:1px solid #424950;background:#20292c;color:#ecf1f2;font-size:13px;cursor:pointer;
+}
+html[data-educa-platform="web"] #chatView #fcMediaPhoto{
+ display:block;padding:0;margin:14px 0;width:155px;height:155px;
+ border:0;border-radius:13px;overflow:hidden;cursor:pointer;background:#30343b;
+}
+html[data-educa-platform="web"] #chatView .fc-thumb-image{
+ display:block;width:100%;height:100%;object-fit:cover;
+}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="photo"]{height:100%;max-width:none;}
+html[data-educa-platform="web"] #chatView .fc-photo-view{
+ width:100%;height:100%;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:14px;
+}
+html[data-educa-platform="web"] #chatView #fcFullPhoto{
+ max-height:min(72vh,520px);width:100%;display:flex;align-items:center;justify-content:center;
+}
+html[data-educa-platform="web"] #chatView .fc-full-image{
+ max-width:100%;max-height:min(72vh,520px);object-fit:contain;border-radius:8px;
+}
+html[data-educa-platform="web"] #chatView .fc-photo-view p{
+ color:#b6bdc2;font-size:12px;text-align:center;
+}
+html[data-educa-platform="web"] #chatView .fc-status{
+ margin:0;padding:10px 13px;min-height:35px;
+ background:#173629;color:#dcf7e6;font-size:12px;line-height:1.4;
+}
+html[data-educa-platform="web"] #chatView .fc-menu{
+ position:absolute;right:8px;top:58px;z-index:110;width:min(245px,82%);
+ padding:5px;background:#26302e;color:#f9fafa;border-radius:12px;
+ box-shadow:0 9px 28px #0006;display:flex;flex-direction:column;
+}
+html[data-educa-platform="web"] #chatView .fc-menu button{
+ color:inherit;background:transparent;text-align:left;
+ border:0;padding:11px 13px;font-size:13px;line-height:1.35;min-height:40px;cursor:pointer;
+}
+html[data-educa-platform="web"] #chatView .fc-menu button:focus-visible,
+html[data-educa-platform="web"] #chatView .fc-menu button:hover,
+html[data-educa-platform="web"] #chatView .fc-group button:hover{background:#3b4845;}
+html[data-educa-platform="web"] #chatView .fc-avatar-trigger,
+html[data-educa-platform="web"] #whatsappView .fc-list-avatar{
+ background-position:center 36%!important;background-size:cover!important;
+ background-color:#2b4e53!important;color:transparent!important;cursor:pointer;
+}
+html[data-educa-platform="web"] #chatView .fc-title-trigger{cursor:pointer;min-width:0;}
+html[data-educa-platform="web"] #chatView .free-training-photo img{
+ display:block;width:100%;height:auto;aspect-ratio:520/632;object-fit:cover;
+ cursor:zoom-in;image-rendering:auto;
+}
+html[data-educa-platform="web"] #chatView .fc-highlight{
+ outline:3px solid #13a578;outline-offset:2px;
+}
+html[data-educa-platform="web"] #chatView.fc-dark-chat #chatWallpaper{
+ background-color:#131e1d!important;color:#f8f8f8;
+}
+html[data-educa-platform="web"] #chatView.fc-dark-chat .message.incoming{
+ background-color:#253330!important;color:#f5f5f5;
+}
+html[data-educa-platform="web"] #chatView.fc-dark-chat .message.outgoing{
+ background-color:#15594b!important;color:white;
+}
+html[data-educa-platform="web"] #chatView.fc-dark-chat .free-training-photo{
+ background-color:#263330!important;
+}
+html[data-educa-platform="web"] #chatView .fc-menu button:focus-visible,
+html[data-educa-platform="web"] #chatView .fc-pane button:focus-visible,
+html[data-educa-platform="web"] #chatView .fc-nav button:focus-visible{
+ outline:3px solid #63c9ee;outline-offset:-2px;
+}
+@media(max-height:660px){
+ html[data-educa-platform="web"] #chatView .fc-big-avatar{width:100px;height:100px;}
+ html[data-educa-platform="web"] #chatView .fc-shortcuts b{width:39px;height:39px;}
+}
+
+/* Chamadas demonstrativas permanecem no contato; LIA só vem após o resultado. */
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="outgoing"]{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ min-height:60%;text-align:center;padding:20px 10px 30px;
+}
+html[data-educa-platform="web"] #chatView .fc-pane[data-pane="outgoing"][hidden]{display:none!important;}
+html[data-educa-platform="web"] #chatView .fc-outgoing-image{
+ width:135px;height:135px;border-radius:50%;overflow:hidden;background:#263c40;margin:8px auto 22px;
+}
+html[data-educa-platform="web"] #chatView .fc-outgoing-avatar{
+ display:block;width:100%;height:100%;object-fit:cover;object-position:center 35%;
+}
+html[data-educa-platform="web"] #chatView .fc-outgoing-status{
+ color:#d5e0e0;font-size:15px;line-height:1.45;margin:14px 6px;
+}
+html[data-educa-platform="web"] #chatView .fc-hangup{
+ box-sizing:border-box;display:block;min-height:49px;width:min(240px,100%);padding:11px 18px;
+ background:#a9283b;border:0;border-radius:30px;color:white;font-weight:750;font-size:15px;cursor:pointer;
+}

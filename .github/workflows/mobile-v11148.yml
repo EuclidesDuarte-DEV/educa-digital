@@ -38,6 +38,8 @@ jobs:
         run: node scripts/validar-family-photo-v11212.mjs
       - name: V112.13 — primeira foto do falso familiar, segunda videochamada com LIA
         run: node scripts/validar-photo-first-lia-second-v11213.mjs
+      - name: V112.14 — perfil fictício, foto WebP, mídia, busca, opções e LIA
+        run: node scripts/validar-contact-profile-v11214.mjs
       - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
         run: node scripts/validar-modo-livre-v11175.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
@@ -77,4 +79,5 @@ jobs:
             artifacts/level-badge-v11211/
             artifacts/family-photo-v11212/
             artifacts/photo-first-lia-second-v11213/
+            artifacts/contact-profile-v11214/
           if-no-files-found: ignore
