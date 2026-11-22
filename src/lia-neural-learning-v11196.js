@@ -81,7 +81,7 @@ export function classifyTrainingTurn(scenario,text){
  if(/(vou|quero|prefiro|vou tentar).{0,25}(verificar|confirmar|conferir|consultar)|canal oficial|numero antigo|banco oficial/.test(t))
   return 'verify';
  if(/vou bloquear|quero desligar|desligar|nao quero|nao vou|pare|isso e golpe|vou denunciar/.test(t))return 'refuse';
- if(/vou enviar|vou fazer o pix|vou transferir|eu pago|vou mandar o dinheiro/.test(t))return 'accept';
+ if(/\b(vou (te )?(mandar|enviar|transferir|pagar)|vou (fazer|realizar) (o |um )?pix|vou mandar o dinheiro|eu pago|te pago|vou transferir|vou enviar|ja (fiz|enviei) (o )?pix)\b/.test(t))return 'accept';
  if(/[?]|quem e|onde|como|por que|porque|pode explicar/.test(t))return 'question';
  return 'other';
 }
