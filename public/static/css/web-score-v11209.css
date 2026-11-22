@@ -1,0 +1,26 @@
+/* V112.09 | Apenas Web — retorno de risco da pontuação fictícia.
+ * Visível dentro do chat, sem sobrepor o campo de mensagem ou a barra de gestos.
+ */
+html[data-educa-platform="web"] #chatWallpaper .free-risk-feedback {
+  display:block;
+  clear:both;
+  box-sizing:border-box;
+  max-width:94%;
+  width:max-content;
+  margin:12px auto 14px;
+  border:1px solid #e8c17a;
+  border-radius:12px;
+  background:#fff5df;
+  color:#633c12;
+  padding:11px 12px;
+  font-size:.94em;
+  font-weight:650;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+  box-shadow:0 2px 8px rgba(86,58,8,.08);
+}
+html[data-educa-platform="web"].a11y-text-large #chatWallpaper .free-risk-feedback,
+html[data-educa-platform="web"].a11y-text-extra #chatWallpaper .free-risk-feedback {
+  font-size:1em;
+  max-width:96%;
+}
