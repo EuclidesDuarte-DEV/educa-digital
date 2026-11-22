@@ -166,6 +166,9 @@ function finish(kind='safe',reason=''){
  if(isWebTraining()&&state.blocked&&visible()==='free-summary')return;
  const s=state.scenario||state.pending;
  if(!s){home();return;}
+ // Ao revisitar um contato já reprovado nesta sessão, nem Bloquear nem outro
+ // botão pode converter a falha anterior em uma nova vitória ou recuperar pontos.
+ if(isWebTraining()&&state.completedSteps.has(s.id)&&state.riskyScenarios.has(s.id))kind='risk';
  const quickRisk=isWebTraining()&&kind==='risk';
  const unsafe=kind==='unsafe'||kind==='risk';
  const safe=!unsafe;
