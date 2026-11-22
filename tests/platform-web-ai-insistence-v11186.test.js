@@ -74,7 +74,7 @@ test('V111.89 — IA reduz texto apenas na rota Web, sem alterar modelo nativo',
   };
   const web=await run(true),native=await run(false);
   assert.equal(web.model,native.model,'modelo não alterado nem substituído');
-  assert.equal(web.options.max_completion_tokens,110);
+  assert.equal(web.options.max_completion_tokens,85);
   assert.equal(native.options.max_completion_tokens,150);
   assert.equal(web.options.chat_template_kwargs.enable_thinking,false);
 });
