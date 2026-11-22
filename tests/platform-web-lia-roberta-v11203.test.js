@@ -16,7 +16,10 @@ test('V112.03 — Roberta selecionada no Worker oficial e Preview, nunca no Andr
  // O Preview continua desligado e não compartilha o segredo de produção.
  assert.match(wrangler,/\[previews\.vars\][\s\S]*LIA_WEB_HQ_TTS_ENABLED = "false"/);
  assert.doesNotMatch(wrangler,/LIA_ELEVENLABS_API_KEY\s*=/);
- assert.match(video,/voiceEngine\.options\[0\]\.textContent='Roberta · voz natural/);
+ // O status da Roberta atualiza sua própria option; não sobrescreve
+ // a voz neural gratuita colocada no início da lista Web.
+ assert.match(video,/voiceEngine\.querySelector\('option\[value="feminina"\]'\)\.textContent='Roberta · voz natural/);
+ assert.match(video,/const robertaOption=voiceEngine\?\.querySelector\('option\[value="feminina"\]'\)/);
  assert.match(video,/config\.provider==='elevenlabs-flash-v2\.5'/);
  assert.match(html,/free-video\.js\?v=11191[^"]*&roberta=11203/);
 });
