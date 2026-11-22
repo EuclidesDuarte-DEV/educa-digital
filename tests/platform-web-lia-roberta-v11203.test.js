@@ -61,6 +61,6 @@ test('V112.03 — Safari aguarda brevemente o status para não começar robótic
  assert.match(video,/await Promise\.race\(\[/);
  assert.match(video,/session\.hqVoiceCheck,new Promise\(resolve=>setTimeout\(resolve,650\)\)/);
  assert.match(video,/turn!==session\.serial\|\|!session\.active/);
- assert.match(video,/timeout=setTimeout\(\(\)=>controller\.abort\(\),2800\)/);
+ assert.match(video,/timeout=setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
  assert.match(video,/session\.hqVoiceFailedSerial=serial/);
 });
