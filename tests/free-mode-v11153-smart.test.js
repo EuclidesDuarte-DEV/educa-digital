@@ -50,7 +50,8 @@ test('V111.53: SMS e ligação fictícios aceitos, informações reais proibidas
 test('V111.53: sequência preserva WhatsApp, vídeo e ligação antes do SMS',()=>{
  assert.match(js,/SCRIPTED_ORDER=Object.freeze\(\['family','video','bank'\]\)/);
  assert.match(js,/BONUS_ORDER=Object.freeze\(\['sms-delivery','relative','call-tech','sms-bank'/);
- assert.match(js,/BONUS_ORDER.find\(id=>!state.completedSteps.has\(id\)\)/);
+ assert.match(js,/bonus.find\(id=>!state.completedSteps.has\(id\)\)/);
+ assert.match(js,/const bonus=isWebTraining\(\)\?WEB_BONUS_ORDER:BONUS_ORDER/);
  assert.match(js,/nextScriptedScenario\(\)/);
  assert.match(js,/if\(s.channel==='sms'\)openSms\(s\)/);
  assert.match(js,/next\?\.channel==='sms'/);

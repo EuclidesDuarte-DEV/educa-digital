@@ -36,6 +36,8 @@ jobs:
         run: node scripts/validar-level-badge-v11211.mjs
       - name: V112.12 — falso familiar envia foto e pede Pix no WhatsApp Web
         run: node scripts/validar-family-photo-v11212.mjs
+      - name: V112.13 — primeira foto do falso familiar, segunda videochamada com LIA
+        run: node scripts/validar-photo-first-lia-second-v11213.mjs
       - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
         run: node scripts/validar-modo-livre-v11175.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
@@ -74,4 +76,5 @@ jobs:
             artifacts/quick-result-v11210/
             artifacts/level-badge-v11211/
             artifacts/family-photo-v11212/
+            artifacts/photo-first-lia-second-v11213/
           if-no-files-found: ignore

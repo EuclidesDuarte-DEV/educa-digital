@@ -50,8 +50,7 @@ try{
    },selector);
    assert.ok(before.active,name+': tela de conclusão não está ativa');
    assert.equal(before.overflow,'auto',name+': overflow-y bloqueado pela regra genérica');
-   // Se a tela já cabe integralmente no celular, não há por que forçar overflow.
-   const needsScroll=before.scrollHeight>before.height+15;
+   // A altura pode mudar depois do scrollIntoView; medir novamente após a rolagem.
    const panel=page.locator(selector);
    // Em telas móveis, o mockup pode começar ABAIXO do topo da página inicial.
    // Primeiro traga o celular para o viewport; senão a rolagem do mouse cai
@@ -69,7 +68,9 @@ try{
    await page.mouse.move(mx,my);
    await page.mouse.wheel(0,950);
    await page.waitForTimeout(170);
-   const afterWheel=await panel.evaluate(e=>e.scrollTop);
+   const wheelState=await panel.evaluate(e=>({scrollTop:e.scrollTop,scrollHeight:e.scrollHeight,height:e.clientHeight}));
+   const afterWheel=wheelState.scrollTop;
+   const needsScroll=wheelState.scrollHeight>wheelState.height+1;
    if(needsScroll)assert.ok(afterWheel>8,name+': mouse/touchpad não rola dentro do celular, scrollTop='+afterWheel
     +' rect='+JSON.stringify(rect)+' hit='+JSON.stringify(hit));
    else assert.ok(afterWheel<=8,name+': painel sem overflow não precisa rolar; scrollTop='+afterWheel);

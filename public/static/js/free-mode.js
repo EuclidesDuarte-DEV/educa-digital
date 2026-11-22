@@ -23,10 +23,12 @@ const SCENARIOS=[
  {id:'daughter',channel:'whatsapp',name:'Maria (filha)',icon:'M',intro:'Oi! Tudo bem por aí?',notification:'Maria enviou uma mensagem',kind:'normal',tips:'Conversas com contatos já conhecidos também fazem parte do aprendizado.'},
  {id:'family-group',channel:'whatsapp',name:'Grupo da família',icon:'G',intro:'João: mandei as fotos do almoço!',notification:'Mensagem no grupo da família',kind:'normal',tips:'Grupos legítimos ajudam a treinar comunicação e privacidade.'}
 ];
-// Roteiro principal: WhatsApp primeiro, videochamada inovadora em segundo, voz depois.
+// O roteiro NATIVO permanece intacto. Somente Web: foto fictícia primeiro e LIA logo depois.
 const SCRIPTED_ORDER=Object.freeze(['family','video','bank']);
-// Depois do roteiro principal, novas tentativas são entregues sem botão "Próxima atividade".
+const WEB_SCRIPTED_ORDER=Object.freeze(['family-photo','video','bank']);
+// Os demais exercícios continuam disponíveis depois do roteiro principal.
 const BONUS_ORDER=Object.freeze(['sms-delivery','relative','call-tech','sms-bank','account','sms-prize','prize','code','delivery']);
+const WEB_BONUS_ORDER=Object.freeze([...BONUS_ORDER,'family']);
 const byId=Object.fromEntries(SCENARIOS.map(s=>[s.id,s]));
 const video=()=>window.EducaVideoCall;
 const state={active:false,scenario:null,pending:null,unread:new Set(),conversations:new Map(),delivered:0,seen:[],finished:0,completedSteps:new Set(),timer:null,replying:false,blocked:false,callAccepted:false,lastSpoken:'',recognizer:null,request:null,baseline:null,transitionTimer:null,callHandsFree:false,callUtterance:null,learningConsent:false,exampleConsent:false,score:100,riskyScenarios:new Set()};
@@ -108,7 +110,12 @@ function makeContactRows(){const list=$('#whatsappView .wa-chat-list');if(!list)
   }
 }
 function updatePreview(s){const row=$(`#whatsappView [data-scenario="${s.id}"],#whatsappView [data-free-scenario="${s.id}"],#whatsappView [data-normal-chat="${s.id}"]`);if(!row)return;const m=state.conversations.get(s.id)?.at(-1);row.querySelector('.chat-copy small').textContent=(m?.content||s.intro).slice(0,55);const clock=row.querySelector('.chat-meta small');if(clock)clock.textContent=now();row.parentNode?.prepend(row);updateUnread();}
-function nextScriptedScenario(){return byId[SCRIPTED_ORDER.find(id=>!state.completedSteps.has(id))||BONUS_ORDER.slice(0,2).find(id=>!state.completedSteps.has(id))||(isWebTraining()&&!state.completedSteps.has('family-photo')?'family-photo':null)||BONUS_ORDER.find(id=>!state.completedSteps.has(id))]||null;}
+function nextScriptedScenario(){
+ const order=isWebTraining()?WEB_SCRIPTED_ORDER:SCRIPTED_ORDER;
+ const bonus=isWebTraining()?WEB_BONUS_ORDER:BONUS_ORDER;
+ return byId[order.find(id=>!state.completedSteps.has(id))||
+   bonus.find(id=>!state.completedSteps.has(id))]||null;
+}
 function chooseScenario(){let s=nextScriptedScenario();if(!s){const pool=[...(isWebTraining()?[byId['family-photo']]:[]),byId.code,byId.delivery,byId.relative,byId.account,byId.prize,byId['sms-bank'],byId['sms-delivery'],byId['sms-prize'],byId['call-tech'],byId.friend,byId.family,byId.bank,byId.video].filter(x=>!state.seen.slice(-3).includes(x.id));s=pool[Math.floor(Math.random()*pool.length)];}state.delivered++;state.seen.push(s.id);return s;}
 function triggerEvent(){if(!state.active)return;if(state.blocked||visible()==='free-pix'||visible()==='free-call'||visible()==='free-video'||visible()==='free-sms'||visible()==='chat'){schedule(12000,22000);return;}const s=chooseScenario();state.pending=s;
  if(s.channel==='whatsapp'||s.channel==='sms'){const list=state.conversations.get(s.id)||[];if(!list.length)list.push({role:'assistant',content:s.intro});state.conversations.set(s.id,list.slice(-14));state.unread.add(s.id);updatePreview(s);}
@@ -212,7 +219,7 @@ function finish(kind='safe',reason=''){
  if(quickRisk){
   if(icon)icon.textContent='−15';
   if(title)title.textContent='Você perdeu 15 pontos';
-  if(text)text.textContent='Você aceitou um Pix suspeito. Restam '+state.score+' pontos.';
+  if(text)text.textContent='Você aceitou um Pix suspeito. Restam '+state.score+' pontos.'+(next?.id==='video'?' Próximo: videochamada com a LIA.':'');
   if(detail)detail.textContent='Antes de enviar dinheiro, confirme a identidade pelo número antigo.';
   if(nextButton){nextButton.hidden=false;nextButton.textContent='Ir para o próximo desafio';}
   if(transition){transition.hidden=true;transition.textContent='';}
@@ -220,7 +227,7 @@ function finish(kind='safe',reason=''){
   if(icon)icon.textContent=safe&&!commitmentLoss?'✓':'!';
   if(title)title.textContent=safe&&!commitmentLoss?'Situação concluída':'Atenção à decisão';
   const message=safe?'Você concluiu esta situação do treino.':'Você confirmou um Pix FICTÍCIO. Nenhum dinheiro verdadeiro foi enviado.';
-  if(text)text.textContent=message+(s.id==='family'&&next?.id==='video'?' A seguir, uma videochamada com IA: ver um rosto não garante a identidade.':'')+(isWebTraining()?' Pontuação: '+state.score+' pontos.'+(pixLoss?' (−'+pixLoss+' pontos pelo Pix fictício confirmado.)':commitmentLoss?' (−15 pontos por aceitar enviar antes de verificar.)':''):'');
+  if(text)text.textContent=message+(['family','family-photo'].includes(s.id)&&next?.id==='video'?' A seguir, uma videochamada com a LIA: ver um rosto não garante a identidade.':'')+(isWebTraining()?' Pontuação: '+state.score+' pontos.'+(pixLoss?' (−'+pixLoss+' pontos pelo Pix fictício confirmado.)':commitmentLoss?' (−15 pontos por aceitar enviar antes de verificar.)':''):'');
   if(detail)detail.textContent=(commitmentLoss?'Você assumiu risco ao concordar em enviar dinheiro sem confirmar a identidade. ':'')+(reason?reason+' ':'')+s.tips;
   if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
   if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}

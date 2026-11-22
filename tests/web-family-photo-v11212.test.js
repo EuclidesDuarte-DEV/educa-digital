@@ -17,7 +17,7 @@ test('V112.12: personagem fictício envia foto ANTES do pedido de Pix e só na W
  assert.match(free,/if\(isWebTraining\(\)&&s\.photoUrl&&s\.photoAsk/);
  assert.match(free,/renderPhoto\(s\)/);
  assert.match(free,/isWebTraining\(\)\?\[byId\['family-photo'\]\]:\[\]/);
- assert.match(free,/isWebTraining\(\)&&!state\.completedSteps\.has\('family-photo'\)/);
+ assert.match(free,/WEB_SCRIPTED_ORDER=Object\.freeze\(\['family-photo','video','bank'\]\)/);
  assert.match(free,/state\.completedSteps\.add\(s\.id\)/);
  assert.match(css,/html\[data-educa-platform="web"\] #chatWallpaper \.message\.incoming\.free-training-photo/);
  assert.match(css,/object-fit:cover/);
