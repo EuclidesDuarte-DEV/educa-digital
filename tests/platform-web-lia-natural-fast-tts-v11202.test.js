@@ -69,10 +69,10 @@ test('V112.02 — cliente Web usa serviço só após status habilitado e não aq
  const html=readFileSync('public/html/index.html','utf8');
  assert.doesNotMatch(video,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
  assert.match(video,/session\.hqVoiceEnabled=enabled/);
- assert.match(video,/session\.hqVoiceFailedSerial=serial/);
+ assert.match(video,/voiceEngine\.querySelector\('option\[value="feminina"\]'\)\?\.remove\(\)/);
  assert.match(video,/session\.fastVoiceSerial=serial/);
  assert.match(video,/playFreeNeuralVoice\(phrase,serial\)/);
- assert.match(video,/session\.hqVoiceFailedSerial!==serial/);
+ assert.match(video,/return voiceEngine\?\.value==='padrao'\?'padrao':'gratuita'/);
  assert.match(video,/const chunks=web&&selectedEngine\(\)==='gratuita'\?speechSegments\(whole\)/);
  assert.match(video,/speechSegments\(whole\)/);
  assert.match(free,/educaPlatform!=='web'/);
