@@ -31,6 +31,9 @@ test('V112.14: perfil é script Web independente, com menu, busca, ações e ace
  for(const label of ['Dados do contato','Mídia, links e docs','Pesquisar','Notificações','Tema da conversa','Mensagens temporárias','Bloquear contato','Denunciar contato','Favoritos']) assert.ok(profile.includes(label),label);
  assert.match(profile,/PHOTO='\/static\/img\/free-family-photo-v11214\.webp'/);
  assert.match(profile,/free-training-photo img/);
+ for(const label of ['Liberar espaço de armazenamento','Salvar no Fotos','Idioma de transcrição','Trancar conversa','Conversa restrita','Criptografia','Grupos em comum','Compartilhar contato']) assert.ok(profile.includes(label),'falta opção: '+label);
+ for(const action of ['storage','save','transcribe','lock','restricted','encryption','group','share']) assert.ok(profile.includes("data-fc=\""+action+"\""),'ação indisponível: '+action);
+ assert.match(profile,/Object\.hasOwn\(demonstrations,name\)/);
  assert.match(profile,/freeFamilyBlock/);
  assert.match(profile,/reportContact/);
  assert.match(profile,/event.*Escape|e\.key==='Escape'/);
