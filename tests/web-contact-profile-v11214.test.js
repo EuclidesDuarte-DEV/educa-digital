@@ -35,7 +35,10 @@ test('V112.14: perfil é script Web independente, com menu, busca, ações e ace
  for(const action of ['storage','save','transcribe','lock','restricted','encryption','group','share']) assert.ok(profile.includes("data-fc=\""+action+"\""),'ação indisponível: '+action);
  assert.match(profile,/Object\.hasOwn\(demonstrations,name\)/);
  assert.match(profile,/freeFamilyBlock/);
- assert.match(profile,/reportContact/);
+ assert.match(profile,/data-pane="outgoing"/);
+ assert.match(profile,/if\(name==='call'\|\|name==='video'\)/);
+ assert.match(profile,/showPane\('outgoing'\)/);
+  assert.match(profile,/reportContact/);
  assert.match(profile,/event.*Escape|e\.key==='Escape'/);
  assert.match(profile,/role','dialog'/);
  assert.match(css,/html\[data-educa-platform="web"\] #chatView/);
