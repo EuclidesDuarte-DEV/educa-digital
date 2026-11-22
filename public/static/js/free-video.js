@@ -76,19 +76,24 @@ const captionToggle=$('freeVideoCaptionToggle');
 const speaker=$('freeVideoSpeaker'),captionSwitch=$('freeVideoCaptionsSwitch'),expand=$('freeVideoExpand');
 const voiceStyle=$('freeVideoVoiceStyle'),voiceEngine=$('freeVideoVoiceEngine'),latencyMode=$('freeVideoLatencyMode');
 const selectedEngine=()=>{
- if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.value==='gratuita')return 'gratuita';
+ // A plataforma já está definida pelo script síncrono no <head>.
+ // Mesmo se houver atraso no DOM, nunca rotear WEB para Roberta por padrão.
+ if(document.documentElement?.dataset?.educaPlatform==='web')
+  return voiceEngine?.value==='padrao'?'padrao':'gratuita';
  return voiceEngine?.value==='padrao'?'padrao':'feminina';
 };
 // Web V112.01: no anúncio da voz, descrever o fallback real sem prometer
 // Kokoro em dispositivos onde o modelo ainda não foi preparado.
 if(document.documentElement?.dataset?.educaPlatform==='web'&&voiceEngine?.options?.length){
- voiceEngine.querySelector('option[value="feminina"]').textContent='Roberta · voz natural (aguardando ativação)';
- voiceEngine.querySelector('option[value="padrao"]').textContent='Voz do aparelho · sem aguardar Kokoro';
- // Somente WEB: a opção gratuita neural é padrão. Nada muda nos apps nativos.
+ // A ElevenLabs foi retirada da LIA Web. A opção feminina original
+ // permanece intacta SOMENTE no HTML usado pelos apps nativos.
+ voiceEngine.querySelector('option[value="feminina"]')?.remove();
+ const device=voiceEngine.querySelector('option[value="padrao"]');
+ if(device)device.textContent='Voz alternativa do aparelho (opcional)';
  if(!voiceEngine.querySelector('option[value="gratuita"]')){
   const freeOption=document.createElement('option');freeOption.value='gratuita';
-  freeOption.textContent='Neural brasileira gratuita · Dora (experimental)';
-  voiceEngine.insertBefore(freeOption,voiceEngine.options[0]);
+  freeOption.textContent='Dora · voz neural gratuita brasileira';
+  voiceEngine.insertBefore(freeOption,voiceEngine.options[0]||null);
  }
  voiceEngine.value='gratuita';
 }
@@ -741,45 +746,24 @@ async function playFreeNeuralVoice(text,serial){
 }
 function startSpeechChunk(phrase,serial){
  if(serial!==session.serial||!session.active||!session.connected)return;
- // Nova opção Web, pré-aquecida assim que a chamada aparece.
- if(document.documentElement?.dataset?.educaPlatform==='web'&&selectedEngine()==='gratuita'){
+ // V112.07 — Na WEB, fala neural local é o único motor automático.
+ // Nem ElevenLabs nem voz robótica do navegador podem ser acionadas sem
+ // uma escolha MANUAL do participante no menu de acessibilidade.
+ if(document.documentElement?.dataset?.educaPlatform==='web'){
+  if(selectedEngine()==='padrao'){
+   stopVoiceProgress();audioOnly(phrase,serial);return;
+  }
   session.utterance={kind:'neural-gratis-loading'};
-  showVoiceProgress('LIA · preparando voz neural brasileira gratuita…');
+  showVoiceProgress('LIA · preparando Dora neural gratuita…');
   void playFreeNeuralVoice(phrase,serial).catch(e=>{
    if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
    session.speechQueue=[];session.utterance=null;stopVoiceProgress();
-   indicator('Lia · voz gratuita indisponível neste aparelho');
-   status('Voz neural gratuita não pôde falar: '+String(e?.message||e).slice(0,150)+'.');
+   indicator('Lia · voz neural local indisponível');
+   status('A voz neural brasileira não conseguiu gerar áudio: '+String(e?.message||e).slice(0,140)+'.');
    if(ui.view?.dataset)ui.view.dataset.captions='on';
    if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
    if(ui.play){ui.play.hidden=false;ui.play.dataset.retryVoice='true';ui.play.textContent='↻ Tentar voz neural gratuita';}
   });
-  return;
- }
- // V112.05: a versão Web prioriza Roberta quando o Worker a configurou.
- // Não substitui silenciosamente a voz escolhida pela voz robótica.
- if(document.documentElement?.dataset?.educaPlatform==='web'&&
-    selectedEngine()!=='padrao'&&session.hqVoiceEnabled&&
-    session.hqVoiceFailedSerial!==serial){
-  session.hqVoiceChoiceSerial=serial;
-  session.utterance={kind:'hq-web-loading'};
-  showVoiceProgress('LIA: iniciando voz expressiva…');
-  const fallback=()=>{
-   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return;
-   // Não disfarçar erro 402, 404 ou timeout com fala robótica.
-   // O usuário pode repetir explicitamente ou escolher a voz do aparelho.
-   session.hqVoiceFailedSerial=serial;
-   session.speechQueue=[];
-   session.utterance=null;
-   stopVoiceProgress();
-   indicator('Lia · Roberta ElevenLabs indisponível nesta tentativa');
-   status('Roberta não conseguiu falar: '+(session.hqVoiceLastError||
-    'Não foi possível obter o áudio.')+' Toque em Tentar Roberta novamente.');
-   if(ui.view?.dataset)ui.view.dataset.captions='on';
-   if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
-   if(ui.play){ui.play.dataset.retryVoice='true';ui.play.hidden=false;ui.play.textContent='↻ Tentar Roberta novamente';}
-  };
-  void playWebHQVoice(phrase,serial).then(ok=>{if(!ok)fallback();}).catch(fallback);
   return;
  }
  // V112.01 — Somente Web: o modelo local de 82M pode demorar dezenas
@@ -898,7 +882,7 @@ function speak(text){
  // Safari entre várias partes; os nativos preservam o fluxo por trechos.
  // Serviço natural online: primeira frase curta chega antes sem aguardar
  // sintetizar todo o parágrafo. As outras mantêm a mesma voz no turno.
- const chunks=web&&session.hqVoiceEnabled&&selectedEngine()!=='padrao'?speechSegments(whole):
+ const chunks=web&&selectedEngine()==='gratuita'?speechSegments(whole):
   immediateDevice?[whole]:continuousFemale?[whole]:speechSegments(whole);
  const first=chunks.shift();session.speechQueue=chunks;
  // A mensagem educativa chega ao leitor no mesmo instante. A síntese
@@ -940,8 +924,7 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  // A voz online só é consultada quando o operador a habilitou no Worker.
  // A Web não baixa o Kokoro pesado no iPhone durante o treino.
  session.hqVoiceEnabled=false;session.hqVoiceCheck=null;
- if(document.documentElement?.dataset?.educaPlatform==='web')
-  session.hqVoiceCheck=inspectWebHQVoice();
+ // Nunca consultar o serviço pago ElevenLabs no modo Web da LIA.
  // Baixar/preparar a voz local antes de o usuário apertar Atender.
  if(document.documentElement?.dataset?.educaPlatform==='web'&&selectedEngine()==='gratuita')
   void window.EducaLiaFreeNeural?.prepare?.().catch(()=>{});
@@ -963,9 +946,7 @@ async function answer(){if(!session.active||session.connected)return;
  // Safari: aguardar no máximo uma fração de segundo pela consulta gratuita de
  // status para não começar com voz robótica por uma corrida de inicialização.
  const web=document.documentElement?.dataset?.educaPlatform==='web';
- if(web&&session.hqVoiceCheck)await Promise.race([
-  session.hqVoiceCheck,new Promise(resolve=>setTimeout(resolve,2000))
- ]);
+ // Resposta Web não aguarda status ElevenLabs: usa a Dora neural local.
  if(!session.active||!session.connected)return;
  free()?.videoAccepted?.();speak(intro);}
 function listen(){
@@ -1056,12 +1037,12 @@ async function inspectMotor(){
   } else if(r.enabled&&r.video_enabled){
    indicator('Motor neural detectado · autenticação necessária');
    status('Motor de voz e MuseTalk disponíveis. Use Verificar avatar com IA para liberar a geração neural.');
-  } else if(document.documentElement?.dataset?.educaPlatform==='web'&&session.hqVoiceEnabled){
-   indicator('Lia · Roberta ElevenLabs configurada');
-   status('Roberta selecionada. A voz natural será testada ao atender.');
+  } else if(document.documentElement?.dataset?.educaPlatform==='web'){
+   indicator('Lia · Dora neural brasileira gratuita');
+   status('Preparando a voz neural feminina local. A primeira carga baixa o modelo; próximas falas usam o cache.');
   } else {
    indicator('Educa+ online · voz do navegador');
-   status('A IA do Educa+ já está disponível. A voz feminina depende das vozes instaladas no navegador; sincronização labial neural requer serviço online próprio.');
+   status('A voz feminina depende das vozes instaladas no aparelho ou do motor neural configurado.');
   }
  }catch(_){session.health={enabled:false};}
 }
@@ -1074,9 +1055,6 @@ voiceEngine?.addEventListener('change',()=>{
   indicator('Lia · voz neural gratuita pt-BR');
   status('Dora neural gratuita selecionada. O modelo prepara no aparelho sem cobrança.');
   void window.EducaLiaFreeNeural?.prepare?.().catch(()=>{});
- }else if(selectedEngine()==='feminina'){
-  indicator('Lia · Roberta ElevenLabs');
-  status('Roberta escolhida: a síntese ElevenLabs usa créditos se o serviço responder.');
  }else{
   indicator('Lia · voz do navegador');
   status('Voz alternativa do próprio dispositivo selecionada.');
@@ -1135,7 +1113,8 @@ ui.play?.addEventListener('click',()=>{
  }
  const media=session.utterance instanceof HTMLMediaElement?session.utterance:ui.portraitVideo;
  media?.play().then(()=>{ui.play.hidden=true;showVoiceProgress(
-  session.hqVoiceEnabled?'LIA falando · Roberta ElevenLabs':'LIA falando · voz pf_dora'
+  document.documentElement?.dataset?.educaPlatform==='web'&&selectedEngine()==='gratuita'?
+  'LIA falando · Dora neural gratuita':'LIA falando · voz do aparelho'
  );}).catch(()=>{showVoiceProgress('Áudio bloqueado: confira o som.');status('Não foi possível liberar a reprodução.');});});
 ui.form?.addEventListener('submit',e=>{e.preventDefault();const t=ui.input.value.trim();if(!t||!session.active||!session.connected||session.waiting)return;ui.input.value='';ui.form.hidden=true;ui.text?.setAttribute('aria-expanded','false');abortSpeech();free()?.sendVideo?.(t);});
 document.addEventListener('pointerdown',e=>{
