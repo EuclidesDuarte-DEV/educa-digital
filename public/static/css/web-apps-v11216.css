@@ -1,0 +1,464 @@
+/* V112.16 — apenas Web / Modo Livre. Visual de apps de treino baseado nos vídeos.
+   Mantém as telas nativas Android/iOS separadas e não acessa Gmail/Fotos/SMS reais. */
+html[data-educa-platform="web"] #webRealView.webx-active{
+ background:#0f1013!important;color:#f4f4f7!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-active .webreal-header{
+ background:#18191d!important;color:#f4f4f7!important;
+ border-color:#35363b!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-active .webreal-header :is(strong,small){
+ color:#f1f1f4!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-active .webreal-header button{color:#e8ebf0!important;}
+html[data-educa-platform="web"] #webRealView.webx-active #webRealBody{
+ padding:0!important;overflow:hidden!important;overscroll-behavior:contain;min-height:0;
+}
+html[data-educa-platform="web"] #webRealView .webx-app{
+ position:relative;display:flex;flex-direction:column;height:100%;width:100%;min-width:0;min-height:0;
+ box-sizing:border-box;overflow:hidden;background:#0d0e11;color:#f1f1f5;
+ font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+html[data-educa-platform="web"] #webRealView .webx-app *,
+html[data-educa-platform="web"] #webRealView .webx-app *::before{
+ box-sizing:border-box;
+}
+html[data-educa-platform="web"] #webRealView .webx-app button,
+html[data-educa-platform="web"] #webRealView .webx-app label.webx-upload{
+ min-width:0;min-height:38px;border:0;border-radius:0;background:none;
+ color:inherit;padding:7px 9px;font-size:13px;font-weight:560;
+ box-shadow:none;text-align:inherit;cursor:pointer;line-height:1.25;
+}
+html[data-educa-platform="web"] #webRealView .webx-app input,
+html[data-educa-platform="web"] #webRealView .webx-app textarea{
+ min-width:0;min-height:42px;margin:0;padding:8px 10px;width:100%;
+ background:#282a30;color:#f4f4f8;border:1px solid #454751;
+ border-radius:13px;font-size:16px;font-weight:450;
+}
+html[data-educa-platform="web"] #webRealView .webx-app button:focus-visible,
+html[data-educa-platform="web"] #webRealView .webx-app input:focus-visible,
+html[data-educa-platform="web"] #webRealView .webx-app textarea:focus-visible{
+ outline:3px solid #79baff;outline-offset:-2px;
+}
+html[data-educa-platform="web"] #webRealView .webx-app .webx-photos-scroll,
+html[data-educa-platform="web"] #webRealView .webx-app .webx-mail-scroll,
+html[data-educa-platform="web"] #webRealView .webx-app .webx-sms-list,
+html[data-educa-platform="web"] #webRealView .webx-app .webx-mail-detail{
+ flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;
+ -webkit-overflow-scrolling:touch;touch-action:pan-y;overscroll-behavior-y:contain;
+ scrollbar-width:thin;
+}
+/* Fototeca / Fotos */
+html[data-educa-platform="web"] #webRealView .webx-photos-head{
+ display:flex;flex-direction:column;padding:14px 12px 4px;gap:12px;flex-shrink:0;
+ background:#101114;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-heading{
+ display:flex;align-items:flex-start;gap:8px;justify-content:space-between;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-heading div{min-width:0;display:flex;flex-direction:column;gap:5px;}
+html[data-educa-platform="web"] #webRealView .webx-photos-heading strong{font-size:23px;letter-spacing:-.6px;font-weight:830;}
+html[data-educa-platform="web"] #webRealView .webx-photos-heading small{color:#a1a4ae;font-size:10px;}
+html[data-educa-platform="web"] #webRealView .webx-photos-heading button{
+ border-radius:18px!important;background:#24262c!important;color:#fff!important;
+ min-height:35px;padding:6px 13px!important;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-period{
+ display:flex;gap:5px;align-self:center;padding:4px;background:#25262d;border-radius:18px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-period button{
+ min-height:30px;padding:5px 13px!important;border-radius:15px;
+ color:#c8c9d0;font-size:11px;white-space:nowrap;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-period button[aria-pressed="true"]{
+ background:#565961!important;color:white;font-weight:760;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-topactions{
+ display:flex;gap:7px;padding:8px 11px;background:#101114;flex-shrink:0;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-topactions :is(button,label){
+ flex:1;position:relative;display:flex;justify-content:center;align-items:center;
+ border-radius:12px!important;background:#252830!important;color:#e9edff!important;
+ min-height:38px;padding:7px 10px!important;font-size:12px!important;font-weight:650!important;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-topactions input[type=file]{
+ position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-group h3{
+ margin:15px 12px 9px;font-size:12px;font-weight:730;color:#f2f3f5;text-transform:capitalize;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-grid{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;padding:0 2px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-grid button{
+ position:relative;display:block;aspect-ratio:1;min-height:0;padding:0!important;overflow:hidden;
+ background:#333840;cursor:zoom-in;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-grid img{
+ display:block;width:100%;height:100%;object-fit:cover;object-position:center;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-grid button.selected{outline:3px solid #459bff;outline-offset:-3px;}
+html[data-educa-platform="web"] #webRealView .webx-photo-grid button em{
+ position:absolute;top:5px;right:5px;background:#3c83f4;border-radius:50%;
+ color:white;width:21px;height:21px;display:grid;place-items:center;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-empty{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ text-align:center;padding:30px 21px 18px;gap:8px;color:#d3d5dc;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-empty span{font-size:40px;color:#7c91bd;}
+html[data-educa-platform="web"] #webRealView .webx-photo-empty strong{font-size:17px;}
+html[data-educa-platform="web"] #webRealView .webx-photo-empty p{
+ margin:0;font-size:12px;line-height:1.55;color:#9ba2b0;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-examples{padding:15px 14px 22px;display:flex;flex-direction:column;gap:8px;}
+html[data-educa-platform="web"] #webRealView .webx-photo-examples strong{font-size:12px;}
+html[data-educa-platform="web"] #webRealView .webx-example-tiles{
+ display:grid;grid-template-columns:repeat(4,1fr);gap:3px;
+}
+html[data-educa-platform="web"] #webRealView .webx-example-tiles i{
+ display:grid;place-items:center;min-height:64px;font-size:27px;font-style:normal;
+ background:linear-gradient(135deg,#234a5a,#30593d);
+}
+html[data-educa-platform="web"] #webRealView .webx-example-tiles i:nth-child(2){background:linear-gradient(140deg,#592c5f,#e28a49);}
+html[data-educa-platform="web"] #webRealView .webx-example-tiles i:nth-child(3){background:linear-gradient(140deg,#283965,#547cbe);}
+html[data-educa-platform="web"] #webRealView .webx-example-tiles i:nth-child(4){background:linear-gradient(140deg,#153854,#3593a4);}
+html[data-educa-platform="web"] #webRealView .webx-photo-examples small{color:#a4a7b0;font-size:10px;}
+html[data-educa-platform="web"] #webRealView .webx-collection-card{
+ margin:15px 12px;background:#24272d;border-radius:15px;padding:20px 12px;
+ display:flex;flex-direction:column;gap:6px;
+}
+html[data-educa-platform="web"] #webRealView .webx-collection-card span{font-size:32px;}
+html[data-educa-platform="web"] #webRealView .webx-collection-card small{font-size:11px;color:#a5a9b0;}
+html[data-educa-platform="web"] #webRealView .webx-photo-search{
+ display:flex;gap:9px;align-items:center;padding:10px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-search input{flex:1;}
+html[data-educa-platform="web"] #webRealView .webx-photos-tabs,
+html[data-educa-platform="web"] #webRealView .webx-mail-tabs{
+ flex:0 0 58px;display:flex;align-items:center;justify-content:space-evenly;
+ background:#17181c;border-top:1px solid #35363c;z-index:2;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-tabs button,
+html[data-educa-platform="web"] #webRealView .webx-mail-tabs button{
+ min-height:50px;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:2px;
+ font-size:21px!important;color:#a2a4ad;padding:4px 8px!important;
+}
+html[data-educa-platform="web"] #webRealView .webx-photos-tabs button[aria-current="page"],
+html[data-educa-platform="web"] #webRealView .webx-mail-tabs button[aria-current="page"]{color:#79aeff;}
+html[data-educa-platform="web"] #webRealView .webx-photos-tabs small,
+html[data-educa-platform="web"] #webRealView .webx-mail-tabs small{font-size:9px!important;}
+html[data-educa-platform="web"] #webRealView .webx-selection-bar{
+ background:#282c35;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;
+ font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webx-selection-bar button{
+ border-radius:15px;background:#7c2935;color:white;min-height:36px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-view{
+ height:100%;display:flex;flex-direction:column;min-height:0;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-view header,
+html[data-educa-platform="web"] #webRealView .webx-photo-view footer{
+ min-height:56px;display:flex;align-items:center;justify-content:space-between;
+ padding:5px 10px;border-bottom:1px solid #303137;gap:8px;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-view header strong{font-size:13px;}
+html[data-educa-platform="web"] #webRealView .webx-photo-view footer{border-top:1px solid #303137;border-bottom:0;}
+html[data-educa-platform="web"] #webRealView .webx-photo-stage{
+ flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#000;
+ overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-stage img{
+ width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;
+}
+html[data-educa-platform="web"] #webRealView .webx-photo-view button{color:#83afff;}
+/* Gmail: caixa de entrada, pastas, pesquisa, mensagens e composição simuladas. */
+html[data-educa-platform="web"] #webRealView .webx-mail-toolbar{
+ flex:0 0 58px;display:flex;align-items:center;gap:6px;background:#16181d;
+ margin:7px 10px 4px;border-radius:23px;padding:3px 8px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-toolbar button{
+ flex:0 0 34px;min-height:35px;font-size:19px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-toolbar button:last-child{
+ border-radius:50%;background:#c65f52;font-size:14px;font-weight:800;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-toolbar label{min-width:0;flex:1;}
+html[data-educa-platform="web"] #webRealView .webx-mail-toolbar input{
+ background:transparent;border:0;padding:6px 4px;border-radius:0;color:#fff;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-label{
+ padding:9px 15px 7px;display:flex;align-items:center;justify-content:space-between;
+ flex:0 0 40px;gap:5px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-label strong{font-size:12px;color:#c5c7d3;}
+html[data-educa-platform="web"] #webRealView .webx-mail-label small{font-size:10px;color:#a8a9ae;}
+html[data-educa-platform="web"] #webRealView .webx-mail-scroll{padding-bottom:64px;}
+html[data-educa-platform="web"] #webRealView .webx-mail-row{
+ display:grid;grid-template-columns:minmax(0,1fr) 43px;align-items:start;
+ padding:6px 7px 4px 2px;min-height:78px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-row.unread{background:#171a20;}
+html[data-educa-platform="web"] #webRealView .webx-mail-message{
+ width:100%;display:grid;grid-template-columns:38px minmax(0,1fr) 41px;
+ gap:8px;align-items:start;padding:5px 1px 4px 9px!important;text-align:left;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-avatar,
+html[data-educa-platform="web"] #webRealView .webx-mail-sender b{
+ display:grid;place-items:center;width:37px;height:37px;border-radius:50%;
+ color:white;font-size:16px;font-weight:780;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-copy{
+ display:flex;flex-direction:column;min-width:0;gap:3px;line-height:1.25;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-copy :is(strong,b,small){
+ display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-copy strong{font-size:13px;font-weight:750;}
+html[data-educa-platform="web"] #webRealView .webx-mail-copy b{font-size:12px;font-weight:540;}
+html[data-educa-platform="web"] #webRealView .webx-mail-copy small{font-size:11px;color:#a8a9b1;}
+html[data-educa-platform="web"] #webRealView .webx-mail-time{font-size:10px;color:#bbbcc1;white-space:nowrap;text-align:right;}
+html[data-educa-platform="web"] #webRealView .webx-mail-star{
+ color:#9f9fa9;font-size:22px;min-height:42px;padding:3px!important;text-align:center;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-empty{
+ display:flex;flex-direction:column;align-items:center;gap:15px;
+ padding:80px 16px;text-align:center;font-size:40px;color:#aaa;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-empty strong{font-size:14px;color:#ccc;}
+html[data-educa-platform="web"] #webRealView .webx-mail-fab{
+ position:absolute;bottom:80px;right:12px;z-index:3;background:#b9cbfb!important;
+ color:#14233a!important;border-radius:18px!important;min-height:46px!important;
+ display:flex;align-items:center;gap:5px;box-shadow:0 4px 15px #0006;
+ padding:10px 14px!important;font-weight:780!important;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer[hidden]{display:none!important;}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer{
+ position:absolute;top:0;left:0;bottom:0;z-index:6;width:min(84%,270px);overflow-y:auto;
+ background:#24252b;box-shadow:10px 0 38px #000b;padding:11px 9px;
+ display:flex;flex-direction:column;gap:3px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer-head{
+ min-height:55px;padding:10px 15px;display:flex;align-items:center;justify-content:space-between;
+ color:#efeff4;font-size:20px;font-weight:770;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer-head small{font-size:10px;color:#9ba5bb;}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer button{
+ width:100%;min-height:43px;display:flex;gap:12px;align-items:center;
+ padding:10px 14px!important;text-align:left;border-radius:22px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer button span{flex:1;font-size:12px;}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer button small{font-size:10px;}
+html[data-educa-platform="web"] #webRealView .webx-mail-drawer button.active{
+ background:#50383c;color:#ffbdc2;font-weight:750;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-detailhead,
+html[data-educa-platform="web"] #webRealView .webx-mail-compose header{
+ min-height:57px;display:flex;align-items:center;justify-content:space-between;gap:9px;padding:5px 8px;
+ flex:0 0 57px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-detailhead button{font-size:21px;}
+html[data-educa-platform="web"] #webRealView .webx-mail-detail{padding:14px 17px 30px;}
+html[data-educa-platform="web"] #webRealView .webx-mail-detail h2{font-size:20px;margin:9px 0 10px;line-height:1.3;}
+html[data-educa-platform="web"] #webRealView .webx-mail-detail>small{font-size:11px;color:#aeb3be;}
+html[data-educa-platform="web"] #webRealView .webx-mail-sender{
+ display:flex;align-items:center;gap:10px;margin:23px 0;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-sender span{display:flex;flex-direction:column;gap:3px;min-width:0;}
+html[data-educa-platform="web"] #webRealView .webx-mail-sender strong{font-size:12px;}
+html[data-educa-platform="web"] #webRealView .webx-mail-sender small{font-size:10px;color:#a7b1b9;}
+html[data-educa-platform="web"] #webRealView .webx-mail-detail p{font-size:13px;line-height:1.6;}
+html[data-educa-platform="web"] #webRealView .webx-mail-notice{
+ margin:22px 0;padding:12px;background:#252a35;color:#d2dbed;font-size:11px;
+ line-height:1.45;border-radius:11px;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-compose{
+ height:100%;min-height:0;display:flex;flex-direction:column;overflow:auto;
+}
+html[data-educa-platform="web"] #webRealView #webxMailForm{
+ padding:11px;flex:1;display:flex;flex-direction:column;gap:9px;overflow:auto;
+}
+html[data-educa-platform="web"] #webRealView #webxMailForm label{display:flex;flex-direction:column;gap:5px;color:#cdd1db;font-size:12px;}
+html[data-educa-platform="web"] #webRealView #webxMailForm textarea{flex:1;min-height:98px;}
+html[data-educa-platform="web"] #webRealView #webxMailForm p{font-size:11px;line-height:1.55;color:#bbc2d0;}
+html[data-educa-platform="web"] #webRealView #webxMailForm button{
+ min-height:48px;border-radius:15px;background:#c8d6fc;color:#18345c;font-weight:750;
+}
+html[data-educa-platform="web"] #webRealView .webx-mail-compose header strong{flex:1;}
+/* SMS: lista e conversa fictícias, campo não simula acesso ao SMS do aparelho. */
+html[data-educa-platform="web"] #webRealView .webx-sms-head{padding:15px 13px 11px;}
+html[data-educa-platform="web"] #webRealView .webx-sms-head h2{margin:0;font-size:23px;}
+html[data-educa-platform="web"] #webRealView .webx-sms-head p{font-size:11px;color:#adb4bb;}
+html[data-educa-platform="web"] #webRealView .webx-sms-head label{display:flex;align-items:center;gap:8px;}
+html[data-educa-platform="web"] #webRealView .webx-sms-list button{
+ display:grid;grid-template-columns:46px minmax(0,1fr) 38px;gap:10px;
+ align-items:center;width:100%;padding:12px!important;text-align:left;min-height:74px;
+}
+html[data-educa-platform="web"] #webRealView .webx-sms-avatar{
+ display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
+ color:white;font-weight:790;font-size:17px;
+}
+html[data-educa-platform="web"] #webRealView .webx-sms-list button span:nth-child(2){display:flex;flex-direction:column;gap:5px;min-width:0;}
+html[data-educa-platform="web"] #webRealView .webx-sms-list strong{font-size:13px;}
+html[data-educa-platform="web"] #webRealView .webx-sms-list small{
+ font-size:11px;color:#aab0bd;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView .webx-sms-list time{font-size:10px;color:#aab0bd;}
+html[data-educa-platform="web"] #webRealView .webx-sms-note,
+html[data-educa-platform="web"] #webRealView .webx-sms-disabled{font-size:11px;color:#9aa9b8;padding:10px 14px;margin:0;}
+html[data-educa-platform="web"] #webRealView .webx-sms-detail{height:100%;display:flex;flex-direction:column;min-height:0;}
+html[data-educa-platform="web"] #webRealView .webx-sms-detail header{
+ display:flex;align-items:center;gap:8px;padding:6px 10px;min-height:58px;
+ border-bottom:1px solid #383b42;
+}
+html[data-educa-platform="web"] #webRealView .webx-sms-detail header strong{font-size:13px;min-width:0;}
+html[data-educa-platform="web"] #webRealView .webx-sms-detail .webx-sms-avatar{width:34px;height:34px;flex-shrink:0;}
+html[data-educa-platform="web"] #webRealView .webx-sms-detail main{
+ flex:1;overflow:auto;min-height:0;padding:18px 14px;display:flex;flex-direction:column;
+ align-items:flex-start;gap:9px;
+}
+html[data-educa-platform="web"] #webRealView .webx-sms-demo{align-self:center;font-size:11px;color:#b9c3ce;}
+html[data-educa-platform="web"] #webRealView .webx-sms-bubble{
+ max-width:87%;background:#272d37;border-radius:16px;padding:11px 14px;
+ color:#eef3fc;font-size:13px;line-height:1.5;margin:0;
+}
+@media(max-height:660px){
+ html[data-educa-platform="web"] #webRealView .webx-photos-head{padding:7px 10px 2px;gap:5px;}
+ html[data-educa-platform="web"] #webRealView .webx-photos-heading strong{font-size:19px;}
+ html[data-educa-platform="web"] #webRealView .webx-photo-topactions{padding:5px 9px;}
+ html[data-educa-platform="web"] #webRealView .webx-photos-tabs{flex-basis:50px;}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-educa-platform="web"] #webRealView .webx-app *{scroll-behavior:auto!important;}
+}
+html[data-educa-platform="web"] #webRealView .webx-search-empty{
+ padding:26px 14px;text-align:center;color:#aab1bd;font-size:12px;
+}
+html[data-educa-platform="web"] #webRealView .webx-app .sr-only{
+ position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+ overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+}
+
+/* Câmera presente no segundo vídeo: visor escuro e obturador destacado.
+   Os controles continuam sendo os recursos Web reais com permissão explícita. */
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo){
+ background:#08090c!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-header{
+ background:#16171b;border-color:#31333b;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-header :is(strong,small){
+ color:#f5f5f7!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-scroll{
+ background:#08090c!important;padding:8px 10px 26px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card{
+ border:0!important;box-shadow:none!important;background:#0c0d11!important;
+ color:#f7f8fa!important;padding:10px!important;margin:0 0 10px!important;gap:10px;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card>strong{
+ color:#fafafa!important;font-size:15px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card p{
+ color:#adb3bd!important;line-height:1.5!important;font-size:11px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-camera-frame{
+ position:relative;aspect-ratio:3/4;min-height:180px;max-height:min(52dvh,450px);
+ width:100%;margin:auto;border-radius:9px;background:#050608;
+ border:1px solid #37393e;overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-camera-frame::after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(90deg,transparent 33%,#fff4 33%,#fff4 33.3%,transparent 33.3%,transparent 66.6%,#fff4 66.6%,#fff4 67%,transparent 67%),
+ linear-gradient(0deg,transparent 33%,#fff4 33%,#fff4 33.3%,transparent 33.3%,transparent 66.6%,#fff4 66.6%,#fff4 67%,transparent 67%);
+ opacity:.5;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-row{
+ display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:nowrap;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-row button{
+ flex:1;min-width:0!important;min-height:43px!important;padding:8px!important;
+ background:#2a2c31!important;color:#f7f7fb!important;border-color:#4a4e54!important;
+ border-radius:18px!important;font-size:12px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"]{
+ flex:0 0 70px!important;width:70px!important;height:70px!important;min-height:70px!important;
+ font-size:0!important;border-radius:50%!important;background:#fdfdfd!important;
+ border:5px solid #52535a!important;outline:3px solid #fefefe!important;
+ outline-offset:-9px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"]::after{
+ content:"";width:49px;height:49px;display:block;margin:auto;border-radius:50%;
+ background:#fff;border:1px solid #d2d2d2;pointer-events:none;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="open-photos"]{
+ flex:1 1 0!important;
+}
+@media(max-height:650px){
+ html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-camera-frame{
+  max-height:min(44dvh,310px);
+ }
+ html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"]{
+  flex-basis:60px!important;width:60px!important;height:60px!important;min-height:60px!important;
+ }
+}
+
+/* Acessibilidade V112.16: cresce o texto, nao os ícones nem a moldura do telefone. */
+html[data-educa-platform="web"].a11y-text-large #webRealView .webx-app{
+ --webx-body-size:15px;--webx-caption-size:12px;--webx-title-size:17px;
+}
+html[data-educa-platform="web"].a11y-text-extra #webRealView .webx-app{
+ --webx-body-size:17px;--webx-caption-size:14px;--webx-title-size:19px;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app :is(.webx-mail-copy strong,.webx-mail-copy b,.webx-sms-list strong,.webx-photo-group h3,.webx-mail-label strong){
+ font-size:var(--webx-body-size)!important;
+ line-height:1.32!important;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app :is(.webx-mail-copy small,.webx-mail-time,.webx-sms-list small,.webx-sms-list time,
+ .webx-mail-sender small,.webx-mail-detail>small,.webx-photo-examples small,.webx-photos-heading small){
+ font-size:var(--webx-caption-size)!important;
+ line-height:1.34!important;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app :is(.webx-photo-empty p,.webx-photo-empty strong,.webx-mail-detail p,
+ .webx-sms-bubble,.webx-mail-compose label,.webx-sms-note,.webx-sms-disabled){
+ font-size:var(--webx-body-size)!important;
+ line-height:1.44!important;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app :is(.webx-photos-tabs small,.webx-mail-tabs small,.webx-mail-drawer button span){
+ font-size:var(--webx-caption-size)!important;
+}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app :is(.webx-photos-tabs,.webx-mail-tabs){flex-basis:67px!important;}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app :is(.webx-photos-tabs button,.webx-mail-tabs button){min-height:60px!important;}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app .webx-mail-row{min-height:86px!important;}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app .webx-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
+ #webRealView .webx-app .webx-mail-copy :is(strong,b,small){max-width:100%;}
+
+/* Notificações surpresa do Modo Livre não devem roubar o toque do app aberto.
+   O aviso continua visível; ao voltar à Home a interação do aviso é restabelecida. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
+ .free-event-notice:not([hidden]) {
+ pointer-events:none!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
+ .free-event-notice:not([hidden]) * {
+ pointer-events:none!important;
+}
+
+/* Feedback do app (foto salva/erro) é informativo, não uma janela modal.
+   Nunca deve bloquear os botões da Fototeca nem os controles da Câmera. */
+html[data-educa-platform="web"] #webRealView #webRealStatus:not([hidden]) {
+ pointer-events:none!important;
+ max-height:min(84px,20%)!important;
+ overflow:hidden!important;
+}

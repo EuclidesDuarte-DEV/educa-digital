@@ -93,7 +93,7 @@ try {
              scrollX:scroll.scrollWidth-scroll.clientWidth,
              overflow:scroll.scrollHeight-scroll.clientHeight,
              hidden:getComputedStyle(floating).display==='none',show:root.classList.contains('is-active'),
-             cards:[...scroll.querySelectorAll('.wr-card')].length};
+             cards:[...scroll.querySelectorAll('.wr-card')].length,experiences:[...scroll.querySelectorAll('.webx-app')].length};
            scroll.scrollTop=scroll.scrollHeight;
            const children=[...scroll.children].filter(el=>getComputedStyle(el).display!=='none');
            const last=children.at(-1);
@@ -106,7 +106,7 @@ try {
          assert.ok(result.titleLines<=1.25,name+' '+app+': titulo extrapola cabecalho');
          assert.ok(result.scrollX<=4,name+' '+app+': rolagem horizontal');
          assert.ok(result.scroll.height>=40,name+' '+app+': formulario inacessivel');
-         assert.ok(result.cards>=1,name+' '+app+': conteudo ausente');
+         assert.ok(result.cards>=1||result.experiences>=1,name+' '+app+': conteudo ausente');
          if(result.lastRect)assert.ok(result.lastRect.bottom<=result.scroll.bottom+5,
            name+' '+app+': ultimo recurso inalcançavel ao rolar');
          checked++;
