@@ -35,7 +35,7 @@ test('V112.06 — fullscreen shows full LIA photo and all video layers, Web-only
 
 test('V112.06 — free neural voice is chosen only on Web; native options preserved',()=>{
  assert.match(video,/return voiceEngine\?\.value==='padrao'\?'padrao':'gratuita'/);
- assert.match(video,/voiceEngine\.insertBefore\(freeOption,voiceEngine\.options\[0\]\)/);
+ assert.match(video,/voiceEngine\.insertBefore\(freeOption,voiceEngine\.options\[0\]\|\|null\)/);
  assert.match(video,/voiceEngine\.value='gratuita'/);
  assert.match(video,/selectedEngine\(\)==='gratuita'/);
  assert.match(video,/playFreeNeuralVoice\(phrase,serial\)/);
