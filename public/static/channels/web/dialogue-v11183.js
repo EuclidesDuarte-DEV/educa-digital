@@ -10,11 +10,12 @@
   const phone=document.getElementById('phoneScreen');
   if(!phone||!window.EducaFreeMode||typeof window.fetch!=='function')return;
   const SCAMS=new Set([
-    'family','bank','video','code','delivery','call-tech','relative',
+    'family','family-photo','bank','video','code','delivery','call-tech','relative',
     'account','prize','sms-delivery','sms-bank','sms-prize'
   ]);
   const TIPS={
     family:'Confirme pedidos de familiares usando um número antigo e conhecido.',
+    'family-photo':'Uma foto enviada por outro número não prova identidade. Ligue para o familiar pelo número antigo.',
     relative:'Uma pessoa conhecida pode ser imitada: confira por outro contato.',
     bank:'Bancos não exigem Pix para proteger contas. Use o aplicativo oficial.',
     video:'Imagem e voz podem ser imitados. Verifique a identidade por um canal independente.',
@@ -62,7 +63,7 @@
     const recognized=safeRecognition.some(re=>re.test(normalized)) ||
       /\b(?:e\s+golpe|isso\s+e\s+mentira|voce\s+esta\s+tentando\s+me\s+enganar|nao\s+confio\s+em\s+voce|vou\s+denunciar|vou\s+bloquear)\b/.test(normalized);
     const safe=explicitRefusal||recognized;
-    const cashScenarios=new Set(['family','bank','video','relative','delivery','prize','sms-delivery','sms-prize']);
+    const cashScenarios=new Set(['family','family-photo','bank','video','relative','delivery','prize','sms-delivery','sms-prize']);
     const wantsMoney=cashScenarios.has(scenario);
     const riskObject=/\b(?:pix|dinheiro|reais|valor|quantia|pagamento|transferencia|chave|codigo|senha|token|link|dados|conta)\b/;
     const direct=[...withoutRefusals.matchAll(riskyAction)].some(m=>{

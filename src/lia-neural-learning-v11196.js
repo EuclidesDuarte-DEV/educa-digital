@@ -3,7 +3,7 @@
 // Apenas metadados categóricos anônimos e notas oficiais curadas alimentam o D1.
 import { TRAINING_EXAMPLES_SQL } from './lia-training-examples-v11197.js';
 const SCENARIOS=Object.freeze({
- family:'whatsapp',relative:'whatsapp',account:'whatsapp',code:'whatsapp',delivery:'whatsapp',
+ family:'whatsapp','family-photo':'whatsapp',relative:'whatsapp',account:'whatsapp',code:'whatsapp',delivery:'whatsapp',
  prize:'whatsapp',friend:'whatsapp',daughter:'whatsapp','family-group':'whatsapp',
  video:'video',bank:'call','call-tech':'call','sms-delivery':'sms','sms-bank':'sms','sms-prize':'sms'
 });

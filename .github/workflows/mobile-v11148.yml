@@ -34,6 +34,8 @@ jobs:
         run: node scripts/validar-quick-result-v11210.mjs
       - name: V112.11 — nível compacto em celular normal, fonte extra e desktop
         run: node scripts/validar-level-badge-v11211.mjs
+      - name: V112.12 — falso familiar envia foto e pede Pix no WhatsApp Web
+        run: node scripts/validar-family-photo-v11212.mjs
       - name: V111.75 — auditar a tela inicial e 10 apps no Modo Livre
         run: node scripts/validar-modo-livre-v11175.mjs
       - name: Modo Livre — WhatsApp, video, ligacao e SMS em 3 resolucoes
@@ -71,4 +73,5 @@ jobs:
             artifacts/summary-scroll-v11208/
             artifacts/quick-result-v11210/
             artifacts/level-badge-v11211/
+            artifacts/family-photo-v11212/
           if-no-files-found: ignore

@@ -1,0 +1,35 @@
+/* V112.12 — apenas Web: foto sintética dentro do WhatsApp de treinamento.
+ * Não altera WhatsApp, Android ou iOS reais; foto estática fica no projeto. */
+html[data-educa-platform="web"] #chatWallpaper .message.incoming.free-training-photo{
+  box-sizing:border-box;
+  display:block;
+  width:min(76%,238px);
+  max-width:calc(100% - 35px);
+  padding:5px 5px 8px;
+  margin:5px auto 10px 0;
+  background:#fff;
+  border-radius:13px;
+  overflow:hidden;
+  box-shadow:0 1px 3px rgba(25,39,55,.13);
+  text-align:left;
+}
+html[data-educa-platform="web"] #chatWallpaper .free-training-photo img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:192/136;
+  object-fit:cover;
+  border-radius:9px;
+  background:#e6edf5;
+}
+html[data-educa-platform="web"] #chatWallpaper .free-training-photo small{
+  display:block;
+  padding:5px 3px 0;
+  color:#687782;
+  font-size:11px;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+}
+html[data-educa-platform="web"].a11y-text-extra #chatWallpaper .free-training-photo small{
+  font-size:13px;
+}

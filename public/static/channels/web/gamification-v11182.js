@@ -15,7 +15,7 @@
     {name:'Experiente',min:210,next:null}
   ];
   const SCAM_IDS=new Set([
-    'family','bank','video','code','delivery','call-tech','relative',
+    'family','family-photo','bank','video','code','delivery','call-tech','relative',
     'account','prize','sms-delivery','sms-bank','sms-prize'
   ]);
   const clamp=n=>Math.max(0,Math.min(MAX_XP,Math.floor(Number(n)||0)));
@@ -130,7 +130,7 @@
     const scenario=window.EducaFreeMode?.videoState?.();
     if(!SCAM_IDS.has(scenario))return;
     const title=document.getElementById('freeSummaryTitle')?.textContent?.trim();
-    if(!['Situação concluída','Atenção à decisão'].includes(title))return;
+    if(!['Situação concluída','Atenção à decisão','Você perdeu 15 pontos'].includes(title))return;
     resultHandled=true; // Exatamente uma pontuação por finalização real da conversa.
     const safe=title==='Situação concluída';
     showResult(credit(safe?20:-15));
