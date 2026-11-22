@@ -70,7 +70,7 @@ test('V111.52: resposta inicial dividida em poucos trechos, sem dezenas de infer
 
 test('V111.52: IA tem timeout de conversa e contexto educativo seguro',async()=>{
   assert.match(free,/responseTimer=setTimeout\(\(\)=>\{timedOut=true;abort\.abort\(\);\},responseTimeoutMs\)/);
-  assert.match(free,/educaPlatform==='web'\?32000:17000/);
+  assert.match(free,/educaPlatform==='web'\?18000:17000/);
   assert.match(free,/clearTimeout\(responseTimer\)/);
   assert.match(free,/A IA demorou para responder/);
   const query=new Request('https://educa.example/api/modo-livre/conversar',{
