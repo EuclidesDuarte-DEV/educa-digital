@@ -76,6 +76,8 @@ export async function setupNeuralDB(env){
 const normalized=v=>String(v||'').toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 export function classifyTrainingTurn(scenario,text){
  if(!Object.hasOwn(SCENARIOS,String(scenario||'')))return null;
+ // Contatos legítimos não podem ser avaliados como golpistas ou quedas.
+ if(['friend','daughter','family-group'].includes(String(scenario)))return null;
  // O texto bruto só existe na memória da requisição e NUNCA é gravado.
  const t=normalized(text).slice(0,350);
  if(/(vou|quero|prefiro|vou tentar).{0,25}(verificar|confirmar|conferir|consultar)|canal oficial|numero antigo|banco oficial/.test(t))
