@@ -18,7 +18,7 @@ function notice(msg,error=false){if(!status)return;status.textContent=msg;status
 function clearNotice(){notice('');}
 function stopCamera(){if(stream){for(const track of stream.getTracks())track.stop();stream=null;}const video=$('#webRealCameraVideo');if(video)video.srcObject=null;}
 function clearUrls(){photoUrls.forEach(URL.revokeObjectURL);photoUrls=[];}
-function leave(){window.EducaWebAppsV11216?.close?.();stopCamera();clearUrls();current='';clearNotice();}
+function leave(){window.EducaWebAppsV11216?.close?.();window.EducaWebMoreAppsV11219?.close?.();stopCamera();clearUrls();current='';clearNotice();}
 function back(){leave();window.EducaFreeView?.setView('home');}
 function openApp(app){
  if(!isFree()||!intercepted.has(app))return;
@@ -28,6 +28,7 @@ function openApp(app){
  $('#webRealSubtitle').textContent=app==='camera'?'Permissão necessária para usar a câmera':'Modo Livre · recursos web';
  window.EducaFreeView?.setView('webreal');
  if(window.EducaWebAppsV11216?.open?.(app,{readPhotos,addFiles,removePhoto,downloadBlob}))return;
+ if(window.EducaWebMoreAppsV11219?.open?.(app))return;
  const p='<p class="wr-disclosure">Este é um ambiente educativo. Recursos do seu aparelho só são usados após uma ação sua.</p>';
  switch(app){
   case 'camera': body.innerHTML=p+card('Câmera do seu aparelho','Permita o acesso quando o navegador solicitar. As fotos ficam neste navegador, não vão para a nuvem.')+`<div class="wr-camera-frame"><video id="webRealCameraVideo" autoplay muted playsinline></video></div><div class="wr-row"><button type="button" class="wr-primary" data-wr="camera-start">Ligar câmera</button><button type="button" data-wr="camera-flip">Virar câmera</button></div><div class="wr-row"><button type="button" data-wr="camera-capture">Tirar foto</button><button type="button" data-wr="open-photos">Ver fotos</button></div>`+end;break;
