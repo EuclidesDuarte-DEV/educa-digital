@@ -50,7 +50,7 @@ try{
       autoHidden:auto.hidden||getComputedStyle(auto).display==='none',
       nextVisible:getComputedStyle(next).display!=='none',
       chatAlert:!!chatAlert,
-      buttons:actions.map(x=>{panel.scrollTop=panel.scrollHeight;const br=x.getBoundingClientRect();
+      buttons:actions.map(x=>{x.scrollIntoView({block:'nearest'});const br=x.getBoundingClientRect();
        return {title:x.textContent,visible:getComputedStyle(x).display!=='none',
          width:br.width,top:br.top,bottom:br.bottom,panelTop:pr.top,panelBottom:pr.bottom}})};
    });
