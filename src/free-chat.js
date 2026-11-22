@@ -5,6 +5,7 @@ import { storeTrainingExample } from './lia-training-examples-v11197.js';
 const CHARACTERS = Object.freeze({
   family: {name:'Rafael, familiar fictício',premise:'Diz que trocou de número, conversa com naturalidade e pede ajuda financeira fictícia de R$ 350 via Pix de TREINO. Se perguntarem, identifica-se como Rafael. Não forneça chaves reais; o banco simulado exibe a chave CHAVE-TREINO-RAFAEL. O verdadeiro exercício é confirmar a identidade antes de transferir.'},
   video: {name:'Lia, personagem visual fictícia',premise:'Você participa de uma videochamada de TREINAMENTO no Educa+ Digital, fazendo papel de uma pessoa desconhecida que aparenta conhecer o participante. Apresente uma história breve e plausível, por exemplo, mudança de celular ou dificuldade para pagar algo, e mencione um Pix de treinamento de R$ 350 no banco simulado. Responda de maneira contextual às perguntas da pessoa; não repita o pedido em toda fala. Mostre sinais educativos de tentativa de golpe, como identidade não verificada e pedido de dinheiro, sem solicitar dados reais ou levar a qualquer transação verdadeira. Se a pessoa desconfiar, respeite imediatamente e incentive a confirmação por um canal conhecido. A interface identifica expressamente a simulação.'},
+  'family-photo':{name:'Rafael fictício, impostor que enviou foto no WhatsApp',premise:'Em simulação educativa de WhatsApp, diz ser Rafael, filho da pessoa, e que trocou de número. Já enviou uma FOTO TOTALMENTE SINTÉTICA do personagem fictício e pediu R$ 650 FICTÍCIOS para uma despesa urgente. Responda de modo coloquial sem mudar a história ou afirmar que a foto comprova identidade. Não solicite foto da pessoa, documentos, dados reais, chaves reais, pagamento real ou contato externo. Se a pessoa optar por verificar pelo número antigo, bloquear ou encerrar, respeite sem insistir.'},
   bank: {name:'Pessoa que diz ser da central bancária',premise:'Em chamada fictícia, alega movimentação suspeita e tenta convencer o participante a tomar providências rápidas, como verificar um Pix de treino. Não ofereça chaves reais nem solicite códigos ou senhas. Deixe o participante questionar e encerrar.'},
   code: {name:'Contato desconhecido',premise:'Pede ajuda com confirmação de acesso em uma conversa fictícia, mas não solicite código numérico verdadeiro. Aceite recusa ou verificação.'},
   delivery: {name:'Aviso de entrega fictício',premise:'Alega uma taxa de entrega fictícia de R$ 12. Não envie links verdadeiros nem chave de pagamento real. Deixe a pessoa validar no aplicativo oficial.'},
@@ -63,6 +64,7 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null){
   if(parsed.error)return Response.json({ok:false,message:parsed.error},{status:400});
   if(!limitar(request.headers.get('CF-Connecting-IP')||'local'))return Response.json({ok:false,message:'Limite temporário atingido. Volte em alguns minutos.'},{status:429});
   if(!env?.AI?.run)return Response.json({ok:false,message:'IA indisponível neste ambiente. Para conversar de verdade, execute no Worker da Cloudflare com o binding AI.'},{status:503,headers:{'Cache-Control':'no-store'}});
+  if(parsed.scenario==='family-photo'&&!webOnly)return Response.json({ok:false,message:'Atividade disponível apenas no treinamento Web.'},{status:422});
   const s=CHARACTERS[parsed.scenario];
   // V111.86: a progressão existe exclusivamente na rota Web opt-in.
   // A rota comum preserva os prompts e o comportamento de Android/iOS.
@@ -70,7 +72,7 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null){
     ?Math.max(1,Math.min(3,payload.webChallenge.level)):1;
   const tries=webOnly&&Number.isInteger(payload?.webChallenge?.tries)
     ?Math.max(0,Math.min(2,payload.webChallenge.tries)):0;
-  const eligible=new Set(['family','relative','bank','video','delivery','prize','sms-delivery','sms-prize']);
+  const eligible=new Set(['family','family-photo','relative','bank','video','delivery','prize','sms-delivery','sms-prize']);
   const persistent=webOnly&&tier>1&&eligible.has(parsed.scenario)&&tries>0;
   const webCue=webOnly&&tier>1&&eligible.has(parsed.scenario)
     ?'Neste exercício com dificuldade elevada, mantenha a história coerente e plausível. Responda às perguntas sem revelar o roteiro ou repetir o mesmo pedido. Fale como a pessoa do contato, com naturalidade. '
