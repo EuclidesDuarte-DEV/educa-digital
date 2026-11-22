@@ -57,6 +57,12 @@ test('V112.10: cair no golpe é definitivo; Bloquear depois não pode virar acer
  assert.equal(state.score,85);
  assert.equal(state.finished,0);
  assert.equal($('#freeSummaryTitle').textContent,'Você perdeu 15 pontos');
+ // Mesmo depois de voltar ao WhatsApp e clicar Bloquear, o desafio já estava perdido.
+ state.blocked=false;current='chat';
+ finish('safe','Bloqueei depois de cair');
+ assert.equal(state.finished,0);
+ assert.equal(state.score,85);
+ assert.equal($('#freeSummaryTitle').textContent,'Você perdeu 15 pontos');
 });
 
 test('V112.10: resumo curto Web sem notificação grande nem pausa, todos botões alcançáveis',()=>{
