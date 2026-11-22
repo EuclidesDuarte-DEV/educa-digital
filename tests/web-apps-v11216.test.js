@@ -45,6 +45,7 @@ test('V112.16: SMS e galeria permanecem no telefone simulado com rolagem indepen
  assert.match(css,/a11y-text-extra/);
  assert.match(css,/free-event-notice:not\(\[hidden\]\)/);
  assert.match(css,/pointer-events:none!important/);
+ assert.match(css,/#webRealStatus:not\(\[hidden\]\)/);
  assert.match(css,/--webx-body-size:17px/);
  assert.match(ui,/SMS fictício/);
  assert.match(css,/#webRealView:has\(#webRealCameraVideo\)/);
