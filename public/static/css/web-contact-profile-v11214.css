@@ -132,7 +132,7 @@ html[data-educa-platform="web"] #whatsappView .fc-list-avatar{
 }
 html[data-educa-platform="web"] #chatView .fc-title-trigger{cursor:pointer;min-width:0;}
 html[data-educa-platform="web"] #chatView .free-training-photo img{
- display:block;width:100%;height:auto;aspect-ratio:720/875;object-fit:cover;
+ display:block;width:100%;height:auto;aspect-ratio:520/632;object-fit:cover;
  cursor:zoom-in;image-rendering:auto;
 }
 html[data-educa-platform="web"] #chatView .fc-highlight{
