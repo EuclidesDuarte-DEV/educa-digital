@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Testar voz neural feminina gratuita — Educa+ Digital</title>
+<style>
+:root{font-family:system-ui,Segoe UI,sans-serif;background:#eff4fa;color:#12253f}
+*{box-sizing:border-box}
+body{margin:0;padding:18px;min-height:100dvh;display:grid;place-items:center}
+main{width:min(100%,580px);background:white;border-radius:18px;padding:clamp(20px,4vw,32px);box-shadow:0 14px 34px #142f5020}
+h1{margin:0 0 10px;font-size:clamp(22px,5vw,30px);line-height:1.2}
+p{line-height:1.55;color:#40536b}label{display:block;font-weight:700;margin:12px 0}
+textarea{display:block;width:100%;min-height:100px;padding:12px;border:1px solid #b3cbe3;border-radius:12px;font:inherit;resize:vertical}
+button{display:block;width:100%;min-height:48px;background:#144e93;border:0;border-radius:12px;color:white;font:inherit;font-weight:700;margin-top:12px;padding:11px 14px;cursor:pointer}
+button.secondary{background:#e7f0fc;color:#123a70}
+button:disabled{opacity:.55;cursor:wait}
+audio{width:100%;margin-top:16px}
+output{display:block;border-radius:12px;background:#eff4fa;color:#173e70;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;min-height:48px;margin-top:16px}
+small{display:block;margin-top:16px;color:#53647a;line-height:1.5}
+a{color:#1450a3}
+</style>
+</head>
+<body>
+<main>
+<h1>Voz neural feminina gratuita da LIA</h1>
+<p><strong>Dora · Paradee-8M · português brasileiro</strong>. Gera a fala no próprio navegador, sem usar créditos da ElevenLabs. É um modelo experimental: a naturalidade e a rapidez dependem do dispositivo.</p>
+<label for="text">Frase fictícia para testar</label>
+<textarea id="text" maxlength="220">Oi, eu sou a Lia! Tudo bem? Você sabe como identificar um golpe por videochamada? Vamos praticar juntos!</textarea>
+<button id="prepare" type="button">Preparar voz no aparelho (~8 MB de modelo)</button>
+<button id="speak" type="button" class="secondary">Ouvir voz neural brasileira</button>
+<output id="status" role="status" aria-live="polite">Pronto para o teste. No primeiro acesso, o navegador baixa o modelo.</output>
+<audio id="audio" hidden controls preload="none" aria-label="Áudio neural gratuito de teste"></audio>
+<small>Privacidade: o texto é processado no dispositivo. Há download dos arquivos públicos do modelo e das bibliotecas na primeira execução. Créditos: <a href="https://huggingface.co/eraldohug/Paradee-8M-PtBr" rel="noopener noreferrer" target="_blank">Paradee-8M Pt-BR, Eraldo R./astrowar, Apache-2.0</a>.</small>
+<p><a href="/">Voltar ao Educa+ Digital</a></p>
+</main>
+<script src="/static/js/lia-free-neural-v11206.js?v=11206"></script>
+<script>
+(()=>{
+ const engine=window.EducaLiaFreeNeural,prep=document.querySelector('#prepare'),speak=document.querySelector('#speak');
+ const state=document.querySelector('#status'),text=document.querySelector('#text'),audio=document.querySelector('#audio');
+ let last=null;
+ function status(value){state.textContent=value;}
+ window.addEventListener('educa-lia-free-neural-progress',e=>status(String(e.detail?.stage||'Preparando…')));
+ prep.onclick=async()=>{
+  prep.disabled=true;const t=performance.now();
+  try{await engine.prepare();status('Voz pronta! Carregamento inicial: '+Math.round(performance.now()-t)+' ms.');}
+  catch(e){status('Falha: '+String(e.message||e));}
+  finally{prep.disabled=false;}
+ };
+ speak.onclick=async()=>{
+  speak.disabled=true;const t=performance.now();
+  try{
+   const r=await engine.speak(text.value,{speed:1.04});
+   if(last)URL.revokeObjectURL(last);
+   last=URL.createObjectURL(r.blob);audio.src=last;audio.hidden=false;
+   status('Áudio neural gerado! Espera total: '+Math.round(performance.now()-t)+' ms. Inferência ONNX: '+r.elapsed_ms+' ms. Fala: '+Number(r.seconds||0).toFixed(1)+' s. Ouça abaixo e confira o sotaque.');
+   try{await audio.play();}catch(_){/* Para Safari, controles visíveis permitem liberar reprodução. */}
+  }catch(e){status('Falha: '+String(e.message||e));}
+  finally{speak.disabled=false;}
+ };
+ window.addEventListener('pagehide',()=>{if(last)URL.revokeObjectURL(last);});
+})();
+</script>
+</body>
+</html>
