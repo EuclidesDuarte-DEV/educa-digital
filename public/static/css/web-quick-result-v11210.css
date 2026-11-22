@@ -1,6 +1,6 @@
 /* V112.10 — APENAS WEB: tela rápida de perda de pontos, sem aviso no chat. */
 html[data-educa-platform="web"] #phoneScreen #freeSummaryView.web-quick-risk.android-view.is-active > .v106-app-screen.v106-summary{
- display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;
+ display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:center!important;
  box-sizing:border-box!important;padding:54px 18px 42px!important;gap:10px!important;
  overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior-y:contain!important;
  -webkit-overflow-scrolling:touch;touch-action:pan-y!important;
