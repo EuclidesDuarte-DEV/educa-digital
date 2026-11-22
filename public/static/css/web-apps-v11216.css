@@ -339,3 +339,68 @@ html[data-educa-platform="web"] #webRealView .webx-app .sr-only{
  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
+
+/* Câmera presente no segundo vídeo: visor escuro e obturador destacado.
+   Os controles continuam sendo os recursos Web reais com permissão explícita. */
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo){
+ background:#08090c!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-header{
+ background:#16171b;border-color:#31333b;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-header :is(strong,small){
+ color:#f5f5f7!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-scroll{
+ background:#08090c!important;padding:8px 10px 26px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card{
+ border:0!important;box-shadow:none!important;background:#0c0d11!important;
+ color:#f7f8fa!important;padding:10px!important;margin:0 0 10px!important;gap:10px;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card>strong{
+ color:#fafafa!important;font-size:15px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card p{
+ color:#adb3bd!important;line-height:1.5!important;font-size:11px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-camera-frame{
+ position:relative;aspect-ratio:3/4;min-height:180px;max-height:min(52dvh,450px);
+ width:100%;margin:auto;border-radius:9px;background:#050608;
+ border:1px solid #37393e;overflow:hidden;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-camera-frame::after{
+ content:"";position:absolute;inset:0;pointer-events:none;
+ background:linear-gradient(90deg,transparent 33%,#fff4 33%,#fff4 33.3%,transparent 33.3%,transparent 66.6%,#fff4 66.6%,#fff4 67%,transparent 67%),
+ linear-gradient(0deg,transparent 33%,#fff4 33%,#fff4 33.3%,transparent 33.3%,transparent 66.6%,#fff4 66.6%,#fff4 67%,transparent 67%);
+ opacity:.5;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-row{
+ display:flex;justify-content:center;align-items:center;gap:11px;flex-wrap:nowrap;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-row button{
+ flex:1;min-width:0!important;min-height:43px!important;padding:8px!important;
+ background:#2a2c31!important;color:#f7f7fb!important;border-color:#4a4e54!important;
+ border-radius:18px!important;font-size:12px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"]{
+ flex:0 0 70px!important;width:70px!important;height:70px!important;min-height:70px!important;
+ font-size:0!important;border-radius:50%!important;background:#fdfdfd!important;
+ border:5px solid #52535a!important;outline:3px solid #fefefe!important;
+ outline-offset:-9px!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"]::after{
+ content:"";width:49px;height:49px;display:block;margin:auto;border-radius:50%;
+ background:#fff;border:1px solid #d2d2d2;pointer-events:none;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="open-photos"]{
+ flex:1 1 0!important;
+}
+@media(max-height:650px){
+ html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-camera-frame{
+  max-height:min(44dvh,310px);
+ }
+ html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"]{
+  flex-basis:60px!important;width:60px!important;height:60px!important;min-height:60px!important;
+ }
+}
