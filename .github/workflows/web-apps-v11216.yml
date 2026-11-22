@@ -20,6 +20,9 @@ on:
       - 'scripts/validar-web-more-apps-v11219.mjs'
       - 'tests/web-more-apps-v11219.test.js'
       - 'scripts/diagnosticar-toques-web-v11220.mjs'
+      - 'public/static/js/web-touch-recovery-v11220.js'
+      - 'public/static/css/web-call-touch-light-v11220.css'
+      - 'tests/web-touch-v11220.test.js'
       - '.github/workflows/web-apps-v11216.yml'
 permissions:
   contents: read
@@ -57,6 +60,8 @@ jobs:
         run: |
           node --test tests/web-more-apps-v11219.test.js
           node scripts/validar-web-more-apps-v11219.mjs
+      - name: V112.20 checagens de recuperação e escopo Web
+        run: node --test tests/web-touch-v11220.test.js
       - name: V112.20 diagnostico de toques em chamadas Web
         run: node scripts/diagnosticar-toques-web-v11220.mjs
       - name: V112.20 iPhone Safari WebKit - toque real no fluxo WhatsApp LIA ligacao
