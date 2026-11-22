@@ -12,8 +12,8 @@ const dialogue=readFileSync('public/static/channels/web/dialogue-v11183.js','utf
 
 test('V112.12: personagem fictício envia foto ANTES do pedido de Pix e só na Web',()=>{
  assert.match(free,/id:'family-photo',channel:'whatsapp'/);
- assert.match(free,/photoUrl:'\/static\/img\/free-family-photo-v11212\.jpg'/);
- assert.match(free,/photoAsk:'Estou precisando pagar uma conta hoje/);
+ assert.match(free,/photoUrl:'\/static\/img\/free-family-photo-v11214\.webp'/);
+ assert.match(free,/photoAsk:'Mãe, tô com uma conta pra pagar hoje/);
  assert.match(free,/if\(isWebTraining\(\)&&s\.photoUrl&&s\.photoAsk/);
  assert.match(free,/renderPhoto\(s\)/);
  assert.match(free,/isWebTraining\(\)\?\[byId\['family-photo'\]\]:\[\]/);
@@ -27,7 +27,7 @@ test('V112.12: personagem fictício envia foto ANTES do pedido de Pix e só na W
 test('V112.12: Neural reconhece pedido por foto, rejeita dados reais e mantém nativos isolados',()=>{
  assert.equal(validarMensagem({scenario:'family-photo',message:'Essa foto é mesmo sua?',history:[]}).scenario,'family-photo');
  assert.match(chat,/parsed\.scenario==='family-photo'&&!webOnly/);
- assert.match(chat,/FOTO TOTALMENTE SINTÉTICA/);
+ assert.match(chat,/Uma foto sintética já apareceu/);
  assert.match(chat,/R\$ 650 FICTÍCIOS/);
  assert.match(chat,/sem.*?real|pagamento real/);
  assert.match(gamification,/'family-photo'/);
