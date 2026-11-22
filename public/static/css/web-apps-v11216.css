@@ -443,3 +443,14 @@ html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
  #webRealView .webx-app .webx-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
 html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra)
  #webRealView .webx-app .webx-mail-copy :is(strong,b,small){max-width:100%;}
+
+/* Notificações surpresa do Modo Livre não devem roubar o toque do app aberto.
+   O aviso continua visível; ao voltar à Home a interação do aviso é restabelecida. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
+ .free-event-notice:not([hidden]) {
+ pointer-events:none!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
+ .free-event-notice:not([hidden]) * {
+ pointer-events:none!important;
+}
