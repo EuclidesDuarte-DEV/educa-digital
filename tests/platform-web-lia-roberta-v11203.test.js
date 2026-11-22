@@ -11,7 +11,10 @@ const voiceId='RGymW84CSmfVugnA5tvA';
 test('V112.03 — Roberta selecionada no Worker oficial e Preview, nunca no Android ou iOS nativos',()=>{
  assert.equal(wrangler.match(/LIA_ELEVENLABS_VOICE_ID = "RGymW84CSmfVugnA5tvA"/g)?.length,2);
  assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_PROVIDER = "elevenlabs"/g)?.length,2);
- assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "false"/g)?.length,2);
+ assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "true"/g)?.length,1);
+ assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "false"/g)?.length,1);
+ // O Preview continua desligado e não compartilha o segredo de produção.
+ assert.match(wrangler,/\[previews\.vars\][\s\S]*LIA_WEB_HQ_TTS_ENABLED = "false"/);
  assert.doesNotMatch(wrangler,/LIA_ELEVENLABS_API_KEY\s*=/);
  assert.match(video,/voiceEngine\.options\[0\]\.textContent='Roberta · voz natural/);
  assert.match(video,/config\.provider==='elevenlabs-flash-v2\.5'/);
