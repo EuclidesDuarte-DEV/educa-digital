@@ -25,11 +25,11 @@ try{
    const photo=await page.locator('#chatWallpaper .free-training-photo img').evaluate(img=>({
       width:img.naturalWidth,height:img.naturalHeight,alt:img.alt,src:img.getAttribute('src')
    }));
-   assert.ok(photo.width>=150&&photo.height>=100,id+': foto sintética não carregou: '+JSON.stringify(photo));
+   assert.ok(photo.width>=500&&photo.height>=600,id+': foto sintética não carregou: '+JSON.stringify(photo));
    const bubbles=await page.locator('#chatWallpaper .message').allTextContents();
    assert.ok(bubbles.length>=3,id+': diálogo inicial sem foto e pedido: '+JSON.stringify(bubbles));
-   assert.match(bubbles[0],/Sou o Rafael/);
-   assert.match(bubbles.at(-1),/R\$ 650 por Pix/);
+   assert.match(bubbles[0],/é o Rafa\. Troquei de número/);
+   assert.match(bubbles.at(-1),/emprestar R\$ 650/);
    const mediaIndex=await page.locator('#chatWallpaper .message').evaluateAll(nodes=>nodes.findIndex(n=>n.classList.contains('free-training-photo')));
    assert.equal(mediaIndex,1,id+': foto deve ficar entre apresentação e pedido');
    await page.screenshot({path:'artifacts/family-photo-v11212/'+id+'-conversa.png'});
