@@ -9,17 +9,17 @@ const html=readFileSync('public/html/index.html','utf8');
 const voiceId='RGymW84CSmfVugnA5tvA';
 
 test('V112.03 — Roberta selecionada no Worker oficial e Preview, nunca no Android ou iOS nativos',()=>{
- assert.equal(wrangler.match(/LIA_ELEVENLABS_VOICE_ID = "RGymW84CSmfVugnA5tvA"/g)?.length,2);
+ assert.doesNotMatch(wrangler,/LIA_ELEVENLABS_VOICE_ID\s*=/);
  assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_PROVIDER = "elevenlabs"/g)?.length,2);
- assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "true"/g)?.length,1);
- assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "false"/g)?.length,1);
+ assert.doesNotMatch(wrangler,/LIA_WEB_HQ_TTS_ENABLED = "true"/);
+ assert.equal(wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "false"/g)?.length,2);
  // O Preview continua desligado e não compartilha o segredo de produção.
  assert.match(wrangler,/\[previews\.vars\][\s\S]*LIA_WEB_HQ_TTS_ENABLED = "false"/);
  assert.doesNotMatch(wrangler,/LIA_ELEVENLABS_API_KEY\s*=/);
  // O status da Roberta atualiza sua própria option; não sobrescreve
  // a voz neural gratuita colocada no início da lista Web.
- assert.match(video,/voiceEngine\.querySelector\('option\[value="feminina"\]'\)\.textContent='Roberta · voz natural/);
- assert.match(video,/const robertaOption=voiceEngine\?\.querySelector\('option\[value="feminina"\]'\)/);
+ assert.match(video,/voiceEngine\.querySelector\('option\[value="feminina"\]'\)\?\.remove\(\)/);
+ assert.match(video,/return voiceEngine\?\.value==='padrao'\?'padrao':'gratuita'/);
  assert.match(video,/config\.provider==='elevenlabs-flash-v2\.5'/);
  assert.match(html,/free-video\.js\?v=11191[^"]*&roberta=11203/);
 });
@@ -60,10 +60,10 @@ test('V112.03 — API realmente endereça a voz Roberta e usa Flash v2.5',async(
 });
 
 test('V112.03 — Safari aguarda brevemente o status para não começar robótico',()=>{
- assert.match(video,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
+ assert.doesNotMatch(video,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
  assert.match(video,/await Promise\.race\(\[/);
  assert.match(video,/session\.hqVoiceCheck,new Promise\(resolve=>setTimeout\(resolve,2000\)\)/);
  assert.match(video,/turn!==session\.serial\|\|!session\.active/);
  assert.match(video,/timeout=setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
- assert.match(video,/session\.hqVoiceFailedSerial=serial/);
+ assert.match(video,/playFreeNeuralVoice\(phrase,serial\)/);
 });
