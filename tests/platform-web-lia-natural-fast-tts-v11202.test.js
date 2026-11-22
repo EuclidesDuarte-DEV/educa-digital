@@ -67,8 +67,8 @@ test('V112.02 — cliente Web usa serviço só após status habilitado e não aq
  const video=readFileSync('public/static/js/free-video.js','utf8');
  const free=readFileSync('public/static/js/free-mode.js','utf8');
  const html=readFileSync('public/html/index.html','utf8');
- assert.match(video,/void inspectWebHQVoice\(\)/);
- assert.match(video,/session\.hqVoiceEnabled=r\.ok&&config\.enabled===true/);
+ assert.match(video,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
+ assert.match(video,/session\.hqVoiceEnabled=enabled/);
  assert.match(video,/session\.hqVoiceFailedSerial=serial/);
  assert.match(video,/session\.fastVoiceSerial=serial/);
  assert.match(video,/playWebHQVoice\(phrase,serial\)/);
