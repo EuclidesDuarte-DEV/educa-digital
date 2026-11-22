@@ -1,0 +1,182 @@
+/* Educa+ Digital V112.18 — modo claro dos aplicativos simulados (somente Web).
+   O visor real da camera permanece escuro; menus e controles ficam claros.
+   Sem alterar o design ou os binarios Android/iOS nativos. */
+html[data-educa-platform="web"] #webRealView.webx-active,
+html[data-educa-platform="web"] #webRealView.webx-active #webRealBody {
+  background:#fff!important;color:#253044!important;color-scheme:light;
+}
+html[data-educa-platform="web"] #webRealView.webx-active .webreal-header {
+  background:#fff!important;border-color:#e2e8f1!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-active .webreal-header :is(strong,small) {
+  color:#34435a!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-active .webreal-header>button {
+  color:#175da7!important;min-width:44px;min-height:44px;touch-action:manipulation;
+}
+html[data-educa-platform="web"] #webRealView .webx-app {
+  color-scheme:light;background:#fff!important;color:#253044!important;
+}
+html[data-educa-platform="web"] #webRealView .webx-app :is(button,label.webx-upload) {
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(33,105,185,.16);
+}
+html[data-educa-platform="web"] #webRealView .webx-app :is(input,textarea) {
+  background:#fff!important;color:#27354b!important;
+  border:1px solid #c9d6e4!important;font-size:16px!important;
+}
+html[data-educa-platform="web"] #webRealView .webx-app :is(input,textarea)::placeholder {
+  color:#69798d!important;opacity:1;
+}
+html[data-educa-platform="web"] #webRealView .webx-app :is(button,input,textarea):focus-visible {
+  outline:3px solid #276fd2!important;outline-offset:-2px;
+}
+/* Fotos: biblioteca, periodos, colecoes, busca, visualizacao individual. */
+html[data-educa-platform="web"] #webRealView.webx-photos :is(
+  .webx-photos-head,.webx-photo-topactions,.webx-photos-scroll,
+  .webx-photo-examples,.webx-photo-view,.webx-photo-view header,
+  .webx-photo-view footer,.webx-photo-search
+) {background:#fff!important;color:#253044!important;}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-heading strong,
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-group h3,
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-empty strong,
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-examples strong,
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-collection-card strong {
+  color:#27364a!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos :is(
+  .webx-photos-heading small,.webx-photo-empty p,.webx-photo-examples small,
+  .webx-collection-card small,.webx-search-empty
+) {color:#687a90!important;}
+html[data-educa-platform="web"] #webRealView.webx-photos :is(.webx-photos-heading button,.webx-photo-topactions button,.webx-photo-topactions label) {
+  background:#eaf2fd!important;color:#185aa9!important;
+  border:1px solid #d1e0f2!important;border-radius:13px!important;
+  min-height:44px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-period {
+  background:#ecf1f8!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-period button {
+  color:#4b607a!important;min-height:39px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-period button[aria-pressed="true"] {
+  background:#fff!important;color:#175db3!important;
+  box-shadow:0 1px 5px #294c7a2b!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-tabs {
+  background:#f8faff!important;border-top:1px solid #dde7f2!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-tabs button {
+  color:#60718a!important;min-height:52px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-tabs button[aria-current="page"] {
+  color:#155eae!important;font-weight:760!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-grid button {
+  background:#eaf1f9!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-empty {
+  color:#4c617d!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-collection-card {
+  background:#f0f5fb!important;border:1px solid #dce6f1!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-selection-bar {
+  background:#f0f5fb!important;color:#2c4869!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-selection-bar button {
+  color:#fff!important;background:#b83146!important;min-height:44px!important;
+  border-radius:12px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-view :is(header,footer) {
+  border-color:#e2e8ef!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-view button {
+  color:#165eb4!important;min-height:44px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-stage {
+  background:#eef3f8!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-stage img {
+  max-width:100%!important;max-height:100%!important;object-fit:contain!important;
+}
+/* SMS: lista, busca e conversa. Nenhum acesso a SMS real. */
+html[data-educa-platform="web"] #webRealView.webx-messages :is(
+  .webx-sms-head,.webx-sms-list,.webx-sms-detail,.webx-sms-detail main,
+  .webx-sms-detail header,.webx-sms-note,.webx-sms-disabled
+) {background:#fff!important;color:#27364a!important;}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-head h2,
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-list strong,
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-detail header strong {
+  color:#202f43!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages :is(
+  .webx-sms-head p,.webx-sms-list small,.webx-sms-list time,
+  .webx-sms-demo,.webx-sms-note,.webx-sms-disabled
+) {color:#62768d!important;}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-list button {
+  background:#fff!important;color:#27364a!important;
+  border-bottom:1px solid #e9eef5!important;min-height:76px!important;
+  touch-action:manipulation!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-list button:active {
+  background:#f1f6fe!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-detail header {
+  border-bottom:1px solid #dce5f0!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-detail header button {
+  min-width:44px!important;min-height:44px!important;color:#175fae!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-bubble {
+  background:#ecf3ff!important;color:#273b57!important;
+  border:1px solid #d9e7f9!important;
+}
+/* Camera real: superficie clara; visualizacao de video continua escura. */
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) {
+  background:#f6f9fd!important;color:#28364a!important;color-scheme:light;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) :is(.webreal-header,.webreal-scroll) {
+  background:#f8faff!important;border-color:#dfe7f2!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .webreal-header :is(strong,small) {
+  color:#30445f!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card {
+  background:#fff!important;border:1px solid #e3eaf3!important;color:#29374a!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card>strong {
+  color:#26384f!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-card p {
+  color:#64788e!important;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) .wr-row button {
+  background:#e9f2fd!important;color:#20588e!important;
+  border-color:#bed4ee!important;min-height:44px!important;
+  touch-action:manipulation;
+}
+html[data-educa-platform="web"] #webRealView:has(#webRealCameraVideo) [data-wr="camera-capture"] {
+  background:#fff!important;border-color:#b1bfd1!important;
+}
+/* Avisos Web sobre os apps: apenas o fundo deixa os toques passarem;
+   Abrir e × mantem toque real. Nao alterar outros modos. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
+ #freeEventNotice.free-event-notice:not([hidden]) {
+  pointer-events:none!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="webreal"]
+ #freeEventNotice.free-event-notice:not([hidden]) :is(#freeEventOpen,#freeEventDismiss) {
+  pointer-events:auto!important;touch-action:manipulation!important;
+  min-width:44px!important;min-height:44px!important;
+  position:relative;z-index:2;cursor:pointer;
+}
+@media(max-width:390px){
+ html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-period button {
+  padding:5px 10px!important;
+ }
+ html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-list button {
+  grid-template-columns:44px minmax(0,1fr) 35px!important;
+  gap:7px!important;padding:10px 8px!important;
+ }
+}
