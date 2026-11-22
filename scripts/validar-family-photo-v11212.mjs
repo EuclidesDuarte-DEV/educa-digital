@@ -10,6 +10,7 @@ try{
   const page=await browser.newPage({viewport});
   let networkCalls=0;
   try{
+   await page.addInitScript(()=>localStorage.setItem('educaWebModoLivreNivelV11182',JSON.stringify({xp:220})));
    await page.route('**/api/modo-livre/conversar-web',route=>{networkCalls++;return route.abort();});
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeView&&window.EducaFreeMode&&document.documentElement.dataset.educaPlatform==='web',{timeout:15000});
@@ -37,6 +38,7 @@ try{
    await page.waitForFunction(()=>document.querySelector('#freeSummaryTitle')?.textContent.includes('Você perdeu 15 pontos'),null,{timeout:2000});
    const remaining=await page.locator('#freeSummaryText').innerText();
    assert.match(remaining,/85 pontos/,id+': faltou desconto');
+   await page.waitForFunction(()=>window.EducaWebGamification?.getSnapshot?.().xp===205,null,{timeout:2500});
    assert.equal(networkCalls,0,id+': concordar com Pix fictício deveria terminar sem esperar IA');
    await page.screenshot({path:'artifacts/family-photo-v11212/'+id+'-resultado.png'});
    console.log('OK '+id+': foto '+photo.width+'x'+photo.height+', Pix fictício, 85 pontos e sem espera de IA');
