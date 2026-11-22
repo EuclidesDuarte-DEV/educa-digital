@@ -39,6 +39,19 @@ function syncUI(){const familyChat=state.active&&visible()==='chat'&&state.scena
 function stopVoice(){state.callHandsFree=false;state.callUtterance=null;try{window.speechSynthesis?.cancel();}catch(_){}try{state.recognizer?.stop();}catch(_){}state.recognizer=null;}
 function clearRequest(){state.request?.abort();state.request=null;state.replying=false;if(els.typing)els.typing.hidden=true;if(els.send)els.send.disabled=false;}
 function clearTransition(){clearTimeout(state.transitionTimer);state.transitionTimer=null;}
+// V112.08: se o participante tenta rolar ou ler o resumo, o avanço
+// automático pausa apenas na WEB. De outro modo os 2,8 segundos eram
+// insuficientes para alcançar a terceira ação no mockup pequeno.
+function pauseSummaryTransition(){
+ if(document.documentElement?.dataset?.educaPlatform!=='web'||
+    !state.active||visible()!=='free-summary'||!state.transitionTimer)return;
+ clearTransition();
+ const notice=$('#freeSummaryAuto');
+ if(notice){
+  notice.hidden=false;
+  notice.textContent='Avanço automático pausado para você ler. Use os botões abaixo.';
+ }
+}
 function schedule(min=16000,max=30000){clearTimeout(state.timer);state.timer=null;if(state.active)state.timer=setTimeout(triggerEvent,min+Math.random()*(max-min));}
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
@@ -137,6 +150,10 @@ function finish(kind='safe',reason=''){
  // Um resumo curto permite perceber o feedback sem precisar confirmar nada.
  const nextButton=$('#freeSummaryNext');if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
  const transition=$('#freeSummaryAuto');if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}
+ if(document.documentElement?.dataset?.educaPlatform==='web'){
+  const summary=$('#freeSummaryView .v106-summary');
+  if(summary)summary.scrollTop=0;
+ }
  show('free-summary');
  clearTransition();
  state.transitionTimer=setTimeout(()=>{state.transitionTimer=null;continueTraining();},2800);
@@ -215,6 +232,11 @@ document.addEventListener('click',e=>{if(!state.active)return;
 // O Android existente já emite estes eventos para os gestos da barra inferior.
 for(const name of ['educa:system-home','educa:system-learning','educa:system-back'])window.addEventListener(name,e=>{if(!state.active)return;e.stopImmediatePropagation();home();},true);
 $('#gestureHome')?.addEventListener('click',e=>{if(!state.active)return;e.stopImmediatePropagation();home();},true);
+// Rolagem, toque ou teclado indicam que a pessoa quer ler os resultados.
+const summaryScroller=$('#freeSummaryView .v106-summary');
+for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
+ summaryScroller?.addEventListener(eventName,pauseSummaryTransition,
+  ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
 $('#freeModeEntry')?.addEventListener('click',start);$('#freeExitBtn')?.addEventListener('click',exit);$('#freeSummaryExit')?.addEventListener('click',exit);$('#freeSummaryHome')?.addEventListener('click',home);$('#freeSummaryNext')?.addEventListener('click',continueTraining);
 $('#freeEventOpen')?.addEventListener('click',openPending);$('#freeEventDismiss')?.addEventListener('click',dismiss);$('#freeFloatingBack')?.addEventListener('click',home);
 els.form?.addEventListener('submit',e=>{e.preventDefault();const t=els.input.value;if(!t.trim())return;els.input.value='';send(t);});

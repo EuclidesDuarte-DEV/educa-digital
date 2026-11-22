@@ -1981,3 +1981,49 @@ html[data-educa-platform="web"] #learningView .free-learning-consent,
 html[data-educa-platform="web"] #learningView .free-example-consent {
   display: none !important;
 }
+
+/* V112.08 — SOMENTE WEB: permitir rolar até "Sair do Modo Livre".
+   A regra genérica .android-view .v106-app-screen usa overflow:hidden e
+   sobrepunha o overflow-y:auto da tela de conclusão. O celular simulado
+   tem altura fixa; a rolagem deve ocorrer DENTRO da tela, não no body. */
+html[data-educa-platform="web"] #phoneScreen
+#freeSummaryView.android-view.is-active {
+  overflow:hidden!important;
+  min-height:0!important;
+}
+html[data-educa-platform="web"] #phoneScreen
+#freeSummaryView.android-view.is-active > .v106-app-screen.v106-summary {
+  box-sizing:border-box!important;
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-height:100%!important;
+  min-height:0!important;
+  padding:clamp(46px,8cqh,68px) 18px 56px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y!important;
+  scrollbar-width:thin;
+  scrollbar-color:#abc1d9 transparent;
+  scroll-padding-bottom:56px;
+}
+/* A terceira ação nunca deve terminar escondida atrás do gesto inferior. */
+html[data-educa-platform="web"] #phoneScreen
+#freeSummaryView.android-view.is-active #freeSummaryExit {
+  display:block;
+  min-height:48px;
+  margin-bottom:clamp(24px,5cqh,44px);
+}
+html[data-educa-platform="web"] #phoneScreen
+#freeSummaryView.android-view.is-active .v106-summary-detail {
+  overflow-wrap:anywhere;
+}
+@media(max-height:720px) {
+  html[data-educa-platform="web"] #phoneScreen
+  #freeSummaryView.android-view.is-active > .v106-app-screen.v106-summary {
+    padding-top:45px!important;
+  }
+}
