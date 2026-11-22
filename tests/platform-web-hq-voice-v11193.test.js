@@ -57,12 +57,12 @@ test('[web] V111.93 — o frontend isola HQ na Web e retorna para fala feminina 
  const voice=readFileSync('public/static/js/lia-female-voice.js','utf8');
  const worker=readFileSync('src/worker.js','utf8');
  const html=readFileSync('public/html/index.html','utf8');
- assert.match(src,/educaPlatform==='web'&&\s*selectedEngine\(\)!=='padrao'&&session\.hqVoiceEnabled/);
+ assert.match(src,/if\(document\.documentElement\?\.dataset\?\.educaPlatform==='web'\)\{/);
  // V112.03: permitir pequena margem adicional ao áudio natural da Roberta.
  assert.match(src,/setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
  assert.match(src,/audioOnly\(phrase,serial\)/);
  assert.match(src,/session\.hqAbort\?\.abort\(\)/);
- assert.match(src,/const chunks=web&&session\.hqVoiceEnabled/);
+ assert.match(src,/const chunks=web&&selectedEngine\(\)==='gratuita'/);
  assert.match(voice,/natural\|neural\|online/);
  assert.match(worker,/rota === '\/api\/lia\/voz-web\/status'/);
  assert.match(worker,/rota === '\/api\/lia\/voz-web\/speak'/);
