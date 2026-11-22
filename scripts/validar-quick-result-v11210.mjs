@@ -32,7 +32,7 @@ try{
    await page.locator('#freeOriginalInput').fill('VOU TE MANDAR O PIX');
    await page.locator('#freeOriginalSend').click({timeout:10000});
    await page.waitForFunction(()=>document.querySelector('#freeSummaryView.web-quick-risk.is-active')&&
-    document.querySelector('#freeSummaryTitle').textContent.includes('perdeu 15 pontos'),{timeout:1000});
+    document.querySelector('#freeSummaryTitle').textContent.includes('perdeu 15 pontos'),undefined,{timeout:2000});
    assert.equal(aiCalls,0,name+': diálogo chamou IA depois da decisão insegura');
    const result=await page.evaluate(()=>{
     const container=document.querySelector('#freeSummaryView');
@@ -60,7 +60,7 @@ try{
    assert.equal(result.chatAlert,false,name+': aviso gigante permaneceu no chat');
    assert.equal(result.overflow,'auto',name+': rolagem bloqueada');
    assert.ok(result.nextVisible,name+': botão próximo desafio ausente');
-   assert.ok(result.buttons.every(x=>x.visible&&x.width>90),name+': botões ocultos');
+   assert.ok(result.buttons.every(x=>x.visible&&x.width>90&&x.bottom<=x.panelBottom-2&&x.top>=x.panelTop-4),name+': botões cortados mesmo após rolagem: '+JSON.stringify(result.buttons));
    await page.screenshot({path:'artifacts/quick-result-v11210/'+name+'.png'});
    console.log('OK '+name+' perda imediata, 85 pontos, sem IA; '+JSON.stringify(result.buttons));
   }finally{await page.close();}
