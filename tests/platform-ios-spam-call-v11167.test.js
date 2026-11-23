@@ -16,7 +16,7 @@ test('[ios] extensão real Call Directory está embutida no aplicativo nativo',(
  assert.match(yaml,/com\.apple\.callkit\.call-directory/);
  assert.match(yaml,/NSExtensionPrincipalClass: "\$\(PRODUCT_MODULE_NAME\)\.CallDirectoryProvider"/);
  assert.match(yaml,/PRODUCT_BUNDLE_IDENTIFIER: com\.educamaisdigital\.educa\.callerid/);
- assert.match(yaml,/CFBundleShortVersionString: "111\.71"/);
+ assert.match(yaml,/CFBundleShortVersionString: "112\.22"/);
  assert.match(yaml,/com\.apple\.security\.application-groups:[\s\S]*?group\.com\.educamaisdigital\.educa/);
 });
 
@@ -46,10 +46,9 @@ test('[ios] lista é local privada e exige número validado pelo usuário',()=>{
  assert.doesNotMatch(store,/Cloudflare|URLSession|CNContact|fetch\(/);
 });
 
-test('[ios] app usa botão nativo para ativar, editar e remover suspeitos',()=>{
- assert.match(app,/@State private var showingCallProtection/);
- assert.match(app,/Image\(systemName: "shield\.lefthalf\.filled"\)/);
- assert.match(app,/CallProtectionView\(\)/);
+test('[ios] painel de proteção não flutua sobre o treino mas extensão continua opcional',()=>{
+ assert.doesNotMatch(app, /showingCallProtection|Image\(systemName: "shield\.lefthalf\.filled"\)|CallProtectionView\(\)/);
+ assert.match(app,/CloudflareTrainingWebView\(state: state\)/);
  assert.match(view,/CXCallDirectoryManager\.sharedInstance\.getEnabledStatusForExtension/);
  assert.match(view,/CXCallDirectoryManager\.sharedInstance\.openSettings/);
  assert.match(view,/CXCallDirectoryManager\.sharedInstance\.reloadExtension/);
@@ -64,5 +63,5 @@ test('[ios] aviso fictício não é mais injetado no protótipo; CallKit segue n
  assert.doesNotMatch(web,/simulatedCallerWarning|educa-ios-training-caller-warning/);
  assert.match(web,/platform=ios/);
  assert.match(ext,/addIdentificationEntry\(/);
- assert.doesNotMatch(local,/V111\.71/);
+ assert.doesNotMatch(local,/V112\.22/);
 });
