@@ -23,6 +23,9 @@ on:
       - 'public/static/js/web-touch-recovery-v11220.js'
       - 'public/static/css/web-call-touch-light-v11220.css'
       - 'tests/web-touch-v11220.test.js'
+      - 'public/static/css/web-compact-toolbars-v11221.css'
+      - 'scripts/validar-web-toolbars-v11221.mjs'
+      - 'tests/web-toolbars-v11221.test.js'
       - '.github/workflows/web-apps-v11216.yml'
 permissions:
   contents: read
@@ -68,6 +71,10 @@ jobs:
         run: |
           npx playwright install --with-deps webkit
           EDUCA_BROWSER=webkit node scripts/diagnosticar-toques-web-v11220.mjs
+      - name: V112.21 pesquisa filtros topo e rolagem independente nos seis apps
+        run: |
+          node --test tests/web-toolbars-v11221.test.js
+          node scripts/validar-web-toolbars-v11221.mjs
       - name: Imagens da auditoria
         if: always()
         uses: actions/upload-artifact@v4
@@ -78,4 +85,5 @@ jobs:
             artifacts/web-gmail-v11217/
             artifacts/web-apps-light-v11218/
             artifacts/web-more-apps-v11219/
+            artifacts/web-toolbars-v11221/
           if-no-files-found: ignore
