@@ -9,7 +9,11 @@
   const requested = String(q.get('platform') || '').toLowerCase();
   const androidNative = navigator.userAgent.includes('EducaNativeAndroid/');
   // A paridade traz todos os estilos e interações Web, mantendo o canal físico do app.
-  const mobileParity = q.get('experience') === 'web' && ['android','ios'].includes(requested);
+  const nativeOrInstalled = installed || androidNative ||
+    (typeof matchMedia === 'function' && matchMedia('(display-mode: standalone)').matches) ||
+    navigator.standalone === true;
+  const mobileParity = q.get('experience') === 'web' &&
+    (['android','ios'].includes(requested) || nativeOrInstalled);
   const appleDevice = /iPhone|iPad|iPod/i.test(navigator.userAgent)
       || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const androidDevice = /Android/i.test(navigator.userAgent);
