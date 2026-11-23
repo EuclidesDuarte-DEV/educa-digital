@@ -40,7 +40,7 @@ test('Web, Android e iOS carregam somente seu canal',()=>{
      URLSearchParams,fetch:()=>{},window:{},console
    };
    vm.runInNewContext(loader,ctx,{timeout:1000});
-   return {platform:root.dataset.educaPlatform,styles,scripts,info:ctx.window.EducaReleaseChannel};
+   return {platform:root.dataset.educaPlatform,native:root.dataset.educaNativePlatform,styles,scripts,info:ctx.window.EducaReleaseChannel};
  };
  for(const [options,expected] of [
    [{query:'',mobile:false},'web'],
@@ -53,9 +53,31 @@ test('Web, Android e iOS carregam somente seu canal',()=>{
  ]) {
    const result=run(options);
    assert.equal(result.platform,expected,JSON.stringify(options));
-   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11190&fix=11208':'11160')]);
-   assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v='+(expected==='web'?'11190&fix=11212':'11160')]);
+   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11190&fix=11208':'11222')]);
+   assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v='+(expected==='web'?'11190&fix=11212':'11222')]);
    assert.equal(result.info.platform,expected);
+ }
+});
+
+test('V112.22: apps Android/iOS usam a UI Web mas mantêm canal físico e suas permissões',()=>{
+ const loader=read('public/static/js/platform-channel-v11160.js');
+ for(const [requested,ua] of [
+   ['android','Mozilla/5.0 (Linux; Android 15) EducaNativeAndroid/1.0'],
+   ['ios','Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X)']
+ ]) {
+   const scripts=[],styles=[],classes=[];
+   const root={classList:{contains:()=>false,add:name=>classes.push(name)},dataset:{}};
+   const ctx={location:{search:'?app=1&platform='+requested+'&experience=web'},
+    navigator:{userAgent:ua,platform:requested==='ios'?'iPhone':'Linux',maxTouchPoints:1},
+    document:{documentElement:root,head:{appendChild(x){(x.rel==='stylesheet'?styles:scripts).push(x.href||x.src);}},createElement(){return {}}},URLSearchParams,fetch:()=>{},window:{},console};
+   vm.runInNewContext(loader,ctx,{timeout:1000});
+   assert.equal(root.dataset.educaPlatform,'web');
+   assert.equal(root.dataset.educaNativePlatform,requested);
+   assert.equal(ctx.window.EducaReleaseChannel.platform,requested);
+   assert.equal(ctx.window.EducaReleaseChannel.renderPlatform,'web');
+   assert.ok(classes.includes('educa-mobile-web-parity'));
+   assert.deepEqual([...styles],['/static/channels/'+requested+'/overrides.css?v=11222']);
+   assert.deepEqual([...scripts],['/static/channels/'+requested+'/overrides.js?v=11222']);
  }
 });
 
@@ -65,13 +87,13 @@ test('três canais reais e clientes nativos utilizam rotas específicas',()=>{
   assert.ok(existsSync('public/static/channels/'+platform+'/overrides.js'));
  }
  const html=read('public/html/index.html');
- assert.match(html,/platform-channel-v11160\.js\?v=11190/);
+ assert.match(html,/platform-channel-v11160\.js\?v=11222/);
  assert.match(html,/educa-mobile-app/);
  assert.match(read('android-app/app/src/main/java/com/educamaisdigital/educa/MainActivity.java'),/\?app=1&platform=android/);
  assert.match(read('ios-app/EducaDigital/CloudflareTrainingWebView.swift'),/\?app=1&platform=ios/);
  const versions=JSON.parse(read('public/static/release-channels.json'));
- assert.equal(versions.channels.ios.native,'111.59');
- assert.equal(versions.channels.android.native,'111.58');
+ assert.equal(versions.channels.ios.native,'112.22');
+ assert.equal(versions.channels.android.native,'112.22');
  assert.equal(versions.rules.server_shared,true);
 });
 
