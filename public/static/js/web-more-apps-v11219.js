@@ -193,10 +193,6 @@ function renderAgenda(){
    '<button type="button" class="'+(calendarMode==='day'?'active':'')+'" data-wv="cal-mode" data-value="day">Dia</button>'+
    '<button type="button" data-wv="cal-official">Calendário oficial ↗</button></div></div>'+
    '<main class="webv-scroll"><p class="webv-note">Agenda de treinamento · eventos guardados apenas neste navegador. Não sincroniza sua conta real.</p>'+
-   (calendarMode==='month'?'active':'')+'" data-wv="cal-mode" data-value="month">Mês</button>'+
-  '<button class="'+(calendarMode==='day'?'active':'')+'" data-wv="cal-mode" data-value="day">Dia</button>'+
-  '<button type="button" data-wv="cal-official">Abrir calendário oficial ↗</button></div>'+
-  '<main class="webv-scroll"><p class="webv-note">Agenda de treinamento · eventos guardados apenas neste navegador. Não sincroniza sua conta real.</p>'+
   (calendarMode==='month'?calendarGrid(events):'')+
   '<h3>'+esc(title)+'</h3>'+
   (calendarNotice?'<p class="webv-note" role="status">'+esc(calendarNotice)+'</p>':'')+
