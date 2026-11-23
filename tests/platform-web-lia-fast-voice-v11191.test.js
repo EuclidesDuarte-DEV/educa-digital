@@ -119,5 +119,5 @@ test('V111.91 — transcrição antecipada e cache atualizado só no canal Web',
  assert.match(video,/session\.fastVoiceSerial=-1;session\.voiceChoiceDoneSerial=-1/);
  assert.match(html,/free-video\.js\?v=11191&patch=11191/);
  const loader=readFileSync('public/static/js/platform-channel-v11160.js','utf8');
- assert.match(loader,/platform === 'web' \? '11190' : '11160'/);
+ assert.match(loader,/platform === 'web' \? '11190' : '11222'/);
 });
