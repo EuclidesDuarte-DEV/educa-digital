@@ -30,6 +30,15 @@ test('V112.21: Busca e filtros dos novos apps ficam no topo, e não dentro do fe
  assert.match(apps,/data-wv="yt-back"/);
 });
 
+test('V112.21: Agenda não duplica a barra de filtros depois da migração',()=>{
+ assert.equal((apps.match(/data-wv="cal-mode" data-value="day"/g)||[]).length,1);
+ assert.equal((apps.match(/data-wv="cal-mode" data-value="month"/g)||[]).length,1);
+ const from=apps.indexOf('function renderAgenda()');
+ const to=apps.indexOf('function render()',from);
+ const content=apps.slice(from,to);
+ assert.equal((content.match(/<main class="webv-scroll"/g)||[]).length,1);
+});
+
 test('V112.21: Busca de Fotos deixa a área de imagens e mantém input e tab existentes',()=>{
  assert.match(old,/const search=tab==='search'\?/);
  assert.match(old,/galleryHeader\(\)\+search\+photoActions\(\)\+'<main class="webx-photos-scroll">/);
