@@ -32,6 +32,8 @@ test('V112.22: UI Web completa sem perda dos dois canais físicos',()=>{
  assert.match(routing,/EducaReleaseChannel = Object.freeze/);
  assert.match(routing,/renderPlatform,/);
  assert.match(routing,/11222/);
+ assert.match(routing,/\/static\/channels\/web\/overrides\.css\?v=11190&fix=11208/);
+ assert.match(routing,/\/static\/channels\/web\/overrides\.js\?v=11190&fix=11212/);
  for(const marker of ['web-quick-result-v11210.css','web-level-badge-v11211.css',
    'web-family-photo-v11212.css','web-contact-profile-v11214.css',
    'web-chat-photo-scroll-v11215.css','web-apps-light-notices-v11218.css',
