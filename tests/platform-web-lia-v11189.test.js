@@ -48,7 +48,7 @@ test('[web] V111.89 — versão nova de CSS/JS só para o canal web',()=>{
     vm.runInNewContext(channel,context);
     assert.equal(document.documentElement.dataset.educaPlatform,expected);
     assert.ok(captures[captures.length-2].href.includes('/'+expected+'/overrides.css?v='+
-      (expected==='web'?'11190':'11160')));
+      (expected==='web'?'11190':'11222')));
   }
   run('Mozilla Windows Desktop','web');
   run('EducaNativeAndroid/1.0 Android','android',true);
