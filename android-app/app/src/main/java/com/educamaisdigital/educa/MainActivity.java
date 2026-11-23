@@ -58,6 +58,12 @@ public final class MainActivity extends Activity {
         settings.setAllowContentAccess(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setSupportMultipleWindows(false);
+        // Impedir que o sistema Android escureça automaticamente a Home clara da Web.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            settings.setAlgorithmicDarkeningAllowed(false);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            settings.setForceDark(WebSettings.FORCE_DARK_OFF);
+        }
         settings.setUserAgentString(settings.getUserAgentString() + " EducaNativeAndroid/1.0");
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false);
 
