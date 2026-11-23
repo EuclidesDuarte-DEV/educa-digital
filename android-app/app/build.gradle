@@ -6,8 +6,8 @@ android {
     applicationId 'com.educamaisdigital.educa'
     minSdk 26
     targetSdk 35
-    versionCode 11158
-    versionName '111.58'
+    versionCode 11222
+    versionName '112.22'
   }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_17
