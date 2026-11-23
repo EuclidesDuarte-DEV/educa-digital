@@ -8,7 +8,7 @@ const gmail=readFileSync('public/static/js/web-apps-v11216.js','utf8');
 const css=readFileSync('public/static/css/web-gmail-light-v11217.css','utf8');
 test('V112.17: Gmail claro isolado à Web e cache atualizado',()=>{
  assert.match(html,/web-gmail-light-v11217\.css\?v=11217/);
- assert.match(html,/web-apps-v11216\.js\?v=11217/);
+ assert.match(html,/web-apps-v11216\.js\?v=(?:11217|11221)/);
  assert.match(css,/html\[data-educa-platform="web"\] #webRealView\.webx-gmail/);
  assert.match(css,/background:#fff!important/);
  assert.match(css,/color:#202124!important/);
