@@ -13,9 +13,9 @@ test('V112.19: scripts sintaticamente validos e carregamento depois da ponte de 
  const css=html.indexOf('web-light-youtube-maps-agenda-v11219.css?v=11219');
  const previous=html.indexOf('web-apps-light-notices-v11218.css?v=11218');
  assert.ok(css>previous,'tema claro precisa sobrepor estilos antigos');
- const src=html.indexOf('web-more-apps-v11219.js?v=11219');
+ const src=html.indexOf('web-more-apps-v11219.js?v=11221');
  assert.ok(src>html.indexOf('web-real.js?v=11219'),'modulo carregado depois da ponte Web');
- assert.ok(src>html.indexOf('web-apps-v11216.js?v=11217'));
+ assert.ok(src>html.indexOf('web-apps-v11216.js?v=11221'));
  assert.match(bridge,/EducaWebMoreAppsV11219\?\.open/);
  assert.match(bridge,/EducaWebMoreAppsV11219\?\.close/);
 });

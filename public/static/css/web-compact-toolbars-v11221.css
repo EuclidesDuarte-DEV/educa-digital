@@ -1,0 +1,253 @@
+/* Educa+ Digital V112.21 — Web only. Toolbar fixa + conteúdo rolável.
+   O cabeçalho do telefone é o único título principal; busca e filtros ficam
+   imediatamente abaixo. Nenhum ajuste em aplicativos nativos Android/iOS. */
+html[data-educa-platform="web"] #webRealView .webv-app,
+html[data-educa-platform="web"] #webRealView .webx-app {
+  color-scheme:light!important;
+  min-width:0!important;min-height:0!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar {
+  flex:0 0 auto!important;min-width:0;max-width:100%;
+  display:flex!important;flex-direction:column!important;
+  padding:5px 0 0!important;background:#fff!important;
+  border-bottom:1px solid #e3eaf3!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-search {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 44px!important;
+  flex:0 0 auto!important;align-items:center!important;gap:7px!important;
+  margin:0!important;padding:5px 10px!important;
+  min-width:0!important;width:100%!important;max-width:100%!important;
+  background:#fff!important;border:0!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-search input {
+  display:block!important;width:100%!important;min-width:0!important;
+  flex:auto!important;margin:0!important;
+  height:44px!important;min-height:44px!important;
+  padding:9px 12px!important;font-size:16px!important;line-height:1.2!important;
+  border-radius:13px!important;background:#f5f8fc!important;
+  border:1px solid #d4e0ed!important;color:#23374f!important;
+  box-shadow:none!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-search button {
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;height:44px!important;min-width:44px!important;
+  min-height:44px!important;flex:none!important;margin:0!important;
+  padding:0!important;font-size:25px!important;line-height:1!important;
+  background:#e6f1fd!important;color:#175da8!important;
+  border-radius:13px!important;border:1px solid #d4e6f9!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-chips {
+  display:flex!important;align-items:center!important;
+  flex:0 0 auto!important;min-width:0!important;max-width:100%!important;
+  gap:6px!important;padding:3px 10px 9px!important;
+  margin:0!important;border:0!important;
+  background:#fff!important;overflow-x:auto!important;overflow-y:hidden!important;
+  white-space:nowrap!important;scrollbar-width:none!important;
+  -webkit-overflow-scrolling:touch;touch-action:pan-x!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-chips::-webkit-scrollbar {
+  display:none;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-chips button {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;white-space:nowrap!important;
+  min-height:36px!important;margin:0!important;padding:7px 12px!important;
+  border-radius:999px!important;font-size:12px!important;line-height:1.2!important;
+  background:#edf3fa!important;color:#4b6079!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-chips button.active {
+  background:#214c7d!important;color:#fff!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-toolbar-link {
+  align-self:flex-start!important;min-height:31px!important;
+  padding:3px 10px 5px!important;margin:0 0 3px 7px!important;
+  font-size:11px!important;color:#1b65b0!important;font-weight:700!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app > .webv-scroll {
+  flex:1 1 auto!important;min-height:0!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  touch-action:pan-y!important;overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  padding:10px 11px 60px!important;
+  scrollbar-width:none!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app > .webv-scroll::-webkit-scrollbar{
+  display:none;
+}
+html[data-educa-platform="web"] #webRealView .webv-app .webv-note {
+  margin:0 1px 9px!important;font-size:10px!important;line-height:1.45!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app .webv-video-card {
+  min-height:0!important;margin:0 0 10px!important;
+  border-radius:14px!important;overflow:hidden!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app .webv-video-art{
+  height:110px!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app .webv-video-copy{
+  padding:9px 11px!important;gap:2px!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app .webv-video-copy strong{
+  font-size:13px!important;line-height:1.35!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-app .webv-map-surface{
+  flex:0 0 170px!important;height:170px!important;min-height:0!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-cal-controls{
+  display:grid!important;grid-template-columns:36px minmax(0,1fr) 36px 44px 44px!important;
+  gap:4px!important;align-items:center!important;justify-content:stretch!important;
+  padding:6px 8px 2px!important;min-width:0!important;background:#fff!important;
+  border:0!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-cal-controls strong{
+  font-size:12px!important;text-align:center!important;min-width:0!important;
+  text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-cal-controls button{
+  width:100%!important;min-width:0!important;min-height:40px!important;
+  border-radius:11px!important;padding:5px 2px!important;font-size:12px!important;
+}
+html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-cal-controls button.webv-cal-add{
+  background:#1e6fc6!important;color:#fff!important;
+  font-size:22px!important;
+}
+/* Fotos: título discreto, períodos, pesquisa (quando escolhida) e ações fixos.
+   Apenas a grade/coleções ocupa a área rolável. */
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-head{
+  padding:7px 10px 2px!important;gap:4px!important;
+  flex:0 0 auto!important;background:#fff!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-heading{
+  align-items:center!important;gap:6px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-heading strong{
+  font-size:17px!important;line-height:1.2!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-heading small{
+  font-size:9px!important;line-height:1.2!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-heading button{
+  min-height:36px!important;padding:6px 11px!important;
+  background:#e8f2fd!important;color:#1b5fa6!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-period{
+  align-self:stretch!important;display:flex!important;justify-content:center!important;
+  gap:5px!important;margin:2px 0 0!important;padding:3px!important;
+  background:#eef4fb!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-period button{
+  flex:1 1 0!important;min-height:33px!important;padding:5px 6px!important;
+  font-size:11px!important;line-height:1.2!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-search{
+  flex:0 0 auto!important;display:flex!important;align-items:center!important;
+  padding:5px 10px!important;gap:7px!important;margin:0!important;
+  background:#fff!important;border-bottom:1px solid #e4ebf3!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-search input {
+  width:100%!important;min-width:0!important;min-height:44px!important;
+  height:44px!important;margin:0!important;padding:8px 11px!important;
+  font-size:16px!important;background:#f5f9ff!important;color:#26384f!important;
+  border:1px solid #d4e0ec!important;border-radius:12px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-topactions{
+  flex:0 0 auto!important;padding:5px 10px 7px!important;
+  gap:7px!important;background:#fff!important;border-bottom:1px solid #e5ebf3!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-topactions :is(button,label){
+  min-height:44px!important;border-radius:12px!important;
+  padding:7px 8px!important;font-size:11px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-scroll{
+  flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;
+  overflow-x:hidden!important;touch-action:pan-y!important;
+  overscroll-behavior-y:contain!important;-webkit-overflow-scrolling:touch!important;
+  scrollbar-width:none!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-photos .webx-photos-scroll::-webkit-scrollbar {
+  display:none;
+}
+/* Gmail: busca sempre imediatamente abaixo do cabeçalho do app; somente
+   as mensagens rolam, preservando o foco do teclado na pesquisa. */
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar{
+  display:flex!important;align-items:center!important;
+  flex:0 0 50px!important;min-height:50px!important;
+  margin:5px 9px 3px!important;padding:3px 5px!important;
+  border-radius:17px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar label{
+  display:flex!important;min-width:0!important;flex:1!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-toolbar input{
+  min-width:0!important;width:100%!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-label{
+  padding:4px 12px 5px!important;min-height:32px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:5px!important;flex:0 0 auto!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-scroll{
+  flex:1 1 auto!important;min-height:0!important;
+  scrollbar-width:none!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-gmail .webx-mail-scroll::-webkit-scrollbar{
+  display:none;
+}
+/* SMS: pesquisa compacta, conversa rola sozinha e indicador educativo pequeno. */
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-head{
+  display:flex!important;flex-direction:column!important;
+  flex:0 0 auto!important;gap:4px!important;
+  padding:7px 10px 8px!important;background:#fff!important;
+  border-bottom:1px solid #e3eaf2!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-head h2{
+  font-size:17px!important;line-height:1.2!important;margin:0!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-head p {
+  margin:0!important;font-size:10px!important;line-height:1.3!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-head label{
+  min-width:0!important;display:flex!important;align-items:center!important;
+  gap:6px!important;margin:1px 0 0!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-head input{
+  min-width:0!important;width:100%!important;height:44px!important;
+  min-height:44px!important;font-size:16px!important;
+  background:#f5f9ff!important;color:#24384d!important;
+  border:1px solid #d9e4ef!important;border-radius:12px!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-list{
+  flex:1 1 auto!important;min-height:0!important;
+  overflow-y:auto!important;scrollbar-width:none!important;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-list::-webkit-scrollbar{
+  display:none;
+}
+html[data-educa-platform="web"] #webRealView.webx-messages .webx-sms-note{
+  flex:0 0 auto!important;padding:4px 10px!important;
+  font-size:9px!important;line-height:1.35!important;
+  background:#f8fbff!important;border-top:1px solid #e5ebf2!important;
+}
+@media(max-height:640px){
+ html[data-educa-platform="web"] #webRealView .webv-app > .webv-scroll{
+  padding-bottom:40px!important;
+ }
+ html[data-educa-platform="web"] #webRealView .webv-app .webv-map-surface{
+  flex-basis:142px!important;height:142px!important;
+ }
+ html[data-educa-platform="web"] #webRealView .webv-app .webv-video-art{
+  height:90px!important;
+ }
+}
+@media(max-width:355px){
+ html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-cal-controls{
+  grid-template-columns:34px minmax(0,1fr) 34px 40px 40px!important;gap:3px!important;padding:5px!important;
+ }
+ html[data-educa-platform="web"] #webRealView .webv-toolbar .webv-chips button{
+  padding:6px 10px!important;font-size:11px!important;
+ }
+ html[data-educa-platform="web"] #webRealView.webx-photos .webx-photo-topactions :is(button,label){
+  font-size:10px!important;
+ }
+}

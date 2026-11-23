@@ -72,10 +72,11 @@ function renderPhotos(){
   if(k)items=photos.filter(p=>(fmt(p.created)+' '+month(p.created)).toLocaleLowerCase('pt-BR').includes(k));
  }
  let tiles='';
+ const search=tab==='search'?'<label class="webx-photo-search">⌕<input id="webxPhotoSearch" type="search" value="'+esc(term)+'" placeholder="Buscar por mês ou ano" aria-label="Buscar fotos por período"></label>':'';
  if(tab==='collections'){
   tiles='<div class="webx-collection-card"><span>▧</span><strong>Fotos adicionadas</strong><small>'+photos.length+' imagem(ns)</small></div>';
  }
- if(tab==='search')tiles+='<label class="webx-photo-search">⌕<input id="webxPhotoSearch" type="search" value="'+esc(term)+'" placeholder="Buscar por mês ou ano" aria-label="Buscar fotos por período"></label>';
+
  if(!items.length)tiles+=photos.length?'<p class="webx-search-empty">Nenhuma foto corresponde à pesquisa.</p>':albumEmpty();
  else{
   const groups=new Map();
@@ -91,7 +92,7 @@ function renderPhotos(){
    tiles+='</div></section>';
   }
  }
- host('photos',galleryHeader()+photoActions()+'<main class="webx-photos-scroll">'+tiles+'</main>'+
+ host('photos',galleryHeader()+search+photoActions()+'<main class="webx-photos-scroll">'+tiles+'</main>'+
   (chosen.size?'<div class="webx-selection-bar">'+chosen.size+' selecionada(s)<button type="button" data-webx="photo-delete-selected">Apagar selecionadas</button></div>':'')+
   galleryFooter());
 }

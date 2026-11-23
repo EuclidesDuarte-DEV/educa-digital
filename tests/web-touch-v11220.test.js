@@ -31,7 +31,7 @@ test('V112.20: cache atualizado, assets no fim e controles acessíveis',()=>{
  const next=html.indexOf('web-call-touch-light-v11220.css?v=11220');
  assert.ok(previous>=0&&next>previous&&next<html.indexOf('</head>'));
  const src=html.indexOf('web-touch-recovery-v11220.js?v=11220');
- assert.ok(src>html.indexOf('web-more-apps-v11219.js?v=11219'));
+ assert.ok(src>html.indexOf('web-more-apps-v11219.js?v=11221'));
  assert.ok(src<html.indexOf('</body>'));
 });
 test('V112.20: testes reais com Safari WebKit, scroll e recuperação',()=>{

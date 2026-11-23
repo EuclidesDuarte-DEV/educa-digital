@@ -99,12 +99,12 @@ function renderYoutube(){
  if(ytTab==='shorts')rows=rows.slice(0,3);
  if(ytTab==='subscriptions'&&!ytSubscribed)rows=[];
  if(ytTab==='library')rows=rows.filter(x=>ytLiked.has(x.id)||ytRead.has(x.id));
- shell('<header class="webv-head"><h2>▶ YouTube</h2><button class="webv-icon-btn" data-wv="yt-official" aria-label="Abrir YouTube oficial">↗</button></header>'+
+ shell('<div class="webv-toolbar" role="group" aria-label="Pesquisar e filtrar aulas">'+
   '<form id="wvYtSearch" class="webv-search"><input type="search" name="search" value="'+esc(ytQuery)+
-  '" aria-label="Pesquisar aulas do YouTube simulado" placeholder="Pesquisar aulas de treino"><button type="submit">Buscar</button></form>'+
-  '<div class="webv-chips" aria-label="Temas"><button data-wv="yt-category" data-value="Todos" class="'+(ytCategory==='Todos'?'active':'')+'">Todos</button>'+
-  ['Segurança','Tutoriais'].map(x=>'<button data-wv="yt-category" data-value="'+x+'" class="'+(ytCategory===x?'active':'')+'">'+x+'</button>').join('')+
-  '</div><main class="webv-scroll"><p class="webv-note">Simulação educativa · sem vídeos, anúncios ou conta real do YouTube.</p>'+
+  '" aria-label="Pesquisar aulas do YouTube simulado" placeholder="Pesquisar aulas"><button type="submit" aria-label="Buscar aulas" title="Buscar">⌕</button></form>'+
+  '<div class="webv-chips" aria-label="Temas"><button type="button" data-wv="yt-category" data-value="Todos" class="'+(ytCategory==='Todos'?'active':'')+'">Todos</button>'+
+  ['Segurança','Tutoriais'].map(x=>'<button type="button" data-wv="yt-category" data-value="'+x+'" class="'+(ytCategory===x?'active':'')+'">'+x+'</button>').join('')+
+  '</div></div><main class="webv-scroll"><p class="webv-note">Aulas simuladas · selecione um conteúdo para praticar.</p>'+
   (ytTab==='subscriptions'?'<button class="webv-secondary" data-wv="yt-subscribe">'+(ytSubscribed?'✓ Inscrito no canal de treino':'Inscrever-se no canal de treino')+'</button>':'')+
   (ytTab==='library'?'<h3>Suas aulas marcadas nesta sessão</h3>':'')+
   (ytTab==='shorts'?'<h3>Conteúdos curtos de segurança</h3>':'')+
@@ -121,11 +121,12 @@ function renderMaps(){
  const rows=places.filter(p=>(mTab!=='saved'||mSaved.has(p.id))&&
   (!mQuery||norm(p.name+' '+p.type+' '+p.desc).includes(norm(mQuery))));
  const selected=places.find(p=>p.id===mSelected);
- shell('<header class="webv-head"><h2>⌖ Maps</h2><button type="button" class="webv-icon-btn" data-wv="maps-official" aria-label="Abrir Google Maps oficial">↗</button></header>'+
-  '<form id="wvMapsSearch" class="webv-search"><input type="search" name="query" value="'+esc(mQuery)+
-  '" placeholder="Buscar um local de exemplo" aria-label="Buscar no mapa ilustrativo"><button type="submit">Buscar</button></form>'+
-  '<div class="webv-map-surface" role="img" aria-label="Mapa esquemático de três locais fictícios">'+
-  places.map(p=>'<button type="button" class="webv-map-marker '+(mSelected===p.id?'active':'')+
+ shell('<div class="webv-toolbar" role="group" aria-label="Pesquisar e explorar mapa">'+
+   '<form id="wvMapsSearch" class="webv-search"><input type="search" name="query" value="'+esc(mQuery)+
+   '" placeholder="Buscar local de exemplo" aria-label="Buscar no mapa ilustrativo"><button type="submit" aria-label="Buscar local" title="Buscar">⌕</button></form>'+
+   '<button type="button" class="webv-toolbar-link" data-wv="maps-official">↗ Google Maps oficial</button></div>'+
+   '<div class="webv-map-surface" role="img" aria-label="Mapa esquemático de três locais fictícios">'+
+   places.map(p=>'<button type="button" class="webv-map-marker '+(mSelected===p.id?'active':'')+
    '" data-wv="map-place" data-value="'+p.id+'" data-spot="'+p.id+'" aria-label="'+esc(p.name)+'">'+p.symbol+'</button>').join('')+
   '</div><main class="webv-scroll"><p class="webv-note">Mapa ilustrativo. Os locais, pinos e caminhos NÃO representam lugares reais ou sua localização.</p>'+
   (selected?'<section class="webv-place-detail" id="webvMapDetail"><h3>'+esc(selected.name)+'</h3><p>'+esc(selected.desc)+'</p>'+
@@ -184,14 +185,14 @@ function renderAgenda(){
   '<label>Horário<input type="time" name="time" required value="09:00"></label>'+
   '<button type="submit" class="webv-primary">Salvar neste navegador</button>'+
   '<button type="button" class="webv-secondary" data-wv="cal-cancel">Cancelar</button></form>':'';
- shell('<header class="webv-head"><h2>▦ Agenda</h2><button type="button" class="webv-icon-btn" data-wv="cal-add" aria-label="Criar evento">＋</button></header>'+
-  '<div class="webv-cal-controls"><button type="button" data-wv="cal-prev" aria-label="Período anterior">‹</button>'+
-  '<strong>'+esc(monthLabel)+'</strong><button type="button" data-wv="cal-next" aria-label="Próximo período">›</button>'+
-  '<button type="button" data-wv="cal-today">Hoje</button></div>'+
-  '<div class="webv-chips"><button class="'+(calendarMode==='month'?'active':'')+'" data-wv="cal-mode" data-value="month">Mês</button>'+
-  '<button class="'+(calendarMode==='day'?'active':'')+'" data-wv="cal-mode" data-value="day">Dia</button>'+
-  '<button type="button" data-wv="cal-official">Abrir calendário oficial ↗</button></div>'+
-  '<main class="webv-scroll"><p class="webv-note">Agenda de treinamento · eventos guardados apenas neste navegador. Não sincroniza sua conta real.</p>'+
+ shell('<div class="webv-toolbar" role="group" aria-label="Navegação e períodos da agenda">'+
+   '<div class="webv-cal-controls"><button type="button" data-wv="cal-prev" aria-label="Período anterior">‹</button>'+
+   '<strong>'+esc(monthLabel)+'</strong><button type="button" data-wv="cal-next" aria-label="Próximo período">›</button>'+
+   '<button type="button" data-wv="cal-today">Hoje</button><button type="button" data-wv="cal-add" class="webv-cal-add" aria-label="Criar evento">＋</button></div>'+
+   '<div class="webv-chips"><button type="button" class="'+(calendarMode==='month'?'active':'')+'" data-wv="cal-mode" data-value="month">Mês</button>'+
+   '<button type="button" class="'+(calendarMode==='day'?'active':'')+'" data-wv="cal-mode" data-value="day">Dia</button>'+
+   '<button type="button" data-wv="cal-official">Calendário oficial ↗</button></div></div>'+
+   '<main class="webv-scroll"><p class="webv-note">Agenda de treinamento · eventos guardados apenas neste navegador. Não sincroniza sua conta real.</p>'+
   (calendarMode==='month'?calendarGrid(events):'')+
   '<h3>'+esc(title)+'</h3>'+
   (calendarNotice?'<p class="webv-note" role="status">'+esc(calendarNotice)+'</p>':'')+
