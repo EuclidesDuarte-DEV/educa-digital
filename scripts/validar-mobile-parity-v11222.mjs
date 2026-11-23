@@ -36,6 +36,7 @@ try{
    await page.waitForFunction(()=>window.EducaReleaseChannel&&window.EducaFreeMode&&
      window.EducaWebReal&&window.EducaWebMoreAppsV11219&&window.EducaWebAppsV11216,
      null,{timeout:20000});
+   await page.waitForFunction(()=>Boolean(window.EducaWebChannel?.refreshActivityText),null,{timeout:12000});
    const home=await inspect(page);
    assert.equal(home.mobile,false,key+' ainda entra no modo tela de telefone sem Home');
    assert.equal(home.parity,true,key+' paridade não ativada');
