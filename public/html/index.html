@@ -19,7 +19,9 @@
         || matchMedia('(display-mode:fullscreen)').matches
         || navigator.standalone===true;
       const nativeAndroid=navigator.userAgent.includes('EducaNativeAndroid/');
-      if(installed||nativeAndroid||query.get('app')==='1'){
+      // O app nativo pode usar a mesma página inicial da Web, sem forçar o telefone imersivo.
+      const parity=query.get('experience')==='web' && ['android','ios'].includes(query.get('platform'));
+      if(!parity && (installed||nativeAndroid||query.get('app')==='1')){
         document.documentElement.classList.add('educa-mobile-app');
       }
     })();
