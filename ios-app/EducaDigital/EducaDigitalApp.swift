@@ -3,56 +3,21 @@ import SwiftUI
 @main
 struct EducaDigitalApp: App {
     @StateObject private var state = TrainingState()
-    @StateObject private var realCallActivity = RealCallEventBridge()
-    @State private var showingCallProtection = false
-
     var body: some Scene {
         WindowGroup {
             ZStack {
-                Color(red: 0.045, green: 0.082, blue: 0.145)
-                    .ignoresSafeArea()
+                // A versão instalada apresenta a mesma Home clara da Web.
+                Color.white.ignoresSafeArea()
 
+                // Sem botão flutuante de proteção que bloqueava controles.
                 CloudflareTrainingWebView(state: state)
-                    .ignoresSafeArea()
-
-                // Painel nativo opcional: não altera as telas Web/Android.
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            showingCallProtection = true
-                        } label: {
-                            Image(systemName: "shield.lefthalf.filled")
-                                .font(.system(size: 19, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 46, height: 46)
-                                .background(Color(red: 0.12, green: 0.46, blue: 0.77))
-                                .clipShape(Circle())
-                                .shadow(color: .black.opacity(0.18), radius: 5, y: 3)
-                        }
-                        .accessibilityLabel("Proteção contra chamadas suspeitas")
-                        .accessibilityHint("Abre o painel para configurar a identificação de chamadas do iPhone")
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.top, 52)
-                    Spacer()
-                }
-                .allowsHitTesting(!state.isOffline)
 
                 if state.isOffline {
                     offlineScreen
                         .transition(.opacity)
                 }
             }
-            .sheet(isPresented: $showingCallProtection) {
-                CallProtectionView()
-                    .environmentObject(realCallActivity)
-            }
-            .onAppear {
-                realCallActivity.activateIfNeeded()
-            }
-            .statusBarHidden()
-            .ignoresSafeArea(.keyboard, edges: .bottom)
+            .preferredColorScheme(.light)
         }
     }
 

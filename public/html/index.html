@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Educa+ Digital</title>
   <meta name="theme-color" content="#f7faff">
-  <link rel="manifest" href="/static/manifest.webmanifest?v=11158">
+  <link rel="manifest" href="/static/manifest.webmanifest?v=11222">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Educa+">
@@ -19,7 +19,10 @@
         || matchMedia('(display-mode:fullscreen)').matches
         || navigator.standalone===true;
       const nativeAndroid=navigator.userAgent.includes('EducaNativeAndroid/');
-      if(installed||nativeAndroid||query.get('app')==='1'){
+      // O app nativo pode usar a mesma página inicial da Web, sem forçar o telefone imersivo.
+      const parity=query.get('experience')==='web' &&
+        (['android','ios'].includes(query.get('platform')) || installed || nativeAndroid);
+      if(!parity && (installed||nativeAndroid||query.get('app')==='1')){
         document.documentElement.classList.add('educa-mobile-app');
       }
     })();
@@ -46,7 +49,7 @@
 <link rel="stylesheet" href="/static/css/responsive-v11149.css?v=11149">
 <link rel="stylesheet" href="/static/css/fullscreen-v11150.css?v=11150">
 <link rel="stylesheet" href="/static/css/phone-entry-v11151.css?v=11151">
-<link rel="stylesheet" href="/static/css/responsive-v11154.css?v=11155"><link rel="stylesheet" href="/static/css/lia-call-v11156.css?v=11156"><link rel="stylesheet" href="/static/css/mobile-app-v11158.css?v=11158"><link rel="stylesheet" href="/static/css/responsive-v11172.css?v=11172"><link rel="stylesheet" href="/static/css/responsive-v11173.css?v=11173"><link rel="stylesheet" href="/static/css/responsive-v11174.css?v=11174"><link rel="stylesheet" href="/static/css/responsive-v11175.css?v=11175"><script src="/static/js/platform-channel-v11160.js?v=11190&webfix=11212"></script>  <link rel="stylesheet" href="/static/css/lia-fullscreen-v11206.css?v=11206">
+<link rel="stylesheet" href="/static/css/responsive-v11154.css?v=11155"><link rel="stylesheet" href="/static/css/lia-call-v11156.css?v=11156"><link rel="stylesheet" href="/static/css/mobile-app-v11158.css?v=11158"><link rel="stylesheet" href="/static/css/responsive-v11172.css?v=11172"><link rel="stylesheet" href="/static/css/responsive-v11173.css?v=11173"><link rel="stylesheet" href="/static/css/responsive-v11174.css?v=11174"><link rel="stylesheet" href="/static/css/responsive-v11175.css?v=11175"><script src="/static/js/platform-channel-v11160.js?v=11222&webfix=11212"></script>  <link rel="stylesheet" href="/static/css/lia-fullscreen-v11206.css?v=11206">
 <link rel="stylesheet" href="/static/css/web-quick-result-v11210.css?v=11210">
 <link rel="stylesheet" href="/static/css/web-level-badge-v11211.css?v=11211">
 <link rel="stylesheet" href="/static/css/web-family-photo-v11212.css?v=11212">

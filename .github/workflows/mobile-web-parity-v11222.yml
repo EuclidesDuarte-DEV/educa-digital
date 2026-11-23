@@ -1,0 +1,55 @@
+name: V112.22 — Home Web unificada Android e iOS
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ios-app/**'
+      - 'android-app/**'
+      - 'public/html/index.html'
+      - 'public/static/js/platform-channel-v11160.js'
+      - 'public/static/channels/android/**'
+      - 'public/static/channels/ios/**'
+      - 'public/static/manifest.webmanifest'
+      - 'public/static/release-channels.json'
+      - 'scripts/validar-mobile-parity-v11222.mjs'
+      - 'tests/mobile-web-parity-v11222.test.js'
+      - '.github/workflows/mobile-web-parity-v11222.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-parity:
+    name: Android / Safari WebKit — mesmos fluxos Web
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Verificar rotas, versões, proteção de chamadas e permissões
+        run: |
+          node --test tests/mobile-web-parity-v11222.test.js
+          node --test tests/platform-channels-v11160.test.js
+          node --test tests/platform-ios-pwa-call-help-v11170.test.js
+          bash ios-app/scripts/verificar-projeto.sh
+      - name: Instalar Chromium e Safari WebKit para toque e rolagem
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Servir site Cloudflare em localhost (nenhum banco ou API real)
+        run: |
+          python3 -m http.server 8789 --directory public >/tmp/educa-mobile-v11222.log 2>&1 &
+      - name: Android e iOS Web parity em 4 resoluções — Chromium
+        run: node scripts/validar-mobile-parity-v11222.mjs
+      - name: Safari iPhone WebKit — home, clique, filtros e agenda
+        run: EDUCA_BROWSER=webkit node scripts/validar-mobile-parity-v11222.mjs
+      - name: Capturas de auditoria Android e iOS
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: educa-mobile-parity-v11222
+          path: artifacts/mobile-parity-v11222/
+          if-no-files-found: ignore

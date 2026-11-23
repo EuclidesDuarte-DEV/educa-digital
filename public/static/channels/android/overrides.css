@@ -1,3 +1,4 @@
-/* Somente Android: CSS aplicado no APK/WebView ou PWA Android.
- * Para mudanças Android isoladas, edite este arquivo, não app.css. */
+/* V112.22 — Android: estilo claro compartilhado via modo de paridade.
+ * Recursos específicos de Android continuam restritos ao canal nativo. */
+html[data-educa-native-platform="android"],
 html[data-educa-platform="android"] { --educa-android-channel: 1; }
