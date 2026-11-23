@@ -1,0 +1,48 @@
+# V112.22 — variante pessoal para instalação em iPhone com conta Apple gratuita.
+# Somente a Home e os exercícios, sem CallerIDExtension ou App Groups.
+# A IPA resultante AINDA precisa ser assinada para um aparelho específico.
+name: EducaDigitalSideloadIOS
+options:
+  bundleIdPrefix: com.educamaisdigital
+  deploymentTarget:
+    iOS: "16.4"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.4"
+    TARGETED_DEVICE_FAMILY: "1"
+    ASSETCATALOG_COMPILER_APPICON_NAME: "AppIcon"
+    CODE_SIGN_STYLE: "Automatic"
+    ENABLE_BITCODE: "NO"
+targets:
+  EducaDigitalSideload:
+    type: application
+    platform: iOS
+    sources:
+      - path: EducaDigital/EducaDigitalApp.swift
+      - path: EducaDigital/CloudflareTrainingWebView.swift
+      - path: EducaDigital/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.educamaisdigital.educa.personal
+        PRODUCT_NAME: EducaDigitalSideload
+        INFOPLIST_KEY_CFBundleDisplayName: "Educa+ Digital"
+    info:
+      path: Sideload/Info.plist
+      properties:
+        CFBundleDisplayName: "Educa+ Digital"
+        CFBundleShortVersionString: "112.22"
+        CFBundleVersion: "11222"
+        UIStatusBarHidden: false
+        UIViewControllerBasedStatusBarAppearance: false
+        UIRequiresFullScreen: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSMicrophoneUsageDescription: "O Educa+ usa o microfone apenas com a sua autorização nos treinamentos com a LIA."
+        NSCameraUsageDescription: "O Educa+ usa a câmera apenas com a sua autorização nos treinamentos de videochamada."
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen: {}

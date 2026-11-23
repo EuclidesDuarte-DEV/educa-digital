@@ -1,0 +1,109 @@
+name: Educa+ iOS V112.22 — IPA pessoal sem extensão de chamadas
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ios-app/project-sideload.yml'
+      - 'ios-app/EducaDigital/**'
+      - 'ios-app/scripts/preparar-icone.sh'
+      - 'tests/ios-sideload-v11222.test.js'
+      - '.github/workflows/ios-sideload-v11222.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'ios-app/project-sideload.yml'
+      - 'ios-app/EducaDigital/**'
+      - 'ios-app/scripts/preparar-icone.sh'
+      - 'tests/ios-sideload-v11222.test.js'
+      - '.github/workflows/ios-sideload-v11222.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-personal-ipa:
+    name: Compilar IPA iPhone sem Call Directory nem App Groups
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar variante pessoal, escopo e assinatura
+        run: node --test tests/ios-sideload-v11222.test.js
+      - name: Preparar XcodeGen e icone oficial
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          brew install xcodegen
+          bash ios-app/scripts/preparar-icone.sh
+          xcodegen generate --spec ios-app/project-sideload.yml --project ios-app
+          test -d ios-app/EducaDigitalSideloadIOS.xcodeproj
+      - name: Compilar para iPhone real sem assinar no CI
+        run: |
+          set -euo pipefail
+          xcodebuild -project ios-app/EducaDigitalSideloadIOS.xcodeproj \
+            -scheme EducaDigitalSideload -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath ios-app/PersonalDerivedData \
+            CODE_SIGNING_ALLOWED=NO build > /tmp/educa-personal-iphone.log 2>&1 || {
+              tail -n 160 /tmp/educa-personal-iphone.log
+              exit 1
+            }
+          test -d ios-app/PersonalDerivedData/Build/Products/Release-iphoneos/EducaDigitalSideload.app
+      - name: Empacotar IPA sem extensões para assinatura pessoal posterior
+        run: |
+          set -euo pipefail
+          mkdir -p ios-app/personal-dist/Payload
+          cp -R ios-app/PersonalDerivedData/Build/Products/Release-iphoneos/EducaDigitalSideload.app ios-app/personal-dist/Payload/
+          cd ios-app/personal-dist
+          zip -qry EducaMaisDigital-iOS-v11222-Pessoal-SEM-ASSINATURA.ipa Payload
+          python3 - <<'PY'
+          import plistlib,zipfile
+          p="EducaMaisDigital-iOS-v11222-Pessoal-SEM-ASSINATURA.ipa"
+          with zipfile.ZipFile(p) as z:
+            files=z.namelist()
+            assert any(f.endswith("EducaDigitalSideload.app/Info.plist") for f in files), "Info.plist nao encontrado"
+            assert not any(".appex/" in f or "/PlugIns/" in f for f in files), "Extensao de chamadas nao deve estar presente"
+            ip=next(f for f in files if f.endswith("EducaDigitalSideload.app/Info.plist"))
+            info=plistlib.loads(z.read(ip))
+            assert info["CFBundleIdentifier"]=="com.educamaisdigital.educa.personal", info.get("CFBundleIdentifier")
+            assert info["CFBundleShortVersionString"]=="112.22", info
+          print("IPA pessoal OK — sem Call Directory; assinatura para iPhone ainda necessaria.")
+          PY
+          shasum -a 256 EducaMaisDigital-iOS-v11222-Pessoal-SEM-ASSINATURA.ipa
+      - name: Anexar IPA de teste para assinatura no Windows ou Mac
+        uses: actions/upload-artifact@v4
+        with:
+          name: EducaMaisDigital-iOS-v11222-Pessoal
+          path: ios-app/personal-dist/EducaMaisDigital-iOS-v11222-Pessoal-SEM-ASSINATURA.ipa
+          retention-days: 90
+          if-no-files-found: error
+
+  publicar-ipa-pessoal:
+    name: Disponibilizar instalador pessoal no GitHub Releases
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-personal-ipa
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: EducaMaisDigital-iOS-v11222-Pessoal
+          path: dist
+      - name: Criar release com instrucoes e avisos de assinatura
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="v11222-ios-pessoal"
+          asset="dist/EducaMaisDigital-iOS-v11222-Pessoal-SEM-ASSINATURA.ipa"
+          test -s "$asset"
+          notes='Educa+ Digital iOS V112.22, versão pessoal para instalar no iPhone com sua Conta Apple e Sideloadly (Windows/Mac) ou Xcode (Mac). Não contém a extensão opcional de identificação de chamadas, App Groups nem botão flutuante. Contém a Home e os treinamentos da Web por WKWebView. IMPORTANTE: este arquivo ainda está SEM ASSINATURA e não instala tocando no IPA no Safari. Assine no computador usando sua própria Conta Apple. Conta gratuita geralmente exige renovação a cada 7 dias. Guia: https://github.com/EuclidesDuarte-DEV/educa-digital/blob/main/ios-app/INSTALAR_NO_IPHONE_WINDOWS_V11222.md'
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$asset" --clobber
+          else
+            gh release create "$tag" "$asset" --title "Educa+ Digital iPhone V112.22 — IPA pessoal para assinatura" --notes "$notes" --prerelease
+          fi
