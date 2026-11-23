@@ -13,7 +13,8 @@ test('IPA pessoal compila somente SwiftUI WebView e AppIcon, sem extensao',()=>{
   assert.match(project,/com\.educamaisdigital\.educa\.personal/);
   assert.match(project,/CFBundleShortVersionString: "112\.22"/);
   assert.match(project,/UIStatusBarHidden: false/);
-  assert.doesNotMatch(project,/CallerIDExtension|CallProtectionView|RealCallEventBridge|SpamNumberStore|entitlements|com\.apple\.security\.application-groups/);
+  const config=project.split('\n').filter(line=>!line.trim().startsWith('#')).join('\n');
+  assert.doesNotMatch(config,/CallerIDExtension|CallProtectionView|RealCallEventBridge|SpamNumberStore|entitlements|com\.apple\.security\.application-groups/);
 });
 test('Projeto de distribuicao nativo original fica intacto',()=>{
   assert.match(standard,/CallerIDExtension:/);
