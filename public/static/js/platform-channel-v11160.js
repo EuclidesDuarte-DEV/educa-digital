@@ -8,21 +8,28 @@
   const installed = document.documentElement.classList.contains('educa-mobile-app');
   const requested = String(q.get('platform') || '').toLowerCase();
   const androidNative = navigator.userAgent.includes('EducaNativeAndroid/');
+  // A paridade traz todos os estilos e interações Web, mantendo o canal físico do app.
+  const mobileParity = q.get('experience') === 'web' && ['android','ios'].includes(requested);
   const appleDevice = /iPhone|iPad|iPod/i.test(navigator.userAgent)
       || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const androidDevice = /Android/i.test(navigator.userAgent);
   let platform = 'web';
   // Parâmetro explícito só seleciona a interface; nunca altera permissões.
-  if (installed) {
+  if (installed || mobileParity) {
     if (androidNative) platform = 'android';
     else if (['android','ios'].includes(requested)) platform = requested;
     else if (appleDevice) platform = 'ios';
     else if (androidDevice) platform = 'android';
   }
-  document.documentElement.dataset.educaPlatform = platform;
+  const renderPlatform = mobileParity ? 'web' : platform;
+  document.documentElement.dataset.educaPlatform = renderPlatform;
+  if (mobileParity) {
+    document.documentElement.dataset.educaNativePlatform = platform;
+    document.documentElement.classList.add('educa-mobile-web-parity');
+  }
   document.documentElement.classList.add('educa-platform-' + platform);
   const base = '/static/channels/' + platform + '/';
-  const version = platform === 'web' ? '11190' : '11160';
+  const version = platform === 'web' ? '11190' : '11222';
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11208' : '');
@@ -33,7 +40,8 @@
   document.head.appendChild(script);
   window.EducaReleaseChannel = Object.freeze({
     platform,
-    sharedVersion: '11160',
+    renderPlatform,
+    sharedVersion: '11222',
     versionUrl: '/static/release-channels.json',
     // Esta URL apenas mostra versões; nunca grava no banco ou instala binários.
     info: () => fetch('/static/release-channels.json', {cache:'no-store'})
