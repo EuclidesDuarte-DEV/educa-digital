@@ -10,9 +10,9 @@ const callKit = read('ios-app/CallerIDExtension/CallDirectoryProvider.swift');
 const guide = read('ios-app/PROTECAO_CHAMADAS_V11168.md');
 
 test('[ios] a versão 111.71 mantém extensão nativa e não altera o host', () => {
-  assert.match(yaml, /CFBundleShortVersionString: "111\.71"/);
+  assert.match(yaml, /CFBundleShortVersionString: "112\.22"/);
   assert.match(yaml, /com\.apple\.callkit\.call-directory/);
-  assert.match(app, /CallProtectionView\(\)/);
+  assert.doesNotMatch(app, /CallProtectionView\(\)|showingCallProtection/);
   assert.match(web, /educa-digital\.educamaisdigital\.workers\.dev/);
   assert.match(callKit, /addIdentificationEntry\(/);
 });
