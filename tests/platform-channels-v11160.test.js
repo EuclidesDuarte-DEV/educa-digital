@@ -76,8 +76,14 @@ test('V112.22: apps Android/iOS usam a UI Web mas mantêm canal físico e suas p
    assert.equal(ctx.window.EducaReleaseChannel.platform,requested);
    assert.equal(ctx.window.EducaReleaseChannel.renderPlatform,'web');
    assert.ok(classes.includes('educa-mobile-web-parity'));
-   assert.deepEqual([...styles],['/static/channels/'+requested+'/overrides.css?v=11222']);
-   assert.deepEqual([...scripts],['/static/channels/'+requested+'/overrides.js?v=11222']);
+   assert.deepEqual([...styles],[
+     '/static/channels/web/overrides.css?v=11190&fix=11208',
+     '/static/channels/'+requested+'/overrides.css?v=11222'
+   ]);
+   assert.deepEqual([...scripts],[
+     '/static/channels/web/overrides.js?v=11190&fix=11212',
+     '/static/channels/'+requested+'/overrides.js?v=11222'
+   ]);
  }
 });
 
