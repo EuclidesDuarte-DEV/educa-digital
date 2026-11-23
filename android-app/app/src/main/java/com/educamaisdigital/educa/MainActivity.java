@@ -17,6 +17,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.ValueCallback;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -26,20 +27,27 @@ import java.util.ArrayList;
 
 public final class MainActivity extends Activity {
     private static final String ORIGIN = "educa-digital.educamaisdigital.workers.dev";
-    private static final String START = "https://" + ORIGIN + "/?app=1&platform=android";
+    private static final String START = "https://" + ORIGIN + "/html/?app=1&platform=android&experience=web";
     private static final int WEB_PERMISSION_CODE = 1134;
+    private static final int PHOTO_PICKER_CODE = 1135;
     private WebView webView;
     private PermissionRequest pendingWebPermission;
+    private ValueCallback<Uri[]> pendingPhotoSelection;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().setNavigationBarColor(Color.BLACK);
+        // Mostrar barras nativas claras em vez da antiga tela imersiva sem entrada.
+        // O WebView mantém o tratamento padrão de insets e teclado do Android.
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(Color.rgb(247, 250, 255));
+        getWindow().setNavigationBarColor(Color.rgb(247, 250, 255));
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         WebView.setWebContentsDebuggingEnabled(false);
 
         webView = new WebView(this);
-        webView.setBackgroundColor(Color.rgb(11, 21, 37));
+        webView.setBackgroundColor(Color.rgb(247, 250, 255));
         webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -67,6 +75,31 @@ public final class MainActivity extends Activity {
             }
         });
         webView.setWebChromeClient(new WebChromeClient() {
+            // A Fototeca da Web depende de um seletor de arquivos no APK.
+            // Aceitar somente imagens escolhidas explicitamente pelo participante.
+            @Override public boolean onShowFileChooser(WebView view,
+                    ValueCallback<Uri[]> callback, FileChooserParams params) {
+                if (pendingPhotoSelection != null) {
+                    pendingPhotoSelection.onReceiveValue(null);
+                    pendingPhotoSelection = null;
+                }
+                if (view == null || !trusted(Uri.parse(view.getUrl() == null ? "" : view.getUrl()))) {
+                    callback.onReceiveValue(null);
+                    return true;
+                }
+                try {
+                    Intent picker = params.createIntent();
+                    picker.setType("image/*");
+                    picker.addCategory(Intent.CATEGORY_OPENABLE);
+                    picker.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    pendingPhotoSelection = callback;
+                    startActivityForResult(picker, PHOTO_PICKER_CODE);
+                } catch (Exception error) {
+                    pendingPhotoSelection = null;
+                    callback.onReceiveValue(null);
+                }
+                return true;
+            }
             @Override public void onPermissionRequest(PermissionRequest request) {
                 runOnUiThread(() -> askWebPermission(request));
             }
@@ -78,6 +111,18 @@ public final class MainActivity extends Activity {
         setContentView(webView);
         if (state == null) webView.loadUrl(START);
         else webView.restoreState(state);
+    }
+
+    @Override protected void onActivityResult(int code, int resultCode, Intent data) {
+        if (code == PHOTO_PICKER_CODE) {
+            ValueCallback<Uri[]> callback = pendingPhotoSelection;
+            pendingPhotoSelection = null;
+            if (callback != null) {
+                callback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+            }
+            return;
+        }
+        super.onActivityResult(code, resultCode, data);
     }
 
     private boolean trusted(Uri url) {
@@ -154,6 +199,7 @@ public final class MainActivity extends Activity {
         super.onSaveInstanceState(out);
     }
     @Override public void onDestroy() {
+        if (pendingPhotoSelection != null) { pendingPhotoSelection.onReceiveValue(null); pendingPhotoSelection = null; }
         if (pendingWebPermission != null) { pendingWebPermission.deny(); pendingWebPermission = null; }
         if (webView != null) { webView.stopLoading(); webView.destroy(); webView = null; }
         super.onDestroy();
