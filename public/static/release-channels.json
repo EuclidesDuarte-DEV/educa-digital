@@ -1,20 +1,20 @@
 {
   "schema": 1,
-  "shared": "111.60",
+  "shared": "112.22",
   "cloudflare": "https://educa-digital.educamaisdigital.workers.dev",
   "channels": {
     "web": {
-      "interface": "111.60",
+      "interface": "112.22",
       "mode": "website"
     },
     "android": {
-      "interface": "111.60",
-      "native": "111.58",
+      "interface": "112.22",
+      "native": "112.22",
       "mode": "webview-apk"
     },
     "ios": {
-      "interface": "111.60",
-      "native": "111.59",
+      "interface": "112.22",
+      "native": "112.22",
       "mode": "swift-wkwebview"
     }
   },
