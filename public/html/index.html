@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Educa+ Digital</title>
   <meta name="theme-color" content="#f7faff">
-  <link rel="manifest" href="/static/manifest.webmanifest?v=11158">
+  <link rel="manifest" href="/static/manifest.webmanifest?v=11222">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Educa+">
@@ -20,7 +20,8 @@
         || navigator.standalone===true;
       const nativeAndroid=navigator.userAgent.includes('EducaNativeAndroid/');
       // O app nativo pode usar a mesma página inicial da Web, sem forçar o telefone imersivo.
-      const parity=query.get('experience')==='web' && ['android','ios'].includes(query.get('platform'));
+      const parity=query.get('experience')==='web' &&
+        (['android','ios'].includes(query.get('platform')) || installed || nativeAndroid);
       if(!parity && (installed||nativeAndroid||query.get('app')==='1')){
         document.documentElement.classList.add('educa-mobile-app');
       }
