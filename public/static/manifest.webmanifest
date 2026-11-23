@@ -2,7 +2,7 @@
   "name": "Educa+ Digital",
   "short_name": "Educa+",
   "description": "Simulações educativas de segurança digital no celular, conectadas ao Educa+ Digital.",
-  "start_url": "/?app=1",
+  "start_url": "/html/?experience=web",
   "scope": "/",
   "display": "standalone",
   "display_override": [
