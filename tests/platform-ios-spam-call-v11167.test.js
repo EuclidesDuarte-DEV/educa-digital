@@ -63,5 +63,5 @@ test('[ios] aviso fictício não é mais injetado no protótipo; CallKit segue n
  assert.doesNotMatch(web,/simulatedCallerWarning|educa-ios-training-caller-warning/);
  assert.match(web,/platform=ios/);
  assert.match(ext,/addIdentificationEntry\(/);
- assert.doesNotMatch(local,/V112\.22/);
+ assert.match(local,/floatingCallProtection:false/);
 });
