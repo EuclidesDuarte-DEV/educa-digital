@@ -36,21 +36,19 @@ test('[ios] apenas ligacao real observada pode solicitar aviso e texto nao afirm
   assert.doesNotMatch(event, /UnknownCallerSafetyMessage\.body/);
 });
 
-test('[ios] botao nativo de consentimento, sem injetar alerta no PWA',()=>{
-  assert.match(app, /@StateObject private var realCallActivity = RealCallEventBridge\(\)/);
-  assert.match(app, /realCallActivity\.activateIfNeeded\(\)/);
-  assert.match(app, /\.environmentObject\(realCallActivity\)/);
-  assert.match(panel, /@EnvironmentObject private var realCallActivity/);
-  assert.match(panel, /Section\("Acionador próprio de chamada real \(experimental\)"\)/);
-  assert.match(panel, /Toggle\("Avisar sobre atividade de ligação no iPhone"/);
-  assert.match(panel, /realCallActivity\.setEnabled\(\$0\)/);
-  assert.match(panel, /não sabe se está salvo nos contatos/);
-  assert.match(panel, /Não é possível prometer funcionamento com o app fechado/);
-  assert.doesNotMatch(pwa, /CXCallObserver|RealCallEventBridge/);
+test('[ios] observador permanece opt-in e não ativa sozinho no app sem painel flutuante',()=>{
+  assert.doesNotMatch(app,/realCallActivity\.activateIfNeeded\(\)|showingCallProtection|\.sheet\(isPresented:/);
+  assert.match(panel,/@EnvironmentObject private var realCallActivity/);
+  assert.match(panel,/Section\("Acionador próprio de chamada real \(experimental\)"\)/);
+  assert.match(panel,/Toggle\("Avisar sobre atividade de ligação no iPhone"/);
+  assert.match(panel,/realCallActivity\.setEnabled\(\$0\)/);
+  assert.match(panel,/não sabe se está salvo nos contatos/);
+  assert.match(panel,/Não é possível prometer funcionamento com o app fechado/);
+  assert.doesNotMatch(pwa,/CXCallObserver|RealCallEventBridge/);
 });
 
 test('[ios] incrementa dois targets e documenta que não funciona em segundo plano',()=>{
-  assert.equal((project.match(/CFBundleShortVersionString: "111\.71"/g) || []).length,2);
+  assert.equal((project.match(/CFBundleShortVersionString: "112\.22"/g) || []).length,2);
   assert.match(doc, /Nao disponibiliza numero do chamador/);
   assert.match(doc, /nao e gatilho garantido com app encerrado/i);
   assert.match(doc, /NAO funciona no PWA\/Safari/i);
