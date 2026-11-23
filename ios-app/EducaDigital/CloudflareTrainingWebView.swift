@@ -2,13 +2,13 @@ import SwiftUI
 import UIKit
 import WebKit
 
-/// App iOS V111.59. A Cloudflare continua sendo a fonte única de conteúdo,
-/// conta, IA Gemma, voz Kokoro e simulações educativas, sem segredos no app.
+/// App iOS V112.22. Interface inicial e simulações agora usam o mesmo design da Web.
+/// Cloudflare continua fonte única dos exercícios, LIA e voz, sem segredos no app.
 struct CloudflareTrainingWebView: UIViewRepresentable {
     @ObservedObject var state: TrainingState
 
     static let officialHost = "educa-digital.educamaisdigital.workers.dev"
-    static let startURL = URL(string: "https://educa-digital.educamaisdigital.workers.dev/?app=1&platform=ios")!
+    static let startURL = URL(string: "https://educa-digital.educamaisdigital.workers.dev/html/?app=1&platform=ios&experience=web")!
 
     func makeCoordinator() -> Coordinator {
         Coordinator(state: state)
@@ -51,15 +51,15 @@ struct CloudflareTrainingWebView: UIViewRepresentable {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
-        webView.backgroundColor = UIColor(red: 0.045, green: 0.082, blue: 0.145, alpha: 1)
+        webView.backgroundColor = UIColor.white
         webView.isOpaque = false
         webView.scrollView.backgroundColor = webView.backgroundColor
-        webView.scrollView.bounces = false
+        webView.scrollView.bounces = true
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.allowsBackForwardNavigationGestures = true
         context.coordinator.webView = webView
 
-        webView.load(URLRequest(url: Self.startURL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 25))
+        webView.load(URLRequest(url: Self.startURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 25))
         return webView
     }
 
