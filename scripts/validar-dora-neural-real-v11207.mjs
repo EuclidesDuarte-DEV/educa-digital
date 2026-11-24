@@ -48,7 +48,9 @@ try {
  assert.ok(out.seconds>0.5&&out.seconds<35,'Duração vocal inesperada');
  assert.equal(paidCalls,0,'O teste local NUNCA deve chamar API ElevenLabs.');
  const app=await browser.newPage({viewport:{width:390,height:844}});
- let webPaidCalls=0;
+ let webPaidCalls=0,nav=0,heavyCalls=0;
+ app.on('framenavigated',frame=>{if(frame===app.mainFrame())nav++;});
+ app.on('request',r=>{if(r.url().includes('/api/lia-model/'))heavyCalls++;});
  app.on('request',r=>{if(r.url().includes('/api/lia/voz-web/speak'))webPaidCalls++;});
  await app.goto(root+'/html/',{waitUntil:'domcontentloaded',timeout:40000});
  await app.waitForFunction(()=>window.EducaVideoCall&&document.documentElement.dataset.educaPlatform==='web',{timeout:15000});
@@ -63,7 +65,21 @@ try {
  assert.equal(active.value,'gratuita','A Web deve selecionar neural grátis antes de usar a videochamada');
  assert.ok(!active.options.some(o=>o.value==='feminina'||/Roberta|ElevenLabs/i.test(o.label)),'A Roberta não pode mais estar no menu Web');
  assert.ok(active.freeAvailable);
+ // Teste de ponta a ponta: tocar áudio neural de verdade no fluxo da chamada.
+ await app.evaluate(()=>{window.EducaFreeView.isTraining=()=>true;window.EducaFreeMode.start();window.EducaVideoCall.incoming();});
+ await app.locator('#freeVideoAnswer').click({timeout:10000});
+ await app.waitForFunction(()=>{
+  const state=document.querySelector('#freeVideoState')?.textContent||'';
+  return /Voz neural brasileira reproduzindo|Lia falando com áudio gerado/.test(state);
+ },null,{timeout:45000});
+ const call=await app.evaluate(()=>({active:window.EducaVideoCall.isActive(),connected:window.EducaVideoCall.isConnected(),
+  diag:window.EducaLiaFreeNeural.getDiagnostics(),label:document.querySelector('#liaPhotoIndicator')?.textContent}));
+ assert.equal(call.active,true);assert.equal(call.connected,true);
+ assert.ok(call.diag.lastSynthesisMs>0,'A chamada deve gerar áudio dinâmico');
+ assert.equal(nav,1,'A chamada neural não pode recarregar a página');
+ assert.equal(heavyCalls,0,'A chamada Dora não deve baixar o Kokoro pesado');
  assert.equal(webPaidCalls,0);
+ console.log('DORA REAL CALL OK',JSON.stringify(call));
  await app.close();
 } finally {
  await browser.close();
