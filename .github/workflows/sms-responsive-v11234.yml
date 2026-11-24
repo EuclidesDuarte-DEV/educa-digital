@@ -1,0 +1,28 @@
+name: SMS responsivo V112.34
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/static/css/sms-responsive-v11234.css'
+      - 'public/html/index.html'
+      - 'scripts/validar-sms-responsive-v11234.mjs'
+      - '.github/workflows/sms-responsive-v11234.yml'
+permissions:
+  contents: read
+jobs:
+  sms:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - name: SMS Chromium e WebKit em todos os tamanhos
+        run: |
+          python3 -m http.server 8789 --directory public >/tmp/sms-server.log 2>&1 &
+          node scripts/validar-sms-responsive-v11234.mjs
