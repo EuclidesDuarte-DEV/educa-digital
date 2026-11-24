@@ -109,7 +109,7 @@ let outputMuted=false;
  const INTRO_FIRST='Oi, sou a Lia.';
  function prepareIntroNeural(){
   if(!webNeuralPlayback()||introNeural||!window.EducaLiaFreeNeural)return;
-  if(lightNeuralVisual()){
+  if(lightNeuralVisual()&&!session.connected){
    cancelTransitions();stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);
    motion.talkActive=null;motion.idleActive=null;
    if(ui.portraitStill)ui.portraitStill.hidden=false;
@@ -180,28 +180,29 @@ function stopPlayer(v,clearSource=false){
 function stopGroup(players,clearSource=false){for(const v of players)stopPlayer(v,clearSource);}
 function moveTo(kind){
  const talking=kind==='talk';
- // WebKit: um único clipe original durante a fala; nenhum vídeo durante
- // inferência ou escuta. Sem crossfade, pré-decodificação ou troca de src.
+ // V112.28: um único decodificador, inclusive quando Lia está ouvindo.
+ // Os clipes originais de boca fechada continuam em loop durante a síntese.
+ // A troca libera o src anterior ANTES de abrir o novo vídeo.
  if(lightNeuralVisual()){
-  if(!session.active||!session.connected)return;
-  if(!talking){
-   stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);
-   motion.talkActive=null;motion.idleActive=null;
-   ui.portrait?.classList.remove('lia-photo-speaking');
-   if(ui.portraitStill)ui.portraitStill.hidden=false;
-   return;
-  }
-  const target=talkPlayers[0];if(!target)return;
-  if(motion.talkActive===target)return;
-  stopGroup(idlePlayers,true);stopGroup(talkPlayers.slice(1),true);
-  const token=motion.epoch,serial=session.serial;
-  motion.talkActive=target;target.muted=true;target.playsInline=true;
+  if(!session.active||!session.connected||document.hidden)return;
+  const key=talking?'talkActive':'idleActive',other=talking?'idleActive':'talkActive';
+  const target=talking?talkPlayers[0]:idlePlayers[0];
+  if(!target)return;
+  if(motion[key]===target)return; // também vale enquanto play() está pendente
+  if(talking){stopGroup(idlePlayers,true);stopGroup(talkPlayers.slice(1),true);}
+  else{stopGroup(talkPlayers,true);stopGroup(idlePlayers.slice(1),true);}
+  motion[other]=null;motion[key]=target;
+  const token=motion.lightEpoch=(motion.lightEpoch||0)+1;
+  target.muted=true;target.playsInline=true;target.playbackRate=1;
   target.preload='none';target.loop=true;target.hidden=false;
-  target.src=talkClips[0];
-  const valid=()=>motion.epoch===token&&session.serial===serial&&motion.talking&&session.connected;
-  const show=()=>{if(!valid())return;target.classList.add('lia-clip-visible');ui.portrait?.classList.add('lia-photo-speaking');if(ui.portraitStill)ui.portraitStill.hidden=true;};
-  target.onerror=()=>{if(valid()){stopPlayer(target,true);motion.talkActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;}};
-  Promise.resolve(target.play()).then(show).catch(()=>{if(valid()){stopPlayer(target,true);motion.talkActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;}});
+  target.src=talking?talkClips[0]:idleClips[0];
+  ui.portrait?.classList.toggle('lia-photo-speaking',talking);
+  if(ui.portraitStill)ui.portraitStill.hidden=false;
+  const valid=()=>motion.lightEpoch===token&&motion[key]===target&&motion.talking===talking&&session.active&&session.connected&&!document.hidden;
+  const show=()=>{if(!valid())return;target.classList.add('lia-clip-visible');if(ui.portraitStill)ui.portraitStill.hidden=true;};
+  const fail=()=>{if(valid()){stopPlayer(target,true);motion[key]=null;if(ui.portraitStill)ui.portraitStill.hidden=false;}};
+  target.onerror=fail;
+  Promise.resolve(target.play()).then(show).catch(fail);
   return;
  }
  if(!session.active||!session.connected|| (talking&&!motion.talking))return;
@@ -298,6 +299,7 @@ function moveTo(kind){
 }
 function idleMotion(){
  if(!session.active||!session.connected){stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;return;}
+ if(lightNeuralVisual()&&document.hidden){stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);motion.talkActive=null;motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;return;}
  if(motion.talking)return;
  if(motion.idleActive&&!motion.idleActive.paused&&motion.idleActive.classList.contains('lia-clip-visible'))return;
  moveTo('idle');
@@ -311,7 +313,7 @@ function referenceMotion(){
  if(!session.active||!session.connected||!talkPlayers.length)return;
  if(motion.talking&&session.motionSerial===session.serial)return;
  cancelTransitions();motion.talking=true;session.motionSerial=session.serial;
- stopGroup(talkPlayers);motion.talkActive=null;
+ if(!lightNeuralVisual()){stopGroup(talkPlayers);motion.talkActive=null;}
  // Listening stays visible under speaking until the next player is playing.
  moveTo('talk');
 }
@@ -546,7 +548,7 @@ async function playDynamicKokoroWebAudio(result,text,serial,voiceLabel='Kokoro p
   source.buffer=buffer;gain.gain.value=outputMuted?0:1;
   // Leve: controlar o clipe pelo nível real do WAV, sem novo decodificador.
   let analyser=null;
-  if(typeof ctx.createAnalyser==='function'&&lightNeuralVisual()){
+  if(typeof ctx.createAnalyser==='function'&&webNeuralPlayback()){
    analyser=ctx.createAnalyser();analyser.fftSize=256;
    source.connect(analyser);analyser.connect(gain);
   }else source.connect(gain);
@@ -569,11 +571,18 @@ async function playDynamicKokoroWebAudio(result,text,serial,voiceLabel='Kokoro p
     if(now-last>=65){
      last=now;analyser.getByteTimeDomainData(data);
      let power=0;for(const value of data){const x=(value-128)/128;power+=x*x;}
-     const rms=Math.sqrt(power/data.length),clip=motion.talkActive;
-     if(clip){
-      if(rms<.008){if(!silentSince)silentSince=now;if(now-silentSince>180&&!clip.paused)clip.pause();}
-      else{silentSince=0;clip.playbackRate=.86+Math.min(.34,rms*3);if(clip.paused)void clip.play().catch(()=>{});}
-     }
+     const rms=Math.sqrt(power/data.length);
+     // Histerese: não trocar decoder a cada fonema. Nas pausas longas,
+     // usar vídeo de escuta (boca fechada), nunca congelar boca aberta.
+     if(rms<.008){
+      if(!silentSince)silentSince=now;
+      if(now-silentSince>380&&motion.talking)toListening();
+     }else if(rms>.015){
+      silentSince=0;
+      if(!motion.talking)referenceMotion();
+     }else silentSince=0;
+     const clip=motion.talkActive;
+     if(clip&&motion.talking)clip.playbackRate=.86+Math.min(.34,rms*3);
     }
     speechMotion.frame=requestAnimationFrame(animate);
    }
@@ -821,7 +830,7 @@ async function playFreeNeuralVoice(text,serial){
  try{
   await local.prepare();
   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
-  if(lightNeuralVisual()){stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);motion.talkActive=null;}
+  if(lightNeuralVisual())idleMotion(); // não congelar o rosto enquanto a voz é preparada
   const speed=selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05;
   const cached=webNeuralPlayback()&&text===INTRO_FIRST&&introNeural?.speed===speed?introNeural:null;
   if(cached){cached.used=true;introNeural=null;}
@@ -1254,7 +1263,7 @@ document.addEventListener('pointerdown',e=>{
  const menu=$('freeVideoMore');if(menu?.open&&!menu.contains(e.target))menu.open=false;
 });
 $('freeVideoVerify')?.addEventListener('click',()=>free()?.verifyVideo?.());$('freeVideoPix')?.addEventListener('click',()=>free()?.openPixVideo?.());
-document.addEventListener('visibilitychange',()=>{if(document.hidden){stopRecognition();abortSpeech();if(webNeuralPlayback())window.EducaLiaFreeNeural?.stop?.('');}else scheduleListen();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stopRecognition();abortSpeech();if(webNeuralPlayback())window.EducaLiaFreeNeural?.stop?.('');}else{if(lightNeuralVisual())idleMotion();scheduleListen();}});
  window.addEventListener?.('pagehide',()=>{if(webNeuralPlayback())window.EducaLiaFreeNeural?.stop?.('');});
 window.EducaVideoCall=Object.freeze({incoming,close,addLine,reply,error,isActive:()=>session.active,isConnected:()=>session.connected});
 })();

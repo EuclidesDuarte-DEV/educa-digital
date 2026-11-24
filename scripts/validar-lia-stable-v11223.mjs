@@ -17,7 +17,7 @@ for(const config of browsers){
   page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
   await page.route('**/api/lia-free-model/**',async route=>{modelCalls++;await route.abort();});
   // Voz do sistema monitorada; motor neural mockado para testar roteamento sem inferência.
-  await page.route('**/static/js/lia-free-neural-v11206.js*',route=>route.fulfill({contentType:'application/javascript',body:`window.__neuralCalls=0;window.__failNeural=false;window.EducaLiaFreeNeural={prepare:async()=>({voice:'Dora'}),isReady:()=>true,stop:()=>{},speak:async()=>{window.__neuralCalls++;if(window.__failNeural)throw Error('falha neural simulada');const n=72000,b=new ArrayBuffer(44+n*2),v=new DataView(b);for(const [offset,tag] of [[0,'RIFF'],[8,'WAVE'],[12,'fmt '],[36,'data']])for(let j=0;j<tag.length;j++)v.setUint8(offset+j,tag.charCodeAt(j));v.setUint32(4,b.byteLength-8,true);v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);v.setUint32(40,n*2,true);for(let j=0;j<n;j++)v.setInt16(44+j*2,Math.sin(j/20)*1000,true);return {blob:new Blob([b],{type:'audio/wav'}),seconds:3,elapsed_ms:10}}};`}));
+  await page.route('**/static/js/lia-free-neural-v11206.js*',route=>route.fulfill({contentType:'application/javascript',body:`window.__neuralCalls=0;window.__failNeural=false;window.EducaLiaFreeNeural={prepare:async()=>({voice:'Dora'}),isReady:()=>true,stop:()=>{},speak:async()=>{window.__neuralCalls++;if(window.__failNeural)throw Error('falha neural simulada');const n=72000,b=new ArrayBuffer(44+n*2),v=new DataView(b);for(const [offset,tag] of [[0,'RIFF'],[8,'WAVE'],[12,'fmt '],[36,'data']])for(let j=0;j<tag.length;j++)v.setUint8(offset+j,tag.charCodeAt(j));v.setUint32(4,b.byteLength-8,true);v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);v.setUint32(40,n*2,true);for(let j=0;j<n;j++)v.setInt16(44+j*2,(j>=24000&&j<43200?0:Math.sin(j/20)*3000),true);return {blob:new Blob([b],{type:'audio/wav'}),seconds:3,elapsed_ms:10}}};`}));
   await page.addInitScript((ram)=>{
    // Chromium headless não expõe a RAM física do Pixel simulado; declarar
    // explicitamente a RAM baixa para exercitar a regra do navegador real.
@@ -60,6 +60,12 @@ for(const config of browsers){
    assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),1,config.name+' deve usar exatamente um clipe original na fala');
   assert.match(await page.locator('#liaPhotoSpeech').getAttribute('src'),/lia-conversando-a\.mp4/);
   assert.equal(await page.locator('#liaPhotoSpeech').evaluate(v=>v.loop),true);
+  // Uma pausa de 800 ms no WAV deve trocar para boca fechada e retornar à fala.
+  await page.waitForFunction(()=>{const v=document.querySelector('#liaPhotoIdle');return v?.classList.contains('lia-clip-visible')&&v.currentTime>0.03;},null,{timeout:10000});
+  assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),1);
+  await page.waitForFunction(()=>{const v=document.querySelector('#liaPhotoSpeech');return v?.classList.contains('lia-clip-visible')&&v.currentTime>0.03;},null,{timeout:10000});
+  assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),1);
+  console.log('LIA_LIVE_IDLE_AND_TALK_OK',config.name);
   }else console.log('LIA_MP4_TEST_SKIPPED_CODEC',config.name);
   await page.evaluate(()=>{window.__failNeural=true;});
   await page.evaluate(()=>window.EducaVideoCall.reply('Oi, agora eu estou respondendo com seguranca.'));
