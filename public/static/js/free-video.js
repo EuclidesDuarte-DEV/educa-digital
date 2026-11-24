@@ -175,15 +175,33 @@ function stopPlayer(v,clearSource=false){
  if(!v)return;
  v.onended=null;v.ontimeupdate=null;v.onerror=null;v.onplaying=null;
  v.pause();v.classList.remove('lia-clip-visible');v.hidden=true;v.loop=false;
- if(clearSource){v.removeAttribute('src');v.load();}
+ if(clearSource&&v.hasAttribute('src')){v.removeAttribute('src');v.load();}
 }
 function stopGroup(players,clearSource=false){for(const v of players)stopPlayer(v,clearSource);}
 function moveTo(kind){
  const talking=kind==='talk';
- // Safari: retrato sem decodificadores MP4 concorrentes ao ONNX.
+ // WebKit: um único clipe original durante a fala; nenhum vídeo durante
+ // inferência ou escuta. Sem crossfade, pré-decodificação ou troca de src.
  if(lightNeuralVisual()){
-  if(ui.portraitStill)ui.portraitStill.hidden=false;
-  ui.portrait?.classList.toggle('lia-photo-speaking',talking);
+  if(!session.active||!session.connected)return;
+  if(!talking){
+   stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);
+   motion.talkActive=null;motion.idleActive=null;
+   ui.portrait?.classList.remove('lia-photo-speaking');
+   if(ui.portraitStill)ui.portraitStill.hidden=false;
+   return;
+  }
+  const target=talkPlayers[0];if(!target)return;
+  if(motion.talkActive===target)return;
+  stopGroup(idlePlayers,true);stopGroup(talkPlayers.slice(1),true);
+  const token=motion.epoch,serial=session.serial;
+  motion.talkActive=target;target.muted=true;target.playsInline=true;
+  target.preload='none';target.loop=true;target.hidden=false;
+  target.src=talkClips[0];
+  const valid=()=>motion.epoch===token&&session.serial===serial&&motion.talking&&session.connected;
+  const show=()=>{if(!valid())return;target.classList.add('lia-clip-visible');ui.portrait?.classList.add('lia-photo-speaking');if(ui.portraitStill)ui.portraitStill.hidden=true;};
+  target.onerror=()=>{if(valid()){stopPlayer(target,true);motion.talkActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;}};
+  Promise.resolve(target.play()).then(show).catch(()=>{if(valid()){stopPlayer(target,true);motion.talkActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;}});
   return;
  }
  if(!session.active||!session.connected|| (talking&&!motion.talking))return;
@@ -328,6 +346,10 @@ function primeSpeechMotion(){
 }
 function startSpeechMotion(audio,cues=[]){
  stopSpeechMotion();
+ if(lightNeuralVisual()){
+  referenceMotion();
+  return true;
+ }
  if(window.EducaLiaWarm?.isMemorySensitive?.())return false;
  speechMotion.cues=Array.isArray(cues)?cues.filter(c=>Number.isInteger(c?.at_ms)&&c.at_ms>=0&&c.at_ms<=60000&&/^(rest|m|fv|ah|ee|oh|oo|wide)$/.test(c.shape)).slice(0,160):[];
  const context=speechMotion.context;
@@ -522,17 +544,42 @@ async function playDynamicKokoroWebAudio(result,text,serial,voiceLabel='Kokoro p
   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return false;
   const source=ctx.createBufferSource(),gain=ctx.createGain();
   source.buffer=buffer;gain.gain.value=outputMuted?0:1;
-  source.connect(gain);gain.connect(ctx.destination);
+  // Leve: controlar o clipe pelo nível real do WAV, sem novo decodificador.
+  let analyser=null;
+  if(lightNeuralVisual()){
+   analyser=ctx.createAnalyser();analyser.fftSize=256;
+   source.connect(analyser);analyser.connect(gain);
+  }else source.connect(gain);
+  gain.connect(ctx.destination);
   session.utterance=source;session.webAudioGain=gain;
   source.onended=()=>{
    if(serial===session.serial&&session.utterance===source)completed();
-   try{source.disconnect();gain.disconnect();}catch(_){}
+   try{source.disconnect();analyser?.disconnect();gain.disconnect();}catch(_){}
   };
   source.start(0);
   stopVoiceProgress();ui.play.hidden=true;subtitle(text);
   indicator('Lia · '+voiceLabel);
   status('Lia falando com áudio gerado para esta resposta.');
-  referenceMotion();prefetchNextChunk(serial);
+  referenceMotion();
+  if(analyser){
+   const data=new Uint8Array(analyser.fftSize);let last=0,silentSince=0;
+   speechMotion.playing=true;speechMotion.analyser=analyser;
+   function animate(now){
+    if(!speechMotion.playing||session.utterance!==source||session.serial!==serial)return;
+    if(now-last>=65){
+     last=now;analyser.getByteTimeDomainData(data);
+     let power=0;for(const value of data){const x=(value-128)/128;power+=x*x;}
+     const rms=Math.sqrt(power/data.length),clip=motion.talkActive;
+     if(clip){
+      if(rms<.008){if(!silentSince)silentSince=now;if(now-silentSince>180&&!clip.paused)clip.pause();}
+      else{silentSince=0;clip.playbackRate=.86+Math.min(.34,rms*3);if(clip.paused)void clip.play().catch(()=>{});}
+     }
+    }
+    speechMotion.frame=requestAnimationFrame(animate);
+   }
+   speechMotion.frame=requestAnimationFrame(animate);
+  }
+  prefetchNextChunk(serial);
   return true;
  }catch(_){return false;}
 }
@@ -774,6 +821,7 @@ async function playFreeNeuralVoice(text,serial){
  try{
   await local.prepare();
   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
+  if(lightNeuralVisual()){stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);motion.talkActive=null;}
   const speed=selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05;
   const cached=webNeuralPlayback()&&text===INTRO_FIRST&&introNeural?.speed===speed?introNeural:null;
   if(cached){cached.used=true;introNeural=null;}
