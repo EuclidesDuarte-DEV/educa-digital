@@ -105,7 +105,7 @@ let outputMuted=false;
  const webNeuralPlayback=()=>document.documentElement?.dataset?.educaPlatform==='web'&&
   !document.documentElement?.dataset?.educaNativePlatform&&selectedEngine()==='gratuita';
  const lightNeuralVisual=()=>webNeuralPlayback()&&!!window.EducaLiaWarm?.isMemorySensitive?.();
- let introNeural=null;
+ let introNeural=null,introFlight=null;
  const INTRO_FIRST='Oi, sou a Lia.';
  function prepareIntroNeural(){
   if(!webNeuralPlayback()||introNeural||!window.EducaLiaFreeNeural)return;
@@ -116,10 +116,14 @@ let outputMuted=false;
   }
   const local=window.EducaLiaFreeNeural;
   const speed=selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05;
-  const entry={speed,promise:null};introNeural=entry;
+  const entry={speed,promise:null,used:false};introNeural=entry;
   window.EducaLiaWarm?.beginSpeech?.();
-  entry.promise=Promise.resolve().then(()=>local.prepare()).then(()=>local.speak(INTRO_FIRST,{speed}))
+  // Uma síntese por vez: não acumular alocações ONNX se a chamada for interrompida.
+  entry.promise=Promise.resolve(introFlight).then(()=>local.prepare())
+   .then(()=>introNeural===entry||entry.used?local.speak(INTRO_FIRST,{speed}):null)
    .catch(()=>null).finally(()=>{if(introNeural===entry&&!session.connected)window.EducaLiaWarm?.endSpeech?.();});
+  introFlight=entry.promise;
+  entry.promise.finally(()=>{if(introFlight===entry.promise)introFlight=null;});
  }
 const subtitle=t=>{
  if(!ui.subtitle)return;
@@ -772,8 +776,10 @@ async function playFreeNeuralVoice(text,serial){
   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
   const speed=selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05;
   const cached=webNeuralPlayback()&&text===INTRO_FIRST&&introNeural?.speed===speed?introNeural:null;
-  const synthesis=cached?cached.promise.then(wav=>wav||local.speak(text,{speed})):local.speak(text,{speed});
-  if(cached)introNeural=null;
+  if(cached){cached.used=true;introNeural=null;}
+  const generate=()=>serial===session.serial&&session.active&&session.connected?local.speak(text,{speed}):null;
+  const synthesis=cached?cached.promise.then(wav=>wav||generate()):
+   webNeuralPlayback()&&introFlight?introFlight.then(generate):generate();
   result=await Promise.race([
    synthesis,
    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('O modelo neural demorou demais para este aparelho.')),7500);})
@@ -805,8 +811,8 @@ async function playFreeNeuralVoice(text,serial){
   // A chamada inicial desbloqueia o AudioContext. Em Safari, WAV também
   // pode ser reproduzido pelo contexto sem enviar áudio a um servidor.
   if(await playDynamicKokoroWebAudio(result,text,serial,'voz neural brasileira gratuita'))return true;
-  if(ui.play){ui.play.hidden=false;ui.play.textContent='Ativar som';delete ui.play.dataset.retryVoice;}
-  status('O navegador bloqueou a reprodução automática. Ative o som para continuar.');
+  if(ui.play){ui.play.hidden=false;ui.play.textContent=webNeuralPlayback()?'Ativar som':'▶ Ouvir voz neural';delete ui.play.dataset.retryVoice;}
+  status(webNeuralPlayback()?'O navegador bloqueou a reprodução automática. Ative o som para continuar.':'Toque em Ouvir voz neural para liberar o áudio neste navegador.');
  }
  return true;
 }
@@ -1009,12 +1015,12 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
 async function answer(){if(!session.active||session.connected)return;
  // Desbloqueia WebAudio durante o clique do usuário, antes da síntese ONNX.
  // No Safari, criar o AudioContext só depois do áudio ficar pronto é tarde.
- primeSpeechMotion();
+ primeSpeechMotion();syncLiaCallLayout();session.connected=true;
  if(webNeuralPlayback()){
   allowRecoveredNeural=true;
   prepareIntroNeural();
  }
- syncLiaCallLayout();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
+ session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
  const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';
