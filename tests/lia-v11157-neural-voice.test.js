@@ -96,10 +96,24 @@ test('V111.57: codec neural atenua bordas, versão de voz renova e bancos seguem
  assert.match(browser,/lia-kokoro-worker\.js\?v=11157/);
  assert.match(browser,/voice:'pf_dora',version:'11157'/);
  assert.match(html,/lia-kokoro-browser\.js\?v=11157/);
- assert.match(cache,/const CACHE = 'educa-cf(?:111(?:60-unified-platform-channels|72-responsive-text-reflow|73-all-screens-reflow|74-whatsapp-navigation|75-free-mode-navigation)|11223-lia-stable-navigation)'/);
+ assert.match(cache,/const CACHE = 'educa-cf(?:111(?:60-unified-platform-channels|72-responsive-text-reflow|73-all-screens-reflow|74-whatsapp-navigation|75-free-mode-navigation)|11223-lia-stable-navigation(?:-v11224)?)'/);
  assert.doesNotMatch(cache,/\/api\/.*cache\.put/);
  const wrangler=readFileSync('wrangler.toml','utf8');
  assert.match(wrangler,/database_name = "educa-digital"/);
  assert.match(wrangler,/database_name = "educa-digital-preview"/);
  assert.match(wrangler,/LIA_CONTAINER_ENABLED = "false"/);
+});
+
+ test('V112.24: proxy Kokoro recupera HTTP 503 sem cachear erros nem trocar o modelo',async()=>{
+ const original=globalThis.fetch;const calls=[];
+ try{
+  globalThis.fetch=async(url,opts)=>{calls.push({url:String(url),opts});return calls.length===1?new Response('temporário',{status:503}):new Response('pesos oficiais',{status:200});};
+  const result=await apiWorker.fetch(new Request('https://educa.example/api/lia-model/onnx/model_quantized.onnx'),{});
+  assert.equal(result.status,200);assert.equal(await result.text(),'pesos oficiais');assert.equal(calls.length,2);
+  assert.equal(calls[1].url,calls[0].url+'?download=true');
+  assert.equal(calls[0].opts.cf.cacheTtlByStatus['201-599'],-1);
+  calls.length=0;globalThis.fetch=async()=>{calls.push(1);return new Response('erro',{status:503});};
+  const fail=await apiWorker.fetch(new Request('https://educa.example/api/lia-model/onnx/model_quantized.onnx'),{});
+  assert.equal(fail.status,503);assert.equal(calls.length,3);assert.equal(fail.headers.get('cache-control'),'no-store');
+ }finally{globalThis.fetch=original;}
 });

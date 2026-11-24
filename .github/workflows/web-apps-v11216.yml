@@ -33,7 +33,9 @@ jobs:
   apps-web:
     name: Interação Fotos Gmail SMS e Câmera no navegador
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -46,7 +48,8 @@ jobs:
       - name: Preparar Chromium
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
-          npx playwright install --with-deps chromium
+          test -d /ms-playwright
+          ls /ms-playwright | head
       - name: Testar Foto, Gmail, SMS e Camera em 3 resoluções
         run: |
           python3 -m http.server 8789 --directory public > /tmp/educa-web-apps-v11216.log 2>&1 &
@@ -69,7 +72,6 @@ jobs:
         run: node scripts/diagnosticar-toques-web-v11220.mjs
       - name: V112.20 iPhone Safari WebKit - toque real no fluxo WhatsApp LIA ligacao
         run: |
-          npx playwright install --with-deps webkit
           EDUCA_BROWSER=webkit node scripts/diagnosticar-toques-web-v11220.mjs
       - name: V112.21 pesquisa filtros topo e rolagem independente nos seis apps
         run: |

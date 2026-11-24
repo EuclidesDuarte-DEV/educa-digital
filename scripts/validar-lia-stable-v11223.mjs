@@ -1,4 +1,4 @@
-/* V112.23 — Safari iPhone: LIA nao recarrega Home nem liga ONNX ao falar.
+/* V112.23 — Safari iPhone: LIA nao recarrega Home nem troca silenciosamente para voz do aparelho.
    Motor de audio é simulado para testar NAVEGACAO; não valida timbre real. */
 import {webkit,chromium} from 'playwright';
 import assert from 'node:assert/strict';
@@ -16,17 +16,19 @@ for(const config of browsers){
   page.on('framenavigated',f=>{if(f===page.mainFrame())nav++;});
   page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
   await page.route('**/api/lia-free-model/**',async route=>{modelCalls++;await route.abort();});
-  // Voz do sistema mockada para testar que o app nao navega nem reinicia.
+  // Voz do sistema monitorada; motor neural mockado para testar roteamento sem inferência.
+  await page.route('**/static/js/lia-free-neural-v11206.js*',route=>route.fulfill({contentType:'application/javascript',body:`window.__neuralCalls=0;window.EducaLiaFreeNeural={prepare:async()=>({voice:'Dora'}),isReady:()=>true,stop:()=>{},speak:async()=>{window.__neuralCalls++;throw Error('falha neural simulada')}};`}));
   await page.addInitScript((ram)=>{
    // Chromium headless não expõe a RAM física do Pixel simulado; declarar
    // explicitamente a RAM baixa para exercitar a regra do navegador real.
    if(ram)Object.defineProperty(navigator,'deviceMemory',{configurable:true,get:()=>ram});
    const Voice=function(text){this.text=text;this.lang='pt-BR';this.rate=1;this.pitch=1;this.volume=1};
    window.SpeechSynthesisUtterance=Voice;
+   window.__deviceCalls=0;
    window.speechSynthesis={
     getVoices:()=>[{lang:'pt-BR',name:'Voz de teste feminina',voiceURI:'local-pt-br'}],
     cancel:()=>{},resume:()=>{},pause:()=>{},
-    speak:u=>{setTimeout(()=>u.onstart?.(),15);setTimeout(()=>u.onend?.(),200);}
+    speak:u=>{window.__deviceCalls++;setTimeout(()=>u.onstart?.(),15);setTimeout(()=>u.onend?.(),200);}
    };
   },config.deviceMemory||null);
   await page.goto('http://127.0.0.1:8789/html/?platform=web',{waitUntil:'domcontentloaded',timeout:30000});
@@ -37,7 +39,7 @@ for(const config of browsers){
    selected:document.querySelector('#freeVideoVoiceEngine')?.value
   }));
   assert.equal(init.mode,'leve',config.name+' mode');
-  assert.equal(init.selected,'padrao',config.name+' voice engine');
+  assert.equal(init.selected,'gratuita',config.name+' voice engine');
   await page.evaluate(()=>{
    window.EducaFreeView.isTraining=()=>true;
    window.EducaFreeMode.start();
@@ -48,7 +50,9 @@ for(const config of browsers){
   await page.evaluate(()=>window.EducaVideoCall.reply('Oi, agora eu estou respondendo com seguranca.'));
   await page.waitForTimeout(400);
   assert.equal(nav,1,config.name+' recarregou ou redirecionou durante a voz');
-  assert.equal(modelCalls,0,config.name+' carregou ONNX num aparelho sensivel');
+  assert.equal(modelCalls,0,config.name+' chamou rede ONNX durante mock');
+  assert.ok(await page.evaluate(()=>window.__neuralCalls)>0,config.name+' nao tentou voz neural');
+  assert.equal(await page.evaluate(()=>window.__deviceCalls),0,config.name+' trocou para voz do sistema');
   assert.equal(await page.locator('#freeVideoView.is-active').count(),1,config.name+' saiu da videochamada');
   assert.ok(errors.length===0,config.name+' pageerrors '+JSON.stringify(errors));
   console.log('LIA_STABLE_V11223_OK '+config.name+' '+JSON.stringify({nav,modelCalls,voice:init.selected}));

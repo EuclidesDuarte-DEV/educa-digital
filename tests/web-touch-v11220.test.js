@@ -36,7 +36,9 @@ test('V112.20: cache atualizado, assets no fim e controles acessíveis',()=>{
 });
 test('V112.20: testes reais com Safari WebKit, scroll e recuperação',()=>{
  assert.match(workflow,/EDUCA_BROWSER=webkit node scripts\/diagnosticar-toques-web-v11220\.mjs/);
- assert.match(workflow,/npx playwright install --with-deps webkit/);
+ assert.match(workflow,/image: mcr\.microsoft\.com\/playwright:v1\.56\.1-noble/);
+ assert.match(workflow,/test -d \/ms-playwright/);
+ assert.match(workflow,/playwright@1\.56\.1/);
  assert.match(workflow,/web-touch-v11220\.test\.js/);
  assert.match(audit,/DIAG_JOURNEY_CALL/);
  assert.match(audit,/DIAG_FALLBACK_ANSWER/);

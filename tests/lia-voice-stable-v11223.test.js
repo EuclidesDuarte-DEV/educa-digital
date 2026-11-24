@@ -27,16 +27,18 @@ test('V112.23: a voz neural aquece apenas uma vez, sem cron ou chamadas pagas',(
  assert.doesNotMatch(voice,/fetch\(|\/api\/lia\/voz-web\/speak/);
  assert.equal((wrangler.match(/LIA_WEB_HQ_TTS_ENABLED = "false"/g)||[]).length,2);
 });
-test('V112.23: iPhone e crash recente usam voz leve em vez de ONNX automático',()=>{
+test('V112.23: iPhone conserva modo de memória, Dora padrão e recuperação explícita',()=>{
  assert.match(voice,/iPad\|iPhone\|iPod/);
  assert.match(voice,/sessionStorage\.getItem\(KEY\)/);
  assert.match(voice,/sessionStorage\.getItem\(WARM_KEY\)/);
  assert.match(voice,/const sensitive=iOS\|\|lowRam\|\|interrupted/);
- assert.match(video,/voiceEngine\.value='padrao'/);
+ assert.doesNotMatch(video,/voiceEngine\.value='padrao'/);
  assert.match(video,/window\.EducaLiaWarm\?\.isMemorySensitive\?\.\(\)/);
  assert.match(video,/voiceEngine\.value='gratuita'/);
  assert.match(video,/voiceEngine\.querySelector\('option\[value="feminina"\]'\)\?\.remove\(\)/);
- assert.match(video,/audioOnly\(session\.lastSpoken\|\|phrase,serial\)/);
+ assert.doesNotMatch(video,/audioOnly\(session\.lastSpoken\|\|phrase,serial\)/);
+ assert.match(video,/await local\.prepare\(\)/);
+ assert.match(video,/recovered&&!allowRecoveredNeural/);
 });
 test('V112.23: limita o áudio que não responde e libera a memória realmente',()=>{
  assert.match(video,/Promise\.race\(\[/);
@@ -91,4 +93,10 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
  assert.equal(simulate({ua:'Mozilla/5.0 (X11; Linux)',platform:'Linux',ram:2}).mode,'leve');
  assert.equal(simulate({ua:'Mozilla/5.0 (Windows NT)',platform:'Win32',ram:8,stamp:true}).mode,'leve');
  assert.equal(simulate({ua:'Mozilla/5.0 (Windows NT)',platform:'Win32',ram:8}).mode,'neural');
+});
+
+ test('V112.24: fallback WebAudio da Dora não baixa Kokoro pesado',()=>{
+ const prefetch=video.split('function prefetchNextChunk(serial){')[1].split('async function playDynamicKokoroWebAudio')[0];
+ assert.ok(prefetch.indexOf("if(selectedEngine()==='gratuita')return;")>=0);
+ assert.ok(prefetch.indexOf("if(selectedEngine()==='gratuita')return;")<prefetch.indexOf('browser.synthesize('));
 });
