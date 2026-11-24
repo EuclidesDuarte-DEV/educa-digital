@@ -102,11 +102,19 @@ try {
   assert.equal(await phone.locator('#freeVideoPortrait video[src]').count(),1);
   for(const phrase of ['Olá, podemos conversar?', 'Você está me ouvindo?', 'Muito obrigada pela atenção.']){
    await phone.waitForFunction(()=>/Sua vez/.test(document.querySelector('#freeVideoState')?.textContent||''),null,{timeout:60000});
+   await phone.waitForFunction(()=>{const v=document.querySelector('#liaPhotoIdle');return v?.classList.contains('lia-clip-visible')&&!v.paused&&v.currentTime>0.05;},null,{timeout:12000});
+   const idle=await phone.locator('#liaPhotoIdle').evaluate(v=>({time:v.currentTime,src:v.getAttribute('src'),loop:v.loop}));
+   assert.match(idle.src,/lia-ouvindo\.mp4/);assert.equal(idle.loop,true);
+   await phone.waitForFunction(t=>{const v=document.querySelector('#liaPhotoIdle');return !v.paused&&Math.abs(v.currentTime-t)>0.1;},idle.time,{timeout:3000});
+   assert.equal(await phone.locator('#freeVideoPortrait video[src]').count(),1);
    await phone.evaluate(text=>window.EducaVideoCall.reply(text),phrase);
    await phone.waitForFunction(speakState,null,{timeout:45000});
    assert.equal(await phone.locator('#liaPhotoPlay').isVisible(),false);
+   await phone.waitForFunction(()=>{const v=document.querySelector('#liaPhotoSpeech');return v?.classList.contains('lia-clip-visible')&&v.currentTime>0.05;},null,{timeout:12000});
+   assert.equal(await phone.locator('#freeVideoPortrait video[src]').count(),1);
    assert.equal(navigations,1);assert.equal(crashes,0);
   }
+  console.log('LIA_REAL_LISTENING_MOTION_OK');
   const diagnostics=await phone.evaluate(()=>window.EducaLiaFreeNeural.getDiagnostics());
   assert.equal(diagnostics.provider,'wasm-only-v11227');assert.equal(heavy,0);assert.equal(paid,0);
   assert.equal(navigations,1);assert.equal(crashes,0);
