@@ -837,6 +837,7 @@
     }
 
     // O balão acompanha o alvo (flip + shift), não o rodapé do telefone.
+    const landingBank = document.body.classList.contains('landing-pretest-active') && target.matches('[data-open-app="bank"].landing-pretest-target');
     const pointerWidth = guidePointer.offsetWidth || 110;
     const pointerHeight = guidePointer.offsetHeight || 39;
     const margin = 18; // inclui a seta
@@ -861,6 +862,20 @@
     guidePointer.style.left = `${pointerLeft - screenRect.left}px`;
     guidePointer.style.top = `${pointerTop - screenRect.top}px`;
     guidePointer.classList.toggle('below-target', isBelow);
+    // V112.41: o WebKit pode recalcular a altura do balão ao posicioná-lo.
+    // Use a geometria final do holofote e do texto, com a faixa reservada na home.
+    if (landingBank) {
+      const spot = guideSpotlight.getBoundingClientRect();
+      const bubble = guidePointer.getBoundingClientRect();
+      const bounds = guideSafeBounds(target);
+      const date = target.closest('#homeView')?.querySelector('.at-a-glance')?.getBoundingClientRect();
+      const upper = Math.max(bounds.top + 2, (date?.bottom || bounds.top) + 2);
+      const desired = spot.top - bubble.height - margin;
+      if (desired >= upper - 1) {
+        guidePointer.style.top = `${parseFloat(guidePointer.style.top) + desired - bubble.top}px`;
+        guidePointer.classList.remove('below-target');
+      }
+    }
     const arrow = guidePointer.querySelector('i');
     if (arrow) {
       const arrowX = Math.max(14, Math.min(pointerWidth - 14, centerX - pointerLeft));
@@ -878,6 +893,7 @@
       guideResizeObserver = new ResizeObserver(scheduleGuidePositionUpdate);
       guideResizeObserver.observe(target);
       guideResizeObserver.observe(phoneScreen);
+      if (target.matches('[data-open-app="bank"].landing-pretest-target')) guideResizeObserver.observe(guidePointer);
     }
   }
 
