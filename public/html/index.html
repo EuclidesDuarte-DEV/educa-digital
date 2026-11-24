@@ -62,6 +62,7 @@
 <link rel="stylesheet" href="/static/css/lia-zoom-v11230.css?v=11233">
 <link rel="stylesheet" href="/static/css/mobile-safe-header-v11231.css?v=11231">
 <link rel="stylesheet" href="/static/css/sms-responsive-v11234.css?v=11234">
+<link rel="stylesheet" href="/static/css/gov-level-responsive-v11235.css?v=11235">
 </head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
@@ -1033,13 +1034,13 @@
               <div class="android-view" data-view="govbr-home" id="govbrHomeView">
                 <div class="app-surface gov-app-surface gov-real-home-screen">
                   <header class="gov-real-topbar"><img src="/static/icons/govbr.svg" alt="gov.br"><div class="gov-topbar-actions"><span>🔔</span><button class="gov-avatar-photo" id="govHeaderProfileBtn" type="button" aria-label="Meus dados">◯</button></div></header>
+                  <div class="gov-real-home-scroll">
                   <section class="gov-real-banner">
                     <small>Olá, <strong id="govWelcomeName">MARIA</strong></small>
                     <h2>SUA CONTA É NÍVEL PRATA</h2>
                     <div class="gov-banner-progress"><span></span><span></span><span></span></div>
                     <button type="button" data-gov-detail="Aumentar nivel" class="gov-banner-cta">↗ AUMENTAR NÍVEL</button>
                   </section>
-                  <div class="gov-real-home-scroll">
                     <button class="gov-search-card" id="govSearchBox" type="button"><span>Encontre serviços públicos no gov.br</span><b>⌕</b></button>
                     <section class="gov-home-list-card">
                       <h3>Serviços</h3>
@@ -1428,7 +1429,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11223&lia=stable&voicepriority=11224&autoplay=11225&motion=11226&memory=11227&liveavatar=11228&cleanchat=11229&zoomfit=11230&nativeheader=11231&normalfit=11233&smsfit=11234').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11223&lia=stable&voicepriority=11224&autoplay=11225&motion=11226&memory=11227&liveavatar=11228&cleanchat=11229&zoomfit=11230&nativeheader=11231&normalfit=11233&smsfit=11234&govfit=11235').catch(() => {});
       });
     }
   </script>
