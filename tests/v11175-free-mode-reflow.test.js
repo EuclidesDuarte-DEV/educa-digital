@@ -63,7 +63,7 @@ test('[all] ativa CSS V111.75 e renova cache sem alterar versoes nativas',()=>{
  assert.ok(ui.indexOf('responsive-v11175.css')>ui.indexOf('responsive-v11174.css'));
  assert.match(sw,/educa-cf(?:11175-free-mode-navigation|11223-lia-stable-navigation)/);
  assert.match(sw,/responsive-v11175\.css/);
- assert.match(ui,/sw\.js\?v=11160&layout=11175/);
+ assert.match(ui,/sw\.js\?v=(?:11160&layout=11175|11223&lia=stable)/);
 });
 
 test('[all] script navegador percorre todos recursos, tamanhos e fullscreen',()=>{
