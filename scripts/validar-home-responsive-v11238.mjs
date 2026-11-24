@@ -1,6 +1,6 @@
 import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
-const cases=[['web',1366,610],['web',1280,600],['web',1600,760],['web',1920,1080],['web',1024,600],['web',768,1024],['web',320,568],['android',360,800],['ios',390,844]];
+const cases=[['web',1280,550],['web',1321,550],['web',1366,610],['web',1280,600],['web',1600,760],['web',1920,1080],['web',1024,600],['web',768,1024],['web',320,568],['android',360,800],['ios',390,844]];
 for(const engine of [chromium,webkit]){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
@@ -18,6 +18,28 @@ for(const engine of [chromium,webkit]){
      const r=s=>{const e=document.querySelector(s),b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,font:parseFloat(getComputedStyle(e).fontSize)}};
      return {title:r('.hero-copy h1'),subtitle:r('.hero-subtitle'),cta:r('#startNowBtn'),label:r('#startNowLabel'),phone:r('#phoneHardware'),wrap:r('#inicio .phone-preview-wrap'),header:r('.home-simple-header'),viewport:innerWidth,scroll:document.documentElement.scrollWidth,extra:document.documentElement.classList.contains('a11y-text-extra'),large:document.documentElement.classList.contains('a11y-text-large')};
     });
+    const launcher=await page.evaluate(()=>{
+      const r=e=>{const b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
+      const home=document.querySelector('#homeView');
+      if(!home.classList.contains('is-active'))return null;
+      const grid=home.querySelector('.launcher-grid'),dock=home.querySelector('.launcher-bottom');
+      return {home:r(home),grid:r(grid),dock:r(dock),date:r(home.querySelector('.at-a-glance')),search:r(home.querySelector('.google-search')),scroll:grid.scrollHeight,client:grid.clientHeight,tiles:[...grid.querySelectorAll('.app-tile')].map(e=>({tile:r(e),icon:r(e.querySelector('.adaptive-icon')),label:r(e.lastElementChild)})),favorites:[...dock.querySelectorAll('.favorite-row button')].map(r)};
+    });
+    assert.ok(launcher,'tela de aplicativos não está ativa');
+    assert.ok(launcher.grid.top>=launcher.date.bottom-1&&launcher.grid.bottom<=launcher.dock.top+1,'grade sobreposta ao dock ou data '+JSON.stringify(launcher));
+    assert.ok(launcher.grid.height>=40&&launcher.dock.bottom<=launcher.home.bottom-6,'grade/dock fora da moldura '+JSON.stringify(launcher));
+    assert.equal(launcher.tiles.length,12);
+    for(const {tile,icon,label} of launcher.tiles){
+     assert.ok(icon.width>0&&icon.width<=tile.width+1&&icon.left>=tile.left-1&&icon.right<=tile.right+1,'ícone invade vizinho '+JSON.stringify({tile,icon}));
+     assert.ok(label.left>=tile.left-1&&label.right<=tile.right+1&&label.top>=icon.bottom-1,'rótulo sobreposto '+JSON.stringify({tile,icon,label}));
+    }
+    for(let i=0;i<launcher.tiles.length;i++)for(let j=i+1;j<launcher.tiles.length;j++){
+     const a=launcher.tiles[i].tile,c=launcher.tiles[j].tile;
+     assert.ok(a.right<=c.left+1||c.right<=a.left+1||a.bottom<=c.top+1||c.bottom<=a.top+1,'aplicativos sobrepostos '+JSON.stringify({a,c}));
+    }
+    for(let i=1;i<launcher.favorites.length;i++)assert.ok(launcher.favorites[i-1].right<=launcher.favorites[i].left+1,'favoritos sobrepostos');
+    if(width>=901&&size==='normal')assert.ok(b.phone.width>=269,'moldura estreita');
+    console.log('HOME_LAUNCHER_V11239_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,phone:b.phone,grid:launcher.grid,dock:launcher.dock,scroll:launcher.scroll,client:launcher.client}));
     assert.ok(b.cta.height>=65&&b.cta.width>0,'CTA pequeno '+JSON.stringify(b));
     assert.ok(b.label.right<=b.cta.right+1&&b.label.bottom<=b.cta.bottom+1,'CTA cortado '+JSON.stringify(b));
     assert.ok(b.scroll<=width+2,'overflow horizontal '+JSON.stringify(b));
@@ -31,7 +53,7 @@ for(const engine of [chromium,webkit]){
     if(size==='large')assert.ok(b.large);
     if(size==='extra')assert.ok(b.extra);
     previous=b;
-    console.log('HOME_RESPONSIVE_V11238_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,font:b.title.font,phone:b.phone}));
+    console.log('HOME_RESPONSIVE_V11239_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,font:b.title.font,phone:b.phone}));
    }
   }finally{await page.close();}
  }
