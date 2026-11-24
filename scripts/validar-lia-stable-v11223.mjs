@@ -93,8 +93,9 @@ for(const config of browsers){
   await p.locator('#freeVideoAnswer').click({timeout:10000});
   for(const full of [false,true]){
    await p.evaluate(full=>document.documentElement.classList.toggle('educa-fullscreen-active',full),full);
-   for(const zoom of [.8,1,1.25,1.5,2,2.5,3]){
-    await p.setViewportSize({width:Math.round(1280/zoom),height:Math.round(800/zoom)});
+   const sizes=[... [.8,1,1.25,1.5,2,2.5,3].map(zoom=>({zoom,width:Math.round(1280/zoom),height:Math.round(800/zoom)})),...(!full?[{zoom:1,width:1853,height:800},{zoom:1,width:1366,height:650},{zoom:1,width:1920,height:1080},{zoom:1,width:2560,height:1440}]:[])];
+   for(const {zoom,width,height} of sizes){
+    await p.setViewportSize({width,height});
     await p.waitForTimeout(180);
     const bounds=await p.evaluate(()=>{
      const box=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
@@ -102,6 +103,12 @@ for(const config of browsers){
      const controls=[...toolbar.querySelectorAll(':scope > button:not([hidden]), :scope > details > summary')].filter(e=>e.getClientRects().length).map(e=>({id:e.id||'more',...box(e)}));
      return {view:box(view),toolbar:box(toolbar),phone:box(phone),controls,viewport:{w:innerWidth,h:innerHeight}};
     });
+    if(!full&&width>=1000&&height>=600){
+     assert.ok(bounds.phone.height>=Math.min(height-40,480/0.45685)-2,'V112.32 moldura pequena demais '+JSON.stringify({width,height,bounds}));
+     assert.ok(bounds.phone.top>=-1&&bounds.phone.bottom<=height+1,'moldura fora da janela '+JSON.stringify(bounds));
+     assert.ok(Math.abs((bounds.phone.top+bounds.phone.bottom)/2-height/2)<=12,'moldura não centralizada '+JSON.stringify(bounds));
+     console.log('LIA_NORMAL_SIZE_V11232_OK',JSON.stringify({width,height,phone:bounds.phone}));
+    }
     assert.ok(bounds.controls.length>=5,'controles ausentes '+JSON.stringify(bounds));
     for(const c of bounds.controls){
      assert.ok(c.left>=bounds.view.left-1&&c.right<=bounds.view.right+1&&c.top>=bounds.view.top-1&&c.bottom<=bounds.view.bottom+1,'controle cortado '+JSON.stringify({full,zoom,c,bounds}));
