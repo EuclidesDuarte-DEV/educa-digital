@@ -515,20 +515,25 @@ const LIA_MODEL_FILES=new Set([
 async function servirModeloLia(path){
  if(!LIA_MODEL_FILES.has(path))return erro(404,'Arquivo neural não permitido.');
  const source='https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve/main/'+path;
- try{
-  const upstream=await fetch(source,{redirect:'follow',cf:{cacheEverything:true,cacheTtl:86400}});
-  if(!upstream.ok||!upstream.body){
+ // Não guardar respostas de erro ou redirecionamentos expirados no cache.
+ for(let attempt=0;attempt<3;attempt++){
+  try{
+   const url=attempt===0?source:source+'?download=true'+(attempt===2?'&retry=2':'');
+   const upstream=await fetch(url,{redirect:'follow',cf:{cacheEverything:true,cacheTtlByStatus:{'200':86400,'201-599':-1}}});
+   if(upstream.status===200&&upstream.body)return new Response(upstream.body,{status:200,headers:{
+    'Content-Type':path.endsWith('.json')?'application/json':'application/octet-stream',
+    'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'
+   }});
    console.warn('Lia neural: arquivo remoto indisponível',path,upstream.status);
-   return erro(503,'O arquivo neural está temporariamente indisponível.');
-  }
-  return new Response(upstream.body,{status:200,headers:{
-   'Content-Type':path.endsWith('.json')?'application/json':'application/octet-stream',
-   'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'
-  }});
- }catch(err){
-  console.warn('Lia neural: falha no espelho',path,String(err?.message||'falha').slice(0,100));
-  return erro(503,'Não foi possível preparar a voz neural.');
+   try{await upstream.body?.cancel();}catch(_){}
+   if(![403,408,429,500,502,503,504].includes(upstream.status))break;
+  }catch(err){console.warn('Lia neural: falha no espelho',path,String(err?.message||'falha').slice(0,100));}
+  if(attempt<2)await new Promise(resolve=>setTimeout(resolve,250*(attempt+1)));
  }
+ const unavailable=erro(503,'O arquivo neural está temporariamente indisponível.');
+ unavailable.headers.set('Cache-Control','no-store');
+ unavailable.headers.set('Retry-After','3');
+ return unavailable;
 }
 
 // V112.06: apenas dois arquivos públicos do Paradee-8M Pt-BR (Apache-2.0).
