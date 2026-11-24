@@ -115,10 +115,20 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
 
  test('V112.26 Web: runtime estável CPU WASM, fila de inferência e clipe único durante fala',()=>{
  assert.match(model,/ort\.webgpu\.min\.mjs/);assert.match(model,/executionProviders:\['wasm'\]/);assert.match(model,/queue=queue\.catch/);
- assert.match(neural,/runtime=wasm&fix=11226/);
+ assert.match(neural,/lia-paradee-wasm-v11227\.js\?v=11227/);
  assert.match(video,/const target=talkPlayers\[0\]/);
  assert.match(video,/stopGroup\(talkPlayers\.slice\(1\),true\)/);
  assert.match(video,/analyser\.getByteTimeDomainData\(data\)/);
  assert.match(video,/motion=11226|rms<\.008/);
  assert.match(html,/motion=11226/);
+});
+
+ test('V112.27 Web: runtime estático exclusivamente WASM, descarte de worker e sem JSEP',()=>{
+ const cpu=read('public/static/js/lia-paradee-wasm-v11227.js');
+ assert.match(cpu,/import \* as ort from 'https:\/\/cdn\.jsdelivr\.net\/npm\/onnxruntime-web@1\.22\.0\/dist\/ort\.wasm\.bundle\.min\.mjs'/);
+ assert.doesNotMatch(cpu,/ort\.webgpu|\.jsep\.|await import\(/);
+ assert.match(cpu,/numThreads=1/);assert.match(cpu,/wasm\.proxy=false/);
+ assert.match(cpu,/queue=queue\.catch/);assert.match(neural,/worker!==current/);
+ assert.match(neural,/18000/);assert.match(video,/pagehide/);
+ assert.match(html,/memory=11227/);
 });
