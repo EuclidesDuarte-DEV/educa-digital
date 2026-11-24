@@ -63,7 +63,7 @@
 <link rel="stylesheet" href="/static/css/mobile-safe-header-v11231.css?v=11231">
 <link rel="stylesheet" href="/static/css/sms-responsive-v11234.css?v=11234">
 <link rel="stylesheet" href="/static/css/gov-level-responsive-v11235.css?v=11235">
-<link rel="stylesheet" href="/static/css/learning-cards-v11236.css?v=11237">
+<link rel="stylesheet" href="/static/css/learning-cards-v11236.css?v=11242">
 <link rel="stylesheet" href="/static/css/home-responsive-v11238.css?v=11241">
 </head>
 <body class="training-page home-training-page">
@@ -338,7 +338,41 @@
                     <strong id="learningGreeting">O que você quer aprender hoje?</strong>
                     
                   </header>
-<button class="learning-featured" type="button" data-learning-topic="pix">
+<button class="free-mode-entry" id="freeModeEntry" type="button">
+                    <span class="free-entry-copy">
+                      <small class="free-entry-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m2 7 5 4 5-7 5 7 5-4-3 12H5L2 7Z"/><path d="M6 21h12v1H6z"/></svg>Carro-chefe</small>
+                      <strong>Modo Livre</strong>
+                      <em>Treine WhatsApp, SMS e chamadas com IA.</em>
+                    </span>
+                    <span class="free-entry-art" aria-hidden="true">
+                      <svg viewBox="0 0 120 136" fill="none" focusable="false">
+                        <g transform="rotate(13 66 69)">
+                          <rect x="36" y="12" width="63" height="110" rx="13" fill="#9fc3ec" opacity=".65"/>
+                          <rect x="31" y="7" width="63" height="110" rx="13" fill="#f7fbff" stroke="#bfd8f5" stroke-width="3"/>
+                          <rect x="36" y="14" width="53" height="96" rx="9" fill="#d9ecff"/>
+                          <rect x="51" y="10" width="23" height="5" rx="2.5" fill="#91b5df"/>
+                          <rect x="45" y="40" width="35" height="7" rx="3.5" fill="#fff"/>
+                          <rect x="45" y="54" width="28" height="7" rx="3.5" fill="#fff"/>
+                          <rect x="45" y="87" width="34" height="12" rx="6" fill="#b9d7f9"/>
+                        </g>
+                        <g transform="rotate(-8 27 38)">
+                          <rect x="6" y="19" width="42" height="40" rx="11" fill="#0e9d65"/>
+                          <image href="/static/icons/whatsapp.svg" x="9" y="22" width="36" height="34"/>
+                        </g>
+                        <g transform="rotate(12 95 61)">
+                          <path d="M76 41h29a9 9 0 0 1 9 9v22a9 9 0 0 1-9 9h-8l-7 7v-7H76a9 9 0 0 1-9-9V50a9 9 0 0 1 9-9Z" fill="#0868ee"/>
+                          <circle cx="79" cy="61" r="3" fill="#fff"/><circle cx="90" cy="61" r="3" fill="#fff"/><circle cx="101" cy="61" r="3" fill="#fff"/>
+                        </g>
+                        <g transform="rotate(10 23 88)">
+                          <rect x="5" y="71" width="38" height="38" rx="10" fill="#2587f5"/>
+                          <path d="M17 79c-4 1-5 5-2 10 3 6 8 11 14 12 4 0 7-3 5-6l-5-3-4 3c-4-2-7-5-8-9l3-3-3-4Z" fill="#fff"/>
+                        </g>
+                        <path d="m105 7 3-6m6 12 5-3m-10 10 8 1" stroke="#ffe086" stroke-width="3" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <span class="free-entry-chevron" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  </button>
+                  <button class="learning-featured" type="button" data-learning-topic="pix">
                     <span class="learning-featured-icon" aria-hidden="true">
                       <img src="/static/icons/pix.svg" alt="">
                     </span>
@@ -378,11 +412,7 @@
                       <span class="learning-card-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                     </button>
                   </div>
-                  <button class="free-mode-entry" id="freeModeEntry" type="button">
-                    <span class="free-entry-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 17h4M10 7h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-                    <span class="free-entry-copy"><small>SIMULAÇÕES DE GOLPES</small><strong>Modo Livre</strong><em>Treine WhatsApp, SMS e chamadas com IA.</em></span>
-                    <span class="free-entry-chevron" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                  </button>
+                  
                   
                   <label class="free-learning-consent" style="display:flex;gap:10px;align-items:flex-start;max-width:100%;font-size:0.82rem;line-height:1.4;padding:12px 8px">
                     <input type="checkbox" id="freeLearningConsent" style="margin-top:3px;width:19px;height:19px;flex:none">
@@ -1436,7 +1466,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/static/sw.js?v=11223&lia=stable&voicepriority=11224&autoplay=11225&motion=11226&memory=11227&liveavatar=11228&cleanchat=11229&zoomfit=11230&nativeheader=11231&normalfit=11233&smsfit=11234&govfit=11235&cards=11237&home=11241').catch(() => {});
+        navigator.serviceWorker.register('/static/sw.js?v=11223&lia=stable&voicepriority=11224&autoplay=11225&motion=11226&memory=11227&liveavatar=11228&cleanchat=11229&zoomfit=11230&nativeheader=11231&normalfit=11233&smsfit=11234&govfit=11235&cards=11242&home=11241').catch(() => {});
       });
     }
   </script>

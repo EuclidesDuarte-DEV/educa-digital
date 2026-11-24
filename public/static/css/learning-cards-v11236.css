@@ -77,3 +77,98 @@ html.a11y-high-contrast #phoneScreen #learningView :is(.learning-featured-copy,.
 html.a11y-distinct-colors #phoneScreen #learningView .learning-grid>.learning-card{background:#fff!important;color:#163d72!important;border:2px solid #163d72!important;}
 html.a11y-high-contrast #phoneScreen #learningView .learning-grid>.learning-card{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
 html.a11y-high-contrast #phoneScreen #learningView .learning-card>small{color:#fff!important;}
+
+/* V112.42 — Modo Livre em primeiro lugar, conforme referência aprovada.
+   O botão original mantém seu ID/evento; a ilustração é decorativa. */
+#phoneScreen #learningView #freeModeEntry{
+ position:relative!important;isolation:isolate;display:grid!important;
+ grid-template-columns:minmax(0,1fr) minmax(0,33%)!important;
+ grid-template-rows:auto!important;gap:8px!important;align-items:center!important;
+ padding:clamp(14px,4.5cqw,20px)!important;min-height:clamp(158px,51cqw,210px)!important;
+ margin:0 0 12px!important;border:1px solid #1559ad!important;border-radius:25px!important;
+ color:#fff!important;background:radial-gradient(ellipse at 95% 4%,#1364bb 0%,transparent 56%),linear-gradient(145deg,#103b77 5%,#0c3470 60%,#075cae 100%)!important;
+ box-shadow:0 6px 18px rgba(16,64,128,.16)!important;overflow:hidden!important;
+}
+#phoneScreen #learningView #freeModeEntry::before{
+ content:"";position:absolute;z-index:-1;pointer-events:none;inset:auto -25% -48% -20%;
+ height:76%;background:#146ac4;transform:rotate(-12deg);border-radius:50%;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-copy{
+ grid-column:1;grid-row:1;display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;justify-content:center!important;gap:9px!important;
+ min-width:0!important;position:relative!important;z-index:1;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-badge{
+ position:static!important;clip-path:none!important;width:auto!important;height:auto!important;
+ display:inline-flex!important;align-items:center!important;gap:5px!important;
+ border:0!important;margin:0!important;padding:5px 9px!important;border-radius:999px!important;
+ background:#fff0b5!important;color:#493a1a!important;font-size:calc(11px * var(--ed-font-factor,1))!important;
+ font-weight:750!important;line-height:1.2!important;white-space:normal!important;overflow:visible!important;max-width:100%!important;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-badge svg{width:14px;height:14px;flex:none;color:#a15c00;}
+#phoneScreen #learningView #freeModeEntry .free-entry-copy strong{
+ font-size:calc(clamp(23px,7.6cqw,31px) * var(--ed-font-factor,1))!important;
+ line-height:1.12!important;letter-spacing:-.02em!important;font-weight:850!important;
+ color:#fff!important;margin:0!important;overflow-wrap:normal!important;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-copy em{
+ font-size:calc(14px * var(--ed-font-factor,1))!important;line-height:1.45!important;
+ font-weight:550!important;color:#fff!important;margin:0!important;overflow-wrap:anywhere!important;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-art{
+ grid-column:2;grid-row:1;display:block!important;align-self:start!important;
+ width:100%!important;min-width:0!important;max-width:134px!important;
+ margin:0 auto 43px!important;pointer-events:none;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-art>svg{display:block;width:100%;height:auto;overflow:visible;}
+#phoneScreen #learningView #freeModeEntry .free-entry-chevron{
+ grid-column:2;grid-row:1;align-self:end!important;justify-self:end!important;
+ width:44px!important;height:44px!important;background:#fff!important;
+ color:#103b77!important;z-index:2;
+}
+#phoneScreen #learningView #freeModeEntry .free-entry-chevron svg{width:24px!important;height:24px!important;}
+#phoneScreen #learningView :is(.learning-featured,.learning-grid>.learning-card){
+ grid-template-columns:38px minmax(0,1fr) 30px!important;grid-template-rows:auto auto!important;
+ gap:3px 10px!important;padding:12px!important;margin:0!important;min-height:70px!important;
+}
+#phoneScreen #learningView .learning-featured{margin-bottom:10px!important;}
+#phoneScreen #learningView .learning-grid{gap:10px!important;}
+#phoneScreen #learningView :is(.learning-featured-icon,.learning-card-icon){grid-row:1/3;align-self:center!important;}
+#phoneScreen #learningView :is(.learning-featured-copy>span,.learning-card>small){grid-column:2;grid-row:2;}
+#phoneScreen #learningView :is(.learning-featured-copy,.learning-card)>strong{font-size:calc(18px * var(--ed-font-factor,1))!important;}
+#phoneScreen #learningView :is(.learning-featured-copy>span,.learning-card>small){font-size:calc(13px * var(--ed-font-factor,1))!important;}
+#phoneScreen #learningView #freeModeEntry:focus-visible{outline:3px solid #fff!important;outline-offset:-5px!important;box-shadow:0 0 0 3px #164f96!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen #learningView #freeModeEntry{
+ grid-template-columns:minmax(0,1fr) 44px!important;min-height:0!important;
+}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen #learningView #freeModeEntry .free-entry-art{display:none!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen #learningView #freeModeEntry .free-entry-chevron{align-self:center!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen #learningView :is(.learning-featured,.learning-grid>.learning-card){grid-template-columns:32px minmax(0,1fr) 30px!important;}
+html:is(.a11y-text-large,.a11y-text-extra) #phoneScreen #learningView :is(.learning-featured-icon,.learning-card-icon){width:32px!important;height:32px!important;}
+html.a11y-high-contrast #phoneScreen #learningView #freeModeEntry{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
+html.a11y-distinct-colors #phoneScreen #learningView #freeModeEntry{background:#06418d!important;border:2px solid #fff!important;}
+html:is(.a11y-high-contrast,.a11y-distinct-colors) #phoneScreen #learningView #freeModeEntry::before{display:none!important;}
+@media(forced-colors:active){
+ #phoneScreen #learningView #freeModeEntry{border:2px solid ButtonText!important;}
+ #phoneScreen #learningView #freeModeEntry::before,#phoneScreen #learningView #freeModeEntry .free-entry-art{display:none!important;}
+}
+
+/* V112.42 — largura útil real, inclusive quando a barra de rolagem ocupa espaço. */
+#phoneScreen #learningView .learning-surface{
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+}
+#phoneScreen #learningView .learning-surface > :is(.learning-header,.learning-featured,.learning-grid,.free-mode-entry,.free-learning-consent,.free-example-consent,.learning-account-options){
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+ margin-left:0!important;margin-right:0!important;
+}
+#phoneScreen #learningView .learning-surface > :is(.learning-featured,.free-mode-entry,.learning-grid){
+ position:relative!important;inset:auto!important;transform:none!important;
+}
+#phoneScreen #learningView .learning-surface :is(.free-learning-consent,.free-example-consent)>span{
+ min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;
+}
+#phoneScreen #learningView .learning-header strong{overflow-wrap:anywhere!important;max-width:100%!important;}
+#phoneScreen #learningView #freeModeEntry .free-entry-copy strong{overflow-wrap:anywhere!important;}
+#phoneScreen #learningView #freeModeEntry .free-entry-badge{box-sizing:border-box!important;}
+#phoneScreen #learningView .learning-featured-copy>small{left:0!important;top:0!important;}
