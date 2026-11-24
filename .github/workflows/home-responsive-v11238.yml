@@ -25,3 +25,9 @@ jobs:
       - run: |
           python3 -m http.server 8789 --directory public >/tmp/home-server.log 2>&1 &
           node scripts/validar-home-responsive-v11238.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: home-v11241-capturas
+          path: artifacts/home-v11241/
+          if-no-files-found: ignore
