@@ -175,7 +175,7 @@ function stopPlayer(v,clearSource=false){
  if(!v)return;
  v.onended=null;v.ontimeupdate=null;v.onerror=null;v.onplaying=null;
  v.pause();v.classList.remove('lia-clip-visible');v.hidden=true;v.loop=false;
- if(clearSource&&v.hasAttribute('src')){v.removeAttribute('src');v.load();}
+ if(clearSource&&(typeof v.hasAttribute!=='function'||v.hasAttribute('src'))){v.removeAttribute('src');v.load();}
 }
 function stopGroup(players,clearSource=false){for(const v of players)stopPlayer(v,clearSource);}
 function moveTo(kind){
@@ -546,7 +546,7 @@ async function playDynamicKokoroWebAudio(result,text,serial,voiceLabel='Kokoro p
   source.buffer=buffer;gain.gain.value=outputMuted?0:1;
   // Leve: controlar o clipe pelo nível real do WAV, sem novo decodificador.
   let analyser=null;
-  if(lightNeuralVisual()){
+  if(typeof ctx.createAnalyser==='function'&&lightNeuralVisual()){
    analyser=ctx.createAnalyser();analyser.fftSize=256;
    source.connect(analyser);analyser.connect(gain);
   }else source.connect(gain);
