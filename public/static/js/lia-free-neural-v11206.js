@@ -4,12 +4,17 @@
 (()=>{
  'use strict';
  let worker=null,ready=false,loading=null,resolveReady=null,rejectReady=null,seq=0;
- let lastError='',lastMs=null;const pending=new Map();
+ let lastError='',lastMs=null,provider='',idleTimer=null;const pending=new Map();
+ const isWeb=()=>!document.documentElement?.dataset?.educaNativePlatform&&(!document.documentElement?.dataset?.educaPlatform||document.documentElement.dataset.educaPlatform==='web');
+ const constrained=()=>isWeb()&&!!window.EducaLiaWarm?.isMemorySensitive?.();
+ function cancelIdle(){clearTimeout(idleTimer);idleTimer=null;}
+ function releaseIdle(){cancelIdle();if(!constrained())return;idleTimer=setTimeout(()=>{if(!pending.size&&!loading)reset('');},18000);}
+
  const progress=stage=>{
   try{window.dispatchEvent(new CustomEvent('educa-lia-free-neural-progress',{detail:{stage}}));}catch(_){}
  };
  function reset(message){
-  lastError=message;ready=false;loading=null;
+  cancelIdle();lastError=message;ready=false;loading=null;provider='';
   if(rejectReady)rejectReady(Error(message));
   rejectReady=null;resolveReady=null;
   for(const item of pending.values()){clearTimeout(item.timer);item.reject(Error(message));}
@@ -19,22 +24,25 @@
  }
  function ensureWorker(){
   if(worker)return worker;
-  const web=document.documentElement?.dataset?.educaPlatform==='web'&&!document.documentElement?.dataset?.educaNativePlatform;
-  worker=new Worker('/static/js/lia-paradee-worker-v11206.js?v=11206'+(web?'&runtime=wasm&fix=11226':''),{type:'module'});
+  const web=isWeb();
+  // Web usa entrada estática WASM-only, nativos preservam o motor anterior.
+  worker=new Worker(web?'/static/js/lia-paradee-wasm-v11227.js?v=11227':'/static/js/lia-paradee-worker-v11206.js?v=11206',{type:'module'});
+  const current=worker;
   worker.onmessage=({data})=>{
+   if(worker!==current)return;
    if(data.type==='progress'){progress(data.stage||'Preparando voz…');return;}
    if(data.type==='ready'){
-    ready=true;lastError='';
+    ready=true;lastError='';provider=data.provider||'';
     const resolve=resolveReady;resolveReady=null;rejectReady=null;
     resolve?.({provider:data.provider,voice:data.voice});
-    progress('Voz neural brasileira pronta.');return;
+    progress('Voz neural brasileira pronta.');releaseIdle();return;
    }
    if(data.type==='audio'){
     const req=pending.get(data.id);if(!req)return;
     pending.delete(data.id);clearTimeout(req.timer);
     lastMs=Number(data.elapsed_ms)||null;
     const blob=new Blob([data.buffer],{type:'audio/wav'});
-    req.resolve({blob,elapsed_ms:lastMs,seconds:data.seconds,voice:'Dora · Paradee-8M'});
+    req.resolve({blob,elapsed_ms:lastMs,seconds:data.seconds,voice:'Dora · Paradee-8M'});releaseIdle();
     return;
    }
    if(data.type==='error'){
@@ -43,30 +51,30 @@
     if(req){pending.delete(data.id);clearTimeout(req.timer);req.reject(Error(data.message||'Falha na voz neural.'));}
    }
   };
-  worker.onerror=e=>{e.preventDefault();reset('O motor neural gratuito não pôde iniciar neste navegador.');};
+  worker.onerror=e=>{e.preventDefault();if(worker===current)reset('O motor neural gratuito não pôde iniciar neste navegador: '+String(e.message||'erro').slice(0,160));};
   return worker;
  }
  function prepare(){
+  cancelIdle();
   if(ready)return Promise.resolve({voice:'Dora · Paradee-8M'});
   if(loading)return loading;
   let timeout=null;
-  loading=new Promise((resolve,reject)=>{
+  const request=new Promise((resolve,reject)=>{
    resolveReady=resolve;rejectReady=reject;
-   timeout=setTimeout(()=>reset('O carregamento inicial da voz neural demorou demais.'),30000);
+   timeout=setTimeout(()=>{if(loading===request)reset('O carregamento inicial da voz neural demorou demais.');},30000);
    try{ensureWorker().postMessage({type:'prepare'});}catch(e){reset(String(e?.message||e));}
-  }).then(v=>{clearTimeout(timeout);loading=null;return v;},e=>{
-   clearTimeout(timeout);loading=null;throw e;
+  }).then(v=>{clearTimeout(timeout);if(loading===request)loading=null;return v;},e=>{
+   clearTimeout(timeout);if(loading===request)loading=null;throw e;
   });
-  return loading;
+  loading=request;return request;
  }
  async function speak(text,{speed=1.03}={}){
-  await prepare();
+  await prepare();cancelIdle();
   if(!ready)throw Error('Modelo neural não está pronto.');
   const id=++seq;
   return new Promise((resolve,reject)=>{
    const timer=setTimeout(()=>{
-    pending.delete(id);
-    reject(Error('O áudio gratuito demorou a ser gerado. Tente novamente.'));
+    if(pending.has(id))reset('O áudio gratuito demorou a ser gerado. Tente novamente.');
    },16000);
    pending.set(id,{resolve,reject,timer});
    try{worker.postMessage({type:'speak',id,text:String(text).slice(0,300),speed});}
@@ -79,6 +87,6 @@
   reset(reason);
  }
  window.EducaLiaFreeNeural=Object.freeze({
-  prepare,speak,stop,isReady:()=>ready,getDiagnostics:()=>({ready,lastError,lastSynthesisMs:lastMs})
+  prepare,speak,stop,release:()=>{if(!pending.size&&!loading)reset('');},isReady:()=>ready,getDiagnostics:()=>({ready,lastError,lastSynthesisMs:lastMs,provider,pending:pending.size})
  });
 })();
