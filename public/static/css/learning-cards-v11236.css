@@ -1,6 +1,6 @@
 /* V112.36 — cards Pix e Modo Livre: identidade Educa+ e layout em duas linhas.
    Preserva a ordem, os ícones originais, os eventos e os demais assuntos. */
-#phoneScreen #learningView :is(.learning-featured,.free-mode-entry){
+#phoneScreen #learningView :is(.learning-featured,.free-mode-entry,.learning-card){
  display:grid!important;grid-template-columns:38px minmax(0,1fr) 30px!important;
  grid-template-rows:auto auto!important;column-gap:10px!important;row-gap:10px!important;
  align-items:center!important;box-sizing:border-box!important;
@@ -21,19 +21,19 @@
  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
  overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;border:0!important;
 }
-#phoneScreen #learningView :is(.learning-featured-icon,.free-entry-icon){
+#phoneScreen #learningView :is(.learning-featured-icon,.free-entry-icon,.learning-card-icon){
  grid-column:1;grid-row:1;display:grid!important;place-items:center!important;
  width:38px!important;height:38px!important;min-width:0!important;max-width:100%!important;
  border-radius:11px!important;margin:0!important;background:#fff!important;color:#174578!important;
 }
 #phoneScreen #learningView .learning-featured-icon img{width:27px!important;height:27px!important;object-fit:contain!important;}
 #phoneScreen #learningView .free-entry-icon svg{width:23px!important;height:23px!important;}
-#phoneScreen #learningView :is(.learning-featured-copy,.free-entry-copy)>strong{
+#phoneScreen #learningView :is(.learning-featured-copy,.free-entry-copy,.learning-card)>strong{
  grid-column:2;grid-row:1;min-width:0!important;max-width:100%!important;
  font-size:calc(19px * var(--ed-font-factor,1))!important;font-weight:750!important;
  line-height:1.25!important;margin:0!important;overflow-wrap:anywhere!important;
 }
-#phoneScreen #learningView :is(.learning-featured-copy>span,.free-entry-copy>em){
+#phoneScreen #learningView :is(.learning-featured-copy>span,.free-entry-copy>em,.learning-card>small){
  grid-column:1/3;grid-row:2;display:block!important;min-width:0!important;max-width:100%!important;
  font-size:calc(14px * var(--ed-font-factor,1))!important;
  font-weight:450!important;font-style:normal!important;line-height:1.45!important;
@@ -41,18 +41,39 @@
 }
 #phoneScreen #learningView .learning-featured-copy :is(strong,span){color:#103f85!important;}
 #phoneScreen #learningView .free-entry-copy :is(strong,em){color:#fff!important;}
-#phoneScreen #learningView :is(.learning-arrow,.free-entry-chevron){
+#phoneScreen #learningView :is(.learning-arrow,.free-entry-chevron,.learning-card-arrow){
  grid-column:3;grid-row:1/3;align-self:center!important;justify-self:center!important;
  display:grid!important;place-items:center!important;width:30px!important;height:30px!important;
  margin:0!important;padding:0!important;border-radius:50%!important;background:rgba(21,93,198,.09);
  color:inherit!important;font-size:0!important;transform:none!important;
 }
 #phoneScreen #learningView .free-entry-chevron{background:rgba(255,255,255,.13);}
-#phoneScreen #learningView :is(.learning-arrow,.free-entry-chevron) svg{width:18px!important;height:18px!important;}
-html.a11y-distinct-colors #phoneScreen #learningView :is(.learning-featured,.free-mode-entry){background:#06418d!important;color:#fff!important;border:2px solid #163d72!important;}
+#phoneScreen #learningView :is(.learning-arrow,.free-entry-chevron,.learning-card-arrow) svg{width:18px!important;height:18px!important;}
+html.a11y-distinct-colors #phoneScreen #learningView :is(.learning-featured,.free-mode-entry,.learning-card){background:#06418d!important;color:#fff!important;border:2px solid #163d72!important;}
 html.a11y-distinct-colors #phoneScreen #learningView .learning-featured-copy :is(strong,span){color:#fff!important;}
-html.a11y-high-contrast #phoneScreen #learningView :is(.learning-featured,.free-mode-entry){background:#000!important;color:#fff!important;border:2px solid #fff!important;}
+html.a11y-high-contrast #phoneScreen #learningView :is(.learning-featured,.free-mode-entry,.learning-card){background:#000!important;color:#fff!important;border:2px solid #fff!important;}
 html.a11y-high-contrast #phoneScreen #learningView :is(.learning-featured-copy,.free-entry-copy) :is(strong,span,em){color:#fff!important;}
 @media(forced-colors:active){
- #phoneScreen #learningView :is(.learning-featured,.free-mode-entry){border:1px solid ButtonText!important;}
+ #phoneScreen #learningView :is(.learning-featured,.free-mode-entry,.learning-card){border:1px solid ButtonText!important;}
 }
+
+/* V112.37 — todos os assuntos seguem o mesmo card horizontal em todos os canais. */
+#phoneScreen #learningView .learning-grid{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ gap:12px!important;width:100%!important;min-width:0!important;
+ margin:0!important;padding:0!important;
+}
+#phoneScreen #learningView .learning-grid>.learning-card{
+ margin:0!important;background:#fff!important;border:1px solid #dce6f1!important;
+ color:#174578!important;box-shadow:0 4px 13px rgba(23,55,101,.07)!important;
+}
+#phoneScreen #learningView .learning-card>strong{color:inherit!important;}
+#phoneScreen #learningView .learning-card>small{color:#425a73!important;}
+#phoneScreen #learningView .learning-card-icon{background:#edf4fc!important;}
+#phoneScreen #learningView .learning-card-icon :is(img,svg){
+ width:27px!important;height:27px!important;max-width:100%!important;object-fit:contain!important;
+}
+#phoneScreen #learningView .learning-card-shield svg{fill:#155dc6!important;}
+html.a11y-distinct-colors #phoneScreen #learningView .learning-grid>.learning-card{background:#fff!important;color:#163d72!important;border:2px solid #163d72!important;}
+html.a11y-high-contrast #phoneScreen #learningView .learning-grid>.learning-card{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
+html.a11y-high-contrast #phoneScreen #learningView .learning-card>small{color:#fff!important;}
