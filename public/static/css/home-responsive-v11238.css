@@ -89,6 +89,14 @@ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus)
   overflow:visible!important;
  }
  html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware{
+  --home-phone-available:calc(100dvh - var(--home-header-height,74px) - var(--home-preview-extras,52px) - 40px);
+  width:min(410px,100%,max(270px,calc(var(--home-phone-available) * .4568528)))!important;
+  height:clamp(390px,var(--home-phone-available),897px)!important;
+  max-height:none!important;aspect-ratio:auto!important;
+ }
+ /* Somente o launcher inicial usa a moldura original alta. As telas de
+    atividades e conclusão conservam a geometria ajustada à janela. */
+ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware:has(#homeView.is-active){
   width:min(100%,clamp(320px,25vw,410px))!important;
   height:auto!important;max-height:none!important;aspect-ratio:9/19.7!important;
  }
