@@ -1,6 +1,6 @@
 import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
-const cases=[['web',1280,550],['web',1321,550],['web',1366,610],['web',1280,600],['web',1600,760],['web',1920,1080],['web',1024,600],['web',768,1024],['web',320,568],['android',360,800],['ios',390,844]];
+const cases=[['web',1264,475],['web',1643,712],['web',1280,550],['web',1321,550],['web',1366,610],['web',1280,600],['web',1600,760],['web',1920,1080],['web',1024,600],['web',768,1024],['web',320,568],['android',360,800],['ios',390,844]];
 for(const engine of [chromium,webkit]){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
@@ -38,22 +38,30 @@ for(const engine of [chromium,webkit]){
      assert.ok(a.right<=c.left+1||c.right<=a.left+1||a.bottom<=c.top+1||c.bottom<=a.top+1,'aplicativos sobrepostos '+JSON.stringify({a,c}));
     }
     for(let i=1;i<launcher.favorites.length;i++)assert.ok(launcher.favorites[i-1].right<=launcher.favorites[i].left+1,'favoritos sobrepostos');
-    if(width>=901&&size==='normal')assert.ok(b.phone.width>=269,'moldura estreita');
-    console.log('HOME_LAUNCHER_V11239_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,phone:b.phone,grid:launcher.grid,dock:launcher.dock,scroll:launcher.scroll,client:launcher.client}));
+    if(width>=901&&size==='normal'){
+     assert.ok(b.phone.width>=319,'moldura estreita');
+     assert.ok(Math.abs(b.phone.height/b.phone.width-19.7/9)<.04,'proporção original da moldura perdida '+JSON.stringify(b.phone));
+     assert.ok(launcher.tiles.slice(0,4).every(t=>Math.abs(t.tile.top-launcher.tiles[0].tile.top)<2),'quatro aplicativos na primeira linha');
+     assert.ok(launcher.tiles.slice(4,8).every(t=>Math.abs(t.tile.top-launcher.tiles[4].tile.top)<2),'quatro aplicativos na segunda linha');
+     assert.ok(launcher.tiles.slice(8,12).every(t=>Math.abs(t.tile.top-launcher.tiles[8].tile.top)<2),'quatro aplicativos na terceira linha');
+     assert.ok(launcher.scroll<=launcher.client+2,'grade normal cortada ou rolando internamente '+JSON.stringify(launcher));
+    }
+    console.log('HOME_LAUNCHER_V11240_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,phone:b.phone,grid:launcher.grid,dock:launcher.dock,scroll:launcher.scroll,client:launcher.client}));
     assert.ok(b.cta.height>=65&&b.cta.width>0,'CTA pequeno '+JSON.stringify(b));
     assert.ok(b.label.right<=b.cta.right+1&&b.label.bottom<=b.cta.bottom+1,'CTA cortado '+JSON.stringify(b));
     assert.ok(b.scroll<=width+2,'overflow horizontal '+JSON.stringify(b));
     assert.ok(b.phone.left>=-1&&b.phone.right<=width+1,'moldura cortada '+JSON.stringify(b));
     assert.ok(Math.abs((b.phone.left+b.phone.right-b.wrap.left-b.wrap.right)/2)<=2,'moldura fora do centro '+JSON.stringify(b));
     if(platform==='web'&&width>=901&&size==='normal'){
-     assert.ok(b.phone.top>=b.header.bottom-1&&b.phone.bottom<=height+1,'moldura fora da área visível '+JSON.stringify(b));
+     assert.ok(b.phone.top>=b.header.bottom-1,'moldura sobre o cabeçalho '+JSON.stringify(b));
      assert.ok(b.cta.bottom<=height+1,'CTA abaixo da dobra '+JSON.stringify(b));
+     if(b.phone.bottom>height+1)assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight>=document.querySelector('#phoneHardware').getBoundingClientRect().bottom+scrollY-1),'moldura não acessível por rolagem');
     }
     if(previous&&size!=='normal')for(const k of ['title','subtitle','label'])assert.ok(b[k].font>previous[k].font*1.1,'fonte não aumentou '+k+' '+JSON.stringify({previous,b}));
     if(size==='large')assert.ok(b.large);
     if(size==='extra')assert.ok(b.extra);
     previous=b;
-    console.log('HOME_RESPONSIVE_V11239_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,font:b.title.font,phone:b.phone}));
+    console.log('HOME_RESPONSIVE_V11240_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,font:b.title.font,phone:b.phone}));
    }
   }finally{await page.close();}
  }
