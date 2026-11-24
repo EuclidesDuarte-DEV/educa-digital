@@ -16,7 +16,7 @@ test('[all] novo CSS atualizado para mockup e fullscreen sem reescalar o aparelh
   assert.match(html,/responsive-v11173\.css\?v=11173/);
   assert.match(sw,/educa-cf(?:1117(?:3-all-screens-reflow|4-whatsapp-navigation|5-free-mode-navigation)|11223-lia-stable-navigation)/);
   assert.match(sw,/responsive-v11173\.css/);
-  assert.match(html,/sw\.js\?v=11160&layout=1117(?:3|4|5)/);
+  assert.match(html,/sw\.js\?v=(?:11160&layout=1117(?:3|4|5)|11223&lia=stable)/);
   assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g,''),/(?:^|[;{])\s*(?:zoom|transform)\s*:/);
   assert.match(css,/container-type:inline-size/);
   assert.match(css,/@container educa-chat/);
