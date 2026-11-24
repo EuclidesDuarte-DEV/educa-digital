@@ -59,12 +59,21 @@ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-
  html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-selfie{max-height:20%!important}
 }
 
-/* Preservar a proporção também no modo normal focado, em janelas baixas. */
-@media(min-width:701px){
- html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-fullscreen-active) body.prototype-focus.lia-call-visible #phoneStage #phoneHardware{
-  max-height:calc(100dvh - 110px)!important;
-  width:min(420px,calc(100vw - 30px),calc(max(0px,100dvh - 110px) * 0.45685))!important;
-  height:auto!important;min-height:0!important;min-width:0!important;aspect-ratio:9/19.7!important;
+/* V112.32: no modo normal desktop os controles externos ficam nas
+   laterais. Não descontar uma faixa superior de 110px da moldura.
+   A altura útil real determina a escala; preservar a proporção original. */
+@media(min-width:701px) and (min-height:481px){
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-mobile-app):not(.educa-fullscreen-active) body.prototype-focus.lia-call-visible #phoneStage{
+  box-sizing:border-box!important;width:100%!important;height:100dvh!important;
+  min-height:0!important;padding:12px 0!important;margin:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+ }
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-mobile-app):not(.educa-fullscreen-active) body.prototype-focus.lia-call-visible #phoneStage #phoneHardware{
+  box-sizing:border-box!important;
+  width:min(480px,calc(100vw - 320px),calc(max(0px,100dvh - 24px) * 0.45685))!important;
+  height:auto!important;max-height:calc(100dvh - 24px)!important;
+  min-height:0!important;min-width:0!important;max-width:none!important;
+  aspect-ratio:9/19.7!important;margin:0 auto!important;flex:0 0 auto!important;
  }
 }
 
