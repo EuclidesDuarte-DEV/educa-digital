@@ -25,7 +25,9 @@ for(const engine of [chromium,webkit]){
     assert.ok(b.hero.height>b.secondary[0].card.height,'destaque menor que card secundário');
     assert.ok(inside(b.copy,b.hero)&&inside(b.arrow,b.hero)&&inside(b.badge,b.hero),'conteúdo do destaque cortado '+JSON.stringify(b));
     assert.ok(b.copy.right<=b.arrow.left+1&&b.title.bottom<=b.desc.top+1,'destaque sobreposto '+JSON.stringify(b));
-    assert.ok(b.hero.bottom<=b.secondary[0].card.top+1&&b.scroll<=b.client+2,'overflow da lista');
+    assert.ok(b.hero.bottom<=b.secondary[0].card.top+1,'ordem visual incorreta '+JSON.stringify({engine:engine.name(),platform,width,height,size,hero:b.hero,pix:b.secondary[0].card}));
+    assert.ok(b.scroll<=b.client+2,'overflow horizontal '+JSON.stringify({engine:engine.name(),platform,width,height,size,scroll:b.scroll,client:b.client,hero:b.hero,surface:b.surface}));
+    assert.ok(b.hero.left>=b.surface.left-1&&b.hero.right<=b.surface.right+1&&b.secondary.every(c=>c.card.left>=b.surface.left-1&&c.card.right<=b.surface.right+1),'card fora da área útil');
     if(size==='normal')assert.ok(b.art.width>0&&inside(b.art,b.hero)&&b.art.bottom<=b.arrow.top+1,'ilustração invade seta '+JSON.stringify(b));
     else assert.equal(b.art.width,0,'arte decorativa deve liberar espaço para fonte ampliada');
     for(const c of b.secondary){

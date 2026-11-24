@@ -152,3 +152,23 @@ html:is(.a11y-high-contrast,.a11y-distinct-colors) #phoneScreen #learningView #f
  #phoneScreen #learningView #freeModeEntry{border:2px solid ButtonText!important;}
  #phoneScreen #learningView #freeModeEntry::before,#phoneScreen #learningView #freeModeEntry .free-entry-art{display:none!important;}
 }
+
+/* V112.42 — largura útil real, inclusive quando a barra de rolagem ocupa espaço. */
+#phoneScreen #learningView .learning-surface{
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+}
+#phoneScreen #learningView .learning-surface > :is(.learning-header,.learning-featured,.learning-grid,.free-mode-entry,.free-learning-consent,.free-example-consent,.learning-account-options){
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+ margin-left:0!important;margin-right:0!important;
+}
+#phoneScreen #learningView .learning-surface > :is(.learning-featured,.free-mode-entry,.learning-grid){
+ position:relative!important;inset:auto!important;transform:none!important;
+}
+#phoneScreen #learningView .learning-surface :is(.free-learning-consent,.free-example-consent)>span{
+ min-width:0!important;max-width:100%!important;overflow-wrap:anywhere!important;
+}
+#phoneScreen #learningView .learning-header strong{overflow-wrap:anywhere!important;max-width:100%!important;}
+#phoneScreen #learningView #freeModeEntry .free-entry-copy strong{overflow-wrap:anywhere!important;}
+#phoneScreen #learningView #freeModeEntry .free-entry-badge{box-sizing:border-box!important;}
+#phoneScreen #learningView .learning-featured-copy>small{left:0!important;top:0!important;}
