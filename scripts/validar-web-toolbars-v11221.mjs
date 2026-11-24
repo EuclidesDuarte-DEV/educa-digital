@@ -43,6 +43,8 @@ try{
    };
    // YOUTUBE: busca numa linha, filtros logo abaixo e feed independentemente rolavel.
    await open('youtube');
+   // Aguarda fontes e layout do telefone antes de medir.
+   await page.evaluate(async()=>{await document.fonts?.ready;await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));});
    let g=await geometry(page);
    assert.ok(g.toolbar&&g.search&&g.input&&g.submit&&g.chips&&g.main,name+': toolbar YouTube incompleta');
    assert.ok(g.search.y>=g.body.y-1,name+': busca acima do app');
@@ -52,14 +54,15 @@ try{
    assert.ok(g.main.y>=g.toolbar.bottom-3,name+': feed invade filtros');
    inside(g.input,g.body,name+' YouTube campo');
    inside(g.submit,g.body,name+' YouTube botao');
-   const top=g.toolbar.y;
+   const top=g.toolbar.y-g.app.y;
    const before=await page.locator('.webv-youtube .webv-scroll').evaluate(el=>({scroll:el.scrollTop,max:el.scrollHeight-el.clientHeight}));
    assert.ok(before.max>20,name+': YouTube feed sem rolagem vertical');
    await page.locator('.webv-youtube .webv-scroll').evaluate(el=>el.scrollTop=el.scrollHeight);
    const after=await page.locator('.webv-youtube .webv-scroll').evaluate(el=>el.scrollTop);
    assert.ok(after>10,name+': feed nao rolou');
    const afterGeo=await geometry(page);
-   assert.ok(near(afterGeo.toolbar.y,top,2),name+': filtros rolaram junto com videos');
+   assert.ok(near(afterGeo.toolbar.y-afterGeo.app.y,top,2),name+': filtros rolaram dentro do app '+JSON.stringify({before:g,after:afterGeo}));
+   assert.ok(near(afterGeo.toolbar.y-afterGeo.body.y,g.toolbar.y-g.body.y,2),name+': toolbar se deslocou dentro do corpo do app');
    await page.locator('[data-wv="yt-category"][data-value="Segurança"]').tap({timeout:7000});
    assert.equal(await page.locator('[data-wv="yt-category"][data-value="Segurança"]').getAttribute('class'),'active');
    await page.locator('#wvYtSearch input').fill('Pix');
