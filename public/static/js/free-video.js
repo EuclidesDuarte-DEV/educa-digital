@@ -87,8 +87,7 @@ const selectedEngine=()=>{
 // Web V112.01: no anúncio da voz, descrever o fallback real sem prometer
 // Kokoro em dispositivos onde o modelo ainda não foi preparado.
 if(voiceEngine?.options?.length&&window.EducaLiaFreeNeural){
- // A ElevenLabs foi retirada da LIA Web. A opção feminina original
- // permanece intacta SOMENTE no HTML usado pelos apps nativos.
+ // O motor neural leve é compartilhado pela interface hospedada.
  voiceEngine.querySelector('option[value="feminina"]')?.remove();
  const device=voiceEngine.querySelector('option[value="padrao"]');
  if(device)device.textContent='Voz alternativa do aparelho (opcional)';
@@ -460,6 +459,8 @@ async function playAudio(url,signal,serial,text,cues=[]){
 // Enquanto o WAV atual toca, preparar o próximo trecho (máximo um adiantado).
 // Em CPU, a inferência continua custosa, mas a espera deixa de ser inteiramente serial.
 function prefetchNextChunk(serial){
+ // Dora usa seu próprio motor; nunca carregar o Kokoro pesado por engano.
+ if(selectedEngine()==='gratuita')return;
  if(serial!==session.serial||!session.speechQueue.length||session.renderReady||selectedEngine()==='padrao')return;
  const browser=window.EducaLiaBrowserKokoro;
  if(!browser)return;
