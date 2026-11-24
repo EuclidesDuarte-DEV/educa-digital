@@ -7,7 +7,7 @@ const browsers=[
  {engine:chromium,name:'android-baixa-ram',userAgent:'Mozilla/5.0 (Linux; Android 14; Mobile) Chrome/131.0.0.0',platform:'Linux',width:360,height:760,deviceMemory:2}
 ];
 for(const config of browsers){
- const browser=await config.engine.launch({headless:true,...(config.engine===chromium?{args:['--no-sandbox']}: {})});
+ const browser=await config.engine.launch({headless:true,...(config.engine===chromium?{channel:'chromium',args:['--no-sandbox']}: {})});
  try{
   const context=await browser.newContext({viewport:{width:config.width,height:config.height},
    isMobile:true,hasTouch:true,userAgent:config.userAgent,colorScheme:'dark'});
@@ -17,7 +17,7 @@ for(const config of browsers){
   page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
   await page.route('**/api/lia-free-model/**',async route=>{modelCalls++;await route.abort();});
   // Voz do sistema monitorada; motor neural mockado para testar roteamento sem inferência.
-  await page.route('**/static/js/lia-free-neural-v11206.js*',route=>route.fulfill({contentType:'application/javascript',body:`window.__neuralCalls=0;window.__failNeural=false;window.EducaLiaFreeNeural={prepare:async()=>({voice:'Dora'}),isReady:()=>true,stop:()=>{},speak:async()=>{window.__neuralCalls++;if(window.__failNeural)throw Error('falha neural simulada');const n=24000,b=new ArrayBuffer(44+n*2),v=new DataView(b);for(const [offset,tag] of [[0,'RIFF'],[8,'WAVE'],[12,'fmt '],[36,'data']])for(let j=0;j<tag.length;j++)v.setUint8(offset+j,tag.charCodeAt(j));v.setUint32(4,b.byteLength-8,true);v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);v.setUint32(40,n*2,true);for(let j=0;j<n;j++)v.setInt16(44+j*2,Math.sin(j/20)*1000,true);return {blob:new Blob([b],{type:'audio/wav'}),seconds:1,elapsed_ms:10}}};`}));
+  await page.route('**/static/js/lia-free-neural-v11206.js*',route=>route.fulfill({contentType:'application/javascript',body:`window.__neuralCalls=0;window.__failNeural=false;window.EducaLiaFreeNeural={prepare:async()=>({voice:'Dora'}),isReady:()=>true,stop:()=>{},speak:async()=>{window.__neuralCalls++;if(window.__failNeural)throw Error('falha neural simulada');const n=72000,b=new ArrayBuffer(44+n*2),v=new DataView(b);for(const [offset,tag] of [[0,'RIFF'],[8,'WAVE'],[12,'fmt '],[36,'data']])for(let j=0;j<tag.length;j++)v.setUint8(offset+j,tag.charCodeAt(j));v.setUint32(4,b.byteLength-8,true);v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);v.setUint32(40,n*2,true);for(let j=0;j<n;j++)v.setInt16(44+j*2,Math.sin(j/20)*1000,true);return {blob:new Blob([b],{type:'audio/wav'}),seconds:3,elapsed_ms:10}}};`}));
   await page.addInitScript((ram)=>{
    // Chromium headless não expõe a RAM física do Pixel simulado; declarar
    // explicitamente a RAM baixa para exercitar a regra do navegador real.
@@ -51,7 +51,16 @@ for(const config of browsers){
   await page.locator('#freeVideoAnswer').tap({timeout:6000});
   await page.waitForFunction(()=>/Lia falando com áudio gerado/.test(document.querySelector('#freeVideoState')?.textContent||''),null,{timeout:12000});
   assert.equal(await page.locator('#liaPhotoPlay').isVisible(),false,config.name+' pediu outro toque');
-  assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),0,config.name+' carregou decodificadores em modo leve');
+  const codec=await page.evaluate(()=>document.createElement('video').canPlayType('video/mp4; codecs="avc1.42E01E"'));
+  console.log('LIA_MP4_CODEC',config.name,codec||'unsupported');
+  // Linux Chromium pode não incluir H.264. WebKit exige decodificação real;
+  // Chromium sem o codec testa áudio e navegação, não finge ter exibido vídeo.
+  if(config.engine===webkit||codec){
+   await page.waitForFunction(()=>document.querySelector('#liaPhotoSpeech').currentTime>0.05,null,{timeout:8000});
+   assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),1,config.name+' deve usar exatamente um clipe original na fala');
+  assert.match(await page.locator('#liaPhotoSpeech').getAttribute('src'),/lia-conversando-a\.mp4/);
+  assert.equal(await page.locator('#liaPhotoSpeech').evaluate(v=>v.loop),true);
+  }else console.log('LIA_MP4_TEST_SKIPPED_CODEC',config.name);
   await page.evaluate(()=>{window.__failNeural=true;});
   await page.evaluate(()=>window.EducaVideoCall.reply('Oi, agora eu estou respondendo com seguranca.'));
   await page.waitForTimeout(400);

@@ -19,7 +19,8 @@
  }
  function ensureWorker(){
   if(worker)return worker;
-  worker=new Worker('/static/js/lia-paradee-worker-v11206.js?v=11206',{type:'module'});
+  const web=document.documentElement?.dataset?.educaPlatform==='web'&&!document.documentElement?.dataset?.educaNativePlatform;
+  worker=new Worker('/static/js/lia-paradee-worker-v11206.js?v=11206'+(web?'&runtime=wasm&fix=11226':''),{type:'module'});
   worker.onmessage=({data})=>{
    if(data.type==='progress'){progress(data.stage||'Preparando voz…');return;}
    if(data.type==='ready'){
