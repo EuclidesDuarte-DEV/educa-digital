@@ -15,7 +15,7 @@ test('[all] WhatsApp V111.74 carregado apos V111.73 com cache renovado',()=>{
  assert.match(html,/responsive-v11173\.css\?v=11173/);
  assert.match(html,/responsive-v11174\.css\?v=11174/);
  assert.ok(html.indexOf('responsive-v11174.css')>html.indexOf('responsive-v11173.css'));
- assert.match(cache,/educa-cf1117(?:4-whatsapp-navigation|5-free-mode-navigation)/);
+ assert.match(cache,/educa-cf(?:1117(?:4-whatsapp-navigation|5-free-mode-navigation)|11223-lia-stable-navigation)/);
  assert.match(cache,/responsive-v11174\.css/);
  assert.match(html,/sw\.js\?v=11160&layout=1117(?:4|5)/);
 });
