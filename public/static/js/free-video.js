@@ -785,7 +785,7 @@ function startSpeechChunk(phrase,serial){
    session.utterance=null;stopVoiceProgress();
    indicator('Lia · voz de recuperação');
    session.speechQueue=[];
-   audioOnly(phrase,serial);
+   audioOnly(session.lastSpoken||phrase,serial);
    status('A voz neural demorou. Usando voz do aparelho sem reiniciar a página.');
    if(ui.view?.dataset)ui.view.dataset.captions='on';
    if(captionSwitch){captionSwitch.setAttribute('aria-pressed','true');captionSwitch.textContent='Ocultar legendas';}
