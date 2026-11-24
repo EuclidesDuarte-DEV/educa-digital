@@ -43,8 +43,8 @@ test('V112.22: UI Web completa sem perda dos dois canais físicos',()=>{
    assert.ok(html.includes(marker),marker+' não carregado na UI compartilhada');
  }
  for(const part of ['android','ios']){
-  assert.equal(releases.channels[part].native,'112.22');
-  assert.equal(releases.channels[part].interface,'112.22');
+  assert.equal(releases.channels[part].native,'112.31');
+  assert.equal(releases.channels[part].interface,'112.31');
  }
 });
 
@@ -59,9 +59,9 @@ test('V112.22: rotas nativas abrem a mesma Home e não a tela Android escura',()
  assert.match(ios,/webView\.backgroundColor = UIColor\.white/);
  assert.match(java,/getWindow\(\)\.clearFlags\(WindowManager\.LayoutParams\.FLAG_FULLSCREEN\)/);
  assert.match(java,/getWindow\(\)\.setStatusBarColor\(Color\.rgb\(247, 250, 255\)\)/);
- assert.equal((yaml.match(/CFBundleShortVersionString: "112\.22"/g)||[]).length,2);
- assert.match(gradle,/versionCode 11222/);
- assert.match(gradle,/versionName '112\.22'/);
+ assert.equal((yaml.match(/CFBundleShortVersionString: "112\.31"/g)||[]).length,2);
+ assert.match(gradle,/versionCode 11231/);
+ assert.match(gradle,/versionName '112\.31'/);
 });
 
 test('V112.22: iOS sem launcher flutuante PWA ou nativo, mantendo apenas CallKit voluntário',()=>{
