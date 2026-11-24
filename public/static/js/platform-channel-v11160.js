@@ -32,6 +32,9 @@
     document.documentElement.classList.add('educa-mobile-web-parity');
   }
   document.documentElement.classList.add('educa-platform-' + platform);
+  if (platform !== 'web' && /EducaNative(?:Android|IOS)\/1\.1\b/.test(navigator.userAgent)) {
+    document.documentElement.classList.add('educa-native-insets');
+  }
   // A sincronização é COMPLETA: incluir CSS/JS do canal Web (ícones,
   // acessibilidade, trilhas, feedback, diálogo, gamificação e eventos livres)
   // além das folhas Web já carregadas no HTML. Não altera permissões nativas.
