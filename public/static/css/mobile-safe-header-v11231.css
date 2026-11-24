@@ -1,0 +1,88 @@
+/* V112.31 — somente canais físicos Android/iOS. A Web normal fica intacta. */
+html:is([data-educa-native-platform="android"],[data-educa-native-platform="ios"],[data-educa-platform="android"],[data-educa-platform="ios"]){
+ --mobile-safe-top:env(safe-area-inset-top,0px);
+ --mobile-safe-bottom:env(safe-area-inset-bottom,0px);
+ --mobile-menu-top:calc(var(--mobile-safe-top) + 10px);
+ --mobile-menu-height:48px;
+ --mobile-menu-end:calc(var(--mobile-menu-top) + var(--mobile-menu-height) + 12px);
+}
+/* APK antigo (target 35) pode desenhar sob a barra de status. O novo
+   container nativo fornece os insets; não somar duas vezes. */
+html[data-educa-native-platform="android"]:not(.educa-native-insets){
+ --mobile-safe-top:max(28px,env(safe-area-inset-top,0px));
+ --mobile-safe-bottom:max(12px,env(safe-area-inset-bottom,0px));
+}
+html.educa-native-insets:is([data-educa-native-platform="android"],[data-educa-native-platform="ios"]){
+ --mobile-safe-top:0px;--mobile-safe-bottom:0px;
+}
+/* Home: logotipo flexível e ações de 44px, sem colisão com o relógio/bateria. */
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]):not(.educa-fullscreen-active) body:not(.prototype-focus) .site-header.home-simple-header{
+ box-sizing:border-box!important;position:relative!important;top:auto!important;
+ height:auto!important;max-height:none!important;min-height:calc(var(--mobile-safe-top) + 68px)!important;
+ padding:calc(var(--mobile-safe-top) + 10px) max(12px,env(safe-area-inset-right,0px)) 10px max(12px,env(safe-area-inset-left,0px))!important;
+ gap:8px!important;flex-wrap:wrap!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]) body:not(.prototype-focus) .home-simple-header .brand{
+ flex:1 1 96px!important;min-width:80px!important;max-width:42%!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]) body:not(.prototype-focus) .home-simple-header .header-actions{
+ gap:10px!important;flex:0 0 auto!important;max-width:100%!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]) body:not(.prototype-focus) .home-simple-header #logoutBtn:not([hidden]){
+ margin-inline-start:4px!important;min-width:56px!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]) body:not(.prototype-focus) .home-simple-header :is(#openAccessibilitySettings,#openGuidedTour){
+ width:44px!important;min-width:44px!important;height:44px!important;min-height:44px!important;
+}
+/* Treinamento: faixa reservada antes do mockup; nenhuma sobreposição com
+   o status simulado. Acessibilidade e Sair têm pelo menos 14px de distância. */
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]):not(.educa-fullscreen-active) body.prototype-focus :is(#focusExpandBtn,#focusLogoutBtn):not([hidden]){
+ position:fixed!important;top:var(--mobile-menu-top)!important;height:48px!important;min-height:48px!important;
+ margin:0!important;transform:none!important;z-index:620!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]):not(.educa-fullscreen-active) body.prototype-focus #focusLogoutBtn:not([hidden]){
+ right:max(12px,env(safe-area-inset-right,0px))!important;left:auto!important;
+ width:62px!important;min-width:62px!important;max-width:62px!important;padding-inline:8px!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]):not(.educa-fullscreen-active) body.prototype-focus .educa-external-access.a11y-focus-toolbar{
+ top:var(--mobile-menu-top)!important;right:calc(max(12px,env(safe-area-inset-right,0px)) + 62px + 14px)!important;
+ width:48px!important;height:48px!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]):not(.educa-fullscreen-active) body.prototype-focus .a11y-focus-toolbar #openAccessibilitySettings{
+ width:48px!important;min-width:48px!important;height:48px!important;min-height:48px!important;
+}
+html:is([data-educa-native-platform],[data-educa-platform="android"],[data-educa-platform="ios"]):not(.educa-fullscreen-active) body.prototype-focus #focusExpandBtn:not([hidden]){
+ left:max(12px,env(safe-area-inset-left,0px))!important;right:auto!important;
+ max-width:calc(100vw - 160px)!important;min-width:0!important;white-space:normal!important;
+ font-size:clamp(11px,3.3vw,13px)!important;
+}
+html.educa-mobile-web-parity:not(.educa-fullscreen-active) body.prototype-focus #phoneStage{
+ box-sizing:border-box!important;position:absolute!important;
+ top:var(--mobile-menu-end)!important;bottom:auto!important;left:0!important;right:0!important;
+ height:calc(100dvh - var(--mobile-menu-end) - var(--mobile-safe-bottom) - 8px)!important;
+ min-height:0!important;padding:4px 12px 12px!important;overflow:auto!important;
+ align-items:center!important;justify-content:safe center!important;
+}
+html.educa-mobile-web-parity:not(.educa-fullscreen-active) body.prototype-focus #phoneStage #phoneHardware{
+ box-sizing:border-box!important;
+ width:min(390px,calc(100vw - 28px),calc(max(0px,100dvh - var(--mobile-menu-end) - var(--mobile-safe-bottom) - 28px) * .45685))!important;
+ min-width:0!important;height:auto!important;min-height:0!important;
+ max-height:100%!important;aspect-ratio:9/19.7!important;margin:0 auto!important;flex:0 0 auto!important;
+}
+/* Fullscreen móvel: a faixa de ações continua abaixo da barra nativa. */
+html.educa-mobile-web-parity.educa-fullscreen-active body #exitFullscreen:not([hidden]){
+ top:var(--mobile-menu-top)!important;right:max(12px,env(safe-area-inset-right,0px))!important;
+ min-height:48px!important;height:48px!important;
+}
+html.educa-mobile-web-parity.educa-fullscreen-active body .educa-external-access.a11y-below-exit{
+ top:var(--mobile-menu-top)!important;right:calc(var(--a11y-fullscreen-right,160px) + 4px)!important;
+}
+html.educa-mobile-web-parity.educa-fullscreen-active body .hero-experience #phoneStage{
+ top:var(--mobile-menu-end)!important;height:calc(100dvh - var(--mobile-menu-end) - var(--mobile-safe-bottom))!important;
+ padding-top:0!important;padding-bottom:0!important;min-height:0!important;
+}
+@media(max-width:600px){
+ html.educa-mobile-web-parity.educa-fullscreen-active body #phoneStage #phoneHardware{
+  height:100%!important;min-height:0!important;max-height:100%!important;width:100%!important;aspect-ratio:auto!important;
+ }
+}

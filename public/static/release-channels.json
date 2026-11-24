@@ -8,13 +8,13 @@
       "mode": "website"
     },
     "android": {
-      "interface": "112.22",
-      "native": "112.22",
+      "interface": "112.31",
+      "native": "112.31",
       "mode": "webview-apk"
     },
     "ios": {
-      "interface": "112.22",
-      "native": "112.22",
+      "interface": "112.31",
+      "native": "112.31",
       "mode": "swift-wkwebview"
     }
   },

@@ -98,8 +98,8 @@ test('três canais reais e clientes nativos utilizam rotas específicas',()=>{
  assert.match(read('android-app/app/src/main/java/com/educamaisdigital/educa/MainActivity.java'),/\?app=1&platform=android/);
  assert.match(read('ios-app/EducaDigital/CloudflareTrainingWebView.swift'),/\?app=1&platform=ios/);
  const versions=JSON.parse(read('public/static/release-channels.json'));
- assert.equal(versions.channels.ios.native,'112.22');
- assert.equal(versions.channels.android.native,'112.22');
+ assert.equal(versions.channels.ios.native,'112.31');
+ assert.equal(versions.channels.android.native,'112.31');
  assert.equal(versions.rules.server_shared,true);
 });
 

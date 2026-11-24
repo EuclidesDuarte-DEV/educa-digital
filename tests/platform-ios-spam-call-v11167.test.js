@@ -16,7 +16,7 @@ test('[ios] extensão real Call Directory está embutida no aplicativo nativo',(
  assert.match(yaml,/com\.apple\.callkit\.call-directory/);
  assert.match(yaml,/NSExtensionPrincipalClass: "\$\(PRODUCT_MODULE_NAME\)\.CallDirectoryProvider"/);
  assert.match(yaml,/PRODUCT_BUNDLE_IDENTIFIER: com\.educamaisdigital\.educa\.callerid/);
- assert.match(yaml,/CFBundleShortVersionString: "112\.22"/);
+ assert.match(yaml,/CFBundleShortVersionString: "112\.31"/);
  assert.match(yaml,/com\.apple\.security\.application-groups:[\s\S]*?group\.com\.educamaisdigital\.educa/);
 });
 

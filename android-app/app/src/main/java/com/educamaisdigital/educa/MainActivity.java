@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.graphics.Insets;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.PermissionRequest;
@@ -44,6 +47,10 @@ public final class MainActivity extends Activity {
         getWindow().setNavigationBarColor(Color.rgb(247, 250, 255));
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // API 35 força edge-to-edge. Reservar insets explicitamente.
+            getWindow().setDecorFitsSystemWindows(false);
+        }
         WebView.setWebContentsDebuggingEnabled(false);
 
         webView = new WebView(this);
@@ -64,7 +71,7 @@ public final class MainActivity extends Activity {
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             settings.setForceDark(WebSettings.FORCE_DARK_OFF);
         }
-        settings.setUserAgentString(settings.getUserAgentString() + " EducaNativeAndroid/1.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " EducaNativeAndroid/1.1");
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false);
 
         webView.setWebViewClient(new WebViewClient() {
@@ -114,9 +121,30 @@ public final class MainActivity extends Activity {
             }
         });
 
-        setContentView(webView);
+        setSafeContent(webView);
         if (state == null) webView.loadUrl(START);
         else webView.restoreState(state);
+    }
+
+    private void setSafeContent(View content) {
+        if (content.getParent() instanceof ViewGroup) {
+            ((ViewGroup) content.getParent()).removeView(content);
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            setContentView(content);
+            return;
+        }
+        FrameLayout root = new FrameLayout(this);
+        root.setBackgroundColor(Color.rgb(247, 250, 255));
+        root.addView(content, new FrameLayout.LayoutParams(-1, -1));
+        root.setOnApplyWindowInsetsListener((view, windowInsets) -> {
+            Insets safe = windowInsets.getInsets(WindowInsets.Type.systemBars() |
+                    WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
+            view.setPadding(safe.left, safe.top, safe.right, safe.bottom);
+            return WindowInsets.CONSUMED;
+        });
+        setContentView(root);
+        root.requestApplyInsets();
     }
 
     @Override protected void onActivityResult(int code, int resultCode, Intent data) {
@@ -191,8 +219,8 @@ public final class MainActivity extends Activity {
             params.topMargin = 190;
             params.leftMargin = 32;
             panel.addView(retry, params);
-            retry.setOnClickListener(v -> { setContentView(webView); webView.loadUrl(START); });
-            setContentView(panel);
+            retry.setOnClickListener(v -> { setSafeContent(webView); webView.loadUrl(START); });
+            setSafeContent(panel);
         });
     }
 

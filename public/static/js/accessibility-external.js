@@ -9,6 +9,8 @@
   const exitButton = document.querySelector('#exitFullscreen');
   if (!wrapper || !control || !actions) return;
   let pending = 0;
+  let mobilePending = false;
+  const nativeMobile = () => ['android','ios'].includes(document.documentElement.dataset.educaNativePlatform || document.documentElement.dataset.educaPlatform);
   function place() {
     pending = 0;
     const fullscreen = document.documentElement.classList.contains('educa-fullscreen-active')
@@ -45,6 +47,15 @@
     }
   }
   function schedule() {
+    // WebKit pode suspender rAF durante a troca de tela. Mover o único
+    // atalho na microtarefa antes que o cabeçalho oculto seja pintado.
+    if (nativeMobile()) {
+      if (pending) { cancelAnimationFrame(pending); pending = 0; }
+      if (mobilePending) return;
+      mobilePending = true;
+      Promise.resolve().then(() => { mobilePending = false; place(); });
+      return;
+    }
     if (pending) cancelAnimationFrame(pending);
     pending = requestAnimationFrame(place);
   }

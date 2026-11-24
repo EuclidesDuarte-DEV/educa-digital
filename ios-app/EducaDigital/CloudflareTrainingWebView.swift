@@ -14,9 +14,10 @@ struct CloudflareTrainingWebView: UIViewRepresentable {
         Coordinator(state: state)
     }
 
-    func makeUIView(context: Context) -> WKWebView {
+    func makeUIView(context: Context) -> UIView {
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .default()
+        config.applicationNameForUserAgent = "EducaNativeIOS/1.1"
         config.defaultWebpagePreferences.allowsContentJavaScript = true
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
@@ -60,10 +61,24 @@ struct CloudflareTrainingWebView: UIViewRepresentable {
         context.coordinator.webView = webView
 
         webView.load(URLRequest(url: Self.startURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 25))
-        return webView
+        // A WKWebView nunca desenha por baixo da barra de status ou do gesto.
+        // Se SwiftUI já respeita a safe area, as margens locais são zero.
+        let container = UIView()
+        container.backgroundColor = .white
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(webView)
+        let safe = container.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: safe.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: safe.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: safe.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: safe.trailingAnchor)
+        ])
+        return container
     }
 
-    func updateUIView(_ webView: WKWebView, context: Context) {
+    func updateUIView(_ container: UIView, context: Context) {
+        guard let webView = context.coordinator.webView else { return }
         guard context.coordinator.lastRetryVersion != state.retryVersion else { return }
         context.coordinator.lastRetryVersion = state.retryVersion
         webView.load(URLRequest(url: Self.startURL, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 25))

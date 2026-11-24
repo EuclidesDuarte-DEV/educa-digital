@@ -48,7 +48,7 @@ test('[ios] observador permanece opt-in e não ativa sozinho no app sem painel f
 });
 
 test('[ios] incrementa dois targets e documenta que não funciona em segundo plano',()=>{
-  assert.equal((project.match(/CFBundleShortVersionString: "112\.22"/g) || []).length,2);
+  assert.equal((project.match(/CFBundleShortVersionString: "112\.31"/g) || []).length,2);
   assert.match(doc, /Nao disponibiliza numero do chamador/);
   assert.match(doc, /nao e gatilho garantido com app encerrado/i);
   assert.match(doc, /NAO funciona no PWA\/Safari/i);

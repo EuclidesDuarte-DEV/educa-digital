@@ -50,6 +50,40 @@ try{
    assert.ok(home.button&&home.button.display!=='none'&&home.button.w>150,key+' CTA indisponível');
    assert.equal(home.launcher,0,key+' botão intrusivo de chamadas retornou');
    await page.screenshot({path:dir+'/'+key+'-home.png',fullPage:true});
+   // V112.31: conta logada e barra superior nos modos Home e treino.
+   await page.evaluate(()=>{document.querySelector('#logoutBtn').hidden=false;});
+   await page.waitForTimeout(100);
+   const menu=await page.evaluate(()=>{
+    const box=id=>{const r=document.getElementById(id).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+    const safe=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mobile-safe-top'))||0;
+    return {a11y:box('openAccessibilitySettings'),logout:box('logoutBtn'),help:box('openGuidedTour'),safe,width:innerWidth};
+   });
+   assert.ok(menu.a11y.top>=10&&menu.logout.top>=10,key+' menu invade barra de status');
+   assert.ok(menu.logout.left-menu.a11y.right>=14,key+' acessibilidade junto a Sair');
+   assert.ok(menu.logout.right<=menu.width,key+' Sair cortado');
+   await page.evaluate(()=>{
+    document.body.classList.add('prototype-focus');
+    document.querySelector('#focusExpandBtn').hidden=false;
+    document.querySelector('#focusLogoutBtn').hidden=false;
+   });
+   await page.waitForFunction(()=>{const b=document.querySelector('#openAccessibilitySettings');return b?.closest('.a11y-focus-toolbar')?.parentElement===document.body&&b.getBoundingClientRect().width>=44;},null,{timeout:5000});
+   const focused=await page.evaluate(()=>{
+    const box=id=>{const r=document.getElementById(id).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+    return {a11y:box('openAccessibilitySettings'),logout:box('focusLogoutBtn'),expand:box('focusExpandBtn'),phone:box('phoneHardware'),stage:box('phoneStage'),width:innerWidth,height:innerHeight};
+   });
+   assert.ok(focused.a11y.top>=10&&focused.logout.top>=10,key+' menu treino invade status '+JSON.stringify(focused));
+   assert.ok(focused.logout.left-focused.a11y.right>=13,key+' Sair sem margem '+JSON.stringify(focused));
+   assert.ok(focused.expand.right<=focused.a11y.left+1,key+' Ampliar colide com acessibilidade '+JSON.stringify(focused));
+   assert.ok(focused.phone.top>=Math.max(focused.logout.bottom,focused.expand.bottom,focused.a11y.bottom)-1,key+' mockup sobreposto '+JSON.stringify(focused));
+   assert.ok(focused.phone.bottom<=focused.height+1,key+' moldura fora do viewport '+JSON.stringify(focused));
+   await page.screenshot({path:dir+'/'+key+'-menu-safe.png'});
+   await page.evaluate(()=>{
+    document.body.classList.remove('prototype-focus');
+    document.querySelector('#focusExpandBtn').hidden=true;
+    document.querySelector('#focusLogoutBtn').hidden=true;
+    document.querySelector('#logoutBtn').hidden=true;
+   });
+   console.log('MOBILE_SAFE_HEADER_V11231_OK '+key+' '+JSON.stringify(focused));
 
    await page.evaluate(()=>{
      window.EducaFreeView.isTraining=()=>true;
