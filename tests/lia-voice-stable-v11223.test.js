@@ -116,7 +116,7 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
  test('V112.26 Web: runtime estável CPU WASM, fila de inferência e clipe único durante fala',()=>{
  assert.match(model,/ort\.webgpu\.min\.mjs/);assert.match(model,/executionProviders:\['wasm'\]/);assert.match(model,/queue=queue\.catch/);
  assert.match(neural,/lia-paradee-wasm-v11227\.js\?v=11227/);
- assert.match(video,/const target=talkPlayers\[0\]/);
+ assert.match(video,/const target=talking\?talkPlayers\[0\]:idlePlayers\[0\]/);
  assert.match(video,/stopGroup\(talkPlayers\.slice\(1\),true\)/);
  assert.match(video,/analyser\.getByteTimeDomainData\(data\)/);
  assert.match(video,/motion=11226|rms<\.008/);
@@ -131,4 +131,13 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
  assert.match(cpu,/queue=queue\.catch/);assert.match(neural,/worker!==current/);
  assert.match(neural,/18000/);assert.match(video,/pagehide/);
  assert.match(html,/memory=11227/);
+});
+
+ test('V112.28 Web: escuta animada, pausa com boca fechada e um decoder por vez',()=>{
+ assert.match(video,/target\.src=talking\?talkClips\[0\]:idleClips\[0\]/);
+ assert.match(video,/else\{stopGroup\(talkPlayers,true\);stopGroup\(idlePlayers\.slice\(1\),true\);\}/);
+ assert.match(video,/now-silentSince>380&&motion\.talking\)toListening\(\)/);
+ assert.match(video,/if\(!motion\.talking\)referenceMotion\(\)/);
+ assert.match(video,/if\(lightNeuralVisual\(\)\)idleMotion\(\); \/\/ não congelar/);
+ assert.match(html,/liveavatar=11228/);
 });
