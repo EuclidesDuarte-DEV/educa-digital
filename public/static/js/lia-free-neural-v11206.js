@@ -51,7 +51,7 @@
   let timeout=null;
   loading=new Promise((resolve,reject)=>{
    resolveReady=resolve;rejectReady=reject;
-   timeout=setTimeout(()=>reset('O carregamento inicial da voz neural demorou demais.'),60000);
+   timeout=setTimeout(()=>reset('O carregamento inicial da voz neural demorou demais.'),30000);
    try{ensureWorker().postMessage({type:'prepare'});}catch(e){reset(String(e?.message||e));}
   }).then(v=>{clearTimeout(timeout);loading=null;return v;},e=>{
    clearTimeout(timeout);loading=null;throw e;
@@ -72,7 +72,12 @@
    catch(e){clearTimeout(timer);pending.delete(id);reject(e);}
   });
  }
+ // Interromper o motor e liberar a memoria caso um navegador móvel congele.
+ // Não apaga conversas e não causa navegação ou reload da página.
+ function stop(reason='Preparação pausada para preservar a estabilidade.') {
+  reset(reason);
+ }
  window.EducaLiaFreeNeural=Object.freeze({
-  prepare,speak,isReady:()=>ready,getDiagnostics:()=>({ready,lastError,lastSynthesisMs:lastMs})
+  prepare,speak,stop,isReady:()=>ready,getDiagnostics:()=>({ready,lastError,lastSynthesisMs:lastMs})
  });
 })();
