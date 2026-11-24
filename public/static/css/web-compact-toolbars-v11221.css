@@ -6,6 +6,11 @@ html[data-educa-platform="web"] #webRealView .webx-app {
   color-scheme:light!important;
   min-width:0!important;min-height:0!important;
 }
+/* Somente o feed interno rola. */
+html[data-educa-platform="web"] #webRealView.webv-active #webRealBody,
+html[data-educa-platform="web"] #webRealView .webv-app {
+  min-height:0!important;overflow:hidden!important;overflow-anchor:none;
+}
 html[data-educa-platform="web"] #webRealView .webv-toolbar {
   flex:0 0 auto!important;min-width:0;max-width:100%;
   display:flex!important;flex-direction:column!important;
