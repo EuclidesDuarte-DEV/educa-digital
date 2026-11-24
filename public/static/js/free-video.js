@@ -13,20 +13,29 @@ const ui={view:$('freeVideoView'),portrait:$('freeVideoPortrait'),portraitStill:
 // Isso corrige notebook de 1920px com telefone de 300px e rotação no iPhone.
 function syncLiaCallLayout(){
  if(!ui.view||typeof ui.view.getBoundingClientRect!=='function')return;
+ const active=ui.view.classList.contains('is-active');
+ document.body?.classList.toggle('lia-call-visible',active);
  const rect=ui.view.getBoundingClientRect();
  if(rect.width<120||rect.height<180)return;
  ui.view.dataset.liaLayout=rect.width<=330?'compact':rect.width<=430?'regular':'wide';
  ui.view.dataset.liaShort=String(rect.height<620);
- document.body?.classList.toggle('lia-call-visible',ui.view.classList.contains('is-active'));
+ const dock=ui.view.querySelector?.('.v110-video-bottom');
+ if(active&&dock&&document.documentElement?.dataset?.educaPlatform==='web'&&!document.documentElement?.dataset?.educaNativePlatform){
+  const height=Math.ceil(dock.offsetHeight+(ui.view.clientHeight-dock.offsetTop-dock.offsetHeight));
+  if(Number.isFinite(height)&&height>0&&ui.view.style?.getPropertyValue('--lia-visible-dock')!==height+'px')ui.view.style?.setProperty('--lia-visible-dock',height+'px');
+ }
 }
 if(ui.view){
  if(typeof ResizeObserver==='function'){
   const liaCallResizeObserver=new ResizeObserver(syncLiaCallLayout);
   liaCallResizeObserver.observe(ui.view);
+  const dock=ui.view.querySelector?.('.v110-video-bottom');if(dock)liaCallResizeObserver.observe(dock);
  }
  if(typeof window.addEventListener==='function'){
   window.addEventListener('resize',syncLiaCallLayout,{passive:true});
   window.addEventListener('orientationchange',syncLiaCallLayout,{passive:true});
+  window.visualViewport?.addEventListener?.('resize',syncLiaCallLayout,{passive:true});
+  document.addEventListener?.('fullscreenchange',syncLiaCallLayout);
  }
  if(typeof window.requestAnimationFrame==='function')window.requestAnimationFrame(syncLiaCallLayout);
 }
