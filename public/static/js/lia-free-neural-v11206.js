@@ -61,7 +61,7 @@
   let timeout=null;
   const request=new Promise((resolve,reject)=>{
    resolveReady=resolve;rejectReady=reject;
-   timeout=setTimeout(()=>reset('O carregamento inicial da voz neural demorou demais.'),30000);
+   timeout=setTimeout(()=>{if(loading===request)reset('O carregamento inicial da voz neural demorou demais.');},30000);
    try{ensureWorker().postMessage({type:'prepare'});}catch(e){reset(String(e?.message||e));}
   }).then(v=>{clearTimeout(timeout);if(loading===request)loading=null;return v;},e=>{
    clearTimeout(timeout);if(loading===request)loading=null;throw e;
@@ -74,8 +74,7 @@
   const id=++seq;
   return new Promise((resolve,reject)=>{
    const timer=setTimeout(()=>{
-    pending.delete(id);
-    reject(Error('O áudio gratuito demorou a ser gerado. Tente novamente.'));
+    if(pending.has(id))reset('O áudio gratuito demorou a ser gerado. Tente novamente.');
    },16000);
    pending.set(id,{resolve,reject,timer});
    try{worker.postMessage({type:'speak',id,text:String(text).slice(0,300),speed});}
