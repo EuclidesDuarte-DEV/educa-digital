@@ -1,0 +1,83 @@
+/* V112.30 — Web real: dimensionar a moldura e dock pela área útil, inclusive zoom Ctrl +/-.
+   Não alterar a voz, vídeos, nem os canais nativos. */
+html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-mobile-app).educa-fullscreen-active body.lia-call-visible #phoneStage{
+ box-sizing:border-box!important;
+ min-height:0!important;
+}
+@media(min-width:601px){
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-mobile-app).educa-fullscreen-active body.lia-call-visible #phoneStage{
+  padding-block:calc(var(--educa-fullscreen-toolbar,68px) + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-bottom,0px))!important;
+  align-items:center!important;justify-content:center!important;
+ }
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-mobile-app).educa-fullscreen-active body.lia-call-visible #phoneStage #phoneHardware{
+  width:min(420px,calc(100vw - 28px),calc(max(0px,var(--educa-visible-h,100dvh) - var(--educa-fullscreen-toolbar,68px) - 20px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)) * 0.45685))!important;
+  height:auto!important;max-height:100%!important;min-height:0!important;min-width:0!important;aspect-ratio:9/19.7!important;
+  flex:0 0 auto!important;margin:0 auto!important;
+ }
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view{
+ container-type:size!important;container-name:lia-call!important;min-height:0!important;min-width:0!important;
+}
+/* Uma linha de controles flexíveis; se a largura extrema exigir, quebra
+   para outra linha em vez de esconder o botão vermelho. */
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-bottom{
+ box-sizing:border-box!important;left:6px!important;right:6px!important;
+ bottom:max(30px,env(safe-area-inset-bottom,0px))!important;
+ width:auto!important;max-width:calc(100% - 12px)!important;min-width:0!important;
+ max-height:calc(100% - 86px)!important;gap:5px!important;
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar{
+ box-sizing:border-box!important;display:flex!important;flex-wrap:wrap!important;
+ align-items:center!important;justify-content:space-evenly!important;
+ width:100%!important;max-width:min(100%,392px)!important;min-width:0!important;
+ padding:clamp(4px,1.6cqw,8px)!important;gap:clamp(2px,1.2cqw,6px)!important;
+ min-height:0!important;height:auto!important;margin:0 auto!important;
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar > .v112-video-more,
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar > .v110-tool:not([hidden]){
+ box-sizing:border-box!important;flex:1 1 0!important;
+ width:auto!important;min-width:min(40px,100%)!important;max-width:54px!important;
+ height:auto!important;min-height:0!important;aspect-ratio:1!important;
+ padding:0!important;margin:0!important;align-self:center!important;
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar > .v112-video-more > summary{
+ box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;
+ height:auto!important;min-height:0!important;aspect-ratio:1!important;padding:0!important;margin:0!important;
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar .wa-icon{
+ width:clamp(16px,6cqw,24px)!important;height:clamp(16px,6cqw,24px)!important;
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-selfie{
+ bottom:calc(var(--lia-visible-dock,68px) + 10px)!important;
+ max-height:25%!important;max-width:26%!important;right:10px!important;
+}
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v112-video-more-content{
+ max-height:min(40cqh,250px)!important;max-width:100%!important;overflow-y:auto!important;
+}
+@container lia-call (max-height:420px){
+ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-top{top:12px!important}
+ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-selfie{max-height:20%!important}
+}
+
+/* Preservar a proporção também no modo normal focado, em janelas baixas. */
+@media(min-width:701px){
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-fullscreen-active) body.prototype-focus.lia-call-visible #phoneStage #phoneHardware{
+  max-height:calc(100dvh - 110px)!important;
+  width:min(420px,calc(100vw - 30px),calc(max(0px,100dvh - 110px) * 0.45685))!important;
+  height:auto!important;min-height:0!important;min-width:0!important;aspect-ratio:9/19.7!important;
+ }
+}
+
+@media(max-width:700px){
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-fullscreen-active) body.prototype-focus.lia-call-visible #phoneStage #phoneHardware{
+  height:calc(100dvh - 104px)!important;max-height:calc(100dvh - 104px)!important;
+  min-height:0!important;aspect-ratio:auto!important;margin:0 auto!important;
+ }
+}
+@media(max-height:480px) and (min-width:601px){
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-mobile-app).educa-fullscreen-active body.lia-call-visible #phoneStage #phoneHardware,
+ html[data-educa-platform="web"]:not([data-educa-native-platform]):not(.educa-fullscreen-active) body.prototype-focus.lia-call-visible #phoneStage #phoneHardware{
+  width:min(420px,calc(100vw - 28px))!important;height:calc(100dvh - 100px)!important;
+  aspect-ratio:auto!important;
+ }
+}
