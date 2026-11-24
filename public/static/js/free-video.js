@@ -102,6 +102,25 @@ if(voiceEngine?.options?.length&&window.EducaLiaFreeNeural){
 const lipSyncWaitMs=()=>latencyMode?.value==='sinc' ? 40000 : 1100;
 const selectedStyle=()=>['natural','calma','clara'].includes(voiceStyle?.value)?voiceStyle.value:'natural';
 let outputMuted=false;
+ const webNeuralPlayback=()=>document.documentElement?.dataset?.educaPlatform==='web'&&
+  !document.documentElement?.dataset?.educaNativePlatform&&selectedEngine()==='gratuita';
+ const lightNeuralVisual=()=>webNeuralPlayback()&&!!window.EducaLiaWarm?.isMemorySensitive?.();
+ let introNeural=null;
+ const INTRO_FIRST='Oi, sou a Lia.';
+ function prepareIntroNeural(){
+  if(!webNeuralPlayback()||introNeural||!window.EducaLiaFreeNeural)return;
+  if(lightNeuralVisual()){
+   cancelTransitions();stopGroup(talkPlayers,true);stopGroup(idlePlayers,true);
+   motion.talkActive=null;motion.idleActive=null;
+   if(ui.portraitStill)ui.portraitStill.hidden=false;
+  }
+  const local=window.EducaLiaFreeNeural;
+  const speed=selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05;
+  const entry={speed,promise:null};introNeural=entry;
+  window.EducaLiaWarm?.beginSpeech?.();
+  entry.promise=Promise.resolve().then(()=>local.prepare()).then(()=>local.speak(INTRO_FIRST,{speed}))
+   .catch(()=>null).finally(()=>{if(introNeural===entry&&!session.connected)window.EducaLiaWarm?.endSpeech?.();});
+ }
 const subtitle=t=>{
  if(!ui.subtitle)return;
  ui.subtitle.textContent=t;
@@ -157,6 +176,12 @@ function stopPlayer(v,clearSource=false){
 function stopGroup(players,clearSource=false){for(const v of players)stopPlayer(v,clearSource);}
 function moveTo(kind){
  const talking=kind==='talk';
+ // Safari: retrato sem decodificadores MP4 concorrentes ao ONNX.
+ if(lightNeuralVisual()){
+  if(ui.portraitStill)ui.portraitStill.hidden=false;
+  ui.portrait?.classList.toggle('lia-photo-speaking',talking);
+  return;
+ }
  if(!session.active||!session.connected|| (talking&&!motion.talking))return;
  const allPlayers=talking?talkPlayers:idlePlayers;
  const players=window.EducaLiaWarm?.isMemorySensitive?.()?allPlayers.slice(0,1):allPlayers;
@@ -281,18 +306,25 @@ function stopSpeechMotion(){
  speechMotion.source=null;speechMotion.analyser=null;speechMotion.data=null;
 }
 function primeSpeechMotion(){
- if(window.EducaLiaWarm?.isMemorySensitive?.())return;
+ if(!webNeuralPlayback()&&window.EducaLiaWarm?.isMemorySensitive?.())return;
  // Executar somente no clique que inicia a chamada: alguns navegadores bloqueiam
  // AudioContext criado após fetch(), e isso poderia silenciar o áudio da Lia.
  const Context=window.AudioContext||window.webkitAudioContext;
  if(!Context)return;
  try{
   const context=speechMotion.context||new Context();speechMotion.context=context;
-  if(context.state==='suspended')void context.resume().catch(()=>{});
+  if(context.state!=='running')void context.resume().catch(()=>{});
+   if(webNeuralPlayback()&&!speechMotion.unlocked){
+    const silent=context.createBufferSource();
+    silent.buffer=context.createBuffer(1,1,context.sampleRate);
+    silent.connect(context.destination);silent.onended=()=>{try{silent.disconnect();}catch(_){}};
+    silent.start(0);speechMotion.unlocked=true;
+   }
  }catch(_){}
 }
 function startSpeechMotion(audio,cues=[]){
  stopSpeechMotion();
+ if(window.EducaLiaWarm?.isMemorySensitive?.())return false;
  speechMotion.cues=Array.isArray(cues)?cues.filter(c=>Number.isInteger(c?.at_ms)&&c.at_ms>=0&&c.at_ms<=60000&&/^(rest|m|fv|ah|ee|oh|oo|wide)$/.test(c.shape)).slice(0,160):[];
  const context=speechMotion.context;
  // Nunca redirecionar um elemento HTMLMediaElement para um contexto suspenso:
@@ -476,8 +508,12 @@ function prefetchNextChunk(serial){
 async function playDynamicKokoroWebAudio(result,text,serial,voiceLabel='Kokoro pf_dora'){
  if(document.documentElement?.dataset?.educaPlatform!=='web')return false;
  const ctx=speechMotion.context;
- if(!ctx||ctx.state!=='running'||typeof ctx.decodeAudioData!=='function')return false;
+ if(!ctx||typeof ctx.decodeAudioData!=='function')return false;
  try{
+  if(ctx.state!=='running'&&webNeuralPlayback()){
+   await Promise.race([ctx.resume(),new Promise(resolve=>setTimeout(resolve,700))]);
+  }
+  if(ctx.state!=='running')return false;
   const buffer=await ctx.decodeAudioData(await result.blob.arrayBuffer());
   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return false;
   const source=ctx.createBufferSource(),gain=ctx.createGain();
@@ -734,13 +770,16 @@ async function playFreeNeuralVoice(text,serial){
  try{
   await local.prepare();
   if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
-  const synthesis=local.speak(text,{speed:selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05});
+  const speed=selectedStyle()==='calma'?.96:selectedStyle()==='clara'?1.0:1.05;
+  const cached=webNeuralPlayback()&&text===INTRO_FIRST&&introNeural?.speed===speed?introNeural:null;
+  const synthesis=cached?cached.promise.then(wav=>wav||local.speak(text,{speed})):local.speak(text,{speed});
+  if(cached)introNeural=null;
   result=await Promise.race([
    synthesis,
    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('O modelo neural demorou demais para este aparelho.')),7500);})
   ]);
  }catch(error){
-  local.stop?.('Motor neural pausado após espera longa para evitar travamento.');
+  if(serial===session.serial)local.stop?.('Motor neural pausado após espera longa para evitar travamento.');
   throw error;
  }finally{
   clearTimeout(timeout);
@@ -749,6 +788,8 @@ async function playFreeNeuralVoice(text,serial){
  if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
  if(!result?.blob||result.blob.size<1024)throw Error('O modelo gratuito não gerou áudio.');
  clearMedia();
+ if(webNeuralPlayback()&&await playDynamicKokoroWebAudio(result,text,serial,'Dora neural gratuita, português do Brasil'))return true;
+ if(serial!==session.serial||!session.active||!session.connected||session.waiting)return true;
  const audio=new Audio(),url=URL.createObjectURL(result.blob);
  session.mediaUrl=url;session.utterance=audio;audio.src=url;audio.muted=outputMuted;
  indicator('Lia · Dora neural gratuita, português do Brasil');
@@ -764,8 +805,8 @@ async function playFreeNeuralVoice(text,serial){
   // A chamada inicial desbloqueia o AudioContext. Em Safari, WAV também
   // pode ser reproduzido pelo contexto sem enviar áudio a um servidor.
   if(await playDynamicKokoroWebAudio(result,text,serial,'voz neural brasileira gratuita'))return true;
-  if(ui.play){ui.play.hidden=false;ui.play.textContent='▶ Ouvir voz neural';delete ui.play.dataset.retryVoice;}
-  status('Toque em Ouvir voz neural para liberar o áudio neste navegador.');
+  if(ui.play){ui.play.hidden=false;ui.play.textContent='Ativar som';delete ui.play.dataset.retryVoice;}
+  status('O navegador bloqueou a reprodução automática. Ative o som para continuar.');
  }
  return true;
 }
@@ -944,7 +985,7 @@ async function configure(){
   status(r.video_enabled?'Motor neural autorizado.':(r.voice_engine==='chatterbox'?'Chatterbox V3 autorizado. A voz expressiva acompanha os gestos ilustrativos.':'Kokoro autorizado. A voz controla os vídeos da Lia, sem GPU.'));
  }catch(e){session.renderReady=false;status('Não foi possível ativar o motor: '+String(e.message).slice(0,110));}
 }
-function close(){document.body?.classList.remove('lia-call-visible');stopVoiceProgress();if(ui.play)ui.play.hidden=true;if(ui.view?.dataset)ui.view.dataset.captions='off';if(captionSwitch){captionSwitch.setAttribute('aria-pressed','false');captionSwitch.textContent='Ativar legendas';}if(speaker){speaker.hidden=true;}if($('freeVideoMore'))$('freeVideoMore').open=false;session.active=false;session.connected=false;session.waiting=false;session.motorPending=null;setHandsFree(false);abortSpeech();stopRecognition();stopCamera();clearInterval(session.interval);session.interval=null;session.clock=0;stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;indicator('Lia realista • chamada encerrada');}
+function close(){introNeural=null;document.body?.classList.remove('lia-call-visible');stopVoiceProgress();if(ui.play)ui.play.hidden=true;if(ui.view?.dataset)ui.view.dataset.captions='off';if(captionSwitch){captionSwitch.setAttribute('aria-pressed','false');captionSwitch.textContent='Ativar legendas';}if(speaker){speaker.hidden=true;}if($('freeVideoMore'))$('freeVideoMore').open=false;session.active=false;session.connected=false;session.waiting=false;session.motorPending=null;setHandsFree(false);abortSpeech();stopRecognition();stopCamera();clearInterval(session.interval);session.interval=null;session.clock=0;stopGroup(idlePlayers);motion.idleActive=null;if(ui.portraitStill)ui.portraitStill.hidden=false;indicator('Lia realista • chamada encerrada');}
 function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;if(ui.text){ui.text.hidden=true;ui.text.setAttribute('aria-expanded','false');}free()?.enterVideo?.();session.active=true;ui.name.textContent='Lia';ui.duration.textContent='Videochamada recebida';subtitle('Uma pessoa desconhecida está chamando por vídeo.');status('Chamada educativa com IA. A Lia responde por voz e tenta usar o melhor sincronismo disponível.');indicator('Lia realista • aguardando chamada');if(document.documentElement?.dataset?.educaPlatform==='web'||selectedEngine()==='gratuita'){
   session.renderReady=false;session.teamCode='';session.motorPending=null;
  }else session.motorPending=inspectMotor().finally(()=>{session.motorPending=null;});
@@ -953,8 +994,10 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
  session.hqVoiceEnabled=false;session.hqVoiceCheck=null;
  // Nunca consultar o serviço pago ElevenLabs no modo Web da LIA.
  // Baixar/preparar a voz local antes de o usuário apertar Atender.
- if(selectedEngine()==='gratuita'&&!window.EducaLiaWarm?.state?.().recovered)
-  void window.EducaLiaWarm?.warm?.({manual:true}).catch(()=>{});
+ if(selectedEngine()==='gratuita'&&!window.EducaLiaWarm?.state?.().recovered){
+   if(webNeuralPlayback())prepareIntroNeural();
+   else void window.EducaLiaWarm?.warm?.({manual:true}).catch(()=>{});
+  }
  const browser=window.EducaLiaBrowserKokoro;
  if(browser&&selectedEngine()==='feminina'&&
     document.documentElement?.dataset?.educaPlatform!=='web')
@@ -966,7 +1009,12 @@ function incoming(){close();if($('freeVideoMore'))$('freeVideoMore').open=false;
 async function answer(){if(!session.active||session.connected)return;
  // Desbloqueia WebAudio durante o clique do usuário, antes da síntese ONNX.
  // No Safari, criar o AudioContext só depois do áudio ficar pronto é tarde.
- primeSpeechMotion();syncLiaCallLayout();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
+ primeSpeechMotion();
+ if(webNeuralPlayback()){
+  allowRecoveredNeural=true;
+  prepareIntroNeural();
+ }
+ syncLiaCallLayout();session.connected=true;session.clock=0;ui.answer.hidden=true;ui.mic.hidden=false;if(speaker)speaker.hidden=false;if(ui.text)ui.text.hidden=false;ui.repeat.hidden=false;ui.camera.hidden=false;ui.form.hidden=true;ui.actions.hidden=false;
  session.interval=setInterval(()=>{if(!session.active)return;session.clock++;ui.duration.textContent=String(Math.floor(session.clock/60)).padStart(2,'0')+':'+String(session.clock%60).padStart(2,'0')+' · chamada educativa';},1000);
  ui.duration.textContent='00:00 · chamada educativa';idleMotion();
  const intro='Oi, sou a Lia. Troquei de celular e estou precisando de um favor. Você pode me emprestar R$ 350 pelo Pix de treino? Eu devolvo depois.';
@@ -1095,7 +1143,8 @@ if(typeof window.addEventListener==='function')window.addEventListener('educa-li
    showVoiceProgress('LIA · '+stage);
  }
 });
-ui.answer?.addEventListener('click',()=>{void answer();});ui.hang?.addEventListener('click',()=>free()?.hangupVideo?.());ui.setup?.addEventListener('click',()=>{void configure();});
+ui.answer?.addEventListener('pointerup',()=>{if(webNeuralPlayback())primeSpeechMotion();},{passive:true});
+ ui.answer?.addEventListener('click',()=>{void answer();});ui.hang?.addEventListener('click',()=>free()?.hangupVideo?.());ui.setup?.addEventListener('click',()=>{void configure();});
  $('freeVideoVoiceSettings')?.addEventListener('click',()=>{abortSpeech();window.EducaLiaVoice?.openSettings?.();});
 ui.mic?.addEventListener('click',()=>{if(session.micEnabled){setHandsFree(false);status('Microfone desativado.');}else{primeSpeechMotion();setHandsFree(true);abortSpeech();listen();}});
 ui.text?.addEventListener('click',()=>{if(!session.active||!session.connected)return;const opening=ui.form.hidden;ui.form.hidden=!opening;ui.text.setAttribute('aria-expanded',String(opening));if(opening)ui.input.focus?.();});
@@ -1134,6 +1183,7 @@ document.addEventListener('fullscreenchange',()=>{
 });
 
 ui.play?.addEventListener('click',()=>{
+ if(webNeuralPlayback())primeSpeechMotion();
  if(ui.play.dataset.retryVoice==='true'){
   delete ui.play.dataset.retryVoice;ui.play.hidden=true;
    if(selectedEngine()==='gratuita')allowRecoveredNeural=true;
