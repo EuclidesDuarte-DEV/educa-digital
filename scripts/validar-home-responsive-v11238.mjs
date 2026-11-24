@@ -15,6 +15,12 @@ for(const engine of [chromium,webkit]){
    let previous;
    for(const size of ['normal','large','extra','normal']){
     await page.evaluate(size=>{const e=document.querySelector('#a11yFontSize');e.value=size;e.dispatchEvent(new Event('change',{bubbles:true}));},size);
+    await page.waitForFunction(()=> {
+     const spot=document.querySelector('#guideSpotlight'), pointer=document.querySelector('#guidePointer');
+     return document.body.classList.contains('landing-pretest-active') && !document.querySelector('#guideOverlay').hidden &&
+       parseFloat(spot.style.width)>20 && parseFloat(spot.style.height)>20 && pointer.style.top!=='' &&
+       pointer.textContent.includes('Faça o pré-teste');
+    },{},{timeout:10000});
     await page.waitForTimeout(350);
     const b=await page.evaluate(()=>{
      const r=s=>{const e=document.querySelector(s),b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,font:parseFloat(getComputedStyle(e).fontSize)}};
