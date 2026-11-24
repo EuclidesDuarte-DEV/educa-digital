@@ -4,14 +4,16 @@
 (()=>{
  'use strict';
  const KEY='educa-lia-neural-inflight-v11223';
+ const WARM_KEY='educa-lia-warm-inflight-v11223';
  const iOS=/iPad|iPhone|iPod/i.test(navigator.userAgent||'')||
    (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  const lowRam=Number(navigator.deviceMemory)>0&&Number(navigator.deviceMemory)<4;
  let interrupted=false;
  try{
-  const stamp=Number(sessionStorage.getItem(KEY)||0);
+  const stamp=Math.max(Number(sessionStorage.getItem(KEY)||0),Number(sessionStorage.getItem(WARM_KEY)||0));
   interrupted=Number.isFinite(stamp)&&stamp>Date.now()-180000&&stamp<Date.now()+5000;
   sessionStorage.removeItem(KEY);
+  sessionStorage.removeItem(WARM_KEY);
  }catch(_){}
  const sensitive=iOS||lowRam||interrupted;
  let warmed=false,warming=null,attempts=0,started=0;
@@ -38,11 +40,12 @@
   if(warming)return warming;
   if(!manual&&attempts>=1)return Promise.resolve({skipped:true,reason:'aquecimento ja tentado'});
   attempts++;started=Date.now();
+  try{sessionStorage.setItem(WARM_KEY,String(started));}catch(_){}
   warming=Promise.resolve().then(()=>engine.prepare()).then(result=>{
    warmed=true;return {ready:true,elapsedMs:Date.now()-started,...result};
   }).catch(error=>{
    warmed=false;return {ready:false,error:String(error?.message||error).slice(0,120)};
-  }).finally(()=>{warming=null;});
+  }).finally(()=>{warming=null;try{sessionStorage.removeItem(WARM_KEY);}catch(_){}});
   return warming;
  }
  let bootTimer=null;
