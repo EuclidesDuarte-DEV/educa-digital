@@ -14,7 +14,7 @@ const workflow=read('.github/workflows/mobile-v11148.yml');
 test('[all] novo CSS atualizado para mockup e fullscreen sem reescalar o aparelho',()=>{
   assert.match(html,/responsive-v11172\.css\?v=11172/);
   assert.match(html,/responsive-v11173\.css\?v=11173/);
-  assert.match(sw,/educa-cf1117(?:3-all-screens-reflow|4-whatsapp-navigation|5-free-mode-navigation)/);
+  assert.match(sw,/educa-cf(?:1117(?:3-all-screens-reflow|4-whatsapp-navigation|5-free-mode-navigation)|11223-lia-stable-navigation)/);
   assert.match(sw,/responsive-v11173\.css/);
   assert.match(html,/sw\.js\?v=11160&layout=1117(?:3|4|5)/);
   assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g,''),/(?:^|[;{])\s*(?:zoom|transform)\s*:/);
