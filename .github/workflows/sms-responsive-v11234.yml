@@ -5,6 +5,8 @@ on:
     paths:
       - 'public/static/css/sms-responsive-v11234.css'
       - 'public/html/index.html'
+      - 'public/static/css/gov-level-responsive-v11235.css'
+      - 'scripts/validar-gov-level-v11235.mjs'
       - 'scripts/validar-sms-responsive-v11234.mjs'
       - '.github/workflows/sms-responsive-v11234.yml'
 permissions:
@@ -26,3 +28,6 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public >/tmp/sms-server.log 2>&1 &
           node scripts/validar-sms-responsive-v11234.mjs
+
+      - name: GOV.BR botão de nível responsivo
+        run: node scripts/validar-gov-level-v11235.mjs
