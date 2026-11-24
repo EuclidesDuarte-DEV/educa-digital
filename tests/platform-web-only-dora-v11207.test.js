@@ -15,8 +15,8 @@ test('V112.07 — identificar Web/iOS/Android ANTES de inicializar a lista de vo
  assert.ok(platform>0&&player>platform);
  const snippet=html.slice(platform,platform+115);
  assert.doesNotMatch(snippet,/\bdefer\b|\basync\b/);
- assert.match(html,/&neuralfree=11207/);
- assert.match(html,/lia-free-neural-v11206\.js\?v=11207/);
+ assert.match(html,/&neuralfree=(?:11207|11223)/);
+ assert.match(html,/lia-free-neural-v11206\.js\?v=(?:11207|11223)/);
 });
 
 test('V112.07 — Web remove Roberta e seleciona Dora; nativos mantêm opção anterior',()=>{

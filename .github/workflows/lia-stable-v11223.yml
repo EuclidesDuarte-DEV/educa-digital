@@ -1,0 +1,45 @@
+name: LIA V112.23 — voz rápida e sem recarga em celular
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/static/js/lia-voice-warm-v11223.js'
+      - 'public/static/js/lia-free-neural-v11206.js'
+      - 'public/static/js/lia-paradee-worker-v11206.js'
+      - 'public/static/js/free-video.js'
+      - 'public/static/sw.js'
+      - 'public/html/index.html'
+      - 'tests/lia-voice-stable-v11223.test.js'
+      - 'scripts/validar-lia-stable-v11223.mjs'
+      - '.github/workflows/lia-stable-v11223.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  voice-stable:
+    runs-on: ubuntu-24.04
+    # Chromium e WebKit + bibliotecas ja incluidos; evita downloads apt Ubuntu lentos.
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Sintaxe, memoria, WebKit e politica de custos
+        run: |
+          node --test tests/lia-voice-stable-v11223.test.js tests/platform-web-only-dora-v11207.test.js tests/platform-web-lia-free-ptbr-fullscreen-v11206.test.js
+          node --input-type=module --check < public/static/js/lia-paradee-worker-v11206.js
+      - name: Vincular Playwright 1.56.1 aos navegadores preinstalados
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          test -d /ms-playwright
+          ls /ms-playwright | head
+      - name: Iniciar frontend sem segredo nem API de IA paga
+        run: |
+          python3 -m http.server 8789 --directory public >/tmp/lia-v11223.log 2>&1 &
+      - name: iPhone e Android baixa RAM nao podem recarregar quando LIA fala
+        run: node scripts/validar-lia-stable-v11223.mjs

@@ -11,7 +11,7 @@ test('V111.95 — Kokoro começa a aquecer no WhatsApp, antes da videochamada',(
  // V112.02: modelo pesado não é baixado pela Web no iPhone.
  assert.match(source,/document\.documentElement\?\.dataset\?\.educaPlatform!=='web'/);
  assert.doesNotMatch(source,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
- assert.match(source,/EducaLiaFreeNeural\?\.prepare\?\.\(\)/);
+ assert.match(source,/EducaLiaWarm\?\.warm\?\.\(\{manual:true\}\)/);
 });
 test('V111.95 — voz é gerada dinamicamente, sem MP3 fixo ou TTS pago',()=>{
  assert.doesNotMatch(source,/lia-intro-pf-dora-v11195\.mp3/);
