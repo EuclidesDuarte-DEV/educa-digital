@@ -100,3 +100,15 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
  assert.ok(prefetch.indexOf("if(selectedEngine()==='gratuita')return;")>=0);
  assert.ok(prefetch.indexOf("if(selectedEngine()==='gratuita')return;")<prefetch.indexOf('browser.synthesize('));
 });
+
+ test('V112.25 Web: gesto Atender libera WebAudio, Dora primeiro e retrato leve',()=>{
+ assert.match(video,/function primeSpeechMotion\(\)\{\s*if\(!webNeuralPlayback\(\)&&/);
+ assert.match(video,/silent\.start\(0\)/);
+ assert.match(video,/ui\.answer\?\.addEventListener\('pointerup'/);
+ const neuralCall=video.split('async function playFreeNeuralVoice(text,serial){')[1].split('function startSpeechChunk')[0];
+ assert.ok(neuralCall.indexOf('if(webNeuralPlayback()&&await playDynamicKokoroWebAudio')<neuralCall.indexOf('new Audio()'));
+ assert.match(video,/stopGroup\(talkPlayers,true\);stopGroup\(idlePlayers,true\)/);
+ assert.match(video,/local\.speak\(INTRO_FIRST,\{speed\}\)/);
+ assert.match(video,/!document\.documentElement\?\.dataset\?\.educaNativePlatform/);
+ assert.match(html,/autoplay=11225/);
+});
