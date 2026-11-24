@@ -80,3 +80,35 @@ for(const config of browsers){
   await context.close();
  }finally{await browser.close();}
 }
+
+ // V112.30: desktop com zoom de navegador — variar viewport CSS efetivo
+ // (1280x800 físico / fator de zoom); validar também modo normal.
+ const desktop=await chromium.launch({headless:true,args:['--no-sandbox']});
+ try{
+  const p=await desktop.newPage({viewport:{width:1280,height:800}});
+  await p.route('**/static/js/lia-free-neural-v11206.js*',r=>r.fulfill({contentType:'application/javascript',body:"window.EducaLiaFreeNeural={prepare:async()=>({}),isReady:()=>true,stop:()=>{},speak:()=>new Promise(()=>{})}"}));
+  await p.goto('http://127.0.0.1:8789/html/?platform=web',{waitUntil:'domcontentloaded'});
+  await p.waitForFunction(()=>window.EducaVideoCall&&window.EducaFreeMode);
+  await p.evaluate(()=>{window.EducaFreeView.isTraining=()=>true;window.EducaFreeMode.start();window.EducaVideoCall.incoming();document.body.classList.add('prototype-focus');});
+  await p.locator('#freeVideoAnswer').click({timeout:10000});
+  for(const full of [false,true]){
+   await p.evaluate(full=>document.documentElement.classList.toggle('educa-fullscreen-active',full),full);
+   for(const zoom of [.8,1,1.25,1.5,2,2.5,3]){
+    await p.setViewportSize({width:Math.round(1280/zoom),height:Math.round(800/zoom)});
+    await p.waitForTimeout(180);
+    const bounds=await p.evaluate(()=>{
+     const box=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
+     const view=document.querySelector('#freeVideoView'),toolbar=view.querySelector('.v110-video-toolbar'),phone=document.querySelector('#phoneHardware');
+     const controls=[...toolbar.querySelectorAll(':scope > button:not([hidden]), :scope > details > summary')].filter(e=>e.getClientRects().length).map(e=>({id:e.id||'more',...box(e)}));
+     return {view:box(view),toolbar:box(toolbar),phone:box(phone),controls,viewport:{w:innerWidth,h:innerHeight}};
+    });
+    assert.ok(bounds.controls.length>=5,'controles ausentes '+JSON.stringify(bounds));
+    for(const c of bounds.controls){
+     assert.ok(c.left>=bounds.view.left-1&&c.right<=bounds.view.right+1&&c.top>=bounds.view.top-1&&c.bottom<=bounds.view.bottom+1,'controle cortado '+JSON.stringify({full,zoom,c,bounds}));
+     assert.ok(c.left>=bounds.toolbar.left-1&&c.right<=bounds.toolbar.right+1&&c.bottom<=bounds.toolbar.bottom+1,'dock cortado '+JSON.stringify({full,zoom,c,bounds}));
+     assert.ok(c.bottom<=bounds.viewport.h+1,'controle fora da janela '+JSON.stringify({full,zoom,c,bounds}));
+    }
+    console.log('LIA_ZOOM_FIT_OK',JSON.stringify({full,zoom,phone:bounds.phone,controls:bounds.controls.length}));
+   }
+  }
+ }finally{await desktop.close();}
