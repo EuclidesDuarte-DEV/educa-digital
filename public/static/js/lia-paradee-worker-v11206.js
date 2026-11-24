@@ -83,14 +83,22 @@ async function speak(text,speed){
  const inputIds=new ort.Tensor('int64',BigInt64Array.from(ids.map(BigInt)),[1,ids.length]);
  const ratio=Math.max(.85,Math.min(1.2,Number(speed)||1.03));
  const started=performance.now();
- const outputs=await session.run({
-  input_ids:inputIds,speed:new ort.Tensor('float32',Float32Array.of(ratio),[1])
- });
- const tensor=outputs.waveform||Object.values(outputs)[0];
- const pcm=typeof tensor.getData==='function'?await tensor.getData():tensor.data;
- if(!pcm||pcm.length<500)throw Error('O modelo não gerou amostras de áudio.');
- const audio=wav(pcm,24000);
- return {audio,elapsed:Math.round(performance.now()-started),seconds:pcm.length/24000};
+ const speedTensor=new ort.Tensor('float32',Float32Array.of(ratio),[1]);
+ let outputs;
+ try{
+  outputs=await session.run({input_ids:inputIds,speed:speedTensor});
+  const tensor=outputs.waveform||Object.values(outputs)[0];
+  const pcm=typeof tensor.getData==='function'?await tensor.getData():tensor.data;
+  if(!pcm||pcm.length<500)throw Error('O modelo não gerou amostras de áudio.');
+  // Gerar WAV ANTES de liberar os tensores WASM e evitar crescimento a cada fala.
+  const audio=wav(pcm,24000);
+  return {audio,elapsed:Math.round(performance.now()-started),seconds:pcm.length/24000};
+ }finally{
+  try{inputIds.dispose?.();}catch(_){}
+  try{speedTensor.dispose?.();}catch(_){}
+  if(outputs)for(const tensor of new Set(Object.values(outputs)))
+   try{tensor?.dispose?.();}catch(_){}
+ }
 }
 self.onmessage=async({data})=>{
  if(!data||!['prepare','speak'].includes(data.type))return;
