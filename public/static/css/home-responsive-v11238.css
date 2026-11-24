@@ -231,8 +231,12 @@ html:is(.a11y-text-large,.a11y-text-extra):not(.educa-fullscreen-active) body.ho
   margin-top:12px!important;row-gap:12px!important;
  }
 }
-@media(min-width:901px) and (max-height:850px){
+@media(min-width:901px){
+ /* A coluna textual ocupa a altura visível, não a altura total do telefone.
+    Assim permanece centrada na primeira dobra mesmo com rolagem externa. */
  html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .hero-copy{
-  align-self:start!important;margin-top:clamp(40px,12vh,100px)!important;
+  align-self:start!important;margin:0!important;
+  display:flex!important;flex-direction:column!important;justify-content:center!important;
+  min-height:max(0px,calc(100dvh - var(--home-header-height,74px) - 32px))!important;
  }
 }
