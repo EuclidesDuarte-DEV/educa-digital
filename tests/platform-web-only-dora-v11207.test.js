@@ -19,7 +19,7 @@ test('V112.07 — identificar Web/iOS/Android ANTES de inicializar a lista de vo
  assert.match(html,/lia-free-neural-v11206\.js\?v=(?:11207|11223)/);
 });
 
-test('V112.07 — Web remove Roberta e seleciona Dora; nativos mantêm opção anterior',()=>{
+test('V112.07 — Dora neural padrão nos três canais; alternativa explícita',()=>{
  assert.match(app,/voiceEngine\.querySelector\('option\[value="feminina"\]'\)\?\.remove\(\)/);
  assert.match(app,/voiceEngine\.value='gratuita'/);
  assert.match(app,/if\(document\.documentElement\?\.dataset\?\.educaPlatform==='web'\)/);
@@ -30,7 +30,7 @@ test('V112.07 — Web remove Roberta e seleciona Dora; nativos mantêm opção a
  assert.doesNotMatch(webBranch,/playWebHQVoice|Tentar Roberta/);
  assert.match(webBranch,/if\(selectedEngine\(\)==='padrao'\)/);
  const speak=app.split('function speak(text){')[1].split('async function configure()')[0];
- assert.match(speak,/web&&selectedEngine\(\)==='gratuita'\?speechSegments\(whole\)/);
+ assert.match(speak,/selectedEngine\(\)==='gratuita'\?speechSegments\(whole\)/);
  assert.doesNotMatch(app,/session\.hqVoiceCheck=inspectWebHQVoice\(\)/);
 });
 
