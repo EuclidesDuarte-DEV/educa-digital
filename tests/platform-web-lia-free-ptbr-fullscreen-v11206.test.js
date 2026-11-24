@@ -42,7 +42,7 @@ test('V112.06 — free neural voice is chosen only on Web; native options preser
  assert.match(video,/EducaLiaWarm\?\.warm/);
  assert.match(video,/option\[value="feminina"\]/);
  assert.doesNotMatch(neural,/api\.elevenlabs\.io|xi-api-key|speechSynthesis/);
- assert.match(bridge,/new Worker\('\/static\/js\/lia-paradee-worker-v11206\.js/);
+ assert.match(bridge,/new Worker\(web\?'\/static\/js\/lia-paradee-wasm-v11227\.js\?v=11227':'\/static\/js\/lia-paradee-worker-v11206\.js\?v=11206'/);
 });
 
 test('V112.06 — local inference uses Brazilian phonemes and two strict static assets',()=>{
