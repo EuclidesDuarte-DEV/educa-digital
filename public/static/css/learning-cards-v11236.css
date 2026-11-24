@@ -172,3 +172,12 @@ html:is(.a11y-high-contrast,.a11y-distinct-colors) #phoneScreen #learningView #f
 #phoneScreen #learningView #freeModeEntry .free-entry-copy strong{overflow-wrap:anywhere!important;}
 #phoneScreen #learningView #freeModeEntry .free-entry-badge{box-sizing:border-box!important;}
 #phoneScreen #learningView .learning-featured-copy>small{left:0!important;top:0!important;}
+
+/* V112.43 — neutraliza a ordem legada da V111.47, mantém ordem DOM e visual. */
+#phoneScreen #learningView .learning-surface>.learning-header{order:0!important;}
+#phoneScreen #learningView .learning-surface>#freeModeEntry{order:1!important;flex-shrink:0!important;}
+#phoneScreen #learningView .learning-surface>.learning-featured{order:2!important;flex-shrink:0!important;}
+#phoneScreen #learningView .learning-surface>.learning-grid{order:3!important;flex-shrink:0!important;}
+#phoneScreen #learningView .learning-surface>.free-learning-consent{order:4!important;}
+#phoneScreen #learningView .learning-surface>.free-example-consent{order:5!important;}
+#phoneScreen #learningView .learning-surface>.learning-account-options{order:6!important;}

@@ -2,12 +2,13 @@ import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 await mkdir('artifacts/home-v11241',{recursive:true});
-const cases=[['web',901,600],['web',1096,570],['web',1366,768],['web',1440,900],['web',2560,1440],['web',896,414],['web',390,844],['web',360,640],['android',320,640],['ios',430,932],['web',1264,475],['web',1643,712],['web',1280,550],['web',1321,550],['web',1366,610],['web',1280,600],['web',1600,760],['web',1920,1080],['web',1024,600],['web',768,1024],['web',320,568],['android',360,800],['ios',390,844]];
+const cases=[['web',375,667],['web',393,680],['web',430,740],['web',390,600],['web',901,600],['web',1096,570],['web',1366,768],['web',1440,900],['web',2560,1440],['web',896,414],['web',390,844],['web',360,640],['android',320,640],['ios',430,932],['web',1264,475],['web',1643,712],['web',1280,550],['web',1321,550],['web',1366,610],['web',1280,600],['web',1600,760],['web',1920,1080],['web',1024,600],['web',768,1024],['web',320,568],['android',360,800],['ios',390,844]];
 for(const engine of [chromium,webkit]){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
  for(const [platform,width,height] of cases){
-  const page=await browser.newPage({viewport:{width,height}});
+  const mobile=platform==='web'&&width<=600;
+  const page=await browser.newPage({viewport:{width,height},...(mobile?{isMobile:true,hasTouch:true,deviceScaleFactor:2}:{})});
   try{
    await page.goto('http://127.0.0.1:8789/html/?'+(platform==='web'?'platform=web':'app=1&platform='+platform+'&experience=web'),{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.EducaFreeView&&document.querySelector('#startNowBtn'));
@@ -24,7 +25,7 @@ for(const engine of [chromium,webkit]){
     await page.waitForTimeout(350);
     const b=await page.evaluate(()=>{
      const r=s=>{const e=document.querySelector(s),b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,font:parseFloat(getComputedStyle(e).fontSize)}};
-     return {title:r('.hero-copy h1'),subtitle:r('.hero-subtitle'),cta:r('#startNowBtn'),label:r('#startNowLabel'),phone:r('#phoneHardware'),wrap:r('#inicio .phone-preview-wrap'),header:r('.home-simple-header'),viewport:innerWidth,scroll:document.documentElement.scrollWidth,extra:document.documentElement.classList.contains('a11y-text-extra'),large:document.documentElement.classList.contains('a11y-text-large')};
+     return {title:r('.hero-copy h1'),subtitle:r('.hero-subtitle'),cta:r('#startNowBtn'),label:r('#startNowLabel'),phone:r('#phoneHardware'),screen:r('#phoneScreen'),wrap:r('#inicio .phone-preview-wrap'),header:r('.home-simple-header'),viewport:innerWidth,scroll:document.documentElement.scrollWidth,extra:document.documentElement.classList.contains('a11y-text-extra'),large:document.documentElement.classList.contains('a11y-text-large')};
     });
     const launcher=await page.evaluate(()=>{
       const r=e=>{const b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
@@ -35,6 +36,11 @@ for(const engine of [chromium,webkit]){
       return {pointer:r(pointer),spot:r(spot),guideVisible:!document.querySelector('#guideOverlay').hidden&&getComputedStyle(pointer).visibility!=='hidden',below:pointer.classList.contains('below-target'),home:r(home),grid:r(grid),dock:r(dock),date:r(home.querySelector('.at-a-glance')),search:r(home.querySelector('.google-search')),scroll:grid.scrollHeight,client:grid.clientHeight,tiles:[...grid.querySelectorAll('.app-tile')].map(e=>({tile:r(e),icon:r(e.querySelector('.adaptive-icon')),label:r(e.lastElementChild)})),favorites:[...dock.querySelectorAll('.favorite-row button')].map(r)};
     });
     assert.ok(launcher,'tela de aplicativos não está ativa');
+    if(mobile){
+     assert.ok(b.screen.top>=b.phone.top+4&&b.screen.bottom<=b.phone.bottom-4&&b.screen.left>=b.phone.left+4&&b.screen.right<=b.phone.right-4,'vidro ultrapassa moldura '+JSON.stringify(b));
+     assert.ok(b.phone.height<=Math.max(505,height-20)+2,'moldura maior que altura útil '+JSON.stringify(b));
+     assert.ok(launcher.home.bottom<=b.screen.bottom+1&&launcher.dock.bottom<=b.screen.bottom-5,'conteúdo escapa do vidro');
+    }
     assert.ok(launcher.grid.top>=launcher.date.bottom-1&&launcher.grid.bottom<=launcher.dock.top+1,'grade sobreposta ao dock ou data '+JSON.stringify(launcher));
     assert.ok(launcher.grid.height>=40&&launcher.dock.bottom<=launcher.home.bottom-6,'grade/dock fora da moldura '+JSON.stringify(launcher));
     assert.equal(launcher.tiles.length,12);
@@ -62,7 +68,17 @@ for(const engine of [chromium,webkit]){
      assert.ok(launcher.spot.right<=launcher.tiles[1].icon.left-1,'holofote invade WhatsApp');
      assert.ok(launcher.tiles.every(t=>t.label.bottom<=launcher.grid.bottom+1),'rótulo cortado');
      if(width>=1100)assert.ok(launcher.tiles[0].icon.width>=49,'ícones menores que referência');
-     if(!previous)await page.screenshot({path:`artifacts/home-v11241/${engine.name()}-${platform}-${width}x${height}.png`,fullPage:true,animations:'disabled'});
+     if(!previous){
+      if(mobile){
+       await page.locator('#phoneHardware').evaluate(e=>e.scrollIntoView({block:'center',behavior:'instant'}));
+       await page.waitForTimeout(250);
+       const visible=await page.evaluate(()=>{const p=document.querySelector('#phoneHardware').getBoundingClientRect();return {top:p.top,bottom:p.bottom,height:visualViewport?.height||innerHeight};});
+       assert.ok(visible.top>=-2&&visible.bottom<=visible.height+2,'moldura não cabe na janela após rolar '+JSON.stringify(visible));
+       await page.screenshot({path:`artifacts/home-v11241/${engine.name()}-${platform}-${width}x${height}-viewport.png`,animations:'disabled'});
+       await page.evaluate(()=>scrollTo(0,0));
+      }
+      await page.screenshot({path:`artifacts/home-v11241/${engine.name()}-${platform}-${width}x${height}.png`,fullPage:true,animations:'disabled'});
+     }
     }
     console.log('HOME_LAUNCHER_V11241_OK',JSON.stringify({engine:engine.name(),platform,width,height,size,phone:b.phone,grid:launcher.grid,dock:launcher.dock,scroll:launcher.scroll,client:launcher.client}));
     assert.ok(b.cta.height>=65&&b.cta.width>0,'CTA pequeno '+JSON.stringify(b));
