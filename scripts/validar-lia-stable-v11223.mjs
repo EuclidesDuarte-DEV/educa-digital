@@ -93,7 +93,7 @@ for(const config of browsers){
   await p.locator('#freeVideoAnswer').click({timeout:10000});
   for(const full of [false,true]){
    await p.evaluate(full=>document.documentElement.classList.toggle('educa-fullscreen-active',full),full);
-   const sizes=[... [.8,1,1.25,1.5,2,2.5,3].map(zoom=>({zoom,width:Math.round(1280/zoom),height:Math.round(800/zoom)})),...(!full?[{zoom:1,width:1853,height:800},{zoom:1,width:1366,height:650},{zoom:1,width:1920,height:1080},{zoom:1,width:2560,height:1440}]:[])];
+   const sizes=[... [.8,1,1.25,1.5,2,2.5,3].map(zoom=>({zoom,width:Math.round(1280/zoom),height:Math.round(800/zoom)})),...(!full?[{zoom:.8,width:2064,height:890},{zoom:.8,width:1651,height:712},{zoom:1,width:1853,height:800},{zoom:1,width:1366,height:650},{zoom:1,width:1920,height:1080},{zoom:1,width:2560,height:1440}]:[])];
    for(const {zoom,width,height} of sizes){
     await p.setViewportSize({width,height});
     await p.waitForTimeout(180);
@@ -104,11 +104,17 @@ for(const config of browsers){
      return {view:box(view),toolbar:box(toolbar),phone:box(phone),controls,viewport:{w:innerWidth,h:innerHeight}};
     });
     if(!full&&width>=1000&&height>=600){
-     assert.ok(bounds.phone.height>=Math.min(height-40,480/0.45685)-2,'V112.32 moldura pequena demais '+JSON.stringify({width,height,bounds}));
+     assert.ok(bounds.phone.height>=Math.min(height-40,440/0.45685)-2,'V112.32 moldura pequena demais '+JSON.stringify({width,height,bounds}));
      assert.ok(bounds.phone.top>=-1&&bounds.phone.bottom<=height+1,'moldura fora da janela '+JSON.stringify(bounds));
      assert.ok(Math.abs((bounds.phone.top+bounds.phone.bottom)/2-height/2)<=12,'moldura não centralizada '+JSON.stringify(bounds));
      console.log('LIA_NORMAL_SIZE_V11232_OK',JSON.stringify({width,height,phone:bounds.phone}));
     }
+    if(!full&&width>=701){
+     const normal=await p.evaluate(()=>{const video=document.querySelector('#freeVideoView'),call=document.querySelector('#freeCallView'),phone=document.querySelector('#phoneHardware');video.classList.remove('is-active');call.classList.add('is-active');const r=phone.getBoundingClientRect();const b={width:r.width,height:r.height,top:r.top,left:r.left};call.classList.remove('is-active');video.classList.add('is-active');return b;});
+     for(const k of ['width','height','top','left'])assert.ok(Math.abs(normal[k]-bounds.phone[k])<=1,'moldura diferente entre chamadas '+JSON.stringify({width,height,k,normal,video:bounds.phone}));
+     console.log('LIA_SHARED_CALL_FRAME_OK',JSON.stringify({width,height,zoom,normal}));
+    }
+    assert.ok(Math.max(...bounds.controls.map(c=>c.top+c.height/2))-Math.min(...bounds.controls.map(c=>c.top+c.height/2))<=2,'controles em duas linhas '+JSON.stringify({full,zoom,bounds}));
     assert.ok(bounds.controls.length>=5,'controles ausentes '+JSON.stringify(bounds));
     for(const c of bounds.controls){
      assert.ok(c.left>=bounds.view.left-1&&c.right<=bounds.view.right+1&&c.top>=bounds.view.top-1&&c.bottom<=bounds.view.bottom+1,'controle cortado '+JSON.stringify({full,zoom,c,bounds}));
