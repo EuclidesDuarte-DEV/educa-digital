@@ -4,13 +4,17 @@
  * Disponibilidade e qualidade variam conforme o navegador e a rede inicial.
  * Créditos: https://huggingface.co/eraldohug/Paradee-8M-PtBr
  */
-import * as ort from 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.webgpu.min.mjs';
+// O backend CPU não precisa do runtime JSEP/WebGPU, que aumenta a pressão de memória no WebKit.
+const webWasm=new URL(self.location.href).searchParams.get('runtime')==='wasm';
+const ort=webWasm
+ ? await import('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.mjs')
+ : await import('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.webgpu.min.mjs');
 import {createEspeak} from 'https://esm.sh/@spelling-creator/spellophone@0.2.1/browser?bundle';
 
 const MODEL='/api/lia-free-model/onnx/paradee_dora_int8.onnx';
 const CONFIG='/api/lia-free-model/config.json';
 const ORT='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/';
-let engine=null,loading=null;
+let engine=null,loading=null,queue=Promise.resolve();
 const tell=(stage,percent=null)=>postMessage({type:'progress',stage,percent});
 const units=['zero','um','dois','três','quatro','cinco','seis','sete','oito','nove','dez','onze','doze','treze','quatorze','quinze','dezesseis','dezessete','dezoito','dezenove'];
 const tens=['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
@@ -100,8 +104,10 @@ async function speak(text,speed){
    try{tensor?.dispose?.();}catch(_){}
  }
 }
-self.onmessage=async({data})=>{
+self.onmessage=({data})=>{
  if(!data||!['prepare','speak'].includes(data.type))return;
+ // Nunca executar duas inferências em paralelo, inclusive após uma interrupção.
+ queue=queue.catch(()=>{}).then(async()=>{
  try{
   if(data.type==='prepare'){await load();return;}
   const result=await speak(data.text,data.speed);
@@ -109,4 +115,5 @@ self.onmessage=async({data})=>{
  }catch(err){
   postMessage({type:'error',id:data.id??null,message:String(err?.message||err).slice(0,240)});
  }
+ });
 };
