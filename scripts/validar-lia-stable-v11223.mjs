@@ -51,7 +51,10 @@ for(const config of browsers){
   await page.locator('#freeVideoAnswer').tap({timeout:6000});
   await page.waitForFunction(()=>/Lia falando com áudio gerado/.test(document.querySelector('#freeVideoState')?.textContent||''),null,{timeout:12000});
   assert.equal(await page.locator('#liaPhotoPlay').isVisible(),false,config.name+' pediu outro toque');
-  assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),0,config.name+' carregou decodificadores em modo leve');
+  assert.equal(await page.locator('#freeVideoPortrait video[src]').count(),1,config.name+' deve usar exatamente um clipe original na fala');
+  assert.match(await page.locator('#liaPhotoSpeech').getAttribute('src'),/lia-conversando-a\.mp4/);
+  assert.equal(await page.locator('#liaPhotoSpeech').evaluate(v=>v.loop),true);
+  await page.waitForFunction(()=>document.querySelector('#liaPhotoSpeech').currentTime>0.05,null,{timeout:8000});
   await page.evaluate(()=>{window.__failNeural=true;});
   await page.evaluate(()=>window.EducaVideoCall.reply('Oi, agora eu estou respondendo com seguranca.'));
   await page.waitForTimeout(400);
