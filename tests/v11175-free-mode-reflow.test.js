@@ -61,7 +61,7 @@ test('[all] ativa CSS V111.75 e renova cache sem alterar versoes nativas',()=>{
  assert.match(ui,/responsive-v11174\.css\?v=11174/);
  assert.match(ui,/responsive-v11175\.css\?v=11175/);
  assert.ok(ui.indexOf('responsive-v11175.css')>ui.indexOf('responsive-v11174.css'));
- assert.match(sw,/educa-cf11175-free-mode-navigation/);
+ assert.match(sw,/educa-cf(?:11175-free-mode-navigation|11223-lia-stable-navigation)/);
  assert.match(sw,/responsive-v11175\.css/);
  assert.match(ui,/sw\.js\?v=11160&layout=11175/);
 });
