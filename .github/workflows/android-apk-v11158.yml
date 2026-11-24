@@ -1,4 +1,4 @@
-name: Educa+ Digital APK Android V112.22
+name: Educa+ Digital APK Android V112.31
 on:
   pull_request:
     branches: [main]
@@ -47,14 +47,14 @@ jobs:
       - name: Preparar APK instalável
         run: |
           mkdir -p dist
-          cp android-app/app/build/outputs/apk/debug/app-debug.apk dist/EducaMaisDigital-Android-v11222.apk
-          test -s dist/EducaMaisDigital-Android-v11222.apk
-          sha256sum dist/EducaMaisDigital-Android-v11222.apk
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk dist/EducaMaisDigital-Android-v11231.apk
+          test -s dist/EducaMaisDigital-Android-v11231.apk
+          sha256sum dist/EducaMaisDigital-Android-v11231.apk
       - name: Disponibilizar APK para download no GitHub Actions
         uses: actions/upload-artifact@v4
         with:
-          name: EducaMaisDigital-Android-v11222
-          path: dist/EducaMaisDigital-Android-v11222.apk
+          name: EducaMaisDigital-Android-v11231
+          path: dist/EducaMaisDigital-Android-v11231.apk
           if-no-files-found: error
           retention-days: 90
       - name: Publicar protótipo Android no GitHub Releases
@@ -62,10 +62,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="v11222-android-prototype"
-          notes="Educa+ Digital V112.22 — protótipo APK para testes. Tela inicial identica a Web, recursos simulados atualizados, galeria com seletor de fotos, conteúdo oficial carregado via HTTPS da Cloudflare, IA e voz continuam na mesma infraestrutura. APK de teste assinado com chave de depuração: para atualizar a versão é possível que seja preciso desinstalar a anterior. Não é distribuição Google Play."
+          tag="v11231-android-prototype"
+          notes="Educa+ Digital V112.31 — protótipo APK para testes. Tela inicial identica a Web, recursos simulados atualizados, galeria com seletor de fotos, conteúdo oficial carregado via HTTPS da Cloudflare, IA e voz continuam na mesma infraestrutura. APK de teste assinado com chave de depuração: para atualizar a versão é possível que seja preciso desinstalar a anterior. Não é distribuição Google Play."
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" dist/EducaMaisDigital-Android-v11222.apk --clobber
+            gh release upload "$tag" dist/EducaMaisDigital-Android-v11231.apk --clobber
           else
-            gh release create "$tag" dist/EducaMaisDigital-Android-v11222.apk --title "Educa+ Digital — Android V112.22 (protótipo)" --notes "$notes" --prerelease
+            gh release create "$tag" dist/EducaMaisDigital-Android-v11231.apk --title "Educa+ Digital — Android V112.31 (protótipo)" --notes "$notes" --prerelease
           fi
