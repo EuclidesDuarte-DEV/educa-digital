@@ -66,7 +66,7 @@ try{
     document.querySelector('#focusExpandBtn').hidden=false;
     document.querySelector('#focusLogoutBtn').hidden=false;
    });
-   await page.waitForTimeout(150);
+   await page.waitForFunction(()=>{const b=document.querySelector('#openAccessibilitySettings');return b?.closest('.a11y-focus-toolbar')?.parentElement===document.body&&b.getBoundingClientRect().width>=44;},null,{timeout:5000});
    const focused=await page.evaluate(()=>{
     const box=id=>{const r=document.getElementById(id).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
     return {a11y:box('openAccessibilitySettings'),logout:box('focusLogoutBtn'),expand:box('focusExpandBtn'),phone:box('phoneHardware'),stage:box('phoneStage'),width:innerWidth,height:innerHeight};
