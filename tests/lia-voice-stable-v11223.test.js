@@ -113,8 +113,8 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
  assert.match(html,/autoplay=11225/);
 });
 
- test('V112.26 Web: CPU WASM exclusivo, fila de inferência e clipe único durante fala',()=>{
- assert.match(model,/ort\.wasm\.min\.mjs/);assert.match(model,/queue=queue\.catch/);
+ test('V112.26 Web: runtime estável CPU WASM, fila de inferência e clipe único durante fala',()=>{
+ assert.match(model,/ort\.webgpu\.min\.mjs/);assert.match(model,/executionProviders:\['wasm'\]/);assert.match(model,/queue=queue\.catch/);
  assert.match(neural,/runtime=wasm&fix=11226/);
  assert.match(video,/const target=talkPlayers\[0\]/);
  assert.match(video,/stopGroup\(talkPlayers\.slice\(1\),true\)/);
