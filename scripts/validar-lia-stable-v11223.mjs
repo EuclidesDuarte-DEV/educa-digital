@@ -17,7 +17,10 @@ for(const config of browsers){
   page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
   await page.route('**/api/lia-free-model/**',async route=>{modelCalls++;await route.abort();});
   // Voz do sistema mockada para testar que o app nao navega nem reinicia.
-  await page.addInitScript(()=>{
+  await page.addInitScript((ram)=>{
+   // Chromium headless não expõe a RAM física do Pixel simulado; declarar
+   // explicitamente a RAM baixa para exercitar a regra do navegador real.
+   if(ram)Object.defineProperty(navigator,'deviceMemory',{configurable:true,get:()=>ram});
    const Voice=function(text){this.text=text;this.lang='pt-BR';this.rate=1;this.pitch=1;this.volume=1};
    window.SpeechSynthesisUtterance=Voice;
    window.speechSynthesis={
@@ -25,7 +28,7 @@ for(const config of browsers){
     cancel:()=>{},resume:()=>{},pause:()=>{},
     speak:u=>{setTimeout(()=>u.onstart?.(),15);setTimeout(()=>u.onend?.(),200);}
    };
-  });
+  },config.deviceMemory||null);
   await page.goto('http://127.0.0.1:8789/html/?platform=web',{waitUntil:'domcontentloaded',timeout:30000});
   await page.waitForFunction(()=>window.EducaVideoCall?.incoming&&window.EducaFreeMode&&window.EducaLiaWarm,{timeout:15000});
   const init=await page.evaluate(()=>({
