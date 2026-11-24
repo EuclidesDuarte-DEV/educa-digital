@@ -96,7 +96,7 @@ test('V111.57: codec neural atenua bordas, versão de voz renova e bancos seguem
  assert.match(browser,/lia-kokoro-worker\.js\?v=11157/);
  assert.match(browser,/voice:'pf_dora',version:'11157'/);
  assert.match(html,/lia-kokoro-browser\.js\?v=11157/);
- assert.match(cache,/const CACHE = 'educa-cf(?:111(?:60-unified-platform-channels|72-responsive-text-reflow|73-all-screens-reflow|74-whatsapp-navigation|75-free-mode-navigation)|11223-lia-stable-navigation(?:-v112(?:2[456789]|3[0123456]))?)'/);
+ assert.match(cache,/const CACHE = 'educa-cf(?:111(?:60-unified-platform-channels|72-responsive-text-reflow|73-all-screens-reflow|74-whatsapp-navigation|75-free-mode-navigation)|11223-lia-stable-navigation(?:-v112(?:2[456789]|3[01234567]))?)'/);
  assert.doesNotMatch(cache,/\/api\/.*cache\.put/);
  const wrangler=readFileSync('wrangler.toml','utf8');
  assert.match(wrangler,/database_name = "educa-digital"/);
