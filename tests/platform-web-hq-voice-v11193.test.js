@@ -62,7 +62,7 @@ test('[web] V111.93 — o frontend isola HQ na Web e retorna para fala feminina 
  assert.match(src,/setTimeout\(\(\)=>controller\.abort\(\),8500\)/);
  assert.match(src,/audioOnly\(phrase,serial\)/);
  assert.match(src,/session\.hqAbort\?\.abort\(\)/);
- assert.match(src,/const chunks=web&&selectedEngine\(\)==='gratuita'/);
+ assert.match(src,/const chunks=selectedEngine\(\)==='gratuita'/);
  assert.match(voice,/natural\|neural\|online/);
  assert.match(worker,/rota === '\/api\/lia\/voz-web\/status'/);
  assert.match(worker,/rota === '\/api\/lia\/voz-web\/speak'/);
