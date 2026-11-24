@@ -300,3 +300,10 @@ html:is(.a11y-text-large,.a11y-text-extra):not(.educa-fullscreen-active) body.ho
   align-self:start!important;
  }
 }
+
+/* O balão não pode mudar de largura ao receber a posição absoluta (Safari). */
+html:not(.educa-fullscreen-active) body.home-training-page.landing-pretest-active:not(.prototype-focus) #inicio #phoneScreen #guidePointer{
+ width:max-content!important;max-width:calc(100% - 16px)!important;
+ height:auto!important;white-space:nowrap!important;transform:none!important;
+ animation:none!important;transition:none!important;
+}

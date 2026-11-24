@@ -50,7 +50,7 @@ for(const engine of [chromium,webkit]){
      assert.ok(launcher.tiles.slice(8,12).every(t=>Math.abs(t.tile.top-launcher.tiles[8].tile.top)<2),'quatro aplicativos na terceira linha');
      assert.ok(launcher.scroll<=launcher.client+2,'grade normal cortada ou rolando internamente '+JSON.stringify(launcher));
      assert.ok(launcher.guideVisible&&!launcher.below,'guia deve ficar acima do Banco '+JSON.stringify(launcher));
-     assert.ok(launcher.pointer.bottom<=launcher.spot.top-8,'balão cobre holofote');
+     assert.ok(launcher.pointer.bottom<=launcher.spot.top-8,'balão cobre holofote '+JSON.stringify({engine:engine.name(),platform,width,height,size,pointer:launcher.pointer,spot:launcher.spot,date:launcher.date}));
      assert.ok(launcher.pointer.top>=launcher.date.bottom-2,'balão cobre data '+JSON.stringify(launcher));
      assert.ok(launcher.spot.width<=launcher.tiles[0].icon.width+26,'holofote largo demais');
      assert.ok(launcher.spot.right<=launcher.tiles[1].icon.left-1,'holofote invade WhatsApp');
