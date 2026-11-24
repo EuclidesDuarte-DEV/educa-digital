@@ -73,7 +73,7 @@ test('V112.02 — cliente Web usa serviço só após status habilitado e não aq
  assert.match(video,/session\.fastVoiceSerial=serial/);
  assert.match(video,/playFreeNeuralVoice\(phrase,serial\)/);
  assert.match(video,/return voiceEngine\?\.value==='padrao'\?'padrao':'gratuita'/);
- assert.match(video,/const chunks=web&&selectedEngine\(\)==='gratuita'\?speechSegments\(whole\)/);
+ assert.match(video,/const chunks=selectedEngine\(\)==='gratuita'\?speechSegments\(whole\)/);
  assert.match(video,/speechSegments\(whole\)/);
  assert.match(free,/educaPlatform!=='web'/);
  assert.match(video,/document\.documentElement\?\.dataset\?\.educaPlatform!=='web'/);
