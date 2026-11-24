@@ -4,11 +4,8 @@
  * Disponibilidade e qualidade variam conforme o navegador e a rede inicial.
  * Créditos: https://huggingface.co/eraldohug/Paradee-8M-PtBr
  */
-// O backend CPU não precisa do runtime JSEP/WebGPU, que aumenta a pressão de memória no WebKit.
-const webWasm=new URL(self.location.href).searchParams.get('runtime')==='wasm';
-const ort=webWasm
- ? await import('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.mjs')
- : await import('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.webgpu.min.mjs');
+// Runtime neural estável já validado. Inferências continuam sequenciais e usam CPU WASM.
+import * as ort from 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.webgpu.min.mjs';
 import {createEspeak} from 'https://esm.sh/@spelling-creator/spellophone@0.2.1/browser?bundle';
 
 const MODEL='/api/lia-free-model/onnx/paradee_dora_int8.onnx';
