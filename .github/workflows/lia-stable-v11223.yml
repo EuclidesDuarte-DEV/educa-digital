@@ -18,7 +18,10 @@ permissions:
 jobs:
   voice-stable:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    # Chromium e WebKit + bibliotecas ja incluidos; evita downloads apt Ubuntu lentos.
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,10 +33,11 @@ jobs:
         run: |
           node --test tests/lia-voice-stable-v11223.test.js tests/platform-web-only-dora-v11207.test.js tests/platform-web-lia-free-ptbr-fullscreen-v11206.test.js
           node --input-type=module --check < public/static/js/lia-paradee-worker-v11206.js
-      - name: Instalar navegadores Safari WebKit + Chromium
+      - name: Vincular Playwright 1.56.1 aos navegadores preinstalados
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
-          npx playwright install --with-deps chromium webkit
+          test -d /ms-playwright
+          ls /ms-playwright | head
       - name: Iniciar frontend sem segredo nem API de IA paga
         run: |
           python3 -m http.server 8789 --directory public >/tmp/lia-v11223.log 2>&1 &
