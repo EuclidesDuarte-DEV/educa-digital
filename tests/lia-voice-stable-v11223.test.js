@@ -94,3 +94,9 @@ test('V112.23: modo iOS detectado inclusive iPad com user agent de desktop',()=>
  assert.equal(simulate({ua:'Mozilla/5.0 (Windows NT)',platform:'Win32',ram:8,stamp:true}).mode,'leve');
  assert.equal(simulate({ua:'Mozilla/5.0 (Windows NT)',platform:'Win32',ram:8}).mode,'neural');
 });
+
+ test('V112.24: fallback WebAudio da Dora não baixa Kokoro pesado',()=>{
+ const prefetch=video.split('function prefetchNextChunk(serial){')[1].split('async function playDynamicKokoroWebAudio')[0];
+ assert.ok(prefetch.indexOf("if(selectedEngine()==='gratuita')return;")>=0);
+ assert.ok(prefetch.indexOf("if(selectedEngine()==='gratuita')return;")<prefetch.indexOf('browser.synthesize('));
+});
