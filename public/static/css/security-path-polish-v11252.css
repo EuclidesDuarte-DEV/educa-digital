@@ -19,13 +19,19 @@ html[data-educa-platform="web"] #modulePathView[data-topic="security"] .module-p
   gap:8px;
   min-width:0;
 }
+/* V112.58: o Web já insere o ícone do assunto como filho do header.
+   Reservar as três colunas e não criar um segundo escudo. */
+html[data-educa-platform="web"] #modulePathView[data-topic="security"].web-activity-simple .module-path-header{
+  grid-template-columns:44px 40px minmax(0,1fr)!important;
+  align-items:center!important;
+}
 html[data-educa-platform="web"] #modulePathView[data-topic="security"] .module-path-header>div::before{
-  content:"";
-  width:28px;
-  height:28px;
-  flex:0 0 28px;
-  border-radius:9px;
-  background:#f0edff url("/static/channels/web/security-shield-v11177.svg") center/cover no-repeat;
+  content:none!important;
+  display:none!important;
+}
+html[data-educa-platform="web"] #modulePathView[data-topic="security"] .module-path-header>div{
+  width:100%;
+  min-width:0;
 }
 html[data-educa-platform="web"] #modulePathView[data-topic="security"] .module-path-header small{
   display:none!important;
@@ -35,7 +41,8 @@ html[data-educa-platform="web"] #modulePathView[data-topic="security"] .module-p
   line-height:1.2!important;
   color:#5c43a9!important;
   margin:0!important;
-  overflow-wrap:anywhere;
+  overflow-wrap:normal;
+  word-break:normal;
 }
 html[data-educa-platform="web"] #modulePathView[data-topic="security"] .module-path-content{
   box-sizing:border-box;

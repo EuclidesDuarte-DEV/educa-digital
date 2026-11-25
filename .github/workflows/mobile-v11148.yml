@@ -28,6 +28,8 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-http.log 2>&1 &
           node scripts/validar-interface-v11154.mjs
+      - name: V112.58 — título de todos os módulos sem rótulo e escudo duplicado
+        run: node scripts/validar-module-header-v11258.mjs
       - name: V112.08 — tela de conclusão rolável com terceiro botão visível no celular normal
         run: node scripts/validar-summary-scroll-v11208.mjs
       - name: V112.10 — erro encerra rodada sem esperar IA e resultado compacto com pontos
