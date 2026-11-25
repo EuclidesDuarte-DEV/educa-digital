@@ -46,3 +46,26 @@ test('nota privada aditiva e idempotente',async()=>{
  assert.equal(calls.length,4);assert.deepEqual(calls[0].args.slice(-2),['draft','private']);
  await installStrictSecurityNote({DB:db,LIA_NEURAL_LIBRARY_BOOTSTRAP:'true'});assert.equal(calls.length,4);
 });
+
+test('1000 saídas arbitrárias nunca são interpretadas como código ou texto autorizado',()=>{
+ const choices=approvedReplies('family-group');
+ let x=1729;
+ for(let i=0;i<1000;i++){
+  x=(Math.imul(x,1664525)+1013904223)>>>0;
+  const arbitrary='hello '+x.toString(36)+' '+String.fromCharCode(x%65536);
+  assert.equal(parseChoice(arbitrary,choices),null);
+ }
+});
+test('identificador válido em outro personagem não cruza cenário',()=>{
+ assert.equal(parseChoice('photo',approvedReplies('family-group')),null);
+ assert.equal(parseChoice('photo',approvedReplies('family-photo')),'photo');
+});
+test('modelo não recebe conteúdo do grafo e não grava exemplos',async()=>{
+ let dbCalls=0;
+ const env={DB:{prepare(){dbCalls++;throw Error('nota privada');}},AI:{run:async(_,opts)=>{
+  assert.equal(opts.messages.length,2);assert.doesNotMatch(JSON.stringify(opts),/nota privada/);
+  return {response:'hello'};
+ }}};
+ const r=await selectStrictReply({scenario:'family',message:'Oi',history:[]},env,'gemma-4');
+ assert.equal(r.source,'catalog-ai');assert.equal(dbCalls,0);
+});

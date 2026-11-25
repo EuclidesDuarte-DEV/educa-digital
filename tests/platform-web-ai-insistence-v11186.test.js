@@ -28,9 +28,9 @@ async function getPrompt(scenario,level,tries,web){
 }
 test('V111.86 — rota Web é separada do endpoint antigo e dispensa D1',()=>{
   assert.match(worker,/rota === '\/api\/modo-livre\/conversar-web'/);
-  assert.match(worker,/responderModoLivre\(request, env, true, ctx\)/);
+  assert.match(worker,/responderModoLivre\(request, env, true, ctx, true\)/);
   assert.match(worker,/rota === '\/api\/modo-livre\/conversar'/);
-  assert.match(worker,/responderModoLivre\(request, env\)/);
+  assert.match(worker,/responderModoLivre\(request, env, false, ctx, true\)/);
   assert.match(worker,/\/api\/modo-livre\/conversar-web'.*url\.pathname/s);
   assert.match(frontend,/\/api\/modo-livre\/conversar-web/);
 });
