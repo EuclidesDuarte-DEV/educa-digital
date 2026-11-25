@@ -166,7 +166,7 @@ function showIncomingCall(s){if(!state.active)return;clearRequest();state.pendin
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){const warning='Não informe dados, códigos, senhas ou links reais. Use somente textos fictícios.';setStatus(warning);if(visible()==='free-call')els.callLine.textContent=warning;if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=warning;return;}
  const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');
- const sentAt=performance.now();
+ const sentAt=Date.now();
   // V112.10: decisão explícita -> resultado curto e próximo desafio SEM aguardar Workers AI.
   // Não exibir aviso gigante dentro da conversa e não confundir promessa com Pix realizado.
   if(isWebTraining()&&riskyTrainingPromise(s,message)){
@@ -184,7 +184,7 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  if(isWebTraining()&&s.id==='family-photo'){
    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
    const target=reduced?250:Math.min(2000,1050+Math.round(message.length*9+reply.length*4));
-   const remaining=Math.max(0,target-(performance.now()-sentAt));
+   const remaining=Math.max(0,target-(Date.now()-sentAt));
    if(remaining>0)await new Promise(resolve=>setTimeout(resolve,remaining));
  }
 }
