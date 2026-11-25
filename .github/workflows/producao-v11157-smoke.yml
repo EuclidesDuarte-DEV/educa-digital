@@ -14,23 +14,27 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 7
     steps:
-      - name: Confirmar versão V111.57 publicada na Cloudflare
+      - uses: actions/checkout@v4
+      - name: Confirmar exatamente a revisão do commit na Cloudflare
         run: |
           node --input-type=module <<'NODE'
           const root='https://educa-digital.educamaisdigital.workers.dev';
+          const local=(await import('node:fs/promises')).readFile;
+          const expected=(await local('public/html/index.html','utf8')).match(/cards=(\d+)&home=(\d+)/)?.[0];
+          if(!expected)throw Error('Revisão de interface ausente no commit');
           let ready=false;
           for(let n=1;n<=30;n++){
             try{
               const res=await fetch(root+'/?audit=11157-'+n,{signal:AbortSignal.timeout(15000),headers:{'Cache-Control':'no-cache'}});
               const html=await res.text();
-              if(res.ok&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')){
-                ready=true;console.log('Versão V111.57 confirmada no site oficial.');break;
+              if(res.ok&&html.includes(expected)&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')){
+                ready=true;console.log('Revisão oficial confirmada: '+expected);break;
               }
-              console.log('Site oficial ainda sem V111.57: '+res.status+' (checagem '+n+')');
+              console.log('Site oficial ainda sem a revisão esperada: '+res.status+' (checagem '+n+')');
             }catch(e){console.log('Tentativa '+n+': '+String(e.message).slice(0,100));}
             await new Promise(resolve=>setTimeout(resolve,10000));
           }
-          if(!ready)throw new Error('A Cloudflare ainda não publicou a V111.57 no endereço oficial.');
+          if(!ready)throw new Error('A Cloudflare ainda não publicou a revisão esperada no endereço oficial.');
           const health=await fetch(root+'/api/saude',{signal:AbortSignal.timeout(15000)});
           if(!health.ok||(await health.json()).ok!==true)throw new Error('Saúde da API oficial falhou.');
           const model=await fetch(root+'/api/lia-model/config.json',{signal:AbortSignal.timeout(25000)});
@@ -55,3 +59,24 @@ jobs:
           }
           console.log('Gemma 4 em produção OK: '+data.reply.slice(0,230));
           NODE
+
+  verificar-interface-publicada:
+    name: Interface efetivamente publicada — Chromium e WebKit
+    needs: verificar-producao
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - run: node scripts/validar-interface-producao-v11244.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: interface-producao
+          path: artifacts/interface-producao/
+          if-no-files-found: ignore

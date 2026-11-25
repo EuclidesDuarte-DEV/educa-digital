@@ -312,8 +312,8 @@ html:not(.educa-fullscreen-active) body.home-training-page.landing-pretest-activ
    svh usa a janela pequena (barras do navegador abertas), sem saltar ao rolar.
    A página continua rolável; em janelas muito baixas prevalece a legibilidade. */
 @media(max-width:600px), (max-width:900px) and (pointer:coarse) and (max-height:500px){
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware,
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware:has(#homeView.is-active){
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware,
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware:has(#homeView.is-active){
   --mobile-preview-width:min(340px,calc(100vw - 36px),max(230px,calc((100vh - 24px) * .4568528)));
   --mobile-preview-width:min(340px,calc(100vw - 36px),max(230px,calc((100svh - 24px) * .4568528)));
   width:var(--mobile-preview-width)!important;
@@ -323,30 +323,40 @@ html:not(.educa-fullscreen-active) body.home-training-page.landing-pretest-activ
   border-radius:40px!important;aspect-ratio:9/19.7!important;
   scroll-margin:12px;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware #phoneScreen{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware #phoneScreen{
   position:absolute!important;inset:8px!important;width:auto!important;height:auto!important;
   min-height:0!important;min-width:0!important;max-height:none!important;max-width:none!important;
   box-sizing:border-box!important;border-radius:32px!important;overflow:hidden!important;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #phoneHardware:has(#homeView.is-active) #homeView.is-active{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #phoneHardware:has(#homeView.is-active) #homeView.is-active{
   padding:36px 10px 19px!important;gap:6px!important;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid{
   margin-top:54px!important;row-gap:8px!important;column-gap:4px!important;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid .app-tile{gap:4px!important;}
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid .adaptive-icon{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid .app-tile{gap:4px!important;}
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid .adaptive-icon{
   width:min(100%,clamp(29px,min(15cqw,7.7cqh),46px))!important;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid .app-tile>span:last-child{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .launcher-grid .app-tile>span:last-child{
   font-size:calc(clamp(10px,3.4cqw,12px) * var(--ed-font-factor,1))!important;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .favorite-row{margin-bottom:7px!important;gap:4px!important;}
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .favorite-row button{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .favorite-row{margin-bottom:7px!important;gap:4px!important;}
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .favorite-row button{
   width:min(100%,clamp(29px,min(14cqw,7.5cqh),44px))!important;
  }
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .google-search{min-height:34px!important;padding:6px 9px!important;}
- html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #phoneScreen #guidePointer{
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #homeView .google-search{min-height:34px!important;padding:6px 9px!important;}
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio #phoneScreen #guidePointer{
   font-size:clamp(11px,3.5cqw,13px)!important;padding:7px 10px!important;
+ }
+}
+
+/* V112.44 — garantir geometria do preview móvel antes mesmo de o canal JS carregar.
+   Moldura e vidro usam a mesma caixa, sem depender de altura percentual do Safari.
+   O preview não força scroll da página nem altera o zoom do visitante. */
+@media(max-width:600px){
+ html:not(.educa-mobile-app):not(.educa-mobile-web-parity):not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #phoneHardware #phoneScreen{
+  margin:0!important;transform:none!important;
+  top:8px!important;right:8px!important;bottom:8px!important;left:8px!important;
  }
 }

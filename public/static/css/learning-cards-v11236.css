@@ -181,3 +181,5 @@ html:is(.a11y-high-contrast,.a11y-distinct-colors) #phoneScreen #learningView #f
 #phoneScreen #learningView .learning-surface>.free-learning-consent{order:4!important;}
 #phoneScreen #learningView .learning-surface>.free-example-consent{order:5!important;}
 #phoneScreen #learningView .learning-surface>.learning-account-options{order:6!important;}
+
+/* V112.44 — ordem reforçada no stylesheet de origem V111.47. */
