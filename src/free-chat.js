@@ -72,7 +72,7 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null,stri
   if(strictOutput){
     const selected=await selectStrictReply(parsed,env,escolherModelo(env));
     return Response.json({ok:true,mode:'ia',reply:selected.reply,source:selected.source,
-      ...(selected.guarded?{guarded:true}:{}),security_revision:'11246'},
+      ...(selected.guarded?{guarded:true}:{}),security_revision:'11247'},
       {headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
   }
   const s=CHARACTERS[parsed.scenario];
