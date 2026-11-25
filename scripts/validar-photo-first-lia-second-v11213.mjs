@@ -35,7 +35,9 @@ try{
     assert.ok(img.width>100&&img.height>100,label+': imagem da conversa não carregou');
     await page.screenshot({path:'artifacts/photo-first-lia-second-v11213/'+label+'-whats.png'});
     if(choice==='bloquear'){
-      await page.locator('#freeFamilyBlock').click({timeout:4000});
+      assert.equal(await page.locator('#freeFamilyBlock').isVisible(),false);
+      await page.locator('#chatView .chat-header-actions button[aria-label="Menu"]').click({timeout:4000});
+      await page.locator('#freeContactMoreMenu [data-fc="block"]').click({timeout:4000});
       assert.equal(await page.locator('#freeSummaryTitle').innerText(),'Situação concluída');
       assert.match(await page.locator('#freeSummaryText').innerText(),/videochamada com a LIA/i);
     }else{

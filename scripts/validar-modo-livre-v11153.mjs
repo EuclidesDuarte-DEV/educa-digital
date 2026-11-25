@@ -65,7 +65,9 @@ try{
      bodyClass:document.body.className}));
    if(after.view!=='chat')console.error('Diagnostico clique WhatsApp:',JSON.stringify({clickable,initial,after}));
    assert.equal(after.view,'chat','WhatsApp inicial: '+JSON.stringify({initial,after}));
-   await page.locator('#freeFamilyBlock').click();
+   assert.equal(await page.locator('#freeFamilyBlock').isVisible(),false);
+   await page.locator('#chatView .chat-header-actions button[aria-label="Menu"]').click();
+   await page.locator('#freeContactMoreMenu [data-fc="block"]').click();
    await page.locator('#freeSummaryNext').click();
    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'free-video');
    await page.evaluate(()=>window.EducaFreeMode.hangupVideo());
