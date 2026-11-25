@@ -1,3 +1,14 @@
+# Login com WhatsApp Business
+
+O Worker pede um código de seis dígitos pelo WhatsApp ao criar ou recuperar uma conta. O código vale por cinco minutos e só pode ser usado uma vez. A confirmação mantém o progresso já associado ao número e inicia uma sessão verificada para acessar atividades salvas, preferências e XP.
+
+1. No Meta for Developers, vincule o app e a conta do WhatsApp Business ao portfólio do Educa+ Digital. Adicione e verifique o número comercial e use **Educa+ Digital** como nome de exibição. [Configuração da Cloud API](https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started)
+2. No WhatsApp Manager, envie para aprovação o modelo `educa_login_codigo` em português do Brasil (`pt_BR`), na categoria **Autenticação**, com botão **Copiar código**, recomendação de segurança e validade de 5 minutos. [Modelo de autenticação da Meta](https://developers.facebook.com/documentation/business-messaging/whatsapp/templates/authentication-templates/copy-code-button-authentication-templates)
+3. Configure `WHATSAPP_ACCESS_TOKEN` como segredo do Worker com a permissão `whatsapp_business_messaging` para a conta remetente. Configure também `WHATSAPP_OTP_SECRET` como segredo com um valor aleatório independente de pelo menos 32 caracteres e `WHATSAPP_PHONE_NUMBER_ID` com o **ID** do número remetente. O nome do modelo e a versão padrão da Graph API podem ser ajustados com `WHATSAPP_AUTH_TEMPLATE` e `WHATSAPP_GRAPH_API_VERSION`. [Segredos do Cloudflare Workers](https://developers.cloudflare.com/workers/configuration/secrets/)
+4. Valide o envio e o login em um Worker de teste com o D1 de preview e credenciais próprias, usando um destinatário autorizado. Confirme a chegada da mensagem e a recuperação de uma conta existente antes de publicar a branch em produção. A primeira solicitação válida cria as tabelas adicionais do OTP no D1.
+
+O Preview automático da branch usa `EDUCA_AUTH_MODE=demo` para a suíte de testes. Para usar o mesmo modo no Wrangler local, execute `npm run dev -- --var EDUCA_AUTH_MODE:demo`. O Worker oficial usa `EDUCA_AUTH_MODE=whatsapp` e retorna erro de disponibilidade quando faltam credenciais.
+
 # V111.45 — atalho de acessibilidade responsivo na central do aluno
 
 Para celular/tablet, **Acessibilidade** e **Ver guia novamente** ficam visíveis na parte superior da central após login; no computador continuam no rodapé. Leia `LEIA_PRIMEIRO_V11145.md`.

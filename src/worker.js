@@ -3,13 +3,11 @@ import { installCharacterSecurityNote } from './lia-neural-security-v11245.js';
 /**
  * API do Educa+ Digital em Cloudflare Workers.
  *
- * Esta é uma demonstração educativa. O código de acesso aparece na tela;
- * portanto, não deve ser usado como autenticação de uma aplicação real.
- *
  * A interface estática é a mesma servida pelo app.py (pasta public).
  */
 import { MODULOS } from './catalogo.js';
-import { issueLevelSession, levelProgressApi } from './modo-livre-progress-v11263.js';
+import { issueLevelSession, levelProgressApi, revokeLevelSession, sessionUserId } from './modo-livre-progress-v11263.js';
+import { loginWhatsApp, solicitarCodigoWhatsApp, telefoneWhatsApp, usarCodigoWhatsApp } from './whatsapp-login.js';
 import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
@@ -80,8 +78,17 @@ async function buscarUsuario(env, telefone) {
   ).first();
 }
 
+async function contaAutorizada(request, env, usuario) {
+  return !loginWhatsApp(env) || (await sessionUserId(request, env)) === usuario?.id;
+}
+
 async function cadastrarConta(request, env) {
   const dados = await lerDados(request);
+  if (loginWhatsApp(env)) {
+    if (!telefoneWhatsApp(dados.phone)) return erro(400, 'Digite um número de WhatsApp válido com DDD.');
+    return responder({ ok: false, needs_login: true, channel: 'whatsapp',
+      message: 'Confirme seu celular com um código pelo WhatsApp.' }, 409);
+  }
   const nome = limparNome(dados.name) || 'Participante';
   const telefone = somenteNumeros(dados.phone);
 
@@ -126,6 +133,17 @@ async function cadastrarConta(request, env) {
 
 async function criarCodigo(request, env) {
   const dados = await lerDados(request);
+  if (loginWhatsApp(env)) {
+    const telefone = telefoneWhatsApp(dados.phone);
+    if (!telefone) return erro(400, 'Digite um número de WhatsApp válido com DDD.');
+    if (dados.channel !== 'whatsapp') {
+      return erro(400, 'Atualize a página e solicite o código pelo WhatsApp.');
+    }
+    const { status, message } = await solicitarCodigoWhatsApp(
+      request, env, telefone, limparNome(dados.name) || 'Participante'
+    );
+    return responder({ ok: status === 200, channel: 'whatsapp', message }, status);
+  }
   const telefone = somenteNumeros(dados.phone);
 
   if (!telefoneValido(telefone)) {
@@ -162,6 +180,26 @@ async function criarCodigo(request, env) {
 
 async function confirmarCodigo(request, env) {
   const dados = await lerDados(request);
+  if (loginWhatsApp(env)) {
+    const telefone = telefoneWhatsApp(dados.phone);
+    if (!telefone || typeof dados.code !== 'string' || !/^\d{6}$/.test(dados.code)) {
+      return erro(400, 'Confira o número e digite os 6 dígitos do código.');
+    }
+    const { status, message, nome } = await usarCodigoWhatsApp(env, telefone, dados.code);
+    if (status !== 200) return erro(status, message);
+
+    await env.DB.batch([
+      consulta(env, `INSERT INTO usuarios (nome, numero, ultimo_login) VALUES (?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(numero) DO UPDATE SET ultimo_login = CURRENT_TIMESTAMP`, nome, telefone),
+      consulta(env, `INSERT OR IGNORE INTO perfil_acessibilidade (usuario_id)
+        SELECT id FROM usuarios WHERE numero = ?`, telefone)
+    ]);
+    const usuario = await buscarUsuario(env, telefone);
+    const token = await issueLevelSession(env, usuario.id);
+    if (!token) return erro(503, 'Não foi possível iniciar sua sessão. Aguarde 1 minuto e solicite outro código.');
+    return responder({ ok: true, channel: 'whatsapp', name: usuario.nome, phone: telefone,
+      level_token: token, message: 'Seu número foi confirmado. Você já pode continuar o treino.' });
+  }
   const telefone = somenteNumeros(dados.phone);
   const codigo = somenteNumeros(dados.code);
 
@@ -209,13 +247,14 @@ async function confirmarCodigo(request, env) {
   });
 }
 
-async function consultarProgresso(url, env) {
+async function consultarProgresso(request, url, env) {
   const telefone = somenteNumeros(url.searchParams.get('phone'));
   if (!telefoneValido(telefone)) {
     return erro(400, 'Celular inválido.');
   }
 
   const usuario = await buscarUsuario(env, telefone);
+  if (!await contaAutorizada(request, env, usuario)) return erro(401, 'Entre com seu código do WhatsApp.');
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
   }
@@ -249,6 +288,7 @@ async function salvarProgresso(request, env) {
   }
 
   const usuario = await buscarUsuario(env, telefone);
+  if (!await contaAutorizada(request, env, usuario)) return erro(401, 'Entre com seu código do WhatsApp.');
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
   }
@@ -297,9 +337,10 @@ async function salvarProgresso(request, env) {
   return responder({ ok: true, activity_code: codigoAtividade, ...registro });
 }
 
-async function lerAcessibilidade(url, env) {
+async function lerAcessibilidade(request, url, env) {
   const telefone = somenteNumeros(url.searchParams.get('phone'));
   const usuario = await buscarUsuario(env, telefone);
+  if (!await contaAutorizada(request, env, usuario)) return erro(401, 'Entre com seu código do WhatsApp.');
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
   }
@@ -332,6 +373,7 @@ async function salvarAcessibilidade(request, env) {
   const dados = await lerDados(request);
   const telefone = somenteNumeros(dados.phone);
   const usuario = await buscarUsuario(env, telefone);
+  if (!await contaAutorizada(request, env, usuario)) return erro(401, 'Entre com seu código do WhatsApp.');
 
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
@@ -601,6 +643,13 @@ async function rotearApi(request, env, url, ctx) {
   if (metodo === 'POST' && rota === '/api/conta') {
     return cadastrarConta(request, env);
   }
+  if (metodo === 'GET' && rota === '/api/login/status') {
+    return responder({ ok: true, channel: loginWhatsApp(env) ? 'whatsapp' : 'demo' });
+  }
+  if (metodo === 'DELETE' && rota === '/api/login/sessao') {
+    if (loginWhatsApp(env)) await revokeLevelSession(request, env);
+    return responder({ ok: true });
+  }
   if (metodo === 'POST' && rota === '/api/login/codigo') {
     return criarCodigo(request, env);
   }
@@ -611,13 +660,13 @@ async function rotearApi(request, env, url, ctx) {
     return levelProgressApi(request, env);
   }
   if (metodo === 'GET' && rota === '/api/progresso') {
-    return consultarProgresso(url, env);
+    return consultarProgresso(request, url, env);
   }
   if (metodo === 'POST' && rota === '/api/progresso') {
     return salvarProgresso(request, env);
   }
   if (metodo === 'GET' && rota === '/api/perfil-acessibilidade') {
-    return lerAcessibilidade(url, env);
+    return lerAcessibilidade(request, url, env);
   }
   if (metodo === 'PATCH' && rota === '/api/perfil-acessibilidade') {
     return salvarAcessibilidade(request, env);
