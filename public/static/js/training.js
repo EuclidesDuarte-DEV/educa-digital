@@ -1162,14 +1162,15 @@
     progressFill.style.width = `${n * 25}%`;
   }
 
-  function saveRememberedUser(name, phone) {
+  function saveRememberedUser(name, phone, levelToken) {
     try {
-      localStorage.setItem('educaRememberedUser', JSON.stringify({ name, phone }));
+      localStorage.setItem('educaRememberedUser', JSON.stringify({ name, phone, levelToken: typeof levelToken==='string'?levelToken:undefined }));
     } catch (_) {}
     participantName = name || '';
     progressSaved = true;
     accessMode = 'registered';
     updateReturningUI();
+    window.dispatchEvent(new CustomEvent('educa:account-change'));
   }
 
   function getRememberedUser() {
@@ -1219,6 +1220,7 @@
     progressSaved = false;
     accessMode = 'guest';
     updateReturningUI();
+    window.dispatchEvent(new CustomEvent('educa:account-change'));
   }
 
   function updateReturningUI() {
@@ -1879,7 +1881,7 @@
       if (!response.ok) {
         return showQuickStartMessage(data.message || 'Não foi possível salvar agora.', 'error');
       }
-      saveRememberedUser(data.name || 'Participante', data.phone || digits);
+      saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       isGuestPretest = false;
       await loadServerProgress(data.phone || digits);
       showQuickStartMessage(data.message || 'Seu progresso foi salvo.', 'success');
@@ -1933,7 +1935,7 @@
       const response = await fetch('/api/login/confirmar', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:returningPhone, code}) });
       const data = await response.json();
       if (!response.ok) return showReturnMessage(returnCodeMessage, data.message || 'Código incorreto.');
-      saveRememberedUser(data.name, data.phone);
+      saveRememberedUser(data.name, data.phone, data.level_token);
       await loadServerProgress(data.phone);
       closeReturnModal();
       startTraining({ focus: true, boot: true });
@@ -2991,7 +2993,7 @@
         return;
       }
       if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
-      saveRememberedUser(data.name || 'Participante', data.phone || digits);
+      saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       accountCard.hidden = true;
       await loadServerProgress(data.phone || digits);
       startTraining({ focus: true, boot: true });
