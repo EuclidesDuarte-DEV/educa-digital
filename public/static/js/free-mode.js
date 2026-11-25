@@ -166,6 +166,7 @@ function showIncomingCall(s){if(!state.active)return;clearRequest();state.pendin
 async function send(text){const s=state.scenario;if(!state.active||!s||state.replying||state.blocked)return;const message=String(text||'').trim();if(!message)return;
  if(privateData(message)){const warning='Não informe dados, códigos, senhas ou links reais. Use somente textos fictícios.';setStatus(warning);if(visible()==='free-call')els.callLine.textContent=warning;if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=warning;return;}
  const current=s.id;const oldHist=(state.conversations.get(s.id)||[]).slice(-8);append('user',message);setStatus('');
+ const sentAt=Date.now();
   // V112.10: decisão explícita -> resultado curto e próximo desafio SEM aguardar Workers AI.
   // Não exibir aviso gigante dentro da conversa e não confundir promessa com Pix realizado.
   if(isWebTraining()&&riskyTrainingPromise(s,message)){
@@ -178,7 +179,15 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  const responseTimer=setTimeout(()=>{timedOut=true;abort.abort();},responseTimeoutMs); // sempre limitar a espera para evitar "em andamento" infinito
  try{const response=await fetch(isWebTraining()?'/api/modo-livre/conversar-web':'/api/modo-livre/conversar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s.id,message,history:oldHist,
   learningConsent:state.learningConsent===true,exampleConsent:state.exampleConsent===true,
-  ...(isWebTraining()?{webChallenge:{level:Math.min(3,1+Math.floor((state.finished+state.riskyScenarios.size)/2)),tries:Math.min(2,oldHist.filter(m=>m.role==='user'&&/n[aã]o|desconfio|golpe|bloquear|canal oficial/i.test(m.content)).length)}}:{})}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');}
+  ...(isWebTraining()?{webChallenge:{level:Math.min(3,1+Math.floor((state.finished+state.riskyScenarios.size)/2)),tries:Math.min(2,oldHist.filter(m=>m.role==='user'&&/n[aã]o|desconfio|golpe|bloquear|canal oficial/i.test(m.content)).length)}}:{})}),signal:abort.signal});const data=await response.json().catch(()=>({}));if(!response.ok||!data.ok||data.mode!=='ia'||!data.reply)throw Error(data.message||'A inteligência artificial está indisponível. Tente novamente.');reply=data.reply.slice(0,330);if(privateData(reply))throw Error('A IA retornou dados inadequados. Tente novamente.');
+ // V112.50: indicador "digitando" permanece visível durante a pausa breve.
+ if(isWebTraining()&&s.id==='family-photo'){
+   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches===true;
+   const target=reduced?250:Math.min(2000,1050+Math.round(message.length*9+reply.length*4));
+   const remaining=Math.max(0,target-(Date.now()-sentAt));
+   if(remaining>0)await new Promise(resolve=>setTimeout(resolve,remaining));
+ }
+}
  catch(ex){err=timedOut?'A IA demorou para responder. Tente novamente com uma frase curta.':ex.name==='AbortError'?'A conexão com a IA foi interrompida.':/Failed to fetch|Failed to execute|NetworkError|fetch failed/i.test(String(ex.message))?'Não foi possível conectar à IA. Confira Ollama no Educa+ local ou o Workers AI na Cloudflare.':String(ex.message||'Não foi possível falar com a IA.');}
  finally{clearTimeout(responseTimer);if(state.request===abort)state.request=null;state.replying=false;els.send.disabled=false;if(els.smsSend)els.smsSend.disabled=false;els.typing.hidden=true;}
  if(!state.active||state.scenario?.id!==current||(abort.signal.aborted&&!timedOut))return;
