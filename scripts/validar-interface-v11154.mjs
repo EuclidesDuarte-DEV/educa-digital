@@ -67,6 +67,7 @@ try{
       controls:[...bar.querySelectorAll('.v110-tool:not([hidden]),.v112-video-more summary')].filter(el=>getComputedStyle(el).display!=='none').map(el=>({id:el.id||'more',...r(el)})),
       layout:view.dataset.liaLayout,liaVisible:document.body.classList.contains('lia-call-visible')};
    });
+   console.log('V11255 medidas '+c.w+' '+JSON.stringify({layout:call.layout,controls:call.controls}));
    assert.ok(call.view?.width>200,c.w+': celular simulado sem área útil');
    assert.ok(call.bar.left>=call.view.left-1&&call.bar.right<=call.view.right+1,c.w+': barra ultrapassa borda do Android');
    assert.ok(call.bar.top>=call.view.top&&call.bar.bottom<=call.view.bottom+1,c.w+': dock cortado verticalmente');

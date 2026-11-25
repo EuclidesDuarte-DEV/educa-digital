@@ -41,7 +41,7 @@
   if (mobileParity && platform !== 'web') {
     const webSheet = document.createElement('link');
     webSheet.rel = 'stylesheet';
-    webSheet.href = '/static/channels/web/overrides.css?v=11190&fix=11208';
+    webSheet.href = '/static/channels/web/overrides.css?v=11190&fix=11208&touch=11255';
     document.head.appendChild(webSheet);
     const webScript = document.createElement('script');
     webScript.src = '/static/channels/web/overrides.js?v=11190&fix=11212';
@@ -52,7 +52,7 @@
   const version = platform === 'web' ? '11190' : '11222';
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
-  sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11208' : '');
+  sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11208&touch=11255' : '');
   document.head.appendChild(sheet);
   const script = document.createElement('script');
   script.src = base + 'overrides.js?v=' + version + (platform === 'web' ? '&fix=11212' : '');

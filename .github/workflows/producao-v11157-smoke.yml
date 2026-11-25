@@ -29,7 +29,8 @@ jobs:
               const html=await res.text();
               const required=['home-fullscreen-parity-v11253.css?v=11253','lia-zoom-v11230.css?v=11233&touch=11254'];
               const assets=await Promise.all(required.map(path=>fetch(root+'/static/css/'+path,{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}})));
-              const cssReady=assets.every(r=>r.ok&&/text\/css/i.test(r.headers.get('content-type')||''));
+              const channel=await fetch(root+'/static/channels/web/overrides.css?v=11190&fix=11208&touch=11255',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
+              const cssReady=assets.every(r=>r.ok&&/text\/css/i.test(r.headers.get('content-type')||''))&&channel.ok&&(await channel.text()).includes('V112.55: a largura acompanha a moldura');
               if(res.ok&&html.includes(expected)&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady){
                 ready=true;console.log('Revisão oficial confirmada: '+expected);break;
               }

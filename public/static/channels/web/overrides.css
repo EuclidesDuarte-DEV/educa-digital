@@ -1903,9 +1903,12 @@ body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video
   box-sizing: border-box !important;
   flex: 0 1 var(--lia-dock-control) !important;
   width: var(--lia-dock-control) !important;
-  height: var(--lia-dock-control) !important;
+  /* V112.55: a largura acompanha a moldura; a altura do toque não encolhe. */
+  height: max(48px, var(--lia-dock-control)) !important;
   min-width: 0 !important;
-  min-height: 42px !important;
+  min-height: 48px !important;
+  max-height: 52px !important;
+  aspect-ratio: auto !important;
   max-width: var(--lia-dock-control) !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -1952,13 +1955,13 @@ html[data-educa-platform="web"]:not(.educa-fullscreen-active)
 body.lia-call-visible #phoneHardware #freeVideoView[data-lia-layout="compact"]:not(:fullscreen) {
   --lia-dock-inset: 6px;
   --lia-dock-control: clamp(38px, 12cqw, 44px);
-  --lia-dock-height: 54px;
+  --lia-dock-height: 60px;
   --lia-dock-gap: 3px;
 }
 html[data-educa-platform="web"]:not(.educa-fullscreen-active)
 body.lia-call-visible #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) {
   --lia-dock-bottom: 30px;
-  --lia-dock-height: 51px;
+  --lia-dock-height: 60px;
 }
 html[data-educa-platform="web"]:not(.educa-fullscreen-active)
 body.lia-call-visible #phoneHardware #freeVideoView[data-lia-short="true"]:not(:fullscreen) .v110-selfie {
@@ -2026,4 +2029,9 @@ html[data-educa-platform="web"] #phoneScreen
   #freeSummaryView.android-view.is-active > .v106-app-screen.v106-summary {
     padding-top:45px!important;
   }
+}
+
+/* V112.55: a chamada recebida só exibe três controles. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active) body.lia-call-visible #phoneHardware #freeVideoView:not(:fullscreen) .v110-video-toolbar:has(> #freeVideoCameraToggle[hidden]):has(> #freeVideoSpeaker[hidden]):has(> #freeVideoMic[hidden]) {
+  --lia-dock-control: clamp(44px, 18cqw, 52px);
 }
