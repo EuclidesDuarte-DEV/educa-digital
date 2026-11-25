@@ -1191,13 +1191,14 @@
   }
 
 
+  function accountHeaders(extra={}){const user=getRememberedUser();return {...extra,...(user?.levelToken?{Authorization:'Bearer '+user.levelToken}:{})};}
   async function syncProgressEvent(activityCode, eventName) {
     const user = getRememberedUser();
     if (!user?.phone || !activityCode) return;
     try {
       await fetch('/api/progresso', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: accountHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ phone: user.phone, activity_code: activityCode, event: eventName })
       });
     } catch (_) {
@@ -1210,7 +1211,7 @@
     if (digits.length < 10) return;
     selectLessonsOwner(digits);
     try {
-      const response = await fetch(`/api/progresso?phone=${encodeURIComponent(digits)}`);
+      const response = await fetch(`/api/progresso?phone=${encodeURIComponent(digits)}`,{headers:accountHeaders(),cache:'no-store'});
       if (!response.ok) return;
       const data = await response.json();
       if(lessonsOwner!==lessonsKey(digits))return;
@@ -1287,6 +1288,17 @@
     el.textContent = message;
   }
 
+  let resendUntil=0,resendTimer=null;
+  function showLoginDelivery(data){
+    const real=data.channel==='whatsapp';
+    const heading=$('#returnCodeHeading'),description=$('#returnCodeDescription'),resend=$('#returnResendBtn');
+    if(heading)heading.textContent=real?'Confira seu WhatsApp.':'Digite o código de demonstração.';
+    if(description)description.textContent=real?'Confira o código de 6 números no WhatsApp informado. Ele vale por 5 minutos. Não compartilhe o código.':'Neste ambiente demonstrativo, o código aparece abaixo e não é enviado ao celular.';
+    if(demoCodeValue)demoCodeValue.textContent=!real&&data.demo_code?data.demo_code:'';
+    if(demoCodeBox)demoCodeBox.hidden=real||!data.demo_code;
+    if(returnCode)returnCode.value='';
+    if(resend){resend.hidden=!real;clearInterval(resendTimer);if(real){resendUntil=Date.now()+1000*(data.retry_after||60);const tick=()=>{const remaining=Math.max(0,Math.ceil((resendUntil-Date.now())/1000));resend.disabled=remaining>0;resend.textContent=remaining?'Reenviar em '+remaining+' s':'Reenviar código no WhatsApp';if(!remaining)clearInterval(resendTimer);};tick();resendTimer=setInterval(tick,1000);}}
+  }
   // Conta existente: após um único número, pular a segunda tela de telefone.
   // Mantemos o código da demonstração para não confundir login com cadastro.
   async function openExistingAccountCode(phone) {
@@ -1305,10 +1317,7 @@
     openReturnModal();
     returnPhoneStep.hidden = true;
     returnCodeStep.hidden = false;
-    if (data.demo_code && demoCodeValue && demoCodeBox) {
-      demoCodeValue.textContent = data.demo_code;
-      demoCodeBox.hidden = false;
-    }
+    showLoginDelivery(data);
     window.setTimeout(() => returnCode?.focus(), 120);
   }
 
@@ -1824,6 +1833,7 @@
     if (document.fullscreenElement) {
       document.exitFullscreen?.().catch(() => {});
     }
+    void fetch('/api/login/sair',{method:'POST',headers:accountHeaders()}).catch(()=>{});
     clearRememberedUser();
 
     // Zere o estado ANTES de restaurar o pré-teste; caso contrário,
@@ -1853,9 +1863,10 @@
   }
   logoutBtn?.addEventListener('click', performLogout);
   focusLogoutBtn?.addEventListener('click', performLogout);
-  $('#startNowBtn')?.addEventListener('click', () => {
+  $('#startNowBtn')?.addEventListener('click', async () => {
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
+      try{const res=await fetch('/api/login/status',{headers:accountHeaders(),cache:'no-store'});if(res.ok){const status=await res.json();if(status.mode==='whatsapp'&&!status.verified){clearRememberedUser();openStartModal({entry:true});if(quickPhone)quickPhone.value=formatPhone(user.phone);return;}}}catch(_){}
       participantName = user.name; progressSaved = true; accessMode = 'registered';
       void loadServerProgress(user.phone);
       // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
@@ -1934,11 +1945,16 @@
       if (!response.ok) return showReturnMessage(returnPhoneMessage, data.message || 'Não encontramos seu progresso.');
       returnPhoneStep.hidden = true;
       returnCodeStep.hidden = false;
-      if (data.demo_code) { demoCodeValue.textContent = data.demo_code; demoCodeBox.hidden = false; }
+      showLoginDelivery(data);
       window.setTimeout(() => returnCode?.focus(), 100);
     } catch (_) {
       showReturnMessage(returnPhoneMessage, 'Não foi possível conectar ao servidor. Abra o site pelo Flask ou PythonAnywhere.');
     }
+  });
+  $('#returnResendBtn')?.addEventListener('click',async()=>{
+    if(Date.now()<resendUntil)return;
+    const btn=$('#returnResendBtn');btn.disabled=true;
+    try{const res=await fetch('/api/login/codigo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:returningPhone})});const data=await res.json();if(!res.ok)throw Error(data.message||'Não foi possível reenviar.');showLoginDelivery(data);showReturnMessage(returnCodeMessage,'Novo código solicitado. Confira seu WhatsApp.','success');}catch(error){btn.disabled=false;showReturnMessage(returnCodeMessage,error.message||'Tente novamente.');}
   });
   returnCodeForm?.addEventListener('submit', async (event) => {
     event.preventDefault();

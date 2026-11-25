@@ -1,6 +1,7 @@
 /* V112.63: XP de treinamento vinculado à conta no D1. Migração aditiva,
    independente de conteúdo de conversas. O login anterior continua demonstrativo;
    este token apenas vincula a sessão ao usuário retornado pelo login do protótipo. */
+import {whatsappMode,verifiedAccount} from './whatsapp-auth-v11266.js';
 const init=new WeakMap();
 const sql=(env,s,...args)=>env.DB.prepare(s).bind(...args);
 const hash=async token=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),x=>x.toString(16).padStart(2,'0')).join('');
@@ -35,7 +36,7 @@ export async function levelProgressApi(request,env){
  const token=request.headers.get('authorization')?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];
  if(!token)return response({ok:false,message:'Entre novamente para sincronizar seu nível.'},401);
  await setup(env);
- const user=await sql(env,'SELECT usuario_id FROM modo_livre_sessions WHERE token_hash=? AND expires>?',await hash(token),now()).first();
+ const user=whatsappMode(env)?await verifiedAccount(request,env):await sql(env,'SELECT usuario_id FROM modo_livre_sessions WHERE token_hash=? AND expires>?',await hash(token),now()).first();
  if(!user)return response({ok:false,message:'Sessão expirada. Entre novamente.'},401);
  const id=user.usuario_id;
  if(request.method==='POST'){
