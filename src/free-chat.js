@@ -1,4 +1,4 @@
-import { selectStrictReply } from './free-chat-strict-v11246.js';
+import { selectStrictReply, SECURITY_REVISION } from './free-chat-strict-v11246.js';
 import { CHARACTER_POLICY, injectionAttempt, unsafeCharacterOutput, protectedReply, trustedHistory } from './free-chat-guard-v11245.js';
 import { retrieveLiaKnowledge } from './lia-neural.js';
 import { saveLearningTurn, learningHint, classifyTrainingTurn } from './lia-neural-learning-v11196.js';
@@ -72,7 +72,7 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null,stri
   if(strictOutput){
     const selected=await selectStrictReply(parsed,env,escolherModelo(env));
     return Response.json({ok:true,mode:'ia',reply:selected.reply,source:selected.source,
-      ...(selected.guarded?{guarded:true}:{}),security_revision:'11247'},
+      ...(selected.guarded?{guarded:true}:{}),security_revision:SECURITY_REVISION},
       {headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
   }
   const s=CHARACTERS[parsed.scenario];

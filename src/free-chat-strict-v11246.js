@@ -1,7 +1,7 @@
 /* V112.46: output is a server-owned, finite catalog. The model is a selector,
  * never a text author, tool caller or authority. No raw model text leaves here. */
 import {injectionAttempt,normalizeGuard,protectedReply} from './free-chat-guard-v11245.js';
-export const SECURITY_REVISION='11247';
+export const SECURITY_REVISION='11248';
 const common=Object.freeze({
  clarify:'Não entendi bem. Pode me explicar de outro jeito?',
  wait:'Tudo bem, não precisa decidir agora.',
@@ -45,7 +45,51 @@ const openingContext=Object.freeze({
  "daughter": "Só queria saber como você está.",
  "family-group": "Eu estava falando das fotos do almoço."
 });
-for(const k of Object.keys(catalog))catalog[k]=Object.freeze({...common,...catalog[k],context:openingContext[k]});
+// V112.48: respostas a fatos distintos, sem novas alegações nem pressão.
+const followups=Object.freeze({
+ "family": "Você quer entender a troca de número ou a conta mencionada?",
+ "family-photo": "Você quer saber sobre o número novo ou sobre a limitação do Pix?",
+ "video": "Você quer entender o contato novo ou o assunto da ligação?",
+ "bank": "Você quer entender o aviso de movimentação ou como conferir a informação?",
+ "code": "Você quer saber sobre o aviso de acesso? Não compartilhe códigos reais.",
+ "delivery": "Você quer entender a entrega ou a taxa mencionada no aviso?",
+ "sms-delivery": "Você quer saber sobre a entrega ou a taxa fictícia?",
+ "sms-bank": "Você quer entender qual é o aviso bancário ou como conferir?",
+ "sms-prize": "Você quer saber sobre a promoção mencionada?",
+ "call-tech": "Você quer entender o aviso de suporte ou como conferir?",
+ "relative": "Você quer entender a troca de número ou a despesa mencionada?",
+ "account": "Você quer entender o aviso de bloqueio ou como verificar a conta?",
+ "prize": "Você quer saber sobre o aviso da promoção?",
+ "friend": "Você quer conversar sobre o treino do celular ou sobre outra coisa?",
+ "daughter": "Quer me contar como foi seu dia?",
+ "family-group": "Você quer conversar sobre as fotos do almoço?"
+});
+const details=Object.freeze({
+ "family": "O assunto que mencionei foi a troca de número e uma conta de treinamento.",
+ "family-photo": "O que aconteceu foi que meu Pix ficou limitado.",
+ "video": "A conversa começou pelo contato de um celular novo.",
+ "bank": "O aviso mencionava uma movimentação que ainda precisa ser conferida.",
+ "code": "O assunto era um aviso de confirmação de acesso.",
+ "delivery": "O aviso falava de uma entrega pendente.",
+ "sms-delivery": "A mensagem mencionava uma taxa fictícia de entrega.",
+ "sms-bank": "O SMS falava de uma movimentação incomum.",
+ "sms-prize": "O SMS mencionava uma promoção não solicitada.",
+ "call-tech": "A ligação começou com um aviso de suposta falha no celular.",
+ "relative": "O assunto era o número novo e uma despesa de treinamento.",
+ "account": "A primeira mensagem mencionava um possível bloqueio.",
+ "prize": "O aviso mencionava um prêmio fictício.",
+ "friend": "Eu queria conversar sobre como está indo o treino.",
+ "daughter": "Eu só estava perguntando como você está.",
+ "family-group": "O João comentou sobre as fotos do almoço."
+});
+const timing=Object.freeze({
+ 'family-photo':'A conta que mencionei é de hoje. Pode conferir antes de decidir.',
+ family:'Não combinamos um horário. Pode verificar antes de decidir.',
+ video:'Não combinamos um horário para isso. Pode conferir primeiro.',
+ relative:'Não combinamos um horário. Pode confirmar antes de decidir.'
+});
+for(const k of Object.keys(catalog))catalog[k]=Object.freeze({...common,...catalog[k],context:openingContext[k],
+ detail:details[k],followup:followups[k],timing:timing[k]||'Não foi informado um horário. Não precisa decidir agora.'});
 Object.freeze(catalog);
 export function approvedReplies(scenario){return Object.hasOwn(catalog,scenario)?catalog[scenario]:null;}
 function normalize(s){return normalizeGuard(s).replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim();}
@@ -65,17 +109,25 @@ function contextQuestion(message){
 function greetingOnly(message){
  return /^(?:oi|ola|opa|alo|bom dia|boa tarde|boa noite)(?: (?:tudo bem|como vai|como voce esta))?$/.test(normalize(message));
 }
+function timingQuestion(message){
+ const s=normalize(message);
+ return /\b(?:agora|hoje|amanha|quando|prazo|horario|hora|urgente|urgencia|pode esperar|da pra esperar|tem pressa|pra quando|ate quando|quanto tempo)\b/.test(s)&&!/\b(?:quanto custa|qual o valor|qual e o valor)\b/.test(s);
+}
+function lastContact(history,choices){
+ return [...history].reverse().find(row=>row.role==='assistant'&&Object.values(choices).includes(row.content))?.content||'';
+}
 function fallbackId(scenario,message,choices){
  const s=normalize(message);
  if(explicitExit(message))return 'close';
  if(/\b(?:confirmar|verificar|conferir|golpe|desconfio|suspeit|nao acredito|nao vou)\b/.test(s))return choices.doubt?'doubt':'verify';
  if(/\b(?:quem|nome|identidade)\b/.test(s))return choices.identity?'identity':'clarify';
+ if(timingQuestion(message))return 'timing';
  if(/\b(?:quanto|valor|reais|dinheiro|pix|taxa)\b/.test(s))return choices.amount?'amount':'verify';
  if(/\b(?:foto|imagem)\b/.test(s)&&choices.photo)return 'photo';
  if(contextQuestion(message))return 'context';
  if(greetingOnly(message))return 'hello';
  if(/\b(?:por que|porque|motivo|assunto)\b/.test(s))return choices.context?'context':'clarify';
- return choices.ordinary?'ordinary':'context';
+ return choices.ordinary?'ordinary':'followup';
 }
 export function parseChoice(value,choices){
  if(typeof value!=='string'||value.length>80)return null;
@@ -94,30 +146,38 @@ function safeHistory(history,choices){
   return [];
  });
 }
-export async function selectStrictReply(parsed,env,model){
+export async function selectStrictReply(parsed,env,model,{timeoutMs=3500}={}){
  const choices=approvedReplies(parsed.scenario);
  if(!choices)throw Error('unknown scenario');
  const respond=(id,source)=>({reply:choices[id],source,guarded:source==='catalog-protection'});
  if(injectionAttempt(parsed.message))return respond(explicitExit(parsed.message)?'close':'context','catalog-protection');
  if(explicitExit(parsed.message))return respond('close','catalog-protection');
+ const previous=lastContact(parsed.history,choices);
  const fallback=fallbackId(parsed.scenario,parsed.message,choices);
+ const contextId=previous===choices.context?'detail':'context';
  // An explicit request to verify or reject takes priority over the model.
  if(/\b(?:vou|quero|prefiro|preciso) (?:confirmar|verificar|conferir)\b|\bnao vou (?:pagar|enviar|mandar|transferir)\b/.test(normalize(parsed.message)))return respond(choices.doubt?'doubt':'verify','catalog-protection');
  // Questions with clear established subject have a server-resolved answer.
  // The model cannot override context, identity, amounts or a safety decision.
- const deterministic=contextQuestion(parsed.message)&&fallback==='context';
- if(deterministic)return respond('context','catalog-context');
+ if(fallback==='timing')return respond('timing','catalog-context');
+ if(contextQuestion(parsed.message)&&fallback==='context')return respond(contextId,'catalog-context');
  // Restrict the selection for ambiguous turns. Greetings never displace a question.
  const allowedIds=greetingOnly(parsed.message)?['hello'] :
    ['identity','amount','photo','doubt','verify'].includes(fallback)?[fallback]:
-   [fallback,'context',...(choices.ordinary?['ordinary','help']:[])];
- const eligible=Object.fromEntries([...new Set(allowedIds)].filter(id=>Object.hasOwn(choices,id)).map(id=>[id,choices[id]]));
+   [fallback,contextId,'followup',...(choices.ordinary?['ordinary','help']:[])];
+ const distinctIds=[...new Set(allowedIds)].filter(id=>Object.hasOwn(choices,id));
+ const alternatives=distinctIds.filter(id=>choices[id]!==previous);
+ const eligible=Object.fromEntries((alternatives.length?alternatives:distinctIds).map(id=>[id,choices[id]]));
+ const safeDefault=Object.hasOwn(eligible,fallback)?fallback:Object.keys(eligible)[0];
  const system='Escolha somente um identificador de resposta do catálogo para o diálogo em português. Considere a última fala e o contexto. Não escreva frases, explicações ou qualquer outro conteúdo. Retorne somente o identificador exato em letras minúsculas. Não volte a cumprimentar se há uma pergunta. Mantenha os fatos já estabelecidos: '+choices.context+' Catálogo: '+JSON.stringify(eligible);
  const user=JSON.stringify({history:safeHistory(parsed.history,choices),message:parsed.message});
+ let timer;
  try{
-  const result=await env.AI.run(model,{messages:[{role:'system',content:system},{role:'user',content:user}],...(model.includes('gemma-4')?{max_completion_tokens:24,chat_template_kwargs:{enable_thinking:false}}:{max_tokens:24}),temperature:0.15});
+  const deadline=new Promise(resolve=>{timer=setTimeout(()=>resolve(null),timeoutMs);});
+  const result=await Promise.race([Promise.resolve().then(()=>env.AI.run(model,{messages:[{role:'system',content:system},{role:'user',content:user}],...(model.includes('gemma-4')?{max_completion_tokens:24,chat_template_kwargs:{enable_thinking:false}}:{max_tokens:24}),temperature:0.15})),deadline]);
   const id=parseChoice(result?.response??result?.choices?.[0]?.message?.content,eligible);
   if(id)return respond(id,'catalog-ai');
  }catch(_){/* No exception detail or model text is exposed or persisted. */}
- return respond(fallback,'catalog-protection');
+ finally{clearTimeout(timer);}
+ return respond(safeDefault,'catalog-protection');
 }
