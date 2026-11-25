@@ -72,9 +72,10 @@ function runWebGamification(platform='web'){
     addEventListener(){}
   };
   class MutationObserver{constructor(cb){observers.push(cb);}observe(){}}
+  const listeners={};
   const window={
     EducaFreeMode:{videoState:()=>scenario},
-    MutationObserver,
+    MutationObserver,addEventListener:(name,fn)=>{listeners[name]=fn;},
   };
   const localStorage={
     getItem:k=>store.get(k)||null,
@@ -96,7 +97,7 @@ function runWebGamification(platform='web'){
     for(const child of root.children){const found=walk(child,cls);if(found)return found;}
     return null;
   };
-  return {window,phone,controls,header,fire,repeatObserver,walk,store};
+  return {window,phone,controls,header,fire,repeatObserver,walk,store,login:phone=>{if(phone)store.set('educaRememberedUser',JSON.stringify({phone}));else store.delete('educaRememberedUser');listeners['educa:account-change']?.();}};
 }
 
 test('[web] V111.82 — indicador discreto, XP só no Modo Livre e 3 faixas',()=>{
@@ -149,7 +150,9 @@ test('[web] V111.83 — sem quiz ou pop-up de desafio; pontos somente após resu
   assert.match(game,/safe\?20:-15/);
   assert.match(game,/resultHandled=true/);
   assert.match(game,/Erros da IA ou da conexão não retiram pontos/);
-  assert.doesNotMatch(game,/fetch\s*\(/);
+  assert.ok([...game.matchAll(/window\.fetch\('([^']+)'/g)].every(m=>m[1]==='/api/modo-livre/nivel'));
+  assert.match(game,/Authorization:'Bearer '\+identity.token/);
+  assert.doesNotMatch(game,/\/api\/modo-livre\/conversar|\/api\/lia\/training/);
 });
 
 test('[web] dificuldade permanece isolada no canal Web; sem editar núcleo, Android/iOS ou D1',async()=>{
@@ -181,4 +184,20 @@ test('[ios/android] nenhum elemento de gamificação é criado fora da Web',()=>
     assert.equal(ui.header.children.length,0);
     assert.equal(ui.controls.children.length,0);
   }
+});
+
+test('[web] V112.63 — alternar contas preserva XP separado e não importa XP legado',()=>{
+ const ui=runWebGamification();
+ ui.store.set('educaWebModoLivreNivelV11182',JSON.stringify({xp:210}));
+ ui.login('65900000001');
+ assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,0);
+ ui.fire('family',true);ui.fire('video',true);
+ assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,40);
+ ui.login('65900000002');
+ assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,0);
+ ui.fire('bank',true);
+ ui.login(null);assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,0);
+ ui.login('65900000001');assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,40);
+ ui.login('65900000002');assert.equal(ui.window.EducaWebGamification.getSnapshot().xp,20);
+ assert.equal(JSON.parse(ui.store.get('educaWebModoLivreNivelV11182')).xp,210);
 });

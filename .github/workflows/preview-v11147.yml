@@ -40,17 +40,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           for tentativa in $(seq 1 30); do
-            dados=$(curl --fail --silent --show-error --max-time 15 \
+            if ! dados=$(curl --fail --silent --show-error --max-time 15 \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs")
-            status=$(printf '%s' "$dados" | node -e '
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs"); then
+              echo "Consulta GitHub indisponível (tentativa $tentativa/30); repetindo sem aprovar o build."
+              sleep 10
+              continue
+            fi
+            if ! status=$(printf '%s' "$dados" | node -e '
               let s = ""; process.stdin.on("data", c => s += c);
               process.stdin.on("end", () => {
                 const checks = JSON.parse(s).check_runs || [];
                 const build = checks.find(c => c.name === "Workers Builds: educa-digital");
                 process.stdout.write(build ? build.status + "/" + build.conclusion : "aguardando");
-              });')
+              });'); then
+              echo "Resposta inválida do GitHub; repetindo consulta."
+              sleep 10
+              continue
+            fi
             echo "Cloudflare $HEAD_SHA: $status"
             if [ "$status" = "completed/success" ]; then exit 0; fi
             if [ "$status" = "completed/failure" ]; then exit 1; fi
@@ -111,6 +119,44 @@ jobs:
             throw new Error('Conta existente nao protegida: HTTP ' + second.status);
           }
           console.log('Retorno de conta existente: OK');
+          NODE
+      - name: V112.63 — validar XP real no D1 isolado e retomada de conta
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {randomUUID} from 'node:crypto';
+          const root=process.env.PREVIEW_URL;
+          assert.match(new URL(root).hostname,/^[a-z0-9-]+-educa-digital\.educamaisdigital\.workers\.dev$/);
+          async function call(path,body,token){
+            const res=await fetch(root+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(20000)});
+            return {status:res.status,data:await res.json()};
+          }
+          async function login(phone){
+            const created=await call('/api/conta',{phone});
+            if(created.status===201){assert.match(created.data.level_token||'',/^[a-f0-9]{64}$/);return created.data.level_token;}
+            assert.equal(created.status,409);
+            const code=await call('/api/login/codigo',{phone});
+            assert.equal(code.status,200);
+            const result=await call('/api/login/confirmar',{phone,code:code.data.demo_code});
+            assert.equal(result.status,200);assert.match(result.data.level_token||'',/^[a-f0-9]{64}$/);
+            return result.data.level_token;
+          }
+          const path='/api/modo-livre/nivel';
+          const a=await login('6500000000'),b=await login('6500000001');
+          assert.notEqual(a,b);
+          const denied=await call(path);assert.equal(denied.status,401);
+          async function xp(token,body){
+            const r=await call(path,body,token);assert.equal(r.status,200);assert.equal(r.data.ok,true);assert.ok(Number.isInteger(r.data.xp));return r.data.xp;
+          }
+          const before=await xp(a),other=await xp(b);
+          const event={eventId:randomUUID(),outcome:before>9979?'risk':'safe'};
+          const expected=before+(event.outcome==='safe'?20:-15);
+          assert.equal(await xp(a,event),expected);
+          assert.equal(await xp(a,event),expected,'reenvio duplicou XP');
+          assert.equal(await xp(b),other,'XP vazou para outra conta');
+          const newDevice=await login('6500000000');
+          assert.equal(await xp(newDevice),expected,'XP não recuperado após novo login');
+          console.log('XP real no Preview: sessão, persistência, idempotência e isolamento OK');
           NODE
 
   neural-voice-preview:

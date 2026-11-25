@@ -35,7 +35,12 @@ jobs:
               const arrivalsReady=mode.ok&&(await mode.text()).includes('function prepareContactRows()');
               const neural=await fetch(root+'/static/js/lia-neural-playback-v11261.js?v=11262',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
               const neuralReady=neural.ok&&(await neural.text()).includes('EducaLiaNeuralPlayback');
-              if(res.ok&&html.includes(expected)&&html.includes('guard=11251&arrivals=11257')&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady&&arrivalsReady&&neuralReady&&html.includes('callvoice=11261')&&html.includes('accessibility.js?v=11148&neural=11261&guide=11262')&&html.includes('guide=11241&voice=11262')){
+              const contacts=await fetch(root+'/static/js/web-contact-profile-v11214.js?v=11214&contacts=11263',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
+              const levels=await fetch(root+'/static/channels/web/gamification-v11182.js?v=11212&account=11263',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
+              const accountReady=contacts.ok&&(await contacts.text()).includes('currentContact')&&levels.ok&&(await levels.text()).includes("version:'11263'");
+              const levelAuth=await fetch(root+'/api/modo-livre/nivel',{signal:AbortSignal.timeout(10000)});
+              const levelReady=levelAuth.status===401;
+              if(res.ok&&html.includes(expected)&&html.includes('guard=11251&arrivals=11257')&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady&&arrivalsReady&&neuralReady&&html.includes('callvoice=11261')&&html.includes('accessibility.js?v=11148&neural=11261&guide=11262')&&html.includes('guide=11241&voice=11262&account=11263')&&html.includes('web-contact-profile-v11214.js?v=11214&contacts=11263')&&accountReady&&levelReady){
                 ready=true;console.log('Revisão oficial confirmada: '+expected);break;
               }
               console.log('Site oficial ainda sem a revisão esperada: '+res.status+' (checagem '+n+')');

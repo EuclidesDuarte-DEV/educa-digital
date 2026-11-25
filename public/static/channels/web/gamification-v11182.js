@@ -1,5 +1,5 @@
-/* V111.82 — SOMENTE WEB: gamificação opcional e local do Modo Livre.
- * Não altera o motor compartilhado, IA, D1 ou canais Android/iOS.
+/* V112.63 — gamificação Web: XP por conta, fila local e sincronização D1.
+ * Não transfere XP legado sem proprietário nem envia mensagens do treino.
  */
 (()=>{
   'use strict';
@@ -20,16 +20,59 @@
   ]);
   const clamp=n=>Math.max(0,Math.min(MAX_XP,Math.floor(Number(n)||0)));
   const tierFor=xp=>xp>=210?3:xp>=80?2:1;
-  function restore(){
+  function accountInfo(){
     try{
-      const d=JSON.parse(localStorage.getItem(STORE)||'{}');
-      return {xp:clamp(d.xp)};
-    }catch(_){return {xp:0};}
+      const user=JSON.parse(localStorage.getItem('educaRememberedUser')||'null');
+      const phone=String(user?.phone||'').replace(/\D/g,'');
+      if(/^\d{10,11}$/.test(phone))return {key:STORE+':account:'+phone,registered:true,token:/^[a-f0-9]{64}$/.test(user?.levelToken||'')?user.levelToken:''};
+    }catch(_){}
+    return {key:STORE+':guest',registered:false,token:''};
   }
-  const model=restore();
+  function restore(key){
+    try{
+      const d=JSON.parse(localStorage.getItem(key)||'{}');
+      const pending=Array.isArray(d.pending)?d.pending.filter(e=>/^[a-zA-Z0-9_-]{12,80}$/.test(e?.eventId||'')&&['safe','risk'].includes(e?.outcome)):[];
+      const confirmed=clamp(d.confirmed??d.xp);
+      return {xp:clamp(d.xp),confirmed,pending,synced:false};
+    }catch(_){return {xp:0,confirmed:0,pending:[],synced:false};}
+  }
+  let account=accountInfo(),model=restore(account.key);
   let dialog=null, focusBefore=null;
-  function persist(){
-    try{localStorage.setItem(STORE,JSON.stringify(model));}catch(_){}
+  const syncing=new Set();
+  function persist(target=model,key=account.key){
+    try{localStorage.setItem(key,JSON.stringify({xp:target.xp,confirmed:target.confirmed,pending:target.pending}));}catch(_){}
+  }
+  function recalculate(target){
+    target.xp=target.pending.reduce((xp,e)=>clamp(xp+(e.outcome==='safe'?20:-15)),target.confirmed);
+  }
+  function refreshAccount(){
+    const next=accountInfo(),changed=next.key!==account.key,tokenChanged=next.token!==account.token;
+    if(changed){account=next;model=restore(next.key);closeDialog();updateBadge();}
+    else if(tokenChanged){account=next;model.synced=false;}
+    return changed||tokenChanged;
+  }
+  async function sync(){
+    refreshAccount();
+    const target=model,identity=account;
+    if(!identity.registered||!identity.token||typeof window.fetch!=='function'||syncing.has(target))return;
+    syncing.add(target);
+    const headers={Authorization:'Bearer '+identity.token,'Content-Type':'application/json'};
+    try{
+      const get=await window.fetch('/api/modo-livre/nivel',{headers,cache:'no-store'});
+      if(!get.ok)throw Error('Nível indisponível');
+      const data=await get.json();if(!data.ok||!Number.isFinite(Number(data.xp)))throw Error('Resposta inválida');
+      target.confirmed=clamp(data.xp);recalculate(target);persist(target,identity.key);
+      while(target.pending.length&&model===target&&account.token===identity.token){
+        const item=target.pending[0];
+        const res=await window.fetch('/api/modo-livre/nivel',{method:'POST',headers,body:JSON.stringify(item),cache:'no-store'});
+        if(!res.ok)throw Error('Nível indisponível');
+        const result=await res.json();if(!result.ok||!Number.isFinite(Number(result.xp)))throw Error('Resposta inválida');
+        target.confirmed=clamp(result.xp);target.pending=target.pending.filter(e=>e.eventId!==item.eventId);
+        recalculate(target);persist(target,identity.key);
+      }
+      target.synced=target.pending.length===0;
+    }catch(_){target.synced=false;persist(target,identity.key);}
+    finally{syncing.delete(target);if(model===target)updateBadge();}
   }
   function snapshot(){
     const tier=tierFor(model.xp),spec=LEVELS[tier-1];
@@ -50,10 +93,16 @@
     badge.setAttribute('aria-label','Meu nível no Modo Livre: '+info.level+', '+info.name+'. Abrir progresso.');
   }
   function credit(delta){
+    refreshAccount();
     const previous=snapshot(),old=model.xp;
-    model.xp=clamp(old+delta);
+    if(account.registered){
+      const eventId=window.crypto?.randomUUID?.()||('event-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+      model.pending.push({eventId,outcome:delta>0?'safe':'risk'});
+      model.synced=false;recalculate(model);
+    }else{model.xp=clamp(old+delta);model.confirmed=model.xp;}
     persist();
     updateBadge();
+    if(account.registered)void sync();
     return {delta:model.xp-old,previous:previous.level,current:snapshot()};
   }
   function createDialog(title){
@@ -94,6 +143,7 @@
     return el;
   }
   function progressView(){
+    refreshAccount();void sync();
     const info=snapshot(),sheet=createDialog('Meu progresso no Modo Livre');
     sheet.append(element('h2','','Minha evolução'));
     sheet.append(element('p','ed-modo-subtitle','Nível '+info.level+' · '+info.name));
@@ -106,7 +156,7 @@
     sheet.append(element('p','ed-modo-count',info.next?info.xp+' de '+info.next+' XP para o próximo nível':info.xp+' XP acumulados · nível máximo'));
     sheet.append(element('p','ed-modo-info','Somente decisões tomadas no Modo Livre mudam seu nível.'));
     sheet.append(element('p','ed-modo-info','Decisão segura: +20 XP. Decisão arriscada: −15 XP. Erros da IA ou da conexão não retiram pontos.'));
-    sheet.append(element('p','ed-modo-footnote','Progresso salvo neste navegador. Não sincronizado com outras contas ou aparelhos.'));
+    sheet.append(element('p','ed-modo-footnote',!account.registered?'Progresso de visitante neste navegador.':model.synced?'Nível sincronizado com sua conta.':account.token?'Nível salvo nesta conta; sincronização pendente.':'Nível salvo nesta conta neste aparelho. Entre novamente para ativar a sincronização.'));
   }
   badge.addEventListener('click',progressView);
   function showResult(result){
@@ -139,5 +189,11 @@
     new MutationObserver(evaluateSummary).observe(phone,{attributes:true,attributeFilter:['data-current-view','class']});
   }
   updateBadge();
-  window.EducaWebGamification=Object.freeze({version:'11183',getSnapshot:snapshot});
+  const accountChanged=()=>{refreshAccount();void sync();};
+  window.addEventListener?.('educa:account-change',accountChanged);
+  window.addEventListener?.('storage',e=>{if(e.key==='educaRememberedUser')accountChanged();});
+  window.addEventListener?.('online',accountChanged);
+  window.addEventListener?.('focus',accountChanged);
+  if(account.registered)void sync();
+  window.EducaWebGamification=Object.freeze({version:'11263',getSnapshot:()=>{refreshAccount();return snapshot();}});
 })();

@@ -413,7 +413,7 @@
         !document.getElementById?.('educa-web-gamification-v11182')) {
       const gameScript = document.createElement('script');
       gameScript.id = 'educa-web-gamification-v11182';
-      gameScript.src = '/static/channels/web/gamification-v11182.js?v=11212';
+      gameScript.src = '/static/channels/web/gamification-v11182.js?v=11212&account=11263';
       gameScript.async = false;
       document.head.appendChild(gameScript);
     }

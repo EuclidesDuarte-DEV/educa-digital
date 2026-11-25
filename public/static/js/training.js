@@ -190,7 +190,16 @@
   const modulePathProgressFill = $('#modulePathProgressFill');
   let currentVideoTopic = '';
   let currentVideoLessonIndex = 0;
-  const completedLessons = new Set(JSON.parse(localStorage.getItem('educaCompletedLessonsV44') || '[]'));
+  const completedLessons = new Set();
+  let lessonsOwner='';
+  const lessonsKey=phone=>'educaCompletedLessonsV44:account:'+String(phone||'').replace(/\D/g,'');
+  function selectLessonsOwner(phone){
+    const key=phone?lessonsKey(phone):'';
+    if(key===lessonsOwner)return;
+    lessonsOwner=key;completedLessons.clear();
+    try{if(key)for(const item of JSON.parse(localStorage.getItem(key)||'[]'))completedLessons.add(item);}catch(_){}
+  }
+  function persistLessons(){try{if(lessonsOwner)localStorage.setItem(lessonsOwner,JSON.stringify([...completedLessons]));}catch(_){}}
   let govSessionActive = false;
 
   const scenarios = {
@@ -990,8 +999,9 @@
       guestCompletedLessons.add(key);
       return;
     }
+    selectLessonsOwner(getRememberedUser()?.phone);
     completedLessons.add(key);
-    try { localStorage.setItem('educaCompletedLessonsV44', JSON.stringify([...completedLessons])); } catch (_) {}
+    persistLessons();
     const activityCode = learningTopics[topicId]?.lessons?.[lessonIndex]?.[2];
     if (activityCode) syncProgressEvent(activityCode, 'complete');
   }
@@ -1162,14 +1172,15 @@
     progressFill.style.width = `${n * 25}%`;
   }
 
-  function saveRememberedUser(name, phone) {
+  function saveRememberedUser(name, phone, levelToken) {
     try {
-      localStorage.setItem('educaRememberedUser', JSON.stringify({ name, phone }));
+      localStorage.setItem('educaRememberedUser', JSON.stringify({ name, phone, levelToken: typeof levelToken==='string'?levelToken:undefined }));
     } catch (_) {}
     participantName = name || '';
     progressSaved = true;
     accessMode = 'registered';
     updateReturningUI();
+    window.dispatchEvent(new CustomEvent('educa:account-change'));
   }
 
   function getRememberedUser() {
@@ -1197,17 +1208,19 @@
   async function loadServerProgress(phone) {
     const digits = String(phone || '').replace(/\D/g, '');
     if (digits.length < 10) return;
+    selectLessonsOwner(digits);
     try {
       const response = await fetch(`/api/progresso?phone=${encodeURIComponent(digits)}`);
       if (!response.ok) return;
       const data = await response.json();
+      if(lessonsOwner!==lessonsKey(digits))return;
       const completedCodes = new Set((data.atividades || []).filter(item => item.concluido).map(item => item.atividade_codigo));
       Object.entries(learningTopics).forEach(([topicId, topic]) => {
         (topic.lessons || []).forEach((lesson, index) => {
           if (completedCodes.has(lesson[2])) completedLessons.add(lessonKey(topicId, index));
         });
       });
-      try { localStorage.setItem('educaCompletedLessonsV44', JSON.stringify([...completedLessons])); } catch (_) {}
+      persistLessons();
     } catch (_) {}
   }
 
@@ -1219,10 +1232,12 @@
     progressSaved = false;
     accessMode = 'guest';
     updateReturningUI();
+    window.dispatchEvent(new CustomEvent('educa:account-change'));
   }
 
   function updateReturningUI() {
     const user = getRememberedUser();
+    selectLessonsOwner(user?.phone);
     if (user?.name && user?.phone) {
       participantName = user.name;
       progressSaved = true;
@@ -1842,6 +1857,7 @@
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
       participantName = user.name; progressSaved = true; accessMode = 'registered';
+      void loadServerProgress(user.phone);
       // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
       startTraining({ focus: true, boot: true });
       updatePrototypeViewportFit();
@@ -1879,7 +1895,7 @@
       if (!response.ok) {
         return showQuickStartMessage(data.message || 'Não foi possível salvar agora.', 'error');
       }
-      saveRememberedUser(data.name || 'Participante', data.phone || digits);
+      saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       isGuestPretest = false;
       await loadServerProgress(data.phone || digits);
       showQuickStartMessage(data.message || 'Seu progresso foi salvo.', 'success');
@@ -1933,7 +1949,7 @@
       const response = await fetch('/api/login/confirmar', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:returningPhone, code}) });
       const data = await response.json();
       if (!response.ok) return showReturnMessage(returnCodeMessage, data.message || 'Código incorreto.');
-      saveRememberedUser(data.name, data.phone);
+      saveRememberedUser(data.name, data.phone, data.level_token);
       await loadServerProgress(data.phone);
       closeReturnModal();
       startTraining({ focus: true, boot: true });
@@ -2991,7 +3007,7 @@
         return;
       }
       if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
-      saveRememberedUser(data.name || 'Participante', data.phone || digits);
+      saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       accountCard.hidden = true;
       await loadServerProgress(data.phone || digits);
       startTraining({ focus: true, boot: true });

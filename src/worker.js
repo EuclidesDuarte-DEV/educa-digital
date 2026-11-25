@@ -9,6 +9,7 @@ import { installCharacterSecurityNote } from './lia-neural-security-v11245.js';
  * A interface estática é a mesma servida pelo app.py (pasta public).
  */
 import { MODULOS } from './catalogo.js';
+import { issueLevelSession, levelProgressApi } from './modo-livre-progress-v11263.js';
 import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
@@ -116,6 +117,7 @@ async function cadastrarConta(request, env) {
   return responder({
     ok: true,
     existing: false,
+    level_token: await issueLevelSession(env, usuario.id),
     name: nome,
     phone: telefone,
     message: 'Tudo pronto! Seu treino foi criado e o progresso poderá ser salvo.' 
@@ -202,6 +204,7 @@ async function confirmarCodigo(request, env) {
     ok: true,
     name: usuario.nome,
     phone: telefone,
+    level_token: await issueLevelSession(env, usuario.id),
     message: 'Tudo certo. Seu progresso foi encontrado.'
   });
 }
@@ -603,6 +606,9 @@ async function rotearApi(request, env, url, ctx) {
   }
   if (metodo === 'POST' && rota === '/api/login/confirmar') {
     return confirmarCodigo(request, env);
+  }
+  if (['GET','POST'].includes(metodo) && rota === '/api/modo-livre/nivel') {
+    return levelProgressApi(request, env);
   }
   if (metodo === 'GET' && rota === '/api/progresso') {
     return consultarProgresso(url, env);

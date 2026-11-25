@@ -8,7 +8,8 @@ const chat=$('#chatView'),surface=$('#chatView .chat-surface');
 if(!chat||!surface)return;
 const PHOTO='/static/img/free-family-photo-v11214.webp';
 const FALLBACK='/static/img/free-family-photo-v11212.jpg';
-const webScenario=()=>window.EducaFreeMode?.isActive?.()&&window.EducaFreeMode?.currentScenario?.()==='family-photo'&&$('#phoneScreen')?.dataset.currentView==='chat';
+const contact=()=>window.EducaFreeMode?.currentContact?.();
+const webScenario=()=>window.EducaFreeMode?.isActive?.()&&!!contact()&&$('#phoneScreen')?.dataset.currentView==='chat';
 let current='profile',previous='profile',mute=false,favorite=false,theme='light',temp='Desativadas',focusBefore=null;
 const overlay=document.createElement('section');overlay.id='freeContactProfileLayer';overlay.className='fc-layer';overlay.hidden=true;
 overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','Dados do contato fictício');
@@ -17,12 +18,12 @@ overlay.innerHTML=[
 '<div class="fc-scroll">',
 '<section class="fc-pane" data-pane="profile">',
 '<button class="fc-big-avatar" type="button" data-fc="photo" aria-label="Ampliar foto do contato"></button>',
-'<h2>Rafael</h2><p class="fc-number">+55 (65) 9••••-••••</p><span class="fc-unsaved">Contato não salvo · número fictício</span>',
+'<h2 data-fc-name>Contato de treino</h2><p class="fc-number">Número fictício</p><span class="fc-unsaved">Contato do ambiente de treinamento</span>',
 '<nav class="fc-shortcuts" aria-label="Ações do contato">',
 '<button data-fc="call" type="button"><b>☎</b>Ligar</button><button data-fc="video" type="button"><b>▣</b>Vídeo</button>',
 '<button data-fc="pix" type="button"><b>◇</b>Pix</button><button data-fc="search" type="button"><b>⌕</b>Pesquisar</button></nav>',
-'<div class="fc-group"><button type="button" data-fc="media">▧ <span>Mídia, links e docs</span><small>1 foto</small><b>›</b></button>',
-'<button type="button" data-fc="storage">▤ <span>Liberar espaço de armazenamento</span><small>39 KB</small><b>›</b></button>',
+'<div class="fc-group"><button type="button" data-fc="media">▧ <span>Mídia, links e docs</span><small id="fcMediaCount">Nenhuma foto</small><b>›</b></button>',
+'<button type="button" data-fc="storage">▤ <span>Liberar espaço de armazenamento</span><small id="fcStorageCount">0 KB</small><b>›</b></button>',
 '<button type="button" data-fc="favorite">☆ <span>Favoritos</span><small id="fcFavorite">Nenhuma</small><b>›</b></button></div>',
 '<div class="fc-group"><button type="button" data-fc="mute">♧ <span>Notificações</span><small id="fcMuted">Ativadas</small><b>›</b></button>',
 '<button type="button" data-fc="theme">◐ <span>Tema da conversa</span><small id="fcTheme">Claro</small><b>›</b></button>',
@@ -40,11 +41,11 @@ overlay.innerHTML=[
 '<p class="fc-hint">Este contato, número e foto são fictícios. Uma foto de perfil não comprova identidade.</p>',
 '</section>',
 '<section class="fc-pane" data-pane="photo" hidden><div class="fc-photo-view"><div id="fcFullPhoto"></div><p>Imagem sintética · ambiente de treinamento</p></div></section>',
-'<section class="fc-pane" data-pane="outgoing" hidden><div class="fc-outgoing-image" id="fcOutgoingPhoto"></div><h2>Rafael</h2>',
+'<section class="fc-pane" data-pane="outgoing" hidden><div class="fc-outgoing-image" id="fcOutgoingPhoto"></div><h2 data-fc-name>Contato de treino</h2>',
 '<p class="fc-outgoing-status" id="fcOutgoingStatus">Chamada simulada</p>',
 '<p class="fc-hint">Contato fictício: ver o rosto ou ouvir a voz não comprova identidade.</p>',
 '<button class="fc-hangup" type="button" data-fc="back">Encerrar chamada</button></section>',
-'<section class="fc-pane" data-pane="media" hidden><h2>Mídia, links e docs</h2><p class="fc-hint">1 foto recebida</p>',
+'<section class="fc-pane" data-pane="media" hidden><h2>Mídia, links e docs</h2><p class="fc-hint" id="fcMediaHint">Nenhuma foto recebida</p>',
 '<button type="button" data-fc="photo" id="fcMediaPhoto" aria-label="Abrir foto em tamanho grande"></button>',
 '<p class="fc-hint">Nenhum link ou documento recebido.</p></section>',
 '<section class="fc-pane" data-pane="search" hidden><label for="fcSearch">Pesquisar na conversa</label>',
@@ -72,9 +73,31 @@ function img(cls){
  const el=document.createElement('img');el.className=cls;el.alt='Retrato sintético de Rafael, personagem fictício, sorrindo em um carro';
  el.src=PHOTO;el.onerror=()=>{el.onerror=null;el.src=FALLBACK;};return el;
 }
-$('.fc-big-avatar',overlay).append(img('fc-portrait'));
-$('#fcFullPhoto',overlay).append(img('fc-full-image'));
-$('#fcMediaPhoto',overlay).append(img('fc-thumb-image')); $('#fcOutgoingPhoto',overlay).append(img('fc-outgoing-avatar'));
+// Apenas a foto fictícia que já pertence à atividade pode ser exibida.
+let displayedContact='';
+const settings=new Map();
+function refreshContact(){
+ const c=contact();if(!c)return;
+ if(displayedContact!==c.id){
+  if(displayedContact)settings.set(displayedContact,{mute,favorite,theme,temp});
+  ({mute=false,favorite=false,theme='light',temp='Desativadas'}=settings.get(c.id)||{});
+  displayedContact=c.id;chat.classList.toggle('fc-dark-chat',theme==='dark');
+  for(const name of overlay.querySelectorAll('[data-fc-name]'))name.textContent=c.name;
+  const hasPhoto=c.id==='family-photo'&&c.photo===true;
+  const containers=[['.fc-big-avatar','fc-portrait'],['#fcFullPhoto','fc-full-image'],['#fcMediaPhoto','fc-thumb-image'],['#fcOutgoingPhoto','fc-outgoing-avatar']];
+  for(const [selector,cls] of containers){
+   const el=$(selector,overlay);el.replaceChildren();
+   if(hasPhoto)el.append(img(cls));else el.textContent=c.icon||'?';
+  }
+  $('.fc-big-avatar',overlay).disabled=!hasPhoto;
+  $('.fc-big-avatar',overlay).setAttribute('aria-label',hasPhoto?'Ampliar foto do contato':'Avatar fictício do contato');
+  $('#fcMediaPhoto',overlay).hidden=!hasPhoto;
+  $('#fcMediaCount',overlay).textContent=hasPhoto?'1 foto':'Nenhuma foto';
+  $('#fcStorageCount',overlay).textContent=hasPhoto?'Imagem de treino':'0 KB';
+  $('#fcMediaHint',overlay).textContent=hasPhoto?'1 foto recebida':'Nenhuma foto recebida';
+  for(const el of [...overlay.querySelectorAll('[data-fc="verify"],[data-fc="block"],[data-fc="report"]'),...menu.querySelectorAll('[data-fc="block"],[data-fc="report"]')])el.hidden=c.normal===true;
+ }
+}
 function showPane(which){
  current=which;
  for(const p of overlay.querySelectorAll('[data-pane]'))p.hidden=p.dataset.pane!==which;
@@ -89,6 +112,7 @@ function showPane(which){
 }
 function open(which='profile'){
  if(!webScenario())return;
+ refreshContact();
  focusBefore=document.activeElement;previous=current;overlay.hidden=false;menu.hidden=true;showPane(which);
  (which==='search'?$('#fcSearch',overlay):$('[data-fc="back"]',overlay))?.focus({preventScroll:true});
 }
@@ -116,6 +140,8 @@ function search(){
 }
 function action(name,node){
  if(!webScenario())return;
+ refreshContact();
+ if(name==='photo'&&contact()?.photo!==true)return;
  if(name==='back'){back();return;}
  if(['profile','photo','media','search','theme','temporary'].includes(name)){
   previous=current;if(overlay.hidden)open(name);else showPane(name);return;
@@ -132,7 +158,7 @@ function action(name,node){
  }
  if(name==='pix'){announce('Este Pix é apenas fictício. Confirme a identidade por outro canal antes de enviar dinheiro.');return;}
  const demonstrations={
-  storage:'Só existe uma foto fictícia nesta conversa. Nenhum arquivo do seu celular será apagado.',
+  storage:contact()?.photo?'A foto desta atividade é fictícia. Nenhum arquivo do seu celular será apagado.':'Não há mídia nesta conversa de treino. Nenhum arquivo real será apagado.',
   save:'Demonstração: nenhuma imagem será salva na galeria real.',
   transcribe:'Idioma ilustrativo: português (Brasil). Nenhum áudio real será transcrito.',
   lock:'Trancar conversa é apenas ilustrado; não altera o WhatsApp verdadeiro.',
@@ -167,15 +193,16 @@ menu.addEventListener('click',e=>{const btn=e.target.closest('[data-fc]');if(btn
 $('#fcSearch',overlay).addEventListener('input',search);
 function decorate(){
  if(!webScenario())return;
+ const c=contact();refreshContact();
  const avatar=$('#scenarioAvatar');if(avatar){
-  avatar.textContent='';avatar.classList.add('fc-avatar-trigger');
-  avatar.style.backgroundImage="url('"+PHOTO+"')";avatar.setAttribute('role','button');avatar.tabIndex=0;
+  avatar.textContent=c.photo?'':c.icon;avatar.classList.add('fc-avatar-trigger');
+  avatar.style.backgroundImage=c.photo?"url('"+PHOTO+"')":'';avatar.setAttribute('role','button');avatar.tabIndex=0;
   avatar.setAttribute('aria-label','Ver perfil do contato fictício');
  }
  const label=$('#scenarioTitle')?.parentElement;
  if(label){label.classList.add('fc-title-trigger');label.tabIndex=0;label.setAttribute('role','button');label.setAttribute('aria-label','Ver dados do contato');}
  const listAvatar=$('#whatsappView [data-free-scenario="family-photo"] .wa-avatar');
- if(listAvatar){listAvatar.textContent='';listAvatar.classList.add('fc-list-avatar');listAvatar.style.backgroundImage="url('"+PHOTO+"')";}
+ if(c.photo&&listAvatar){listAvatar.textContent='';listAvatar.classList.add('fc-list-avatar');listAvatar.style.backgroundImage="url('"+PHOTO+"')";}
 }
 function clear(){
  const avatar=$('#scenarioAvatar');
@@ -213,5 +240,5 @@ document.addEventListener('keydown',e=>{
 const phone=$('#phoneScreen');
 if(phone)new MutationObserver(()=>{if(webScenario())decorate();else clear();}).observe(phone,{attributes:true,attributeFilter:['data-current-view']});
 new MutationObserver(()=>{if(webScenario())decorate();}).observe($('#whatsappView'),{childList:true,subtree:true});
-window.EducaWebContactProfile=Object.freeze({isOpen:()=>!overlay.hidden,open:()=>open('profile'),openCall:type=>action(type==='video'?'video':'call')});
+window.EducaWebContactProfile=Object.freeze({isOpen:()=>!overlay.hidden,refresh:()=>{if(webScenario()){close();decorate();}else clear();},open:()=>open('profile'),openCall:type=>action(type==='video'?'video':'call')});
 })();
