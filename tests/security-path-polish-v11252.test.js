@@ -32,3 +32,11 @@ test('V112.58: apenas título, botão voltar e um ícone; Segurança usa três c
  assert.match(css,/\.module-path-header>div::before\{\s*content:none!important/);
  assert.match(html,/security-path-polish-v11252\.css\?v=11252&header=11258/);
 });
+
+test('V112.59: todos os módulos compartilham cabeçalho de três colunas',async()=>{
+ const css=await readFile('public/static/css/security-path-polish-v11252.css','utf8');
+ const browser=await readFile('scripts/validar-module-header-v11258.mjs','utf8');
+ assert.match(css,/#modulePathView\.web-activity-simple \.module-path-header\{\s*grid-template-columns:44px 40px minmax\(0,1fr\)!important/);
+ assert.match(css,/#modulePathView\.web-activity-simple #modulePathTitle/);
+ for(const topic of ['security','settings','whatsapp','pix','govbr','playstore'])assert.ok(browser.includes("'"+topic+"'"));
+});
