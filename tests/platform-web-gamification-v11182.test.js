@@ -150,7 +150,9 @@ test('[web] V111.83 — sem quiz ou pop-up de desafio; pontos somente após resu
   assert.match(game,/safe\?20:-15/);
   assert.match(game,/resultHandled=true/);
   assert.match(game,/Erros da IA ou da conexão não retiram pontos/);
-  assert.doesNotMatch(game,/fetch\s*\(/);
+  assert.ok([...game.matchAll(/window\.fetch\('([^']+)'/g)].every(m=>m[1]==='/api/modo-livre/nivel'));
+  assert.match(game,/Authorization:'Bearer '\+identity.token/);
+  assert.doesNotMatch(game,/\/api\/modo-livre\/conversar|\/api\/lia\/training/);
 });
 
 test('[web] dificuldade permanece isolada no canal Web; sem editar núcleo, Android/iOS ou D1',async()=>{

@@ -23,7 +23,7 @@ test('V112.01 — Web esconde as duas opções sem desativar os controles nativo
  assert.match(web,/document\.addEventListener\('DOMContentLoaded',disableHiddenWebConsents/);
  assert.match(html,/id="freeLearningConsent"/);
  assert.match(html,/id="freeExampleConsent"/);
- assert.match(channel,/platform === 'web' \? '&fix=11212' : ''/);
+ assert.match(channel,/platform === 'web' \? '&fix=11212&account=11263' : ''/);
  assert.match(html,/free-video\.js\?v=11191[^"]*&webfix=11201/);
 });
 

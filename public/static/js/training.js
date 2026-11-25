@@ -1857,6 +1857,7 @@
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
       participantName = user.name; progressSaved = true; accessMode = 'registered';
+      void loadServerProgress(user.phone);
       // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
       startTraining({ focus: true, boot: true });
       updatePrototypeViewportFit();

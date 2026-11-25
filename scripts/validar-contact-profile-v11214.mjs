@@ -21,6 +21,17 @@ try {
      window.EducaFreeMode.start();
      window.EducaFreeView.setView('whatsapp');
    });
+   // Um contato sem foto não deve herdar o retrato ou as ações de Rafael.
+   const ordinary=page.locator('#whatsappView [data-normal-chat="daughter"]');
+   await ordinary.click({timeout:5000});
+   await page.locator('#scenarioAvatar').click({timeout:5000});
+   const normalProfile=page.locator('#freeContactProfileLayer');
+   assert.equal(await normalProfile.isVisible(),true);
+   assert.match(await normalProfile.locator('[data-pane="profile"] [data-fc-name]').innerText(),/Maria/);
+   assert.equal(await normalProfile.locator('.fc-big-avatar img').count(),0);
+   assert.equal(await normalProfile.locator('[data-fc="block"]').isVisible(),false);
+   await normalProfile.locator('.fc-nav [data-fc="back"]').click();
+   await page.evaluate(()=>{window.EducaFreeView.setView('whatsapp');window.EducaFreeMode.triggerEvent();});
    await page.locator('#whatsappView [data-free-scenario="family-photo"]').click({timeout:6000});
    const img=page.locator('#chatWallpaper .free-training-photo img');
    await img.waitFor({state:'visible'});

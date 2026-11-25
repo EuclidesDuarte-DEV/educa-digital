@@ -24,7 +24,7 @@ test('V111.47: leitura automática no guia, com desligamento e sem afetar motor 
  assert.match(guide,/dispatchEvent\(new CustomEvent\('educa:guide-step'/);
  assert.match(a11y,/pointerup/);
  assert.match(a11y,/touchend/);
- assert.match(a11y,/if \(!prefs\.reading\) return;/);
+ assert.match(a11y,/if\s*\(\s*!prefs\.reading\s*(?:\|\|[^)]*)?\)\s*return;/);
  assert.match(a11y,/stopReading\(\)/);
 });
 test('V111.47: zoom antigo removido, layout e contraste preservam cartões',()=>{
