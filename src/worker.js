@@ -1,3 +1,4 @@
+import { installCharacterSecurityNote } from './lia-neural-security-v11245.js';
 /**
  * API do Educa+ Digital em Cloudflare Workers.
  *
@@ -705,6 +706,7 @@ export default {
       // preservar a latência da LIA. Após a primeira execução fica idempotente.
       if(url.pathname==='/api/lia/neural/health')
         await populateReviewedNeuralLibrary(env);
+      if(url.pathname==='/api/lia/neural/health')await installCharacterSecurityNote(env);
       return await rotearApi(request, env, url, ctx);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');
