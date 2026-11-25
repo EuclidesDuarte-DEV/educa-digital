@@ -15,7 +15,10 @@ for(const route of ['conversar','conversar-web'])for(const scenario of scenarios
    assert.equal(opts.messages[1].role,'user');assert.ok(!opts.messages[0].content.includes('CENÁRIO FIXO'));
    return {response:'hello'};
  }}});
- const d=await r.json();assert.equal(r.status,200);assert.equal(d.security_revision,'11249');assert.equal(d.source,'catalog-ai');assert.equal(d.reply,allowed.hello);
+ const d=await r.json();assert.equal(r.status,200);assert.equal(d.security_revision,'11249');
+ if(scenario==='family-photo'){
+  assert.equal(d.source,'catalog-story');assert.ok(Object.values(FAMILY_PHOTO_STORY).includes(d.reply));
+ }else{assert.equal(d.source,'catalog-ai');assert.equal(d.reply,allowed.hello);}
 });
 for(const value of malicious)test('rejeita saída '+String(value).slice(0,35),async()=>{
  const choices=approvedReplies('family-group');assert.equal(parseChoice(value,choices),null);
@@ -130,9 +133,9 @@ test('pergunta repetida sobre situação usa detalhe aprovado',async()=>{
 });
 test('modelo lento não trava a conversa',async()=>{
  const start=Date.now();
- const r=await selectStrictReply({scenario:'family-photo',message:'Pode me explicar melhor?',history:[{role:'assistant',content:approvedReplies('family-photo').context}]},{AI:{run:()=>new Promise(()=>{})}},'gemma-4',{timeoutMs:20});
- assert.ok(Date.now()-start<1000);assert.ok(Object.values(approvedReplies('family-photo')).includes(r.reply));
- assert.notEqual(r.reply,approvedReplies('family-photo').context);assert.equal(r.source,'catalog-protection');
+ const r=await selectStrictReply({scenario:'family',message:'Pode me explicar melhor?',history:[{role:'assistant',content:approvedReplies('family').context}]},{AI:{run:()=>new Promise(()=>{})}},'gemma-4',{timeoutMs:20});
+ assert.ok(Date.now()-start<1000);assert.ok(Object.values(approvedReplies('family')).includes(r.reply));
+ assert.notEqual(r.reply,approvedReplies('family').context);assert.equal(r.source,'catalog-protection');
 });
 test('modelo não pode repetir fala quando há opções contextuais',async()=>{
  const choices=approvedReplies('family-photo');
@@ -149,7 +152,7 @@ test('história ativa: oito turnos sem sair do papel, repetir ou pedir dinheiro 
  const history=[...screenshotHistory];
  let before='',calls=0;
  for(const message of storyMessages){
-  const response=await app.fetch(req('conversar-web','family-photo',message,{history}),{AI:{run:async()=>{calls++;return {response:'hello'};}}});
+  const response=await app.fetch(req('conversar-web','family-photo',message,{history:history.slice(-8)}),{AI:{run:async()=>{calls++;return {response:'hello'};}}});
   const data=await response.json();
   assert.equal(response.status,200);
   assert.equal(data.security_revision,'11249');
