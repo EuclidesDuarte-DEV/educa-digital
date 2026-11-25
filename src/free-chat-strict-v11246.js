@@ -1,7 +1,8 @@
+import {FAMILY_PHOTO_STORY,familyPhotoReplyId} from './free-chat-story-v11249.js';
 /* V112.46: output is a server-owned, finite catalog. The model is a selector,
  * never a text author, tool caller or authority. No raw model text leaves here. */
 import {injectionAttempt,normalizeGuard,protectedReply} from './free-chat-guard-v11245.js';
-export const SECURITY_REVISION='11248';
+export const SECURITY_REVISION='11249';
 const common=Object.freeze({
  clarify:'Não entendi bem. Pode me explicar de outro jeito?',
  wait:'Tudo bem, não precisa decidir agora.',
@@ -88,7 +89,7 @@ const timing=Object.freeze({
  video:'Não combinamos um horário para isso. Pode conferir primeiro.',
  relative:'Não combinamos um horário. Pode confirmar antes de decidir.'
 });
-for(const k of Object.keys(catalog))catalog[k]=Object.freeze({...common,...catalog[k],context:openingContext[k],
+for(const k of Object.keys(catalog))catalog[k]=Object.freeze({...common,...catalog[k],...(k==='family-photo'?FAMILY_PHOTO_STORY:{}),context:openingContext[k],
  detail:details[k],followup:followups[k],timing:timing[k]||'Não foi informado um horário. Não precisa decidir agora.'});
 Object.freeze(catalog);
 export function approvedReplies(scenario){return Object.hasOwn(catalog,scenario)?catalog[scenario]:null;}
@@ -160,6 +161,13 @@ export async function selectStrictReply(parsed,env,model,{timeoutMs=3500}={}){
  // Questions with clear established subject have a server-resolved answer.
  // The model cannot override context, identity, amounts or a safety decision.
  if(fallback==='timing')return respond('timing','catalog-context');
+ // A atividade "número novo + foto" já iniciou uma história. Nunca voltar
+ // ao menu de assuntos nem à saudação genérica no meio do exercício.
+ // Respostas são sempre do catálogo, a continuação não depende de LLM.
+ if(parsed.scenario==='family-photo'&&!['identity','amount','photo','doubt','verify'].includes(fallback)){
+  const id=familyPhotoReplyId(parsed.message,parsed.history,choices);
+  if(id)return respond(id,'catalog-story');
+ }
  if(contextQuestion(parsed.message)&&fallback==='context')return respond(contextId,'catalog-context');
  // Restrict the selection for ambiguous turns. Greetings never displace a question.
  const allowedIds=greetingOnly(parsed.message)?['hello'] :
