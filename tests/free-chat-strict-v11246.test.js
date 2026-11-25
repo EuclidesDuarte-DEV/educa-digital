@@ -14,7 +14,7 @@ for(const route of ['conversar','conversar-web'])for(const scenario of scenarios
    assert.equal(opts.messages[1].role,'user');assert.ok(!opts.messages[0].content.includes('CENÁRIO FIXO'));
    return {response:'hello'};
  }}});
- const d=await r.json();assert.equal(r.status,200);assert.equal(d.security_revision,'11247');assert.equal(d.source,'catalog-ai');assert.equal(d.reply,allowed.hello);
+ const d=await r.json();assert.equal(r.status,200);assert.equal(d.security_revision,'11248');assert.equal(d.source,'catalog-ai');assert.equal(d.reply,allowed.hello);
 });
 for(const value of malicious)test('rejeita saída '+String(value).slice(0,35),async()=>{
  const choices=approvedReplies('family-group');assert.equal(parseChoice(value,choices),null);
@@ -76,7 +76,7 @@ const screenshotHistory=[
 ];
 for(const message of ['Olá oque aconteceu','Oque aconteceu?','O que aconteceu?','Oi, oq aconteceu','Qual o problema?','Me explica o que houve'])test('print: pergunta contextual '+message,async()=>{
  let calls=0;const res=await app.fetch(req('conversar-web','family-photo',message,{history:screenshotHistory}),{AI:{run:async()=>{calls++;return {response:'hello'};}}});
- const d=await res.json();assert.equal(res.status,200);assert.equal(d.security_revision,'11247');assert.equal(d.source,'catalog-context');
+ const d=await res.json();assert.equal(res.status,200);assert.equal(d.security_revision,'11248');assert.equal(d.source,'catalog-context');
  assert.match(d.reply,/conta.*Pix ficou limitado/);assert.equal(calls,0);
 });
 for(const scenario of scenarios)test('contexto correto em '+scenario,async()=>{
@@ -101,4 +101,39 @@ test('verificação e recusa têm prioridade',async()=>{
   const result=await selectStrictReply({scenario:'family-photo',message,history:screenshotHistory},{AI:{run:async()=>{throw Error('não chamar');}}},'gemma-4');
   assert.ok([approvedReplies('family-photo').doubt,approvedReplies('family-photo').close].includes(result.reply));
  }
+});
+
+test('print V112.47: pergunta de prazo não repete explicação do ocorrido',async()=>{
+ let calls=0;
+ const env={AI:{run:async()=>{calls++;return {response:'context'};}}};
+ const history=[...screenshotHistory];
+ const messages=['Oque aconteceu?','Precisa agora?'];
+ const results=[];
+ for(const message of messages){
+  const r=await app.fetch(req('conversar-web','family-photo',message,{history}),env);
+  const d=await r.json();assert.equal(r.status,200);assert.equal(d.security_revision,'11248');
+  assert.equal(d.source,'catalog-context');
+  results.push(d.reply);history.push({role:'user',content:message},{role:'assistant',content:d.reply});
+ }
+ assert.notEqual(results[0],results[1]);assert.match(results[1],/hoje/);assert.equal(calls,0);
+});
+test('pergunta repetida sobre situação usa detalhe aprovado',async()=>{
+ const choices=approvedReplies('family-photo');
+ const r=await selectStrictReply({scenario:'family-photo',message:'Oque aconteceu?',history:[{role:'assistant',content:choices.context}]},{AI:{run:async()=>{throw Error('não chamar');}}},'gemma-4');
+ assert.equal(r.reply,choices.detail);
+});
+test('modelo lento não trava a conversa',async()=>{
+ const start=Date.now();
+ const r=await selectStrictReply({scenario:'family-photo',message:'Pode me explicar melhor?',history:[{role:'assistant',content:approvedReplies('family-photo').context}]},{AI:{run:()=>new Promise(()=>{})}},'gemma-4',{timeoutMs:20});
+ assert.ok(Date.now()-start<1000);assert.ok(Object.values(approvedReplies('family-photo')).includes(r.reply));
+ assert.notEqual(r.reply,approvedReplies('family-photo').context);assert.equal(r.source,'catalog-protection');
+});
+test('modelo não pode repetir fala quando há opções contextuais',async()=>{
+ const choices=approvedReplies('family-photo');
+ const r=await selectStrictReply({scenario:'family-photo',message:'Certo, e depois?',history:[{role:'assistant',content:choices.context}]},{AI:{run:async()=>({response:'context'})}},'gemma-4');
+ assert.notEqual(r.reply,choices.context);assert.ok(Object.values(choices).includes(r.reply));
+});
+for(const scenario of scenarios)test('prazo em '+scenario+' não inventa novos fatos',async()=>{
+ const r=await selectStrictReply({scenario,message:'Precisa agora?',history:[]},{AI:{run:async()=>{throw Error('não chamar');}}},'gemma-4');
+ assert.equal(r.reply,approvedReplies(scenario).timing);
 });
