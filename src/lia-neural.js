@@ -238,7 +238,9 @@ export async function neuralReadiness(env){
     }catch(_){/* D1 anterior à versão atual: manter o diagnóstico principal */}
     let character_guard_note=false;
     try{character_guard_note=Boolean(await sql(env.DB,"SELECT id FROM lia_kb_nodes WHERE id='security-character-integrity-v11245' AND visibility='private'").first());}catch(_){}
-    return {...base,schema_ready:true,published_count,node_count,link_count,library_bootstrapped,character_guard_note,
+    let character_guard_strict=false;
+    try{character_guard_strict=Boolean(await sql(env.DB,"SELECT id FROM lia_kb_nodes WHERE id='security-closed-output-v11246' AND visibility='private'").first());}catch(_){}
+    return {...base,schema_ready:true,published_count,node_count,link_count,library_bootstrapped,character_guard_note,character_guard_strict,
       rag_active:published_count>0&&base.ai_enabled,
       reason:!published_count?'REVIEW_REQUIRED':!base.ai_enabled?'AI_UNAVAILABLE':'READY'};
   }catch(_){return {...base,reason:'DB_UNAVAILABLE'};}

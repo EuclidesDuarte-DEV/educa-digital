@@ -1,3 +1,4 @@
+import { selectStrictReply } from './free-chat-strict-v11246.js';
 import { CHARACTER_POLICY, injectionAttempt, unsafeCharacterOutput, protectedReply, trustedHistory } from './free-chat-guard-v11245.js';
 import { retrieveLiaKnowledge } from './lia-neural.js';
 import { saveLearningTurn, learningHint, classifyTrainingTurn } from './lia-neural-learning-v11196.js';
@@ -53,7 +54,7 @@ function limitar(ip){
   if(hits.length>=30)return false;
   hits.push(now);attempts.set(key,hits);return true;
 }
-export async function responderModoLivre(request,env,webOnly=false,ctx=null){
+export async function responderModoLivre(request,env,webOnly=false,ctx=null,strictOutput=false){
   // Sem CORS e sem dados pessoais armazenados: a chamada parte do próprio site.
   const origin=request.headers.get('origin');
   if(origin && origin!==new URL(request.url).origin)return Response.json({ok:false,message:'Origem não autorizada.'},{status:403});
@@ -66,6 +67,14 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null){
   if(!limitar(request.headers.get('CF-Connecting-IP')||'local'))return Response.json({ok:false,message:'Limite temporário atingido. Volte em alguns minutos.'},{status:429});
   if(!env?.AI?.run)return Response.json({ok:false,message:'IA indisponível neste ambiente. Para conversar de verdade, execute no Worker da Cloudflare com o binding AI.'},{status:503,headers:{'Cache-Control':'no-store'}});
   if(parsed.scenario==='family-photo'&&!webOnly)return Response.json({ok:false,message:'Atividade disponível apenas no treinamento Web.'},{status:422});
+  // Both deployed Worker routes pass true, never controlled by a request field.
+  // The old raw engine below remains only for legacy direct-module regression tests.
+  if(strictOutput){
+    const selected=await selectStrictReply(parsed,env,escolherModelo(env));
+    return Response.json({ok:true,mode:'ia',reply:selected.reply,source:selected.source,
+      ...(selected.guarded?{guarded:true}:{}),security_revision:'11246'},
+      {headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
+  }
   const s=CHARACTERS[parsed.scenario];
   // Não chamar IA/RAG/armazenamento para tentativas reconhecidas. O retorno
   // é uma fala de proteção determinística, e não uma geração do modelo.
