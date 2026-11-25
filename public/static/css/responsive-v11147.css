@@ -28,7 +28,7 @@ button, .learning-card, .module-lesson-card {touch-action:manipulation}
 #learningView .learning-account-options{order:6!important}
 #learningView .learning-featured{order:2!important}
 #learningView .learning-grid{order:3!important}
-#learningView .free-mode-entry{order:4!important}
+#learningView .free-mode-entry{order:1!important}
 #learningView .learning-header{order:0!important;position:relative;min-width:0!important;}
 .learning-a11y-quick{display:none;position:absolute;right:4px;top:3px;
   width:46px;height:46px;place-items:center;background:#e7f2ff;color:#0f5bae;

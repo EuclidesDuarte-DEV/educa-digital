@@ -1,0 +1,11 @@
+# Documentos e worker devem revalidar em cada nova navegação.
+/
+  Cache-Control: no-cache, max-age=0, must-revalidate
+/index.html
+  Cache-Control: no-cache, max-age=0, must-revalidate
+/html/
+  Cache-Control: no-cache, max-age=0, must-revalidate
+/html/index.html
+  Cache-Control: no-cache, max-age=0, must-revalidate
+/static/sw.js
+  Cache-Control: no-cache, max-age=0, must-revalidate
