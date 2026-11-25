@@ -101,6 +101,17 @@ export function explicitExit(message){
  return /^(?:tchau|adeus|ate logo|ate mais|encerrar|sair|desligar|parar|bloquear|denunciar)(?:$| )/.test(s)||
  /\b(?:quero|vou|prefiro|preciso|vamos|pode) (?:encerrar|sair|desligar|parar de conversar|bloquear|denunciar|terminar a conversa)\b|\bnao quero (?:mais )?conversar\b|\bdeixe me em paz\b/.test(s);
 }
+// V112.64: uma negativa breve é uma decisão, não uma pergunta sobre a história.
+const ordinaryContacts=new Set(['friend','daughter','family-group']);
+export function shortRefusal(message){
+ const raw=String(message||'');
+ if(/[?？]/u.test(raw))return false;
+ return /^(?:nao|n|nn|negativo|nem pensar|de jeito nenhum|nao obrigado|nao obrigada|nao valeu|nao posso|nao quero|nao aceito|nao mesmo|nao da|nao consigo|prefiro nao)(?: nao)?$/.test(normalize(raw));
+}
+function priorRefusal(history,choices){
+ const last=[...history].reverse().find(row=>row.role==='user');
+ return !!last&&shortRefusal(last.content);
+}
 // Uma pergunta substantiva não pode ser substituída por uma saudação.
 // A regra vale também com grafia informal e pontuação omitida.
 function contextQuestion(message){
@@ -153,6 +164,12 @@ export async function selectStrictReply(parsed,env,model,{timeoutMs=3500}={}){
  const respond=(id,source)=>({reply:choices[id],source,guarded:source==='catalog-protection'});
  if(injectionAttempt(parsed.message))return respond(explicitExit(parsed.message)?'close':'context','catalog-protection');
  if(explicitExit(parsed.message))return respond('close','catalog-protection');
+ // Respect a refusal before the story/classifier can reinterpret it as a continuation.
+ if(shortRefusal(parsed.message)){
+  const previousUserRefused=priorRefusal(parsed.history,choices);
+  if(ordinaryContacts.has(parsed.scenario))return respond(previousUserRefused?'bye':'wait','catalog-protection');
+  return respond(previousUserRefused?'close':'wait','catalog-protection');
+ }
  const previous=lastContact(parsed.history,choices);
  const fallback=fallbackId(parsed.scenario,parsed.message,choices);
  const contextId=previous===choices.context?'detail':'context';

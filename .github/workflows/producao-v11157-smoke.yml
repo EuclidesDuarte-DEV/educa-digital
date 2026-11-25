@@ -108,6 +108,19 @@ jobs:
           }
           console.log('História ativa e sem repetição OK');
           NODE
+      - name: V112.64 — confirmar respeito à recusa no diálogo publicado
+        run: |
+          node --input-type=module <<'NODE'
+          const root='https://educa-digital.educamaisdigital.workers.dev';
+          const history=[];
+          for(const [message,expected] of [['não','Tudo bem, não precisa decidir agora.'],['não','Tudo bem, vamos deixar por aqui.']]){
+            const res=await fetch(root+'/api/modo-livre/conversar-web',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:'family-photo',message,history}),signal:AbortSignal.timeout(15000)});
+            const data=await res.json();
+            if(!res.ok||data.reply!==expected||data.guarded!==true)throw Error('Reconhecimento de recusa não confirmado.');
+            history.push({role:'user',content:message},{role:'assistant',content:data.reply});
+          }
+          console.log('V112.64: recusa reconhecida e encerramento respeitado.');
+          NODE
       - name: Teste real de conversa da LIA na produção
         run: |
           node --input-type=module <<'NODE'
