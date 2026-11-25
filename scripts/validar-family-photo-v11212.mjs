@@ -10,7 +10,7 @@ try{
   const page=await browser.newPage({viewport});
   let networkCalls=0;
   try{
-   await page.addInitScript(()=>localStorage.setItem('educaWebModoLivreNivelV11182',JSON.stringify({xp:220})));
+   await page.addInitScript(()=>localStorage.setItem('educaWebModoLivreNivelV11182:guest',JSON.stringify({xp:220,confirmed:220,pending:[]})));
    await page.route('**/api/modo-livre/conversar-web',route=>{networkCalls++;return route.abort();});
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeView&&window.EducaFreeMode&&document.documentElement.dataset.educaPlatform==='web',{timeout:15000});

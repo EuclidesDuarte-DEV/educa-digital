@@ -95,6 +95,26 @@ jobs:
           if(/https?:\/\/|www\.|\b\d{7,}\b/.test(data.reply))throw new Error('Workers AI respondeu com links ou números não permitidos');
           console.log('Gemma real OK, latencia='+((Date.now()-started)/1000).toFixed(1)+'s; resposta: '+data.reply.slice(0,240));
           NODE
+      - name: V112.65 — verificar diálogo contextual e recusas no Preview real
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          const root=process.env.PREVIEW_URL;
+          assert.match(new URL(root).hostname,/^[a-z0-9-]+-educa-digital\.educamaisdigital\.workers\.dev$/);
+          for(const route of ['conversar-web','conversar']){
+            const scenario=route==='conversar-web'?'family-photo':'video';
+            const history=[];
+            for(const [message,expected] of [['não','Tudo bem, não precisa decidir agora.'],['não','Tudo bem, vamos deixar por aqui.'],['obrigado','De nada!']]){
+              const response=await fetch(root+'/api/modo-livre/'+route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario,message,history}),signal:AbortSignal.timeout(15000)});
+              const data=await response.json();
+              assert.equal(response.status,200);
+              assert.equal(data.reply,expected);
+              assert.equal(data.security_revision,'11251');
+              history.push({role:'user',content:message},{role:'assistant',content:data.reply});
+            }
+            console.log('V112.65: diálogo e recusas OK em '+route);
+          }
+          NODE
       - name: Cadastro demonstrativo e banco de Preview
         run: |
           node --input-type=module <<'NODE'

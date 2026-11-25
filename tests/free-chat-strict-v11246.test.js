@@ -2,7 +2,7 @@ import {FAMILY_PHOTO_STORY} from '../src/free-chat-story-v11249.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import app from '../src/worker.js';
-import {approvedReplies,parseChoice,selectStrictReply,explicitExit} from '../src/free-chat-strict-v11246.js';
+import {approvedReplies,parseChoice,selectStrictReply,explicitExit,shortRefusal} from '../src/free-chat-strict-v11246.js';
 import {installStrictSecurityNote} from '../src/lia-neural-security-v11246.js';
 const scenarios=['family','family-photo','video','bank','code','delivery','call-tech','relative','account','prize','sms-delivery','sms-bank','sms-prize','friend','daughter','family-group'];
 let counter=0;
@@ -251,4 +251,67 @@ test('inferência semântica expira sem bloquear o usuário',async()=>{
 test('aviso de treinamento permanece na interface independente do personagem',async()=>{
  const {readFile}=await import('node:fs/promises');const s=await readFile('public/static/js/free-mode.js','utf8');
  assert.match(s,/Contato fictício/);assert.match(s,/Ambiente de treinamento/);
+});
+
+// V112.64 — regression from screenshot: two consecutive "não" responses.
+test('recusas curtas não voltam ao assunto nem pedem novamente',async()=>{
+ const history=[...screenshotHistory],choices=approvedReplies('family-photo');
+ let calls=0;
+ for(const [message,expected] of [['não',choices.wait],['não',choices.close]]){
+  const res=await app.fetch(req('conversar-web','family-photo',message,{history}),{AI:{run:async()=>{calls++;return {response:'continuone'};}}});
+  const data=await res.json();
+  assert.equal(res.status,200);assert.equal(data.reply,expected);assert.equal(data.guarded,true);
+  assert.equal(data.security_revision,'11251');
+  assert.doesNotMatch(data.reply,/conta|pix|emprest|pagar|transf/i);
+  history.push({role:'user',content:message},{role:'assistant',content:data.reply});
+ }
+ assert.equal(calls,0);
+});
+test('variações de recusa em todos os contatos mantêm os limites do catálogo',async()=>{
+ for(const scenario of scenarios){
+  const choices=approvedReplies(scenario);
+  for(const message of ['NÃO!','não, obrigado','Não posso','Nem pensar','não mesmo','prefiro não','não dá','nn']){
+   const result=await selectStrictReply({scenario,message,history:[]},{AI:{run:()=>{throw Error('classificador desnecessário');}}},'gemma-4');
+   assert.equal(result.reply,choices.wait,scenario+': '+message);
+  }
+ }
+});
+test('negativa em pergunta ou pedido de explicação não é recusa isolada',async()=>{
+ for(const message of ['Não?','Não entendi','Não sei qual conta','Não quero encerrar','Não, qual é a conta?','Não é amanhã?'])assert.equal(shortRefusal(message),false,message);
+ const reply=await selectStrictReply({scenario:'family-photo',message:'Não entendi',history:screenshotHistory},{AI:{run:async()=>({response:'explain'})}},'gemma-4');
+ assert.equal(reply.source,'catalog-story');
+});
+
+// V112.65: conversational state improvements shared by the two Worker routes.
+test('reconhece linguagem cotidiana sem voltar ao pedido anterior',async()=>{
+ const choices=approvedReplies('family-photo');
+ const env={AI:{run:()=>{throw Error('não precisa gerar');}}};
+ for(const [message,id] of [['ok','ack'],['blz','ack'],['obrigado','thanks'],['calma aí','pause'],['como assim?','clarifydirect']]){
+  const result=await selectStrictReply({scenario:'family-photo',message,history:screenshotHistory},env,'gemma-4');
+  assert.equal(result.reply,choices[id],message);
+ }
+});
+test('recusa com outras palavras e verificação independente são respeitadas',async()=>{
+ for(const scenario of ['family-photo','family','relative','bank','video','code']){
+  const choices=approvedReplies(scenario);
+  for(const message of ['Não posso te emprestar','Não quero transferir','Vou ligar no número antigo','Como sei que é você?','Tem como provar?']){
+   let calls=0;
+   const result=await selectStrictReply({scenario,message,history:[]},{AI:{run:async()=>{calls++;return {response:'hello'};}}},'gemma-4');
+   assert.equal(calls,0,scenario+': '+message);
+   assert.equal(result.guarded,true);
+   assert.ok([choices.doubt,choices.verify,choices.wait].includes(result.reply));
+  }
+ }
+});
+test('pergunta repetida não produz outra paráfrase nem inventa fatos',async()=>{
+ const choices=approvedReplies('family-photo');
+ const history=[...screenshotHistory,{role:'user',content:'Qual é o valor?'},{role:'assistant',content:choices.amount}];
+ const result=await selectStrictReply({scenario:'family-photo',message:'qual é o valor?',history},{AI:{run:()=>{throw Error('não chamar');}}},'gemma-4');
+ assert.equal(result.reply,choices.repeated);
+ assert.equal(result.source,'catalog-context');
+});
+test('conversa comum mantém respostas sociais sem iniciar pedido',async()=>{
+ const choices=approvedReplies('daughter');
+ const result=await selectStrictReply({scenario:'daughter',message:'Valeu!',history:[]},{AI:{run:()=>{throw Error('não chamar');}}},'gemma-4');
+ assert.equal(result.reply,choices.thanks);
 });
