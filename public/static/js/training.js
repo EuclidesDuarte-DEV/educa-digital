@@ -1008,6 +1008,8 @@
     const topic = learningTopics[topicId];
     if (!topic) return openLearningHub();
     currentLearningTopic = topicId;
+    // V112.52: marcador apenas visual; a lógica dos módulos permanece igual.
+    if (modulePathView) modulePathView.dataset.topic = topicId;
     currentLessonIndex = firstIncompleteLesson(topicId);
     currentTopicAction = topic.lessons[currentLessonIndex]?.[2] || '';
     if (modulePathTitle) modulePathTitle.textContent = topic.title;
@@ -1027,7 +1029,8 @@
 
     const completedCount = topic.lessons.filter((_, i) => isLessonComplete(topicId, i)).length;
     const pct = Math.round((completedCount / topic.lessons.length) * 100);
-    if (modulePathProgressText) modulePathProgressText.textContent = `${completedCount} de ${topic.lessons.length} atividades concluídas`;
+    if (modulePathProgressText) modulePathProgressText.textContent = topicId === 'security'
+      ? `${completedCount}/${topic.lessons.length}` : `${completedCount} de ${topic.lessons.length} atividades concluídas`;
     if (modulePathProgressPct) modulePathProgressPct.textContent = `${pct}%`;
     if (modulePathProgressFill) modulePathProgressFill.style.width = `${pct}%`;
 
