@@ -23,8 +23,9 @@ test('as preferências se aplicam imediatamente e podem ser alteradas', () => {
   assert.match(css, /\.a11y-distinct-colors/);
 });
 test('leitura em voz alta é opcional e não altera Kokoro ou LIA', () => {
-  assert.match(js, /SpeechSynthesisUtterance/);
-  assert.match(js, /utterance\.lang = 'pt-BR'/);
+  assert.match(js, /EducaLiaNeuralPlayback/);
+  assert.match(js, /owner:'guide'/);
+  assert.doesNotMatch(js, /new SpeechSynthesisUtterance/);
   assert.match(js, /readButton\?\.addEventListener\('click'/);
   assert.doesNotMatch(js, /pf_dora|kokoro/);
   assert.match(sw, /(?:educa-cf1113(?:5-access-inside-phone|6-access-home-icon|7-access-external|8-access-fullscreen|9-access-position)|educa-cf11140-access-drawer|educa-cf11143-guide-start-train|educa-cf11144-first-login-guide|educa-cf11145-mobile-a11y-shortcuts|educa-cf11147-phone-only-responsive-a11y)/);
