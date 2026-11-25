@@ -33,7 +33,9 @@ jobs:
               const cssReady=assets.every(r=>r.ok&&/text\/css/i.test(r.headers.get('content-type')||''))&&channel.ok&&(await channel.text()).includes('V112.55: a largura acompanha a moldura');
               const mode=await fetch(root+'/static/js/free-mode.js?arrivals=11257',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
               const arrivalsReady=mode.ok&&(await mode.text()).includes('function prepareContactRows()');
-              if(res.ok&&html.includes(expected)&&html.includes('guard=11251&arrivals=11257')&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady&&arrivalsReady){
+              const neural=await fetch(root+'/static/js/lia-neural-playback-v11261.js?v=11261',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
+              const neuralReady=neural.ok&&(await neural.text()).includes('EducaLiaNeuralPlayback');
+              if(res.ok&&html.includes(expected)&&html.includes('guard=11251&arrivals=11257')&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady&&arrivalsReady&&neuralReady&&html.includes('callvoice=11261')&&html.includes('accessibility.js?v=11148&neural=11261')){
                 ready=true;console.log('Revisão oficial confirmada: '+expected);break;
               }
               console.log('Site oficial ainda sem a revisão esperada: '+res.status+' (checagem '+n+')');

@@ -85,10 +85,8 @@
   }
 
   function stopReading() {
-    if (activeUtterance) {
-      try { window.speechSynthesis?.cancel(); } catch (_) {}
-      activeUtterance = null;
-    }
+    window.EducaLiaNeuralPlayback?.stop?.('guide');
+    activeUtterance = null;
     reading = false;
     if (readButton) { readButton.textContent = 'Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
     if (readStatus) readStatus.textContent = '';
@@ -110,42 +108,45 @@
     }).join('. ').replace(/\s+/g, ' ').trim();
     return text.slice(0, 1300);
   }
+  // V112.61: a leitura utiliza a mesma Dora neural gratuita da videochamada,
+  // em vez da voz antiga do sistema operacional.
   function speak(text) {
-    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
-      if (readStatus) readStatus.textContent = 'A leitura em voz alta não está disponível neste navegador.';
-      return;
-    }
     const message = String(text || '').trim();
     if (!message) {
       if (readStatus) readStatus.textContent = 'Nenhum texto disponível nesta tela.';
       return;
     }
+    const neural = window.EducaLiaNeuralPlayback;
     stopReading();
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = 'pt-BR';
-    utterance.rate = 0.88;
-    const voices = window.speechSynthesis.getVoices?.() || [];
-    const ptBR = voices.find(v => /^pt[-_]BR$/i.test(v.lang));
-    if (ptBR) utterance.voice = ptBR;
-    activeUtterance = utterance;
-    reading = true;
-    if (readButton) { readButton.textContent = 'Parar leitura'; readButton.classList.add('is-speaking'); readButton.setAttribute('aria-label','Parar leitura'); }
-    if (readStatus) readStatus.textContent = 'Lendo o texto da tela.';
-    utterance.onend = utterance.onerror = () => {
-      if (activeUtterance === utterance) {
-        activeUtterance = null;
-        reading = false;
-        if (readButton) { readButton.textContent = 'Ouvir esta tela'; readButton.classList.remove('is-speaking'); readButton.setAttribute('aria-label','Ouvir esta tela'); }
-        if (readStatus) readStatus.textContent = '';
-      }
-    };
-    try {
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-    } catch (_) {
-      stopReading();
-      if (readStatus) readStatus.textContent = 'Não foi possível iniciar a leitura.';
+    if (!neural?.speak) {
+      if (readStatus) readStatus.textContent = 'Voz neural indisponível neste navegador. O texto continua visível.';
+      return;
     }
+    reading = true;
+    const session = {};
+    activeUtterance = session;
+    if (readButton) {
+      readButton.textContent = 'Parar leitura';
+      readButton.classList.add('is-speaking');
+      readButton.setAttribute('aria-label','Parar leitura');
+    }
+    if (readStatus) readStatus.textContent = 'Preparando voz neural brasileira…';
+    const complete = message => {
+      if (activeUtterance !== session) return;
+      activeUtterance = null;reading = false;
+      if (readButton) {
+        readButton.textContent = 'Ouvir esta tela';readButton.classList.remove('is-speaking');
+        readButton.setAttribute('aria-label','Ouvir esta tela');
+      }
+      if (readStatus) readStatus.textContent = message || '';
+    };
+    void neural.speak(message,{
+      owner:'guide',speed:0.97,
+      onStart:()=>{if(activeUtterance===session&&readStatus)readStatus.textContent='Lendo com a voz neural Dora.';},
+      onEnd:()=>complete(''),
+      onBlocked:()=>complete('O navegador bloqueou o som. Toque em Ouvir esta tela novamente.'),
+      onError:()=>complete('A voz neural não pôde ser carregada. O texto continua disponível.')
+    }).catch(()=>complete('Não foi possível iniciar a voz neural.'));
   }
 
   // Navegadores exigem interação da pessoa para liberar síntese de voz.
@@ -153,6 +154,7 @@
   // exceto quando a preferência estiver desligada.
   const unlockVoice = () => {
     voiceReady = true;
+    window.EducaLiaNeuralPlayback?.unlock?.();
     if (!prefs.reading || !pendingGuide) return;
     const message = pendingGuide;
     pendingGuide = null;
@@ -167,7 +169,7 @@
     if (!text) return;
     if (!voiceReady) { pendingGuide = text; return; }
     // Não falar por cima da LIA em chamadas nem de outra mídia em execução.
-    if (document.querySelector('#freeCallView.is-active, #liaCallView.is-active')) return;
+    if (document.querySelector('#freeCallView.is-active, #freeVideoView.is-active, #liaCallView.is-active')) return;
     speak(text);
   });
   // A tela continua disponível mesmo que o visitante decida não configurar nada.

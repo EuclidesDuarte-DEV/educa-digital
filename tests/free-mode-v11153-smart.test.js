@@ -74,7 +74,9 @@ test('V111.53: chamada fictícia escuta somente depois da ação do participante
  assert.match(html,/Sem ligação real/);
  assert.match(js,/state.callHandsFree=true;listen\(\)/);
  assert.match(js,/if\(state.callHandsFree&&state.active&&visible\(\)==='free-call'/);
- assert.match(js,/window.EducaLiaVoice\?\.choose\?\.\(\)/);
+ assert.match(js,/window.EducaLiaNeuralPlayback/);
+ assert.match(js,/owner:'call'/);
+ assert.doesNotMatch(js,/new window\.SpeechSynthesisUtterance/);
  assert.match(js,/r.lang='pt-BR'/);
  assert.match(js,/r.onresult=e=>/);
 });
