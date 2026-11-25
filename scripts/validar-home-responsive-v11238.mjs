@@ -27,6 +27,21 @@ for(const engine of [chromium,webkit]){
      const r=s=>{const e=document.querySelector(s),b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,font:parseFloat(getComputedStyle(e).fontSize)}};
      return {title:r('.hero-copy h1'),subtitle:r('.hero-subtitle'),cta:r('#startNowBtn'),label:r('#startNowLabel'),phone:r('#phoneHardware'),screen:r('#phoneScreen'),wrap:r('#inicio .phone-preview-wrap'),header:r('.home-simple-header'),viewport:innerWidth,scroll:document.documentElement.scrollWidth,extra:document.documentElement.classList.contains('a11y-text-extra'),large:document.documentElement.classList.contains('a11y-text-large')};
     });
+    const expand=await page.evaluate(()=>{
+     const button=document.querySelector('#fullscreenBtn'),label=button.querySelector('span'),tools=button.closest('.phone-tools');
+     const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
+     if(!button.getClientRects().length||!rect(button).width||getComputedStyle(button).visibility==='hidden')return null;
+     const range=document.createRange();range.selectNodeContents(label);
+     return {text:label.textContent.trim(),font:parseFloat(getComputedStyle(label).fontSize),button:rect(button),tools:rect(tools),ink:[...range.getClientRects()].map(rect=>({left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom}))};
+    });
+    if(platform==='web'&&width>=901)assert.ok(expand,'botão Tela cheia sumiu no desktop');
+    if(expand){
+     assert.equal(expand.text,'Tela cheia');
+     assert.ok(expand.button.height>=43,'alvo de toque pequeno '+JSON.stringify(expand));
+     assert.ok(expand.ink.length>0&&expand.ink.every(r=>r.left>=expand.button.left-1&&r.right<=expand.button.right+1&&r.top>=expand.button.top-1&&r.bottom<=expand.button.bottom+1),'texto Tela cheia cortado '+JSON.stringify(expand));
+     assert.ok(expand.button.left>=expand.tools.left-1&&expand.button.right<=expand.tools.right+1&&expand.button.bottom<=expand.tools.bottom+1,'botão fora de sua faixa '+JSON.stringify(expand));
+     if(platform==='web')assert.ok(expand.font>=13,'texto Tela cheia reduzido');
+    }
     const launcher=await page.evaluate(()=>{
       const r=e=>{const b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
       const home=document.querySelector('#homeView');
