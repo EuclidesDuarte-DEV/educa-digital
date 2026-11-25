@@ -93,23 +93,47 @@ function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
  // A voz feminina do sistema pode ser procurada paralelamente, sem bloquear.
  if(document.documentElement?.dataset?.educaPlatform==='web')
   void window.EducaLiaVoice?.waitForFemale?.(500)?.catch?.(()=>{});
- state.finished=0;state.score=100;state.riskyScenarios.clear();state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;makeContactRows();show('home');schedule(900,1450);}
+ state.finished=0;state.score=100;state.riskyScenarios.clear();state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden,hidden:row.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;prepareContactRows();show('home');schedule(1800,3200);}
 function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.exampleConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
  const list=$('#whatsappView .wa-chat-list');for(const dynamic of document.querySelectorAll('#whatsappView [data-free-scenario]'))dynamic.remove();
- if(list&&state.baseline)for(const {row,preview,time,badgeHidden} of state.baseline){row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
+ if(list&&state.baseline)for(const {row,preview,time,badgeHidden,hidden} of state.baseline){row.hidden=hidden;row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
  els.phone?.classList.remove('free-active','free-family-chat');if(els.notice)els.notice.hidden=true;if(els.form)els.form.hidden=true;setStatus('');syncUI();}
 function exit(){stop();bridge()?.openLearningHub();}
 function home(){if(!state.active)return;clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
-function makeContactRows(){const list=$('#whatsappView .wa-chat-list');if(!list)return;
-  for(const old of list.querySelectorAll('[data-free-scenario]'))old.remove();
-  for(const s of [...(isWebTraining()?[byId['family-photo']]:[]),byId.delivery,byId.relative,byId.account,byId.prize,byId.friend]){
-    const btn=document.createElement('button');btn.type='button';btn.className='chat-row training-chat';btn.dataset.freeScenario=s.id;
-    const avatar=document.createElement('span');avatar.className='avatar wa-avatar green';avatar.textContent=s.icon;
-    const copy=document.createElement('span');copy.className='chat-copy';const strong=document.createElement('strong');strong.textContent=s.name;const small=document.createElement('small');small.textContent='Toque para conversar';copy.append(strong,small);
-    const meta=document.createElement('span');meta.className='chat-meta';const time=document.createElement('small');time.textContent=now();const badge=document.createElement('b');badge.textContent='1';badge.hidden=true;meta.append(time,badge);btn.append(avatar,copy,meta);list.append(btn);
-  }
+// V112.57 — mensagens fictícias surgem apenas quando o evento acontece.
+// Retirar as linhas do DOM evita que pesquisa e filtros revelem desafios futuros.
+// A lista original das atividades guiadas é restaurada em stop().
+function prepareContactRows(){
+ const list=$('#whatsappView .wa-chat-list');if(!list)return;
+ for(const old of list.querySelectorAll('[data-free-scenario]'))old.remove();
+ for(const {row} of state.baseline||[])if(!row.dataset.normalChat)row.remove();
 }
-function updatePreview(s){const row=$(`#whatsappView [data-scenario="${s.id}"],#whatsappView [data-free-scenario="${s.id}"],#whatsappView [data-normal-chat="${s.id}"]`);if(!row)return;const m=state.conversations.get(s.id)?.at(-1);row.querySelector('.chat-copy small').textContent=(m?.content||s.intro).slice(0,55);const clock=row.querySelector('.chat-meta small');if(clock)clock.textContent=now();row.parentNode?.prepend(row);updateUnread();}
+function ensureContactRow(s){
+ if(!state.active||s.channel!=='whatsapp')return null;
+ const list=$('#whatsappView .wa-chat-list');if(!list)return null;
+ const existing=$(`#whatsappView [data-scenario="${s.id}"],#whatsappView [data-free-scenario="${s.id}"],#whatsappView [data-normal-chat="${s.id}"]`);
+ if(existing)return existing;
+ const original=state.baseline?.find(({row})=>row.dataset.scenario===s.id||row.dataset.normalChat===s.id)?.row;
+ if(original){original.hidden=false;list.prepend(original);return original;}
+ const btn=document.createElement('button');btn.type='button';btn.className='chat-row training-chat';btn.dataset.freeScenario=s.id;
+ const avatar=document.createElement('span');avatar.className='avatar wa-avatar green';avatar.textContent=s.icon;
+ if(s.photoUrl){
+  avatar.textContent='';
+  const image=document.createElement('img');image.src=s.photoUrl;image.alt='';image.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';
+  image.onerror=()=>{image.remove();avatar.textContent=s.icon;};
+  avatar.append(image);
+ }
+ const copy=document.createElement('span');copy.className='chat-copy';const strong=document.createElement('strong');strong.textContent=s.name;const small=document.createElement('small');copy.append(strong,small);
+ const meta=document.createElement('span');meta.className='chat-meta';const time=document.createElement('small');time.textContent=now();const badge=document.createElement('b');badge.textContent='1';badge.hidden=true;meta.append(time,badge);btn.append(avatar,copy,meta);list.prepend(btn);return btn;
+}
+function updatePreview(s){
+ if(s.channel!=='whatsapp')return;
+ const row=ensureContactRow(s);if(!row)return;
+ const m=state.conversations.get(s.id)?.at(-1);const preview=row.querySelector('.chat-copy small');
+ if(preview)preview.textContent=(m?.content||s.intro).slice(0,55);
+ const clock=row.querySelector('.chat-meta small');if(clock)clock.textContent=now();
+ row.parentNode?.prepend(row);updateUnread();
+}
 function nextScriptedScenario(){
  const order=isWebTraining()?WEB_SCRIPTED_ORDER:SCRIPTED_ORDER;
  const bonus=isWebTraining()?WEB_BONUS_ORDER:BONUS_ORDER;

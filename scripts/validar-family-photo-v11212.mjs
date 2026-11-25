@@ -18,9 +18,16 @@ try{
      window.EducaFreeView.isTraining=()=>true;
      window.EducaFreeMode.start();
      window.EducaFreeView.setView('whatsapp');
+     const list=document.querySelector('#whatsappView .wa-chat-list');
+     if(list.querySelector('[data-scenario],[data-free-scenario]'))throw Error('Desafios futuros já aparecem na lista');
+     if(list.querySelectorAll('[data-normal-chat]').length!==2)throw Error('Contatos conhecidos desapareceram');
    });
    const row=page.locator('#whatsappView [data-free-scenario="family-photo"]');
+   await row.waitFor({state:'visible',timeout:8000});
+   assert.equal(await page.locator('#whatsappView .wa-chat-list [data-scenario],#whatsappView .wa-chat-list [data-free-scenario]').count(),1,id+': mais de uma conversa de desafio antecipada');
+   assert.equal(await row.locator('.chat-meta b').isVisible(),true,id+': nova mensagem sem indicador');
    await row.click({timeout:8000});
+   assert.equal(await row.locator('.chat-meta b').evaluate(b=>b.hidden),true,id+': indicador não foi limpo ao ler');
    await page.waitForFunction(()=>document.querySelector('#chatWallpaper .free-training-photo img')?.complete===true,{timeout:4000});
    const photo=await page.locator('#chatWallpaper .free-training-photo img').evaluate(img=>({
       width:img.naturalWidth,height:img.naturalHeight,alt:img.alt,src:img.getAttribute('src')
