@@ -21,7 +21,7 @@ test('Pré-teste, cursos e celular original preservados',()=>{
  assert.match(html,/href="\/static\/css\/android-system\.css\?v=104">/);
 });
 test('Eventos inesperados e ligação automática continuam presentes',()=>{
- assert.match(mode,/schedule\(900,1450\)/);assert.match(mode,/SCRIPTED_ORDER=Object\.freeze/);assert.match(mode,/showIncomingCall/);assert.match(mode,/triggerEvent/);assert.doesNotMatch(mode,/freeNextBtn/);
+ assert.match(mode,/schedule\(1800,3200\)/);assert.match(mode,/SCRIPTED_ORDER=Object\.freeze/);assert.match(mode,/showIncomingCall/);assert.match(mode,/triggerEvent/);assert.doesNotMatch(mode,/freeNextBtn/);
 });
 test('Entradas privadas, inválidas e instruções maliciosas são recusadas',()=>{
  assert.match(validarMensagem({scenario:'bank',message:'12345678901'}).error,/Não digite/);

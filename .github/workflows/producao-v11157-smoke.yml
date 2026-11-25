@@ -31,7 +31,9 @@ jobs:
               const assets=await Promise.all(required.map(path=>fetch(root+'/static/css/'+path,{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}})));
               const channel=await fetch(root+'/static/channels/web/overrides.css?v=11190&fix=11208&touch=11255',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
               const cssReady=assets.every(r=>r.ok&&/text\/css/i.test(r.headers.get('content-type')||''))&&channel.ok&&(await channel.text()).includes('V112.55: a largura acompanha a moldura');
-              if(res.ok&&html.includes(expected)&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady){
+              const mode=await fetch(root+'/static/js/free-mode.js?arrivals=11257',{signal:AbortSignal.timeout(10000),headers:{'Cache-Control':'no-cache'}});
+              const arrivalsReady=mode.ok&&(await mode.text()).includes('function prepareContactRows()');
+              if(res.ok&&html.includes(expected)&&html.includes('guard=11251&arrivals=11257')&&html.includes('lia-kokoro-browser.js?v=11157&mirror=2')&&required.every(path=>html.includes(path))&&cssReady&&arrivalsReady){
                 ready=true;console.log('Revisão oficial confirmada: '+expected);break;
               }
               console.log('Site oficial ainda sem a revisão esperada: '+res.status+' (checagem '+n+')');
