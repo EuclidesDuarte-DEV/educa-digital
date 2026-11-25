@@ -42,7 +42,7 @@ const openingContext=Object.freeze({
  "relative": "Troquei de número e estava falando daquela despesa.",
  "account": "É sobre o aviso de bloqueio da conta que mencionei.",
  "prize": "É sobre aquela promoção mencionada na primeira mensagem.",
- "friend": "Eu queria saber como está indo seu treino com o celular.",
+ "friend": "Eu queria saber como você está se virando com o celular.",
  "daughter": "Só queria saber como você está.",
  "family-group": "Eu estava falando das fotos do almoço."
 });
