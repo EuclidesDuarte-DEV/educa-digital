@@ -41,6 +41,34 @@ test('Interrupção impede tocar fala antiga depois de sair da tela',async()=>{
  const sandbox={window,Audio:class{constructor(){media++;}},URL:{},Promise,console};
  vm.runInNewContext(speech,sandbox);
  const result=window.EducaLiaNeuralPlayback.speak('Guia',{owner:'guide'});
- window.EducaLiaNeuralPlayback.stop('guide');finish({blob:{size:2048}});
+ await Promise.resolve();window.EducaLiaNeuralPlayback.stop('guide');finish({blob:{size:2048}});
  assert.equal(await result,false);assert.equal(media,0);
+});
+
+test('V112.62: iPhone usa WebAudio desbloqueado e pequenos trechos, sem Audio.play',async()=>{
+ const clips=[],sources=[],events=[];
+ class Context{
+  state='suspended';sampleRate=24000;destination={};
+  resume(){this.state='running';return Promise.resolve();}
+  createBuffer(){return {};}
+  createBufferSource(){const source={connect(){},disconnect(){},stop(){},start(){queueMicrotask(()=>source.onended?.());}};sources.push(source);return source;}
+  decodeAudioData(){return Promise.resolve({duration:1});}
+ }
+ const window={navigator:{userAgent:'iPhone'},AudioContext:Context,EducaLiaFreeNeural:{speak:async(text)=>{clips.push(text);return {blob:{size:2048,arrayBuffer:async()=>new ArrayBuffer(2048)}};}},EducaLiaWarm:{state:()=>({iOS:true}),isMemorySensitive:()=>true}};
+ const sandbox={window,Audio:class{constructor(){throw Error('não deve usar elemento Audio no iPhone');}},URL:{},Promise,queueMicrotask,ArrayBuffer,console};
+ vm.runInNewContext(speech,sandbox);
+ window.EducaLiaNeuralPlayback.unlock();
+ const phrase='Abra o aplicativo indicado na tela. Escolha a atividade que deseja praticar e siga a orientação passo a passo com calma.';
+ assert.equal(await window.EducaLiaNeuralPlayback.speak(phrase,{owner:'guide',onStart:()=>events.push('start'),onEnd:()=>events.push('end')}),true);
+ assert.ok(clips.length>=2&&clips.every(t=>t.length<=76));
+ assert.equal(clips.join(' '),phrase);assert.ok(sources.length>=3);assert.deepEqual(events,['start','end']);
+});
+test('V112.62: guia anuncia navegação real e não se sobrepõe a chamadas',()=>{
+ const training=read('public/static/js/training.js');
+ assert.match(training,/educa:training-view/);assert.match(training,/educa:training-guide/);
+ assert.match(access,/addEventListener\('educa:training-view'/);
+ assert.match(access,/addEventListener\('educa:training-guide'/);
+ assert.match(access,/inFreeMode\(\)\|\|callOrMedia\(\)/);
+ assert.match(access,/\['pointerup','touchend','click','keydown'\]/);
+ assert.doesNotMatch(training,/new SpeechSynthesisUtterance/);
 });
