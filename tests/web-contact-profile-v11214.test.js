@@ -26,7 +26,11 @@ test('V112.14: foto estática nova de resolução maior, não texto fingindo com
 test('V112.14: perfil é script Web independente, com menu, busca, ações e acessibilidade',()=>{
  assert.doesNotThrow(()=>new vm.Script(profile));
  assert.match(profile,/dataset\.educaPlatform!=='web'/);
- assert.match(profile,/currentScenario\?\.\(\)==='family-photo'/);
+ assert.match(profile,/currentContact\?\.\(\)/);
+ assert.match(profile,/displayedContact!==c\.id/);
+ assert.match(free,/currentContact:\(\)=>/);
+ assert.match(profile,/hasPhoto=c\.id==='family-photo'/);
+ assert.match(profile,/name\.textContent=c\.name/);
  assert.match(profile,/freeContactProfileLayer/);
  for(const label of ['Dados do contato','Mídia, links e docs','Pesquisar','Notificações','Tema da conversa','Mensagens temporárias','Bloquear contato','Denunciar contato','Favoritos']) assert.ok(profile.includes(label),label);
  assert.match(profile,/PHOTO='\/static\/img\/free-family-photo-v11214\.webp'/);
