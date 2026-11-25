@@ -85,7 +85,7 @@ try{
    assert.ok(call.controls.length>=5,c.w+': esperados cinco controles disponíveis');
    for(const control of call.controls){
     assert.ok(control.left>=call.bar.left-1&&control.right<=call.bar.right+1,c.w+': botão cortado '+control.id);
-    assert.ok(control.height>=40,c.w+': toque pequeno demais '+control.id);
+    assert.ok(control.height>=44,c.w+': toque pequeno demais '+control.id+' ('+control.height.toFixed(1)+'px)');
    }
    for(let i=0;i<call.controls.length;i++)for(let j=i+1;j<call.controls.length;j++)
     assert.ok(!overlaps(call.controls[i],call.controls[j]),c.w+': controles sobrepostos');
@@ -108,7 +108,7 @@ try{
    });
    assert.ok(trio.controls.every(x=>x.left>=trio.dock.left-1&&x.right<=trio.dock.right+1),
      c.w+': botão da chamada real fora da barra');
-   assert.ok(trio.controls.every(x=>x.height>=40),c.w+': controle pequeno na chamada real');
+   assert.ok(trio.controls.every(x=>x.height>=44),c.w+': controle pequeno na chamada real');
    assert.ok(trio.view.bottom-trio.dock.bottom>=24,c.w+': barra muito perto do gesto');
    for(let i=0;i<trio.controls.length-1;i++)
      assert.ok(trio.controls[i].right<=trio.controls[i+1].left+1,c.w+': sobreposição na chamada real');

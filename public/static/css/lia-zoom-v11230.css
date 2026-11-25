@@ -28,6 +28,7 @@ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-
 html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar{
  box-sizing:border-box!important;display:flex!important;flex-wrap:nowrap!important;
  --lia-control-size:min(52px,calc((100cqw - 48px)/5));
+ --lia-control-height:max(44px,var(--lia-control-size));
  align-items:center!important;justify-content:space-evenly!important;
  width:100%!important;max-width:min(100%,392px)!important;min-width:0!important;
  padding:5px!important;gap:4px!important;
@@ -37,12 +38,12 @@ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-
 html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar > .v110-tool:not([hidden]){
  box-sizing:border-box!important;flex:0 0 var(--lia-control-size)!important;
  width:var(--lia-control-size)!important;min-width:0!important;max-width:var(--lia-control-size)!important;
- height:var(--lia-control-size)!important;min-height:0!important;max-height:var(--lia-control-size)!important;aspect-ratio:1!important;
+ height:var(--lia-control-height)!important;min-height:44px!important;max-height:var(--lia-control-height)!important;aspect-ratio:auto!important;
  padding:0!important;margin:0!important;align-self:center!important;
 }
 html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar > .v112-video-more > summary{
  box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;
- height:var(--lia-control-size)!important;min-height:0!important;max-height:var(--lia-control-size)!important;aspect-ratio:1!important;padding:0!important;margin:0!important;
+ height:var(--lia-control-height)!important;min-height:44px!important;max-height:var(--lia-control-height)!important;aspect-ratio:auto!important;padding:0!important;margin:0!important;
 }
 html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar .wa-icon{
  width:clamp(16px,6cqw,24px)!important;height:clamp(16px,6cqw,24px)!important;
@@ -88,4 +89,9 @@ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-
   width:min(420px,calc(100vw - 28px))!important;height:calc(100dvh - 100px)!important;
   aspect-ratio:auto!important;
  }
+}
+
+/* V112.54 — três controles na chamada recebida: não comprimir como se houvesse cinco. */
+html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar:has(> #freeVideoCameraToggle[hidden]):has(> #freeVideoSpeaker[hidden]):has(> #freeVideoMic[hidden]){
+ --lia-control-size:min(52px,calc((100cqw - 32px)/3));
 }

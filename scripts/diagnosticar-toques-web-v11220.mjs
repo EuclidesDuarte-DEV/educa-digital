@@ -63,7 +63,12 @@ try{
      await page.evaluate(()=>{window.EducaFreeMode.stop();window.EducaFreeMode.start();window.EducaFreeMode.triggerEvent();});
      await page.locator('#freeEventOpen').tap({timeout:8000});
      console.log('DIAG_JOURNEY_WHATSAPP '+name+' '+await page.locator('#phoneScreen').getAttribute('data-current-view'));
-     await page.locator('#freeFamilyBlock').tap({timeout:8000});
+     // A Web usa o menu do contato; os atalhos antigos permanecem ocultos.
+     if(await page.locator('#freeFamilyBlock').isVisible())throw Error('Atalho antigo de bloqueio reapareceu na Web');
+     await page.locator('#chatView .chat-header-actions button[aria-label="Menu"]').tap({timeout:8000});
+     await page.locator('#freeContactMoreMenu [data-fc="block"]').tap({timeout:8000});
+     await page.locator('#freeSummaryView.is-active').waitFor({state:'visible',timeout:8000});
+     console.log('DIAG_JOURNEY_BLOCK_MENU '+name);
      await page.locator('#freeSummaryNext').tap({timeout:8000});
      await page.locator('#freeVideoView.is-active').waitFor({state:'visible',timeout:8000});
      await page.locator('#freeVideoHangup').tap({timeout:8000});
