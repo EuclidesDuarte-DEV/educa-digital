@@ -1,3 +1,4 @@
+import { installStrictSecurityNote } from './lia-neural-security-v11246.js';
 import { installCharacterSecurityNote } from './lia-neural-security-v11245.js';
 /**
  * API do Educa+ Digital em Cloudflare Workers.
@@ -573,11 +574,11 @@ async function rotearApi(request, env, url, ctx) {
   if (metodo === 'GET' && /^\/api\/avatar\/render-status\/[a-f0-9]{32}$/.test(rota)) return liaGateway(request,env,'render-status:'+rota.split('/').at(-1));
   if (metodo === 'GET' && rota.startsWith('/api/avatar/media/')) return liaGateway(request,env,'media:'+rota.split('/').at(-1));
   if (metodo === 'POST' && rota === '/api/modo-livre/conversar') {
-    return responderModoLivre(request, env);
+    return responderModoLivre(request, env, false, ctx, true);
   }
   // V111.86: rota opcional do simulador Web, sem mudar o endpoint nativo.
   if (metodo === 'POST' && rota === '/api/modo-livre/conversar-web') {
-    return responderModoLivre(request, env, true, ctx);
+    return responderModoLivre(request, env, true, ctx, true);
   }
   if (metodo === 'POST' && rota === '/api/lia/training/outcome')
     return trainingOutcome(request,env);
@@ -706,7 +707,10 @@ export default {
       // preservar a latência da LIA. Após a primeira execução fica idempotente.
       if(url.pathname==='/api/lia/neural/health')
         await populateReviewedNeuralLibrary(env);
-      if(url.pathname==='/api/lia/neural/health')await installCharacterSecurityNote(env);
+      if(url.pathname==='/api/lia/neural/health'){
+        await installCharacterSecurityNote(env);
+        await installStrictSecurityNote(env);
+      }
       return await rotearApi(request, env, url, ctx);
     } catch (falha) {
       console.error('Educa API:', falha?.message || 'erro desconhecido');
