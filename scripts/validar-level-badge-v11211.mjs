@@ -17,7 +17,12 @@ try{
   const name=c.width+'x'+c.height+'-'+c.font;
   const page=await browser.newPage({viewport:{width:c.width,height:c.height}});
   try{
-   await page.addInitScript(()=>localStorage.setItem('educaWebModoLivreNivelV11182',JSON.stringify({xp:220})));
+   await page.addInitScript(()=>{
+    // Conta fictícia, sem chamada ao servidor. O XP legado deve ser ignorado.
+    localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'6500000000'}));
+    localStorage.setItem('educaWebModoLivreNivelV11182',JSON.stringify({xp:0}));
+    localStorage.setItem('educaWebModoLivreNivelV11182:account:6500000000',JSON.stringify({xp:220,confirmed:220,pending:[]}));
+   });
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForSelector('#edModoLevelBadge',{state:'attached',timeout:12000});
    await page.waitForFunction(()=>Boolean(window.EducaFreeView),{timeout:12000});
@@ -50,6 +55,16 @@ try{
    assert.match(dialogText,/Nível 3/);
    await page.locator('.ed-modo-close').click();
    assert.equal(await page.locator('.ed-modo-dialog').count(),0,name+': não fechou o painel');
+   await page.evaluate(()=>{
+    localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'6500000001'}));
+    window.dispatchEvent(new CustomEvent('educa:account-change'));
+   });
+   assert.equal(await badge.innerText(),'Nível 1',name+': XP de outra conta vazou');
+   await page.evaluate(()=>{
+    localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'6500000000'}));
+    window.dispatchEvent(new CustomEvent('educa:account-change'));
+   });
+   assert.equal(await badge.innerText(),'Nível 3',name+': não recuperou nível da conta original');
    console.log('OK '+name+' '+JSON.stringify(m));
   }finally{await page.close();}
  }
