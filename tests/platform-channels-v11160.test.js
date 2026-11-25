@@ -53,7 +53,7 @@ test('Web, Android e iOS carregam somente seu canal',()=>{
  ]) {
    const result=run(options);
    assert.equal(result.platform,expected,JSON.stringify(options));
-   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11190&fix=11208':'11222')]);
+   assert.deepEqual([...result.styles],['/static/channels/'+expected+'/overrides.css?v='+(expected==='web'?'11190&fix=11208&touch=11255':'11222')]);
    assert.deepEqual([...result.scripts],['/static/channels/'+expected+'/overrides.js?v='+(expected==='web'?'11190&fix=11212':'11222')]);
    assert.equal(result.info.platform,expected);
  }
@@ -77,7 +77,7 @@ test('V112.22: apps Android/iOS usam a UI Web mas mantêm canal físico e suas p
    assert.equal(ctx.window.EducaReleaseChannel.renderPlatform,'web');
    assert.ok(classes.includes('educa-mobile-web-parity'));
    assert.deepEqual([...styles],[
-     '/static/channels/web/overrides.css?v=11190&fix=11208',
+     '/static/channels/web/overrides.css?v=11190&fix=11208&touch=11255',
      '/static/channels/'+requested+'/overrides.css?v=11222'
    ]);
    assert.deepEqual([...scripts],[
