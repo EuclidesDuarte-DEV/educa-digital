@@ -7,6 +7,8 @@ on:
       - 'public/static/js/home-responsive-v11238.js'
       - 'public/html/index.html'
       - 'scripts/validar-home-responsive-v11238.mjs'
+      - 'public/static/css/home-fullscreen-parity-v11253.css'
+      - 'scripts/validar-home-fullscreen-parity-v11253.mjs'
       - '.github/workflows/home-responsive-v11238.yml'
 permissions:
   contents: read
@@ -25,9 +27,17 @@ jobs:
       - run: |
           python3 -m http.server 8789 --directory public >/tmp/home-server.log 2>&1 &
           node scripts/validar-home-responsive-v11238.mjs
+          node scripts/validar-home-fullscreen-parity-v11253.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: home-v11241-capturas
           path: artifacts/home-v11241/
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: home-fullscreen-v11253-capturas
+          path: artifacts/home-fullscreen-v11253/
           if-no-files-found: ignore
