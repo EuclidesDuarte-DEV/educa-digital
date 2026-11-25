@@ -222,7 +222,7 @@ import {needsFamilyPhotoInference,inferFamilyPhotoIntent} from '../src/free-chat
 test('falas do personagem sem lembretes repetitivos de ficção',()=>{
  for(const scenario of scenarios){
   for(const [id,reply] of Object.entries(approvedReplies(scenario))){
-   assert.doesNotMatch(reply,/\b(fict[ií]ci[oa]s?|treinamento|simula[cç][aã]o|ambiente de treino)\b/i,scenario+':'+id);
+   assert.doesNotMatch(reply,/\b(fict[ií]ci[oa]s?|treinamento|treino|simula[cç][aã]o|ambiente de treino)\b/i,scenario+':'+id);
    assert.doesNotMatch(reply,/https?:\/\/|chave pix real|agora me transfira/i,scenario+':'+id);
   }
  }
