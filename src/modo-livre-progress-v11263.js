@@ -1,6 +1,6 @@
-/* V112.63: XP de treinamento vinculado à conta no D1. Migração aditiva,
-   independente de conteúdo de conversas. O login anterior continua demonstrativo;
-   este token apenas vincula a sessão ao usuário retornado pelo login do protótipo. */
+/* Sessões e XP de treinamento vinculados à conta no D1. */
+import { loginWhatsApp } from './whatsapp-login.js';
+
 const init=new WeakMap();
 const sql=(env,s,...args)=>env.DB.prepare(s).bind(...args);
 const hash=async token=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),x=>x.toString(16).padStart(2,'0')).join('');
@@ -20,6 +20,9 @@ async function setup(env){
  }
  await init.get(env.DB);
 }
+const sessionHash=(env,token)=>hash(loginWhatsApp(env)?'whatsapp:'+token:token);
+const bearer=request=>request.headers.get('authorization')?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];
+
 export async function issueLevelSession(env,userId){
  // A sincronização de XP não deve impedir o login existente se D1 estiver indisponível.
  if(!env.DB?.batch||!userId)return undefined;
@@ -27,17 +30,28 @@ export async function issueLevelSession(env,userId){
   await setup(env);
   const token=Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');
   await sql(env,'DELETE FROM modo_livre_sessions WHERE usuario_id=? AND expires<=?',userId,now()).run();
-  await sql(env,'INSERT INTO modo_livre_sessions(token_hash,usuario_id,expires) VALUES(?,?,?)',await hash(token),userId,now()+90*86400).run();
+  await sql(env,'INSERT INTO modo_livre_sessions(token_hash,usuario_id,expires) VALUES(?,?,?)',
+   await sessionHash(env,token),userId,now()+90*86400).run();
   return token;
  }catch(_){return undefined;}
 }
-export async function levelProgressApi(request,env){
- const token=request.headers.get('authorization')?.match(/^Bearer ([a-f0-9]{64})$/)?.[1];
- if(!token)return response({ok:false,message:'Entre novamente para sincronizar seu nível.'},401);
+export async function sessionUserId(request,env){
+ const token=bearer(request);
+ if(!token)return null;
  await setup(env);
- const user=await sql(env,'SELECT usuario_id FROM modo_livre_sessions WHERE token_hash=? AND expires>?',await hash(token),now()).first();
- if(!user)return response({ok:false,message:'Sessão expirada. Entre novamente.'},401);
- const id=user.usuario_id;
+ const row=await sql(env,'SELECT usuario_id FROM modo_livre_sessions WHERE token_hash=? AND expires>?',
+  await sessionHash(env,token),now()).first();
+ return row?.usuario_id??null;
+}
+export async function revokeLevelSession(request,env){
+ const token=bearer(request);
+ if(!token)return;
+ await setup(env);
+ await sql(env,'DELETE FROM modo_livre_sessions WHERE token_hash=?',await sessionHash(env,token)).run();
+}
+export async function levelProgressApi(request,env){
+ const id=await sessionUserId(request,env);
+ if(!id)return response({ok:false,message:'Entre novamente para sincronizar seu nível.'},401);
  if(request.method==='POST'){
   const length=Number(request.headers.get('content-length')||0);
   if(length>1024)return response({ok:false,message:'Evento grande demais.'},413);

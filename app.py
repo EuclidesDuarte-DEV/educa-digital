@@ -192,6 +192,11 @@ def conta():
                    "message": "Tudo pronto! Seu treino foi criado e o progresso poderá ser salvo."}, 201)
 
 
+@app.get("/api/login/status")
+def login_status():
+    return result({"ok": True, "channel": "demo"})
+
+
 @app.post("/api/login/codigo")
 def login_code():
     phone = digits(read_body().get("phone"))

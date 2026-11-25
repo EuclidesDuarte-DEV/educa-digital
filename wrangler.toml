@@ -22,6 +22,7 @@ binding = "AI"
 # O motor Kokoro no navegador não exige Containers ou Durable Objects.
 
 [vars]
+EDUCA_AUTH_MODE = "whatsapp"
 LIA_CONTAINER_ENABLED = "false"
 LIA_ENABLED = "false"
 # Voice stays STAFF ONLY by default. Enable publicly only after load/security tests.
@@ -51,6 +52,7 @@ binding = "AI"
 
 [previews.vars]
 PREVIEW_DB_BOOTSTRAP = "true"
+EDUCA_AUTH_MODE = "demo"
 LIA_CONTAINER_ENABLED = "false"
 LIA_ENABLED = "false"
 LIA_PUBLIC_VOICE_ENABLED = "false"

@@ -23,15 +23,15 @@ test('V111.51: modal tem um telefone e um botão principal', () => {
 });
 
 test('V111.51: fluxo reconhece automaticamente conta antiga e não repete o telefone', () => {
-  assert.match(js, /async function openExistingAccountCode\(phone\)/);
+  assert.match(js, /async function openExistingAccountCode\(phone, channel\)/);
   assert.match(js, /if \(!response\.ok && data\.needs_login\)/);
-  assert.match(js, /await openExistingAccountCode\(digits\)/);
+  assert.match(js, /await openExistingAccountCode\(digits, data\.channel\)/);
   assert.match(js, /returnPhoneStep\.hidden = true;\s*returnCodeStep\.hidden = false/);
-  assert.match(js, /returningPhone = digits/);
+  assert.match(js, /returningPhone = phone/);
   assert.match(js, /'\/api\/login\/codigo'/);
   assert.match(js, /'\/api\/login\/confirmar'/);
   assert.doesNotMatch(js, /#quickSkipBtn|#startAlreadyHaveAccount/);
-  assert.match(js, /quickSaveBtn\.textContent = 'Continuar'/);
+  assert.match(js, /quickSaveBtn\.textContent = whatsapp \? 'Receber código no WhatsApp' : 'Continuar'/);
 });
 
 test('V111.51: visual conciso, responsivo e cache atualizado', () => {

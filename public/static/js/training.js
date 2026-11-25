@@ -54,7 +54,10 @@
   const demoCodeValue = $('#demoCodeValue');
   const returnPhoneForm = $('#returnPhoneForm');
   const returnCodeForm = $('#returnCodeForm');
+  const resendCodeBtn = $('#resendCodeBtn');
   let returningPhone = '';
+  let returningChannel = '';
+  let loginChannel = '';
   const clock = $('#clock');
   const glanceDate = $('#glanceDate');
   const chatWallpaper = $('#chatWallpaper');
@@ -1172,9 +1175,9 @@
     progressFill.style.width = `${n * 25}%`;
   }
 
-  function saveRememberedUser(name, phone, levelToken) {
+  function saveRememberedUser(name, phone, levelToken, channel) {
     try {
-      localStorage.setItem('educaRememberedUser', JSON.stringify({ name, phone, levelToken: typeof levelToken==='string'?levelToken:undefined }));
+      localStorage.setItem('educaRememberedUser', JSON.stringify({ name, phone, levelToken, channel }));
     } catch (_) {}
     participantName = name || '';
     progressSaved = true;
@@ -1190,6 +1193,9 @@
     } catch (_) { return null; }
   }
 
+  function accountHeaders(user) {
+    return user?.levelToken ? { Authorization: `Bearer ${user.levelToken}` } : {};
+  }
 
   async function syncProgressEvent(activityCode, eventName) {
     const user = getRememberedUser();
@@ -1197,7 +1203,7 @@
     try {
       await fetch('/api/progresso', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...accountHeaders(user) },
         body: JSON.stringify({ phone: user.phone, activity_code: activityCode, event: eventName })
       });
     } catch (_) {
@@ -1210,7 +1216,16 @@
     if (digits.length < 10) return;
     selectLessonsOwner(digits);
     try {
-      const response = await fetch(`/api/progresso?phone=${encodeURIComponent(digits)}`);
+      const user = getRememberedUser();
+      const response = await fetch(`/api/progresso?phone=${encodeURIComponent(digits)}`, {
+        headers: accountHeaders(user)
+      });
+      if (response.status === 401 && user?.phone === digits && loginChannel === 'whatsapp') {
+        openStartModal({ entry: true });
+        quickPhone.value = formatPhone(digits);
+        showQuickStartMessage('Confirme seu número pelo WhatsApp para acessar seu progresso.', 'error');
+        return false;
+      }
       if (!response.ok) return;
       const data = await response.json();
       if(lessonsOwner!==lessonsKey(digits))return;
@@ -1225,6 +1240,12 @@
   }
 
   function clearRememberedUser() {
+    const user = getRememberedUser();
+    if (user?.channel === 'whatsapp' && user.levelToken) {
+      void fetch('/api/login/sessao', {
+        method: 'DELETE', headers: accountHeaders(user), keepalive: true
+      }).catch(() => {});
+    }
     try {
       localStorage.removeItem('educaRememberedUser');
     } catch (_) {}
@@ -1264,11 +1285,13 @@
     if (!returnModal) return;
     returnModal.hidden = false;
     returnModal.setAttribute('aria-hidden', 'false');
+    $('.return-dialog', returnModal)?.setAttribute('aria-labelledby', 'returnModalTitle');
     returnPhoneStep.hidden = false;
     returnCodeStep.hidden = true;
     if (returnPhoneMessage) returnPhoneMessage.hidden = true;
     if (returnCodeMessage) returnCodeMessage.hidden = true;
     if (demoCodeBox) demoCodeBox.hidden = true;
+    if (demoCodeValue) demoCodeValue.textContent = '';
     document.body.style.overflow = 'hidden';
     window.setTimeout(() => returnPhone?.focus(), 120);
   }
@@ -1287,29 +1310,67 @@
     el.textContent = message;
   }
 
-  // Conta existente: após um único número, pular a segunda tela de telefone.
-  // Mantemos o código da demonstração para não confundir login com cadastro.
-  async function openExistingAccountCode(phone) {
-    const digits = String(phone || '').replace(/\D/g, '');
-    if (digits.length < 10 || digits.length > 11) throw new Error('Digite um celular válido com DDD.');
+  async function solicitarCodigo(phone, channel) {
     const response = await fetch('/api/login/codigo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone: digits })
+      body: JSON.stringify({ phone, channel })
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'Não foi possível encontrar seu treino.');
-    returningPhone = digits;
-    if (returnPhone) returnPhone.value = formatPhone(digits);
+    if (!response.ok) throw new Error(data.message || 'Não foi possível solicitar o código.');
+    return data;
+  }
+
+  async function openExistingAccountCode(phone, channel) {
+    const data = await solicitarCodigo(phone, channel);
+    returningPhone = phone;
+    returningChannel = data.channel || 'demo';
+    if (returnPhone) returnPhone.value = formatPhone(phone);
     closeStartModal();
     openReturnModal();
     returnPhoneStep.hidden = true;
     returnCodeStep.hidden = false;
-    if (data.demo_code && demoCodeValue && demoCodeBox) {
+    $('.return-dialog', returnModal)?.setAttribute('aria-labelledby', 'returnCodeTitle');
+    if (returnCode) returnCode.value = '';
+    const whatsapp = returningChannel === 'whatsapp';
+    const codigoInstrucao = $('#returnCodeInstructions');
+    if (codigoInstrucao) codigoInstrucao.textContent = whatsapp
+      ? `Confira a mensagem do Educa+ Digital no WhatsApp de ${formatPhone(phone)}. O código vale por 5 minutos.`
+      : 'Use o código exibido abaixo para continuar o treino de demonstração.';
+    if (resendCodeBtn) resendCodeBtn.hidden = !whatsapp;
+    if (!whatsapp && data.demo_code && demoCodeValue && demoCodeBox) {
       demoCodeValue.textContent = data.demo_code;
       demoCodeBox.hidden = false;
     }
     window.setTimeout(() => returnCode?.focus(), 120);
+  }
+
+  function setLoginChannel(channel) {
+    loginChannel = channel;
+    const whatsapp = channel === 'whatsapp';
+    const notice = $('#phoneOnlyNotice');
+    if (notice) notice.textContent = whatsapp
+      ? 'Ao continuar, você solicita um código de acesso no WhatsApp deste número.'
+      : 'Não precisa informar nome ou senha.';
+    const accountNotice = $('#accountPhoneNotice');
+    if (accountNotice) accountNotice.textContent = whatsapp
+      ? 'Ao continuar, você solicita um código de acesso no WhatsApp deste número.'
+      : 'Informe o número com DDD para continuar.';
+    if (quickSaveBtn && !quickSaveBtn.disabled) quickSaveBtn.textContent = whatsapp ? 'Receber código no WhatsApp' : 'Continuar';
+    const accountButton = $('.create-account-btn', accountForm || document);
+    if (accountButton && !accountButton.disabled) {
+      accountButton.textContent = whatsapp ? 'Receber código no WhatsApp' : 'Quero continuar aprendendo';
+    }
+  }
+
+  async function buscarCanalDeLogin() {
+    if (loginChannel) return;
+    try {
+      const response = await fetch('/api/login/status', { signal: AbortSignal.timeout(2500) });
+      if (!response.ok) return;
+      const { channel } = await response.json();
+      if (['demo', 'whatsapp'].includes(channel)) setLoginChannel(channel);
+    } catch (_) {}
   }
 
   function openStartModal({ unlock = false, fromPretest = false, entry = false } = {}) {
@@ -1320,7 +1381,8 @@
     if (startModalIntro) startModalIntro.textContent = 'Para começar ou continuar seu treino.';
     const kicker = $('#startModalKicker');
     if (kicker) kicker.textContent = 'ENTRAR NO EDUCA+';
-    if (quickSaveBtn) quickSaveBtn.textContent = 'Continuar';
+    setLoginChannel(loginChannel);
+    void buscarCanalDeLogin();
     startModal.dataset.unlock = unlock ? '1' : '0';
     startModal.dataset.origin = fromPretest ? 'pretest' : (entry ? 'entry' : 'progress');
     startModal.hidden = false;
@@ -1853,11 +1915,21 @@
   }
   logoutBtn?.addEventListener('click', performLogout);
   focusLogoutBtn?.addEventListener('click', performLogout);
-  $('#startNowBtn')?.addEventListener('click', () => {
+  $('#startNowBtn')?.addEventListener('click', async () => {
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
+      await buscarCanalDeLogin();
+      if (loginChannel === 'whatsapp' && user.channel !== 'whatsapp') {
+        openStartModal({ entry: true });
+        quickPhone.value = formatPhone(user.phone);
+        return;
+      }
       participantName = user.name; progressSaved = true; accessMode = 'registered';
-      void loadServerProgress(user.phone);
+      if (loginChannel === 'whatsapp') {
+        if (await loadServerProgress(user.phone) === false) return;
+      } else {
+        void loadServerProgress(user.phone);
+      }
       // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
       startTraining({ focus: true, boot: true });
       updatePrototypeViewportFit();
@@ -1877,6 +1949,7 @@
     const digits = phone.replace(/\D/g, '');
     if (digits.length < 10 || digits.length > 11) return showQuickStartMessage('Digite um celular válido com DDD.', 'error');
     if (quickPhone) quickPhone.value = phone;
+    const canalInformado = loginChannel;
     // V111.49: finalizar cadastro não solicita fullscreen automaticamente.
     if (quickSaveBtn) { quickSaveBtn.disabled = true; quickSaveBtn.textContent = 'Continuando...'; }
     try {
@@ -1887,9 +1960,11 @@
       });
       const data = await response.json();
       if (!response.ok && data.needs_login) {
-        // Telefone já cadastrado: avançar direto para o código demonstrativo.
-        // Nunca exigir que a pessoa digite o número duas vezes.
-        await openExistingAccountCode(digits);
+        if (data.channel === 'whatsapp' && canalInformado !== 'whatsapp') {
+          setLoginChannel('whatsapp');
+          return showQuickStartMessage('Confira seu número e toque em Receber código no WhatsApp.', 'success');
+        }
+        await openExistingAccountCode(digits, data.channel);
         return;
       }
       if (!response.ok) {
@@ -1908,7 +1983,7 @@
     } finally {
       if (quickSaveBtn) {
         quickSaveBtn.disabled = false;
-        quickSaveBtn.textContent = 'Continuar';
+        setLoginChannel(loginChannel);
       }
     }
   });
@@ -1927,17 +2002,28 @@
     const phone = formatPhone(returnPhone?.value || '');
     const digits = phone.replace(/\D/g, '');
     if (digits.length < 10) return showReturnMessage(returnPhoneMessage, 'Digite seu celular com DDD.');
-    returningPhone = digits;
+    const button = $('button[type="submit"]', returnPhoneForm);
+    button.disabled = true;
     try {
-      const response = await fetch('/api/login/codigo', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:digits}) });
-      const data = await response.json();
-      if (!response.ok) return showReturnMessage(returnPhoneMessage, data.message || 'Não encontramos seu progresso.');
-      returnPhoneStep.hidden = true;
-      returnCodeStep.hidden = false;
-      if (data.demo_code) { demoCodeValue.textContent = data.demo_code; demoCodeBox.hidden = false; }
-      window.setTimeout(() => returnCode?.focus(), 100);
-    } catch (_) {
-      showReturnMessage(returnPhoneMessage, 'Não foi possível conectar ao servidor. Abra o site pelo Flask ou PythonAnywhere.');
+      await openExistingAccountCode(digits, loginChannel);
+    } catch (error) {
+      showReturnMessage(returnPhoneMessage, error.message || 'Não foi possível solicitar o código.');
+    } finally {
+      button.disabled = false;
+    }
+  });
+  resendCodeBtn?.addEventListener('click', async () => {
+    if (returningChannel !== 'whatsapp' || !returningPhone) return;
+    resendCodeBtn.disabled = true;
+    try {
+      const data = await solicitarCodigo(returningPhone, returningChannel);
+      returnCode.value = '';
+      showReturnMessage(returnCodeMessage, data.message, 'success');
+      returnCode.focus();
+    } catch (error) {
+      showReturnMessage(returnCodeMessage, error.message || 'Não foi possível reenviar o código.');
+    } finally {
+      resendCodeBtn.disabled = false;
     }
   });
   returnCodeForm?.addEventListener('submit', async (event) => {
@@ -1945,16 +2031,24 @@
     const code = (returnCode?.value || '').replace(/\D/g, '');
     if (code.length !== 6) return showReturnMessage(returnCodeMessage, 'Digite os 6 números do código.');
     // V111.49: entrar com código não solicita fullscreen automaticamente.
+    const button = $('button[type="submit"]', returnCodeForm);
+    button.disabled = true;
+    if (resendCodeBtn) resendCodeBtn.disabled = true;
     try {
       const response = await fetch('/api/login/confirmar', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:returningPhone, code}) });
       const data = await response.json();
       if (!response.ok) return showReturnMessage(returnCodeMessage, data.message || 'Código incorreto.');
-      saveRememberedUser(data.name, data.phone, data.level_token);
+      saveRememberedUser(data.name, data.phone, data.level_token, data.channel);
+      isGuestPretest = false;
+      if (accountCard) accountCard.hidden = true;
       await loadServerProgress(data.phone);
       closeReturnModal();
       startTraining({ focus: true, boot: true });
     } catch (_) {
       showReturnMessage(returnCodeMessage, 'Não foi possível conectar ao servidor para entrar.');
+    } finally {
+      button.disabled = false;
+      if (resendCodeBtn) resendCodeBtn.disabled = false;
     }
   });
   $('#learnMoreBtn')?.addEventListener('click', () => openInfoModal());
@@ -2997,13 +3091,17 @@
     const submit = $('.create-account-btn', accountForm);
     const show = (message, cls) => { accountMessage.hidden = false; accountMessage.className = `account-message ${cls}`; accountMessage.textContent = message; };
     if (digits.length < 10 || digits.length > 11) return show('Digite seu celular com DDD.', 'error');
+    const canalInformado = loginChannel;
     submit.disabled = true; submit.textContent = 'Verificando...';
     try {
       const response = await fetch('/api/conta', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:digits}) });
       const data = await response.json();
       if (!response.ok && data.needs_login) {
-        await openExistingAccountCode(digits);
-        accountCard.hidden = true;
+        if (data.channel === 'whatsapp' && canalInformado !== 'whatsapp') {
+          setLoginChannel('whatsapp');
+          return show('Confira seu número e toque em Receber código no WhatsApp.', 'neutral');
+        }
+        await openExistingAccountCode(digits, data.channel);
         return;
       }
       if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
@@ -3011,8 +3109,8 @@
       accountCard.hidden = true;
       await loadServerProgress(data.phone || digits);
       startTraining({ focus: true, boot: true });
-    } catch (_) { show('Não foi possível salvar agora. Verifique sua conexão.', 'error'); }
-    finally { submit.disabled = false; submit.textContent = 'Quero continuar aprendendo'; }
+    } catch (error) { show(error.message || 'Não foi possível salvar agora. Verifique sua conexão.', 'error'); }
+    finally { submit.disabled = false; setLoginChannel(loginChannel); }
   });
 
   skipAccount?.addEventListener('click', () => {
@@ -3037,6 +3135,7 @@
   });
 
   updateReturningUI();
+  void buscarCanalDeLogin();
   updateClock();
   syncAndroidStatus();
   window.setInterval(syncAndroidStatus, 60000);
