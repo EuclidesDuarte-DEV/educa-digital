@@ -281,3 +281,37 @@ test('negativa em pergunta ou pedido de explicação não é recusa isolada',asy
  const reply=await selectStrictReply({scenario:'family-photo',message:'Não entendi',history:screenshotHistory},{AI:{run:async()=>({response:'explain'})}},'gemma-4');
  assert.equal(reply.source,'catalog-story');
 });
+
+// V112.65: conversational state improvements shared by the two Worker routes.
+test('reconhece linguagem cotidiana sem voltar ao pedido anterior',async()=>{
+ const choices=approvedReplies('family-photo');
+ const env={AI:{run:()=>{throw Error('não precisa gerar');}}};
+ for(const [message,id] of [['ok','ack'],['blz','ack'],['obrigado','thanks'],['calma aí','pause'],['como assim?','clarifydirect']]){
+  const result=await selectStrictReply({scenario:'family-photo',message,history:screenshotHistory},env,'gemma-4');
+  assert.equal(result.reply,choices[id],message);
+ }
+});
+test('recusa com outras palavras e verificação independente são respeitadas',async()=>{
+ for(const scenario of ['family-photo','family','relative','bank','video','code']){
+  const choices=approvedReplies(scenario);
+  for(const message of ['Não posso te emprestar','Não quero transferir','Vou ligar no número antigo','Como sei que é você?','Tem como provar?']){
+   let calls=0;
+   const result=await selectStrictReply({scenario,message,history:[]},{AI:{run:async()=>{calls++;return {response:'hello'};}}},'gemma-4');
+   assert.equal(calls,0,scenario+': '+message);
+   assert.equal(result.guarded,true);
+   assert.ok([choices.doubt,choices.verify,choices.wait].includes(result.reply));
+  }
+ }
+});
+test('pergunta repetida não produz outra paráfrase nem inventa fatos',async()=>{
+ const choices=approvedReplies('family-photo');
+ const history=[...screenshotHistory,{role:'user',content:'Qual é o valor?'},{role:'assistant',content:choices.amount}];
+ const result=await selectStrictReply({scenario:'family-photo',message:'qual é o valor?',history},{AI:{run:()=>{throw Error('não chamar');}}},'gemma-4');
+ assert.equal(result.reply,choices.repeated);
+ assert.equal(result.source,'catalog-context');
+});
+test('conversa comum mantém respostas sociais sem iniciar pedido',async()=>{
+ const choices=approvedReplies('daughter');
+ const result=await selectStrictReply({scenario:'daughter',message:'Valeu!',history:[]},{AI:{run:()=>{throw Error('não chamar');}}},'gemma-4');
+ assert.equal(result.reply,choices.thanks);
+});

@@ -7,7 +7,13 @@ const common=Object.freeze({
  clarify:'Não entendi bem. Pode me explicar de outro jeito?',
  wait:'Tudo bem, não precisa decidir agora.',
  verify:'Pode confirmar pelo contato ou canal que você já conhece.',
- close:'Tudo bem, vamos deixar por aqui.'
+ close:'Tudo bem, vamos deixar por aqui.',
+ ack:'Entendi, tudo bem.',
+ pause:'Sem problema. Podemos deixar isso para depois.',
+ evidence:'Não tenho como comprovar isso por aqui. Confira por um contato ou canal conhecido.',
+ repeated:'Não tenho mais informações sobre isso. Pode conferir por outro canal.',
+ clarifydirect:'Qual parte não ficou clara?',
+ thanks:'De nada!'
 });
 const catalog={
  family:{hello:'Oi! Tudo bem por aí?',identity:'Sou o Rafael, falando deste número.',context:'Eu tinha comentado sobre a troca de número.',why:'É sobre aquele pedido que comentei antes.',amount:'São R$ 350, daquele assunto que eu te falei.',doubt:'Entendo sua dúvida. Pode confirmar pelo número antigo.'},
@@ -108,9 +114,32 @@ export function shortRefusal(message){
  if(/[?？]/u.test(raw))return false;
  return /^(?:nao|n|nn|negativo|nem pensar|de jeito nenhum|nao obrigado|nao obrigada|nao valeu|nao posso|nao quero|nao aceito|nao mesmo|nao da|nao consigo|prefiro nao)(?: nao)?$/.test(normalize(raw));
 }
-function priorRefusal(history,choices){
- const last=[...history].reverse().find(row=>row.role==='user');
- return !!last&&shortRefusal(last.content);
+function lastUser(history){
+ return [...history].reverse().find(row=>row.role==='user')?.content||'';
+}
+function priorRefusal(history){
+ return refusalIntent(lastUser(history));
+}
+export function refusalIntent(message){
+ if(shortRefusal(message))return true;
+ if(/[?？]/u.test(String(message||'')))return false;
+ const s=normalize(message);
+ return /^(?:eu )?nao (?:vou|quero|posso|consigo|pretendo) (?:te |lhe )?(?:pagar|enviar|mandar|transferir|emprestar|passar|compartilhar|informar|fazer (?:o |um )?pix)(?:\b|$)/.test(s)||
+ /^(?:nao tenho dinheiro|estou sem dinheiro|sem chance|nao conte comigo|nao vou fazer isso|prefiro deixar para depois)(?:$| )/.test(s);
+}
+function verificationIntent(message){
+ const s=normalize(message);
+ return /\b(?:vou|quero|prefiro|preciso|deixa eu|primeiro vou) (?:te |lhe )?(?:ligar|telefonar|confirmar|verificar|conferir|consultar)\b/.test(s)||
+ /\b(?:ligar|telefonar|falar) (?:no|pelo|para o|com o) (?:numero antigo|numero de sempre|contato conhecido|banco|suporte oficial)\b/.test(s)||
+ /\b(?:como (?:eu )?(?:sei|confirmo|verifico)|tem como provar|prove que|como provar|qual a prova|e mesmo voce|voce e mesmo)\b/.test(s);
+}
+function conversationalIntent(message){
+ const s=normalize(message);
+ if(/^(?:obrigad[oa]|valeu|brigad[oa]|muito obrigad[oa])$/.test(s))return 'thanks';
+ if(/^(?:ok|okay|blz|beleza|entendi|certo|ta|tah|tudo certo|aham|uhum|ta bom|ta bem)$/.test(s))return 'ack';
+ if(/^(?:espera|espera ai|calma|calma ai|um minuto|so um minuto|agora nao|depois falamos|falamos depois)$/.test(s))return 'pause';
+ if(/^(?:como assim|que|q|hein|oi|ham|nao percebi)$/.test(s)&&/[?？]/u.test(String(message||'')))return 'clarifydirect';
+ return null;
 }
 // Uma pergunta substantiva não pode ser substituída por uma saudação.
 // A regra vale também com grafia informal e pontuação omitida.
@@ -166,11 +195,25 @@ export async function selectStrictReply(parsed,env,model,{timeoutMs=3500}={}){
  if(explicitExit(parsed.message))return respond('close','catalog-protection');
  // Respect a refusal before the story/classifier can reinterpret it as a continuation.
  if(shortRefusal(parsed.message)){
-  const previousUserRefused=priorRefusal(parsed.history,choices);
+  const previousUserRefused=priorRefusal(parsed.history);
   if(ordinaryContacts.has(parsed.scenario))return respond(previousUserRefused?'bye':'wait','catalog-protection');
   return respond(previousUserRefused?'close':'wait','catalog-protection');
  }
  const previous=lastContact(parsed.history,choices);
+ // A decisão de segurança vem antes de palavras isoladas como Pix ou foto.
+ if(!ordinaryContacts.has(parsed.scenario)&&verificationIntent(parsed.message))
+  return respond(choices.doubt?'doubt':'verify','catalog-protection');
+ if(!ordinaryContacts.has(parsed.scenario)&&refusalIntent(parsed.message))
+  return respond(priorRefusal(parsed.history)?'close':(choices.doubt?'doubt':'wait'),'catalog-protection');
+ const conversational=conversationalIntent(parsed.message);
+ if(conversational)return respond(conversational==='ack'&&previous===choices.ack?'pause':conversational,'catalog-context');
+ // Se já respondeu à mesma pergunta, não inventar detalhes nem insistir.
+ const prior=lastUser(parsed.history);
+ if(prior&&normalize(prior)===normalize(parsed.message)&&!greetingOnly(parsed.message)){
+  if(previous===choices.repeated)return respond('wait','catalog-context');
+  if(previous===choices.wait||previous===choices.close)return respond('close','catalog-protection');
+  return respond('repeated','catalog-context');
+ }
  const fallback=fallbackId(parsed.scenario,parsed.message,choices);
  const contextId=previous===choices.context?'detail':'context';
  // An explicit request to verify or reject takes priority over the model.
