@@ -34,7 +34,7 @@ test('IA avançada recebe histórico e não ignora última pergunta',async()=>{
  const req=new Request('https://educa.example/api/modo-livre/conversar',{method:'POST',headers:{origin:'https://educa.example'},body:JSON.stringify({scenario:'video',message:'Quem é você?',history:[{role:'user',content:'Oi, posso fazer perguntas?'},{role:'assistant',content:'Claro, pode perguntar.'}]})});
  const res=await responderModoLivre(req,{LIA_AI_MODEL:'inteligente',AI:{run:async(m,opts)=>{
  assert.match(m,/70b/);assert.match(opts.messages[0].content,/última pergunta/);assert.equal(opts.messages.at(-1).content,'Quem é você?');
- assert.equal(opts.messages[1].content,'Oi, posso fazer perguntas?');return {response:'Sou a Lia, personagem fictícia desta atividade.'};
+ assert.equal(opts.messages[1].role,'user');assert.match(opts.messages[1].content,/Oi, posso fazer perguntas\?/);assert.match(opts.messages[1].content,/não verificado/);assert.equal(opts.messages.some(m=>m.role==='assistant'&&m.content==='Claro, pode perguntar.'),false);return {response:'Sou a Lia, personagem fictícia desta atividade.'};
  }}});
  assert.equal(res.status,200);
  assert.match((await res.json()).reply,/personagem fictícia/);

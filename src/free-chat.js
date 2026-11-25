@@ -70,7 +70,9 @@ export async function responderModoLivre(request,env,webOnly=false,ctx=null){
   // Não chamar IA/RAG/armazenamento para tentativas reconhecidas. O retorno
   // é uma fala de proteção determinística, e não uma geração do modelo.
   const guarded=()=>Response.json({ok:true,reply:protectedReply(parsed.scenario,parsed.message),mode:'ia',guarded:true},{headers:{'Cache-Control':'no-store'}});
-  if(injectionAttempt(parsed.message)||parsed.history.some(row=>injectionAttempt(row.content)||unsafeCharacterOutput(row.content)))return guarded();
+  if(injectionAttempt(parsed.message))return guarded();
+  // Remover ataques antigos sem prender o participante em respostas de proteção.
+  parsed.history=parsed.history.filter(row=>!injectionAttempt(row.content)&&!unsafeCharacterOutput(row.content));
   // V111.86: a progressão existe exclusivamente na rota Web opt-in.
   // A rota comum preserva os prompts e o comportamento de Android/iOS.
   const tier=webOnly&&Number.isInteger(payload?.webChallenge?.level)
