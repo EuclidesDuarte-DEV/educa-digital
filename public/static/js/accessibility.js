@@ -32,6 +32,9 @@
   let reading = false;
   let voiceReady = false;
   let pendingGuide = null;
+  let guideTimer = null, guideKey = '', guideText = '', retryGuide = null;
+  const callOrMedia = () => !!document.querySelector('#freeCallView.is-active, #freeVideoView.is-active, #liaCallView.is-active, #waCallActiveView.is-active') || !!document.querySelector('#videoLessonView.is-active video:not([paused])') && [...document.querySelectorAll('#videoLessonView.is-active video')].some(v=>!v.paused&&!v.ended);
+  const inFreeMode=()=>window.EducaFreeMode?.isActive?.()===true;
   const dialog = $('#accessibilityDialog');
   const status = $('#a11yFeedback');
   const readButton = $('#a11yReadNow');
@@ -53,7 +56,7 @@
     if (fontSelect) fontSelect.value = prefs.text;
     if (colorInput) colorInput.checked = prefs.colors;
     if (readingInput) readingInput.checked = prefs.reading;
-    if (!prefs.reading) { pendingGuide = null; stopReading(); }
+    if (!prefs.reading) { pendingGuide = null; retryGuide=null; guideKey='';clearTimeout(guideTimer);stopReading(); }
     window.dispatchEvent(new CustomEvent('educa:accessibility-change', { detail: { ...prefs } }));
   }
   function update(next) {
@@ -85,6 +88,7 @@
   }
 
   function stopReading() {
+    clearTimeout(guideTimer);guideTimer=null;retryGuide=null;
     window.EducaLiaNeuralPlayback?.stop?.('guide');
     activeUtterance = null;
     reading = false;
@@ -110,7 +114,7 @@
   }
   // V112.61: a leitura utiliza a mesma Dora neural gratuita da videochamada,
   // em vez da voz antiga do sistema operacional.
-  function speak(text) {
+  function speak(text, { automatic = false } = {}) {
     const message = String(text || '').trim();
     if (!message) {
       if (readStatus) readStatus.textContent = 'Nenhum texto disponível nesta tela.';
@@ -144,34 +148,80 @@
       owner:'guide',speed:0.97,
       onStart:()=>{if(activeUtterance===session&&readStatus)readStatus.textContent='Lendo com a voz neural Dora.';},
       onEnd:()=>complete(''),
-      onBlocked:()=>complete('O navegador bloqueou o som. Toque em Ouvir esta tela novamente.'),
-      onError:()=>complete('A voz neural não pôde ser carregada. O texto continua disponível.')
+      onBlocked:()=>{if(activeUtterance!==session)return;complete('O navegador bloqueou o som. Toque novamente para ouvir.');if(automatic)retryGuide=message;},
+      onError:()=>{if(activeUtterance!==session)return;complete('A voz neural não pôde ser carregada. O texto continua disponível.');if(automatic)retryGuide=message;}
     }).catch(()=>complete('Não foi possível iniciar a voz neural.'));
   }
 
   // Navegadores exigem interação da pessoa para liberar síntese de voz.
   // Depois do primeiro toque, cada passo do guia será lido automaticamente,
   // exceto quando a preferência estiver desligada.
+  const announce = (text, key) => {
+    const message=String(text||'').replace(/\s+/g,' ').trim();
+    if(!message||!prefs.reading||inFreeMode()||callOrMedia())return;
+    if(key===guideKey&&message===guideText)return;
+    guideKey=key;guideText=message;retryGuide=null;
+    if(!voiceReady){pendingGuide=message;return;}
+    clearTimeout(guideTimer);
+    guideTimer=setTimeout(()=>{guideTimer=null;if(prefs.reading&&!inFreeMode()&&!callOrMedia())speak(message,{automatic:true});},180);
+  };
   const unlockVoice = () => {
     voiceReady = true;
+    if(!prefs.reading)return;
     window.EducaLiaNeuralPlayback?.unlock?.();
-    if (!prefs.reading || !pendingGuide) return;
-    const message = pendingGuide;
-    pendingGuide = null;
-    // Executa diretamente no gesto para respeitar as políticas de autoplay.
-    speak(message);
+    if(inFreeMode()||callOrMedia())return;
+    const message=pendingGuide||retryGuide;
+    if(message){pendingGuide=null;retryGuide=null;speak(message,{automatic:true});}
   };
-  document.addEventListener('pointerdown', unlockVoice, { once: true, capture: true });
-  document.addEventListener('keydown', unlockVoice, { once: true, capture: true });
+  // Não usar once: Safari pode suspender/interromper áudio ao trocar de tela.
+  for(const type of ['pointerup','touchend','click','keydown'])
+    document.addEventListener(type,unlockVoice,{capture:true,passive:true});
   window.addEventListener('educa:guide-step', ({ detail }) => {
-    if (!prefs.reading) return;
-    const text = `${detail?.title || ''}. ${detail?.description || ''}`.trim();
-    if (!text) return;
-    if (!voiceReady) { pendingGuide = text; return; }
-    // Não falar por cima da LIA em chamadas nem de outra mídia em execução.
-    if (document.querySelector('#freeCallView.is-active, #freeVideoView.is-active, #liaCallView.is-active')) return;
-    speak(text);
+    const text=[detail?.title,detail?.description].filter(Boolean).join('. ');
+    announce(text,'tour:'+String(detail?.step||''));
   });
+  // O controlador das aulas emite mudanças de tela e instruções reais.
+  window.addEventListener('educa:training-view',({detail})=>{
+    pendingGuide=null;stopReading();guideKey='';guideText='';
+    if(!prefs.reading||inFreeMode()||callOrMedia())return;
+    const name=detail?.view;
+    const fallback={
+      home:'Escolha um aplicativo para praticar. Se o Banco estiver destacado, toque nele para iniciar o pré-teste.',
+      learning:'Escolha o assunto que deseja aprender. Você pode fazer uma atividade de cada vez.',
+      'module-path':()=>[$('#modulePathTitle')?.textContent,$('#modulePathHeadline')?.textContent,'Escolha uma atividade da lista para começar.'].filter(Boolean).join('. '),
+      'guided-practice':()=>[$('#guidedTitle')?.textContent,$('#guidedInstruction')?.textContent].filter(Boolean).join('. '),
+      'video-lesson':'Assista à explicação e depois toque em praticar para continuar.',
+      'bank-home':'Você está no banco de treinamento. Toque em Pix para praticar.',
+      'bank-pix':'Escolha a opção Pix indicada pela atividade.',
+      'bank-send':'Escolha uma chave de exemplo e siga a orientação na tela.',
+      'bank-review':'Confira os dados de exemplo antes de escolher como continuar.',
+      whatsapp:'Escolha uma conversa para praticar.',
+      'settings-main':'Escolha o ajuste que deseja aprender.',
+      'govbr-login':'Toque na opção indicada para treinar o acesso com segurança.',
+      success:'Muito bem! Confira o resultado e escolha como deseja continuar.'
+    }[name];
+    if(fallback)announce(typeof fallback==='function'?fallback():fallback,'view:'+name);
+  });
+  window.addEventListener('educa:training-guide',({detail})=>{
+    if(!prefs.reading||inFreeMode()||callOrMedia())return;
+    const text=[detail?.title,detail?.description].filter(Boolean).join('. ');
+    announce(text,'lesson:'+String(detail?.view||''));
+  });
+  // Alguns exercícios preenchem o mini-guia diretamente. Observar apenas os
+  // dois textos pedagógicos, nunca o conteúdo das conversas ou dados digitados.
+  const coachNodes=[$('#miniCoachTitle'),$('#miniCoachText')].filter(Boolean);
+  if(typeof MutationObserver==='function'){
+    let previousCoach=coachNodes.map(e=>e.textContent.trim()).join('. ');
+    const observer=new MutationObserver(()=>{
+      const message=coachNodes.map(e=>e.textContent.trim()).filter(Boolean).join('. ');
+      if(message===previousCoach)return;
+      previousCoach=message;
+      const view=$('#phoneScreen')?.dataset.currentView||'home';
+      if(!view.startsWith('free-')&&view!=='video-lesson')announce(message,'lesson:'+view);
+    });
+    for(const el of coachNodes)observer.observe(el,{childList:true,characterData:true,subtree:true});
+  }
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){pendingGuide=null;stopReading();}});
   // A tela continua disponível mesmo que o visitante decida não configurar nada.
   $('#openAccessibilitySettings')?.addEventListener('click', open);
   $('#a11yFinish')?.addEventListener('click', close);
@@ -180,7 +230,7 @@
     update({ text: 'normal', colors: false, reading: false });
     report('Padrão restaurado. Você pode personalizar novamente.');
   });
-  $('#a11yExample')?.addEventListener('click', () => speak('Olá! Este é um exemplo de leitura em voz alta do Educa Mais Digital.'));
+  $('#a11yExample')?.addEventListener('click', () => { window.EducaLiaNeuralPlayback?.unlock?.(); speak('Olá! Este é um exemplo de leitura em voz alta do Educa Mais Digital.'); });
   fontSelect?.addEventListener('change', () => update({ text: fontSelect.value }));
   colorInput?.addEventListener('change', () => update({ colors: colorInput.checked }));
   readingInput?.addEventListener('change', () => update({ reading: readingInput.checked }));

@@ -575,6 +575,7 @@
     views.forEach(view => view.classList.toggle('is-active', view.dataset.view === safeName));
     phoneScreen?.setAttribute('data-current-view', safeName);
     syncPretestStepUI(safeName);
+    window.dispatchEvent(new CustomEvent('educa:training-view',{detail:{view:safeName}}));
   }
 
   // O pré-teste não cria uma segunda atividade fora do celular.
@@ -1364,6 +1365,7 @@
     if (miniCoachTitle) miniCoachTitle.textContent = title;
     if (miniCoachText) miniCoachText.textContent = text;
     syncPretestStepUI();
+    window.dispatchEvent(new CustomEvent('educa:training-guide',{detail:{title,description:text,view:phoneScreen?.dataset.currentView}}));
   }
 
   function openSettingsView(view = 'settings-main') {
@@ -2815,10 +2817,8 @@
 
   hintBtn?.addEventListener('click', () => { hintText.hidden = !hintText.hidden; });
   speakBtn?.addEventListener('click', () => {
-    if (!('speechSynthesis' in window)) return;
-    speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(`${coachTitle.textContent}. ${coachText.textContent}. ${hintText.textContent || ''}`);
-    msg.lang = 'pt-BR'; msg.rate = 0.88; speechSynthesis.speak(msg);
+    window.EducaLiaNeuralPlayback?.unlock?.();
+    window.EducaAccessibility?.speak?.(`${coachTitle.textContent}. ${coachText.textContent}. ${hintText.textContent || ''}`);
   });
 
   function isInstalledDisplayMode() {
