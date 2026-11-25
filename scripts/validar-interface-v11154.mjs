@@ -64,7 +64,7 @@ try{
     const view=document.querySelector('#freeVideoView'),bar=document.querySelector('#freeVideoView .v110-video-toolbar');
     return {view:r(view),bar:r(bar),self:r(document.querySelector('#freeVideoSelfie')),
       top:r(document.querySelector('#freeVideoView .v110-video-top')),
-      controls:[...bar.querySelectorAll('.v110-tool:not([hidden]),.v112-video-more summary')].filter(el=>getComputedStyle(el).display!=='none').map(el=>({id:el.id||'more',...r(el)})),
+      controls:[...bar.querySelectorAll('.v110-tool:not([hidden]),.v112-video-more summary')].filter(el=>getComputedStyle(el).display!=='none').map(el=>({id:el.id||'more',cssHeight:getComputedStyle(el).height,offsetHeight:el.offsetHeight,...r(el)})),
       layout:view.dataset.liaLayout,liaVisible:document.body.classList.contains('lia-call-visible')};
    });
    console.log('V11255 medidas '+c.w+' '+JSON.stringify({layout:call.layout,controls:call.controls}));
