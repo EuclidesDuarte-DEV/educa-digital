@@ -2,7 +2,7 @@ import {FAMILY_PHOTO_STORY,familyPhotoReplyId} from './free-chat-story-v11249.js
 /* V112.46: output is a server-owned, finite catalog. The model is a selector,
  * never a text author, tool caller or authority. No raw model text leaves here. */
 import {injectionAttempt,normalizeGuard,protectedReply} from './free-chat-guard-v11245.js';
-export const SECURITY_REVISION='11249';
+export const SECURITY_REVISION='11250';
 const common=Object.freeze({
  clarify:'Não entendi bem. Pode me explicar de outro jeito?',
  wait:'Tudo bem, não precisa decidir agora.',
@@ -84,7 +84,7 @@ const details=Object.freeze({
  "family-group": "O João comentou sobre as fotos do almoço."
 });
 const timing=Object.freeze({
- 'family-photo':'A conta que mencionei é de hoje. Pode conferir antes de decidir.',
+ 'family-photo':'Sim, mãe, é uma conta que vence hoje. Meu Pix ficou limitado; foi por isso que te escrevi. Mas pode confirmar pelo contato antigo antes de decidir.',
  family:'Não combinamos um horário. Pode verificar antes de decidir.',
  video:'Não combinamos um horário para isso. Pode conferir primeiro.',
  relative:'Não combinamos um horário. Pode confirmar antes de decidir.'
