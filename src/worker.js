@@ -10,6 +10,7 @@ import { installCharacterSecurityNote } from './lia-neural-security-v11245.js';
  */
 import { MODULOS } from './catalogo.js';
 import { issueLevelSession, levelProgressApi } from './modo-livre-progress-v11263.js';
+import { whatsappMode, whatsappRequestCode, whatsappConfirmCode, verifiedAccount, revokeVerifiedSession } from './whatsapp-auth-v11266.js';
 import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
@@ -92,6 +93,7 @@ async function cadastrarConta(request, env) {
     return erro(400, 'Digite um número de celular válido com DDD.');
   }
 
+  if(whatsappMode(env))return responder({ok:false,needs_login:true,message:'Confirme seu número pelo WhatsApp.'},409);
   const existente = await buscarUsuario(env, telefone);
   if (existente) {
     // Não autorizar a entrada só porque alguém conhece o número.
@@ -126,6 +128,7 @@ async function cadastrarConta(request, env) {
 
 async function criarCodigo(request, env) {
   const dados = await lerDados(request);
+  if(whatsappMode(env))return whatsappRequestCode(request,env,dados);
   const telefone = somenteNumeros(dados.phone);
 
   if (!telefoneValido(telefone)) {
@@ -162,6 +165,7 @@ async function criarCodigo(request, env) {
 
 async function confirmarCodigo(request, env) {
   const dados = await lerDados(request);
+  if(whatsappMode(env))return whatsappConfirmCode(request,env,dados);
   const telefone = somenteNumeros(dados.phone);
   const codigo = somenteNumeros(dados.code);
 
@@ -209,12 +213,13 @@ async function confirmarCodigo(request, env) {
   });
 }
 
-async function consultarProgresso(url, env) {
+async function consultarProgresso(url, env, request) {
   const telefone = somenteNumeros(url.searchParams.get('phone'));
   if (!telefoneValido(telefone)) {
     return erro(400, 'Celular inválido.');
   }
 
+  if(whatsappMode(env)&&!(await verifiedAccount(request,env,telefone)))return erro(401,'Confirme seu número pelo WhatsApp para acessar sua conta.');
   const usuario = await buscarUsuario(env, telefone);
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
@@ -248,6 +253,7 @@ async function salvarProgresso(request, env) {
     return erro(404, 'Atividade não encontrada.');
   }
 
+  if(whatsappMode(env)&&!(await verifiedAccount(request,env,telefone)))return erro(401,'Confirme seu número pelo WhatsApp para acessar sua conta.');
   const usuario = await buscarUsuario(env, telefone);
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
@@ -297,8 +303,9 @@ async function salvarProgresso(request, env) {
   return responder({ ok: true, activity_code: codigoAtividade, ...registro });
 }
 
-async function lerAcessibilidade(url, env) {
+async function lerAcessibilidade(url, env, request) {
   const telefone = somenteNumeros(url.searchParams.get('phone'));
+  if(whatsappMode(env)&&!(await verifiedAccount(request,env,telefone)))return erro(401,'Confirme seu número pelo WhatsApp para acessar sua conta.');
   const usuario = await buscarUsuario(env, telefone);
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
@@ -331,6 +338,7 @@ async function lerAcessibilidade(url, env) {
 async function salvarAcessibilidade(request, env) {
   const dados = await lerDados(request);
   const telefone = somenteNumeros(dados.phone);
+  if(whatsappMode(env)&&!(await verifiedAccount(request,env,telefone)))return erro(401,'Confirme seu número pelo WhatsApp para acessar sua conta.');
   const usuario = await buscarUsuario(env, telefone);
 
   if (!usuario) {
@@ -598,6 +606,8 @@ async function rotearApi(request, env, url, ctx) {
   if (metodo === 'GET' && rota === '/api/estrutura') {
     return responder({ ok: true, modulos: MODULOS });
   }
+  if(metodo==='GET'&&rota==='/api/login/status')return responder({ok:true,mode:whatsappMode(env)?'whatsapp':'demo',verified:whatsappMode(env)?!!(await verifiedAccount(request,env)):false});
+  if(metodo==='POST'&&rota==='/api/login/sair'){if(whatsappMode(env))await revokeVerifiedSession(request,env);return responder({ok:true});}
   if (metodo === 'POST' && rota === '/api/conta') {
     return cadastrarConta(request, env);
   }
@@ -611,13 +621,13 @@ async function rotearApi(request, env, url, ctx) {
     return levelProgressApi(request, env);
   }
   if (metodo === 'GET' && rota === '/api/progresso') {
-    return consultarProgresso(url, env);
+    return consultarProgresso(url, env, request);
   }
   if (metodo === 'POST' && rota === '/api/progresso') {
     return salvarProgresso(request, env);
   }
   if (metodo === 'GET' && rota === '/api/perfil-acessibilidade') {
-    return lerAcessibilidade(url, env);
+    return lerAcessibilidade(url, env, request);
   }
   if (metodo === 'PATCH' && rota === '/api/perfil-acessibilidade') {
     return salvarAcessibilidade(request, env);
