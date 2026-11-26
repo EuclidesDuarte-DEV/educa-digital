@@ -19,6 +19,7 @@ try{
    await page.route('**/api/modo-livre/conversar-web',async route=>{
     aiCalls++;await route.abort();
    });
+   await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeMode&&window.EducaFreeView&&
     document.documentElement.dataset.educaPlatform==='web',{timeout:15000});
