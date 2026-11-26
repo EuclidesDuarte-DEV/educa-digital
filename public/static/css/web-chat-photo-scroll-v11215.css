@@ -99,3 +99,29 @@ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat
    width:min(54%,150px)!important;
  }
 }
+
+/* V112.69 — rolagem interna da Web, sem depender de arrastar fora da moldura. */
+html[data-educa-platform="web"] #phoneScreen #learningView.is-active {
+ min-height:0!important;max-height:100%!important;overflow:hidden!important;
+ touch-action:pan-y;
+}
+html[data-educa-platform="web"] #phoneScreen #learningView.is-active .learning-surface {
+ box-sizing:border-box!important;height:100%!important;max-height:100%!important;
+ min-height:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+ overscroll-behavior-y:contain;touch-action:pan-y!important;
+ -webkit-overflow-scrolling:touch;
+}
+html[data-educa-platform="web"] #phoneScreen .android-view.is-active :is(
+ .chat-wallpaper,.wa-chat-list,.learning-surface,.topic-surface,.module-path-content,
+ .bank-content,.webreal-body,.webx-photos-scroll,.webv-scroll,.v11153-sms-messages,.v106-summary
+) {
+ touch-action:pan-y!important;
+ -webkit-overflow-scrolling:touch;
+}
+html[data-educa-platform="web"] #phoneScreen :is(#chatView,#normalChatView,#whatsappView).is-active {
+ touch-action:pan-y!important;
+}
+html[data-educa-platform="web"] #phoneScreen .android-view.is-active :is(.chat-wallpaper,.wa-chat-list){
+ overscroll-behavior-y:contain!important;overflow-y:auto!important;min-height:0!important;
+ scroll-behavior:auto!important;
+}
