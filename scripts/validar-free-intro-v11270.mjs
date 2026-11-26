@@ -72,8 +72,8 @@ for(const engine of [chromium,webkit]){
       return {header:rect('#freeIntroView header'),back:rect('#freeIntroBack'),arrow:rect('#freeIntroBack svg'),label:rect('#freeIntroBack span'),tag:rect('#freeIntroView .free-intro-kicker'),border:parseFloat(style.borderTopWidth),cursor:style.cursor,tagBg:tag.backgroundColor,tagWeight:parseInt(tag.fontWeight),lowerArrow:rect('#freeIntroCancel svg'),lowerLabel:rect('#freeIntroCancel span')};
     });
     assert.ok(layout.back.height>=44&&layout.border>=1&&layout.cursor==='pointer','Voltar sem aparência de botão');
-    assert.ok(layout.arrow.width>=24&&layout.lowerArrow.width>=24,'Seta pequena');
-    assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados');
+    assert.ok(layout.arrow.width>=24&&layout.lowerArrow.width>=24,'Seta pequena '+JSON.stringify(layout));
+    assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados '+JSON.stringify(layout));
     assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1&&layout.tagBg==='rgba(0, 0, 0, 0)'&&layout.tagWeight<=500,'Identificação sobreposta ou destacada');
     const notice=page.locator('#freeIntroNotice');
     assert.equal(await notice.innerText(),'Tudo é simulado. Não informe dados reais.');
