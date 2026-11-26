@@ -9,8 +9,10 @@ for(const engine of [chromium,webkit]){
     await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
     await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded'});
     await page.waitForFunction(()=>window.EducaFreeView?.canFreeMode?.()&&window.EducaFreeMode);
-    const auto=await page.evaluate(()=>({touch:navigator.maxTouchPoints>0&&matchMedia('(pointer: coarse)').matches,expanded:document.documentElement.classList.contains('educa-fullscreen-active')}));
+    const auto=await page.evaluate(()=>({touch:navigator.maxTouchPoints>0&&matchMedia('(pointer: coarse)').matches,expanded:document.documentElement.classList.contains('educa-fullscreen-active'),prototype:document.body.classList.contains('prototype-focus'),view:document.querySelector('#phoneScreen').dataset.currentView}));
     assert.equal(auto.expanded,auto.touch,'Tela cheia automática deve distinguir dispositivos de toque e desktop');
+    assert.equal(auto.prototype,auto.touch,'O protótipo, não apenas a página, precisa abrir ampliado');
+    if(auto.touch)assert.equal(auto.view,'learning','Conta válida deve continuar no protótipo');
     await page.evaluate(()=>{document.body.classList.add('prototype-focus');window.EducaFreeView.isTraining=()=>true;window.EducaFreeView.openLearningHub();});
     const view=async name=>{await page.waitForFunction(name=>document.querySelector('#phoneScreen').dataset.currentView===name,name);};
     await page.locator('#freeModeEntry').click();

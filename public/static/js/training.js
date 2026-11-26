@@ -2985,6 +2985,11 @@
   }
 
   async function closePhoneFullscreen() {
+    if (autoPrototypeMobile) {
+      document.removeEventListener('click', promoteToNativeFullscreen, true);
+      if (autoPrototypeLanding && !trainingStarted) document.body.classList.remove('prototype-focus');
+      autoPrototypeLanding = false;
+    }
     document.documentElement.classList.remove('educa-immersive-active');
     if (document.fullscreenElement && document.exitFullscreen) {
       try { await document.exitFullscreen(); } catch (_) {}
@@ -3092,8 +3097,7 @@
   // ESC, F11 ou a saída automática também restauram o botão de ampliar.
   syncFullscreenControls();
 
-  // V112.73: Web em celular/tablet abre ampliada desde a primeira renderização.
-  // A Fullscreen API exige uma interação confiável; até lá, usa o viewport.
+  // V112.74: ampliar o próprio protótipo (não apenas o documento Web).
   const rootForAutoFullscreen = document.documentElement;
   const nativeMobile = rootForAutoFullscreen.classList.contains('educa-mobile-app') ||
     rootForAutoFullscreen.classList.contains('educa-mobile-web-parity') ||
@@ -3101,28 +3105,32 @@
   const mobileOrTablet = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
     (navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches);
-  if (!nativeMobile && !isInstalledDisplayMode() &&
-      rootForAutoFullscreen.dataset.educaPlatform === 'web' && mobileOrTablet) {
+  const autoPrototypeMobile = !nativeMobile && !isInstalledDisplayMode() &&
+    rootForAutoFullscreen.dataset.educaPlatform === 'web' && mobileOrTablet;
+  let autoPrototypeLanding = false;
+  function openAutomaticPrototype(){
+    if (!autoPrototypeMobile) return;
+    autoPrototypeLanding = !trainingStarted;
     rootForAutoFullscreen.classList.add('educa-immersive-active');
+    document.body.classList.add('prototype-focus');
     syncFullscreenControls();
-    const promoteToNativeFullscreen = async (event) => {
-      if (!event.isTrusted) return;
-      document.removeEventListener('click', promoteToNativeFullscreen);
-      if (!rootForAutoFullscreen.classList.contains('educa-immersive-active') ||
-          event.target.closest?.('#exitFullscreen') || document.fullscreenElement) return;
-      if (!rootForAutoFullscreen.requestFullscreen || !document.fullscreenEnabled) return;
-      try {
-        await rootForAutoFullscreen.requestFullscreen({ navigationUI: 'hide' });
-        if (document.fullscreenElement) {
-          rootForAutoFullscreen.classList.remove('educa-immersive-active');
-          syncFullscreenControls();
-        }
-      } catch (_) {
-        // Safari/iPhone e navegadores com bloqueio continuam no modo visual.
-      }
-    };
-    document.addEventListener('click', promoteToNativeFullscreen);
+    window.scrollTo({top:0,behavior:'auto'});
   }
+  async function promoteToNativeFullscreen(event){
+    if (!event.isTrusted || !rootForAutoFullscreen.classList.contains('educa-immersive-active') ||
+        event.target.closest?.('#exitFullscreen,input,textarea,select,[contenteditable]') ||
+        document.fullscreenElement) return;
+    document.removeEventListener('click', promoteToNativeFullscreen, true);
+    if (!rootForAutoFullscreen.requestFullscreen || !document.fullscreenEnabled) return;
+    try {
+      await rootForAutoFullscreen.requestFullscreen({navigationUI:'hide'});
+      if (document.fullscreenElement) {
+        rootForAutoFullscreen.classList.remove('educa-immersive-active');
+        syncFullscreenControls();
+      }
+    } catch (_) { /* O protótipo continua ampliado no viewport. */ }
+  }
+  if (autoPrototypeMobile) document.addEventListener('click', promoteToNativeFullscreen, true);
 
   accountForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -3181,5 +3189,17 @@
   trainingStarted = false;
   setView('home');
   applyLandingPretest();
+  if (autoPrototypeMobile) {
+    const user = getRememberedUser();
+    // Conta válida retorna ao treino; convidado permanece no pré-teste bloqueado.
+    if (user?.phone && /^[a-f0-9]{64}$/.test(user.levelToken || '')) {
+      openAutomaticPrototype();
+      void loadServerProgress(user.phone);
+      startTraining({focus:true,boot:false});
+    } else if (!user?.phone) {
+      openAutomaticPrototype();
+    }
+    // Conta que precisa autenticar novamente mantém o botão de entrada disponível.
+  }
 
 })();
