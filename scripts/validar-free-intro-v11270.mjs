@@ -15,9 +15,13 @@ for(const engine of [chromium,webkit]){
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeIntroView .free-intro-steps').count(),0);
-    assert.equal(await page.locator('#freeIntroTitle').innerText(),'Modo Livre');
+    assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
     assert.equal(await page.locator('#freeIntroView .free-intro-safe').innerText(),'Tudo é simulado. Não informe dados reais.');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
+    assert.ok(await page.locator('#freeIntroStart').isDisabled());
+    await page.locator('#freeIntroStart').evaluate(b=>b.click());
+    await view('free-intro');
+    assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
     const inside=await page.evaluate(()=>{
@@ -32,6 +36,11 @@ for(const engine of [chromium,webkit]){
     await view('learning');
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
+    const since=Date.now();
+    assert.ok(await page.locator('#freeIntroStart').isDisabled());
+    await page.waitForFunction(()=>!document.getElementById('freeIntroStart').disabled);
+    assert.ok(Date.now()-since>=4500,'Botão liberou cedo demais');
+    assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     await page.locator('#freeIntroStart').click();
     await view('home');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),true);
