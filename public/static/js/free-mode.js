@@ -374,8 +374,19 @@ for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
   ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
 // V112.72 — tempo mínimo de leitura da narrativa, sem início automático.
 const INTRO_READ_MS=5000;
-let introTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
+let introTimer=null,introNoticeTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
+function hideIntroNotice(){
+ clearTimeout(introNoticeTimer);introNoticeTimer=null;
+ const notice=$('#freeIntroNotice');if(notice)notice.hidden=true;
+}
+function showIntroNotice(){
+ hideIntroNotice();
+ const notice=$('#freeIntroNotice');if(!notice)return;
+ notice.hidden=false;
+ introNoticeTimer=setTimeout(hideIntroNotice,2000);
+}
 function cancelIntroReading(){
+ hideIntroNotice();
  clearInterval(introTimer);introTimer=null;introRemaining=INTRO_READ_MS;
  const button=$('#freeIntroStart');if(button)button.disabled=true;
  const label=$('#freeIntroStartLabel');if(label)label.textContent='Leia a história · 5 s';
@@ -405,6 +416,7 @@ function openFreeIntro(){
  const intro=$('#freeIntroView .free-intro-content');if(intro)intro.scrollTop=0;
  const status=$('#freeIntroReady');if(status)status.textContent='';
  $('#freeIntroTitle')?.focus?.({preventScroll:true});
+ showIntroNotice();
  introLastTick=performance.now();introTimer=setInterval(tickIntroReading,100);
 }
 function closeFreeIntro(){if(visible()==='free-intro'&&!state.active){cancelIntroReading();bridge()?.openLearningHub();}}
