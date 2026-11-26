@@ -51,6 +51,10 @@ try{
    }
    if([320,390,430,768,1366,1920].includes(c.w))
     await page.screenshot({path:'artifacts/layout-v11154/home-'+c.w+'.png',fullPage:false});
+   // Verifica a home visitante antes de simular uma conta cadastrada.
+   await page.evaluate(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.waitForFunction(()=>Boolean(window.EducaFreeView && window.EducaAccessibility));
    await page.evaluate(()=>{
     window.EducaFreeView.setView('free-video');
     for(const id of ['freeVideoCameraToggle','freeVideoSpeaker','freeVideoMic','freeVideoHangup']){
