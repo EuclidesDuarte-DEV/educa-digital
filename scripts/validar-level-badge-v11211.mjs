@@ -36,10 +36,13 @@ try{
     const br=el.getBoundingClientRect();
     const icon=el.querySelector('svg')?.getBoundingClientRect();
     const h=document.querySelector('#learningView .learning-header').getBoundingClientRect();
+    const status=document.querySelector('#phoneScreen .status-icons').getBoundingClientRect();
+    const title=document.querySelector('#learningGreeting').getBoundingClientRect();
     return {width:br.width,height:br.height,iconWidth:icon?.width,iconHeight:icon?.height,
       label:el.textContent.trim(),accessible:el.getAttribute('aria-label'),
       platform:document.documentElement.dataset.educaPlatform,
-      headerRight:h.right,badgeRight:br.right};
+      headerRight:h.right,badgeRight:br.right,
+      statusGap:br.top-status.bottom,titleGap:title.top-br.bottom};
    });
    assert.equal(m.platform,'web',name+': plataforma errada');
    assert.equal(m.label,'Nível 3',name+': o nível mudou incorretamente');
@@ -47,6 +50,8 @@ try{
    assert.ok(m.height>=28&&m.height<=34,name+': altura fora da medida '+JSON.stringify(m));
    assert.ok(m.iconWidth<=16&&m.iconHeight<=16,name+': escudo continua grande');
    assert.ok(m.badgeRight<=m.headerRight+2,name+': badge saiu do cabeçalho');
+   assert.ok(m.statusGap>=12,name+': selo perto demais da bateria '+JSON.stringify(m));
+   assert.ok(m.titleGap>=4,name+': selo perto demais do título '+JSON.stringify(m));
    assert.match(m.accessible,/Abrir progresso/);
    await page.screenshot({path:'artifacts/level-badge-v11211/'+name+'.png'});
    await badge.click();
