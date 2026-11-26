@@ -27,10 +27,20 @@ for(const engine of [chromium,webkit]){
     });
     assert.ok(design.titleSize>design.storySize&&design.titleWeight>=700,'Hierarquia de título insuficiente '+JSON.stringify(design));
     assert.equal(design.storyStyle,'italic');
-    assert.ok(design.storySize>=21,'Narrativa pequena '+JSON.stringify(design));
+    assert.ok(design.storySize>=26,'Narrativa pequena '+JSON.stringify(design));
     assert.notEqual(design.storyColor,design.titleColor);
     assert.notEqual(design.storyBackground,design.headerBackground);
     assert.ok(design.buttonHeight>=54,'Botão principal pequeno');
+    assert.ok(design.titleSize>=34,'Título pequeno');
+    const layout=await page.evaluate(()=>{
+      const q=s=>document.querySelector(s), rect=s=>{const b=q(s).getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,cy:b.top+b.height/2};};
+      const style=getComputedStyle(q('#freeIntroBack')),tag=getComputedStyle(q('#freeIntroView .free-intro-kicker'));
+      return {header:rect('#freeIntroView header'),back:rect('#freeIntroBack'),arrow:rect('#freeIntroBack svg'),label:rect('#freeIntroBack span'),tag:rect('#freeIntroView .free-intro-kicker'),border:parseFloat(style.borderTopWidth),cursor:style.cursor,tagBg:tag.backgroundColor,tagWeight:parseInt(tag.fontWeight),lowerArrow:rect('#freeIntroCancel svg'),lowerLabel:rect('#freeIntroCancel span')};
+    });
+    assert.ok(layout.back.height>=48&&layout.border>=1&&layout.cursor==='pointer','Voltar sem aparência de botão');
+    assert.ok(layout.arrow.width>=28&&layout.lowerArrow.width>=28,'Seta pequena');
+    assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados');
+    assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1&&layout.tagBg==='rgba(0, 0, 0, 0)'&&layout.tagWeight<=500,'Identificação sobreposta ou destacada');
     const notice=page.locator('#freeIntroNotice');
     assert.equal(await notice.innerText(),'Tudo é simulado. Não informe dados reais.');
     assert.ok(await notice.isVisible(),'Aviso não apareceu');
