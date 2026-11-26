@@ -15,6 +15,16 @@ for(const engine of [chromium,webkit]){
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
+    // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
+    await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
+    const inside=await page.evaluate(()=>{
+     const p=document.getElementById('phoneScreen').getBoundingClientRect();
+     const b=document.getElementById('freeIntroStart').getBoundingClientRect();
+     const c=document.querySelector('#freeIntroView .free-intro-content');
+     return b.top>=p.top&&b.bottom<=p.bottom+1&&b.height>=44&&c.clientHeight>0&&getComputedStyle(c).overflowY==='auto';
+    });
+    assert.ok(inside,'Botão inicial cortado na fonte extra');
+    await page.evaluate(()=>window.EducaAccessibility.update({text:'normal'}));
     await page.locator('#freeIntroCancel').click();
     await view('learning');
     await page.locator('#freeModeEntry').click();
