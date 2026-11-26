@@ -32,7 +32,7 @@ const WEB_BONUS_ORDER=Object.freeze([...BONUS_ORDER,'family']);
 const byId=Object.fromEntries(SCENARIOS.map(s=>[s.id,s]));
 // V112.81: contextos narrativos educativos, sem revelar a resposta do desafio.
 const STORY_CONTEXT=Object.freeze({
- 'family-photo':['Uma mensagem do seu filho','Você está em casa depois de um dia tranquilo. Rafael, seu filho, mora longe e costuma conversar com você pelo celular. Enquanto descansa, percebe que chegou uma nova mensagem.'],
+ 'family-photo':['Uma mensagem do seu filho','Rafael mora longe e costuma falar com você pelo celular. Hoje, enquanto descansa em casa, você recebe uma mensagem.'],
  family:['Uma conversa em família','Você está organizando o dia e lembra de conversar com seu filho, que vive em outra cidade. Uma nova notificação aparece no celular.'],
  video:['Uma videochamada inesperada','É um fim de tarde tranquilo. Você está usando o celular quando recebe uma solicitação de videochamada. Decida como quer lidar com essa situação.'],
  bank:['Uma ligação durante o dia','Você acabou de terminar algumas tarefas de casa. O telefone toca enquanto você está descansando. A ligação parece estar relacionada à sua conta bancária.'],
@@ -434,11 +434,12 @@ function openScenarioStory(s){
  cancelIntroReading();clearTimeout(state.timer);state.timer=null;
  if(els.notice)els.notice.hidden=true;
  const copy=STORY_CONTEXT[s.id]||['Uma nova situação','Você recebe uma nova comunicação no celular de treinamento. Leia com calma e decida como agir.'];
- const title=$('#freeIntroTitle'),body=$('#freeIntroView .free-intro-story p'),kicker=$('#freeIntroView .free-intro-kicker'),channel=$('#freeIntroChannel');
+ const title=$('#freeIntroTitle'),body=$('#freeIntroView .free-intro-story p'),channel=$('#freeIntroChannel'),illustration=$('#freeIntroIllustration');
  if(title)title.textContent=copy[0];
  if(body)body.textContent=copy[1];
- if(kicker)kicker.textContent='Modo Livre · História '+String(state.active?state.delivered+1:1).padStart(2,'0');
- if(channel)channel.textContent=STORY_CHANNELS[s.channel]||'Celular';
+ const channelName=STORY_CHANNELS[s.channel];
+ if(channel)channel.textContent=channelName||'Celular';
+ if(illustration)illustration.src='/static/img/free-story-v11282/'+(channelName?s.channel:'whatsapp')+'.webp';
  show('free-intro');
  if(visible()!=='free-intro')return;
  storyScenario=s;
@@ -468,7 +469,6 @@ $('#freeIntroStart')?.addEventListener('click',()=>{
  storyReadId=s.id;show('home');deliverScenario(s);
 });
 $('#freeIntroBack')?.addEventListener('click',closeFreeIntro);
-$('#freeIntroCancel')?.addEventListener('click',closeFreeIntro);
 for(const id of ['freeBankBack','freeWhatsappBack','freeGovBack'])$('#'+id)?.addEventListener('click',home);
 $('#freeExitBtn')?.addEventListener('click',exit);$('#freeSummaryExit')?.addEventListener('click',exit);$('#freeSummaryHome')?.addEventListener('click',home);$('#freeSummaryNext')?.addEventListener('click',continueTraining);
 $('#freeEventOpen')?.addEventListener('click',openPending);$('#freeEventDismiss')?.addEventListener('click',dismiss);$('#freeFloatingBack')?.addEventListener('click',home);
