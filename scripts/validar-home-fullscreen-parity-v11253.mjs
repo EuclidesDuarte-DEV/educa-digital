@@ -1,4 +1,4 @@
-import {chromium,webkit} from 'playwright';
+import {chromium,devices,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 await mkdir('artifacts/home-fullscreen-v11253',{recursive:true});
@@ -55,7 +55,8 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
    console.log('FULLSCREEN_PARITY_V11253_OK',JSON.stringify({engine:engine.name(),name,before:before.font,after:after.font}));
   }finally{await page.close();}
  }
- const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});
+ const {viewport,userAgent}=devices['iPhone 13'];
+ const page=await browser.newPage({viewport,userAgent,hasTouch:true,isMobile:true});
  try{
   await page.addInitScript(()=>{
    localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)}));
