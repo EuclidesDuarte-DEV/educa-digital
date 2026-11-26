@@ -170,3 +170,65 @@ html.a11y-high-contrast #freeIntroView.is-active :is(.free-intro-hero,article,.f
 html.a11y-high-contrast #freeIntroView.is-active :is(article strong,.free-intro-kicker){color:#fff!important;}
 html.a11y-high-contrast #freeIntroView.is-active{background:#000!important;color:#fff!important;}
 html.a11y-high-contrast #freeIntroView.is-active button{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
+
+/* V112.71: introdução reduzida, com leitura simples e ação principal clara. */
+#freeIntroView .free-intro-content{justify-content:safe center;gap:14px;}
+#freeIntroView .free-intro-hero{padding:24px 16px 26px;border-radius:22px;}
+#freeIntroView .free-intro-symbol{width:68px;height:68px;margin:14px auto;}
+#freeIntroView .free-intro-symbol svg{width:46px;height:46px;}
+#freeIntroView #freeIntroTitle{font-size:calc(28px * var(--ed-font-factor,1));margin:8px 0 12px;}
+#freeIntroView .free-intro-hero p{font-size:calc(16px * var(--ed-font-factor,1));line-height:1.5;}
+#freeIntroView .free-intro-safe{padding:12px;text-align:center;font-size:calc(13px * var(--ed-font-factor,1));}
+#freeIntroView .free-intro-actions{gap:8px;}
+#freeIntroView #freeIntroCancel{border-color:transparent;background:transparent;}
+
+/* V112.72 — estado de leitura antes de começar a história. */
+#freeIntroView #freeIntroStart:disabled{background:#d9e3ef!important;color:#324b67!important;cursor:not-allowed;box-shadow:none;opacity:1;}
+#freeIntroView #freeIntroStart:disabled svg{visibility:hidden;}
+#freeIntroView #freeIntroStart:not(:disabled){background:#155db3;}
+#freeIntroView #freeIntroStartLabel{min-width:0;}
+
+/* V112.72 — hierarquia de leitura: título forte, narrativa em papel claro. */
+#freeIntroView .free-intro-content{gap:12px;}
+#freeIntroView .free-intro-hero{padding:16px 14px 20px;}
+#freeIntroView .free-intro-symbol{width:52px;height:52px;margin:8px auto 10px;}
+#freeIntroView .free-intro-symbol svg{width:37px;height:37px;}
+#freeIntroView #freeIntroTitle{font-size:calc(30px * var(--ed-font-factor,1));font-weight:850;line-height:1.15;color:#fff;letter-spacing:-.02em;margin:4px 0 0;text-wrap:balance;}
+#freeIntroView .free-intro-story{box-sizing:border-box;padding:18px 16px;border:1px solid #cbdced;border-radius:16px;background:#e8f0fa;color:#253b55;box-shadow:0 2px 8px #103f8508;}
+#freeIntroView .free-intro-story p{font-size:calc(17px * var(--ed-font-factor,1));line-height:1.6;text-align:left;overflow-wrap:anywhere;}
+#freeIntroView .free-intro-story em{font-style:italic;font-weight:450;color:inherit;}
+#freeIntroView .free-intro-story .free-intro-question{font-weight:750;font-style:normal;color:#17385e;margin-top:12px;}
+#freeIntroView .free-intro-safe{background:transparent;border:0;padding:4px 8px;color:#43596e;}
+#freeIntroView #freeIntroStart{min-height:58px;font-size:calc(18px * var(--ed-font-factor,1));font-weight:850;border-radius:14px;}
+#freeIntroView #freeIntroStart:not(:disabled){background:linear-gradient(135deg,#155db3,#0b4595);color:white;box-shadow:0 5px 14px #104f8838;}
+#freeIntroView #freeIntroStart:disabled{background:#d9e3ef!important;color:#324b67!important;box-shadow:none;}
+html.a11y-high-contrast #freeIntroView.is-active .free-intro-story{background:#000!important;color:#fff!important;border:1px solid #fff!important;}
+html.a11y-high-contrast #freeIntroView.is-active .free-intro-story .free-intro-question{color:#fff!important;}
+html.a11y-high-contrast #freeIntroView.is-active #freeIntroStart:not(:disabled){background:#fff!important;color:#000!important;}
+
+/* V112.72 — leitura confortável e aviso transitório sem bloquear a navegação. */
+#freeIntroView .free-intro-hero{padding:20px 14px 22px;}
+#freeIntroView .free-intro-kicker{display:block;margin-bottom:10px;}
+#freeIntroView .free-intro-story p{font-size:calc(21px * var(--ed-font-factor,1));line-height:1.5;}
+#freeIntroView .free-intro-story em{font-weight:500;}
+#freeIntroView #freeIntroCancel{min-height:48px;background:#fff;border:1.5px solid #7b9dbf;color:#174578;border-radius:12px;font-size:calc(16px * var(--ed-font-factor,1));font-weight:750;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+#freeIntroView #freeIntroCancel svg{width:20px;height:20px;flex:none;}
+#freeIntroView #freeIntroCancel:hover{background:#e8f0fa;border-color:#174578;}
+#freeIntroView .free-intro-notice[hidden]{display:none!important;}
+#freeIntroView .free-intro-notice:not([hidden]){position:absolute;z-index:20;top:40px;left:12px;right:12px;box-sizing:border-box;background:#17385e;color:#fff;border:1px solid #86b0d9;border-radius:14px;padding:14px;font-size:calc(16px * var(--ed-font-factor,1));font-weight:650;line-height:1.4;box-shadow:0 5px 18px #102a493d;pointer-events:none;overflow-wrap:anywhere;text-align:center;}
+html.a11y-high-contrast #freeIntroView.is-active .free-intro-notice{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
+
+/* V112.72 — leitura ampliada, identificação discreta e retorno alinhado. */
+#freeIntroView .free-intro-surface>header{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;min-width:0;}
+#freeIntroView .free-intro-surface>header .free-intro-kicker{display:block;margin:0;padding:0;background:none;border:0;box-shadow:none;color:#52677c;font-size:calc(12px * var(--ed-font-factor,1));font-weight:500;letter-spacing:0;text-align:right;line-height:1.35;overflow-wrap:anywhere;}
+#freeIntroView #freeIntroBack{box-sizing:border-box;min-height:48px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid #7b9dbf;border-radius:12px;background:#fff;color:#174578;font-size:calc(16px * var(--ed-font-factor,1));font-weight:750;line-height:1.2;cursor:pointer;white-space:nowrap;}
+#freeIntroView #freeIntroBack svg,#freeIntroView #freeIntroCancel svg{display:block;width:28px;height:28px;flex:0 0 28px;}
+#freeIntroView #freeIntroBack span,#freeIntroView #freeIntroCancel span{min-width:0;line-height:1.2;}
+#freeIntroView #freeIntroBack:hover,#freeIntroView #freeIntroCancel:hover{background:#e8f0fa;border-color:#174578;}
+#freeIntroView #freeIntroCancel{min-height:52px;font-size:calc(17px * var(--ed-font-factor,1));gap:10px;}
+#freeIntroView .free-intro-hero{padding:20px 12px;}
+#freeIntroView #freeIntroTitle{font-size:calc(34px * var(--ed-font-factor,1));font-weight:850;line-height:1.15;margin:0;}
+#freeIntroView .free-intro-story{padding:16px 14px;}
+#freeIntroView .free-intro-story p{font-size:calc(26px * var(--ed-font-factor,1));line-height:1.45;}
+#freeIntroView .free-intro-story .free-intro-question{font-weight:800;}
+html.a11y-high-contrast #freeIntroView.is-active header .free-intro-kicker{color:#fff!important;}

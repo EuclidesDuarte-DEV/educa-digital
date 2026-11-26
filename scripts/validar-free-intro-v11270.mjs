@@ -14,7 +14,45 @@ for(const engine of [chromium,webkit]){
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
+    assert.equal(await page.locator('#freeIntroView .free-intro-steps').count(),0);
+    assert.equal(await page.locator('#freeIntroView .free-intro-symbol').count(),0);
+    assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
+    const design=await page.evaluate(()=>{
+     const title=getComputedStyle(document.querySelector('#freeIntroTitle'));
+     const narrative=getComputedStyle(document.querySelector('.free-intro-story em'));
+     const paper=getComputedStyle(document.querySelector('.free-intro-story'));
+     const header=getComputedStyle(document.querySelector('.free-intro-hero'));
+     const action=document.getElementById('freeIntroStart').getBoundingClientRect();
+     return {titleSize:parseFloat(title.fontSize),titleWeight:parseInt(title.fontWeight),storySize:parseFloat(narrative.fontSize),storyStyle:narrative.fontStyle,storyColor:narrative.color,titleColor:title.color,storyBackground:paper.backgroundColor,headerBackground:header.backgroundColor,buttonHeight:action.height};
+    });
+    assert.ok(design.titleSize>design.storySize&&design.titleWeight>=700,'Hierarquia de título insuficiente '+JSON.stringify(design));
+    assert.equal(design.storyStyle,'italic');
+    assert.ok(design.storySize>=26,'Narrativa pequena '+JSON.stringify(design));
+    assert.notEqual(design.storyColor,design.titleColor);
+    assert.notEqual(design.storyBackground,design.headerBackground);
+    assert.ok(design.buttonHeight>=54,'Botão principal pequeno');
+    assert.ok(design.titleSize>=34,'Título pequeno');
+    const layout=await page.evaluate(()=>{
+      const q=s=>document.querySelector(s), rect=s=>{const b=q(s).getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,cy:b.top+b.height/2};};
+      const style=getComputedStyle(q('#freeIntroBack')),tag=getComputedStyle(q('#freeIntroView .free-intro-kicker'));
+      return {header:rect('#freeIntroView header'),back:rect('#freeIntroBack'),arrow:rect('#freeIntroBack svg'),label:rect('#freeIntroBack span'),tag:rect('#freeIntroView .free-intro-kicker'),border:parseFloat(style.borderTopWidth),cursor:style.cursor,tagBg:tag.backgroundColor,tagWeight:parseInt(tag.fontWeight),lowerArrow:rect('#freeIntroCancel svg'),lowerLabel:rect('#freeIntroCancel span')};
+    });
+    assert.ok(layout.back.height>=48&&layout.border>=1&&layout.cursor==='pointer','Voltar sem aparência de botão');
+    assert.ok(layout.arrow.width>=28&&layout.lowerArrow.width>=28,'Seta pequena');
+    assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados');
+    assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1&&layout.tagBg==='rgba(0, 0, 0, 0)'&&layout.tagWeight<=500,'Identificação sobreposta ou destacada');
+    const notice=page.locator('#freeIntroNotice');
+    assert.equal(await notice.innerText(),'Tudo é simulado. Não informe dados reais.');
+    assert.ok(await notice.isVisible(),'Aviso não apareceu');
+    const returnStyle=await page.locator('#freeIntroCancel').evaluate(e=>({height:e.getBoundingClientRect().height,border:parseFloat(getComputedStyle(e).borderTopWidth),cursor:getComputedStyle(e).cursor}));
+    assert.ok(returnStyle.height>=44&&returnStyle.border>=1&&returnStyle.cursor==='pointer','Retorno sem destaque');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
+    assert.ok(await page.locator('#freeIntroStart').isDisabled());
+    await page.locator('#freeIntroStart').evaluate(b=>b.click());
+    await notice.waitFor({state:'hidden',timeout:3000});
+    assert.ok(await page.locator('#freeIntroStart').isDisabled(),'Aviso liberou o início cedo demais');
+    await view('free-intro');
+    assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
     const inside=await page.evaluate(()=>{
@@ -29,6 +67,11 @@ for(const engine of [chromium,webkit]){
     await view('learning');
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
+    const since=Date.now();
+    assert.ok(await page.locator('#freeIntroStart').isDisabled());
+    await page.waitForFunction(()=>!document.getElementById('freeIntroStart').disabled);
+    assert.ok(Date.now()-since>=4500,'Botão liberou cedo demais');
+    assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     await page.locator('#freeIntroStart').click();
     await view('home');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),true);
