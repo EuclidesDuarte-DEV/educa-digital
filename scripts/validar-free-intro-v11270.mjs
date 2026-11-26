@@ -15,6 +15,7 @@ for(const engine of [chromium,webkit]){
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeIntroView .free-intro-steps').count(),0);
+    assert.equal(await page.locator('#freeIntroView .free-intro-symbol').count(),0);
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
     const design=await page.evaluate(()=>{
      const title=getComputedStyle(document.querySelector('#freeIntroTitle'));
@@ -26,13 +27,20 @@ for(const engine of [chromium,webkit]){
     });
     assert.ok(design.titleSize>design.storySize&&design.titleWeight>=700,'Hierarquia de título insuficiente '+JSON.stringify(design));
     assert.equal(design.storyStyle,'italic');
+    assert.ok(design.storySize>=21,'Narrativa pequena '+JSON.stringify(design));
     assert.notEqual(design.storyColor,design.titleColor);
     assert.notEqual(design.storyBackground,design.headerBackground);
     assert.ok(design.buttonHeight>=54,'Botão principal pequeno');
-    assert.equal(await page.locator('#freeIntroView .free-intro-safe').innerText(),'Tudo é simulado. Não informe dados reais.');
+    const notice=page.locator('#freeIntroNotice');
+    assert.equal(await notice.innerText(),'Tudo é simulado. Não informe dados reais.');
+    assert.ok(await notice.isVisible(),'Aviso não apareceu');
+    const returnStyle=await page.locator('#freeIntroCancel').evaluate(e=>({height:e.getBoundingClientRect().height,border:parseFloat(getComputedStyle(e).borderTopWidth),cursor:getComputedStyle(e).cursor}));
+    assert.ok(returnStyle.height>=44&&returnStyle.border>=1&&returnStyle.cursor==='pointer','Retorno sem destaque');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     await page.locator('#freeIntroStart').evaluate(b=>b.click());
+    await notice.waitFor({state:'hidden',timeout:3000});
+    assert.ok(await page.locator('#freeIntroStart').isDisabled(),'Aviso liberou o início cedo demais');
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
