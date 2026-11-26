@@ -1,5 +1,10 @@
 /* V112.11 — somente Web: indicador de nível proporcional ao cabeçalho.
    Não altera XP, diálogo de progresso, cards, Android ou iOS nativos. */
+/* V112.84 — posicione a primeira linha abaixo da barra de status simulada. */
+html[data-educa-platform="web"] #phoneScreen #learningView .learning-surface {
+  padding-top: 38px !important;
+}
+
 html[data-educa-platform="web"] #learningView .learning-header .ed-modo-level-badge {
   box-sizing: border-box !important;
   top: 1px !important;
