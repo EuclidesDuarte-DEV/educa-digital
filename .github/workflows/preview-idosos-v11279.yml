@@ -20,7 +20,7 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public >/tmp/senior.log 2>&1 &
           sleep 2
-          node scripts/validar-preview-idosos-v11279.mjs
+          node tests/platform-web-senior-preview-v11279.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
