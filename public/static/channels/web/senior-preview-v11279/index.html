@@ -67,7 +67,7 @@
 <link rel="stylesheet" href="/static/css/home-responsive-v11238.css?v=11244&expand=11275">
 <link rel="stylesheet" href="/static/css/home-fullscreen-parity-v11253.css?v=11253">
 <link rel="stylesheet" href="/static/css/security-path-polish-v11252.css?v=11252&header=11258&all=11259">
-  <link id="seniorPreviewStyles" rel="stylesheet" href="/static/channels/web/senior-preview-v11279/styles.css?v=11279">
+  <link id="seniorPreviewStyles" rel="stylesheet" href="/static/channels/web/senior-preview-v11279/styles.css?v=112802">
 </head>
 <body class="training-page home-training-page">
   <header class="site-header home-simple-header">
@@ -440,7 +440,7 @@
               <div class="android-view" data-view="free-intro" id="freeIntroView">
                 <section class="free-intro-surface" aria-labelledby="freeIntroTitle">
                   <header><button id="freeIntroBack" type="button" aria-label="Voltar às atividades"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg><span>Voltar</span></button><span class="free-intro-kicker">Modo Livre · História 01</span></header>
-                  <div class="free-intro-content"><div class="free-intro-hero">
+                  <div class="free-intro-content" tabindex="0" role="region" aria-label="História do Modo Livre"><div class="free-intro-hero">
 
                     <h2 id="freeIntroTitle" tabindex="-1">Uma mensagem do seu filho</h2>
                   </div>
@@ -1413,9 +1413,9 @@
           <form id="returnCodeForm" class="return-form" novalidate>
             <label>
               <span>Código de 6 números</span>
-              <input id="returnCode" class="code-input" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="_ _ _ _ _ _">
+              <input id="returnCode" aria-describedby="returnCodeMessage" class="code-input" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="_ _ _ _ _ _">
             </label>
-            <p class="return-message" id="returnCodeMessage" hidden></p>
+            <p class="return-message" id="returnCodeMessage" role="alert" aria-live="polite" hidden></p>
             <button class="return-primary" type="submit">Continuar meu treino</button>
             <button class="return-secondary" id="changePhoneBtn" type="button">Corrigir número</button>
           </form>
@@ -1493,6 +1493,6 @@
   </script>
   <script src="/static/js/mobile-app-v11158.js?v=11158"></script>
   <script src="/static/js/android-system.js?v=104&pretest=11267" defer></script>
-  <script src="/static/channels/web/senior-preview-v11279/toggle.js?v=11279" defer></script>
+  <script src="/static/channels/web/senior-preview-v11279/toggle.js?v=112802" defer></script>
 </body>
 </html>

@@ -1,0 +1,47 @@
+name: Matriz responsiva Web V112.80
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  matriz:
+    runs-on: ubuntu-24.04
+    container: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit, firefox]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.56.1 @axe-core/playwright@4.11.1
+      - name: Renderizar todas as telas em diversos dispositivos
+        env:
+          HOME: /root
+          EDUCA_BROWSER: ${{ matrix.browser }}
+        run: |
+          python3 -m http.server 8789 --directory public >/tmp/matrix.log 2>&1 &
+          sleep 2
+          node tests/platform-web-device-matrix-v11280.mjs
+      - name: Auditoria WCAG na versão experimental
+        if: ${{ always() && matrix.browser == 'chromium' }}
+        env:
+          EDUCA_AUDIT_URL: http://127.0.0.1:8789/static/channels/web/senior-preview-v11279/index.html
+        run: |
+          if ! curl -fsS "$EDUCA_AUDIT_URL" >/dev/null; then
+            python3 -m http.server 8789 --directory public >/tmp/matrix-audit.log 2>&1 &
+            sleep 2
+          fi
+          node scripts/validar-acessibilidade-wcag22.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: responsividade-e-acessibilidade-v11280-${{ matrix.browser }}
+          path: |
+            artifacts/responsividade-v11280/
+            artifacts/accessibility/
