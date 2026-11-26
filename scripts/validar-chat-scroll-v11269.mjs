@@ -16,6 +16,7 @@ try{
     await loc.waitFor({state:'visible'});
     await loc.evaluate(el=>{el.scrollTop=0;});
     const dims=await loc.evaluate(el=>({h:el.clientHeight,sh:el.scrollHeight,overflow:getComputedStyle(el).overflowY}));
+    assert.ok(dims.h>60,'Painel sem altura útil '+selector+' '+JSON.stringify(dims));
     assert.ok(dims.sh>dims.h,'Painel sem overflow interno: '+selector+' '+JSON.stringify(dims));
     assert.match(dims.overflow,/auto|scroll/);
     const rect=await loc.boundingBox();
@@ -43,7 +44,20 @@ try{
     for(let i=0;i<25;i++){const div=document.createElement('div');div.className='message '+(i%2?'incoming':'outgoing');div.textContent='Mensagem fictícia de teste de rolagem '+i;panel.appendChild(div);}
    });
    await scrollInside('#chatWallpaper');
+   const bounds=await page.evaluate(()=>{
+    const r=id=>{const b=document.getElementById(id).getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height}};
+    return {phone:r('phoneScreen'),chat:r('chatView'),messages:r('chatWallpaper')};
+   });
+   assert.ok(bounds.messages.bottom<=bounds.phone.bottom+1&&bounds.messages.top>=bounds.phone.top-1,'Mensagens fora da moldura '+JSON.stringify(bounds));
    assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'chat');
+   await page.evaluate(()=>{
+    window.EducaFreeView.setView('normal-chat');
+    const panel=document.getElementById('normalMessages');
+    panel.replaceChildren();
+    for(let i=0;i<25;i++){const div=document.createElement('div');div.className='message incoming';div.textContent='Mensagem fictícia '+i;panel.appendChild(div);}
+   });
+   await scrollInside('#normalMessages');
+   assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'normal-chat');
    console.log('CHAT_SCROLL_V11269_OK',mobile?'touch':'mouse');
   }finally{await context.close();}
  }
