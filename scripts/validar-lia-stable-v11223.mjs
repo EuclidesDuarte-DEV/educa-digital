@@ -34,7 +34,9 @@ for(const config of browsers){
     speak:u=>{window.__deviceCalls++;setTimeout(()=>u.onstart?.(),15);setTimeout(()=>u.onend?.(),200);}
    };
   },config.deviceMemory||null);
-  await page.goto('http://127.0.0.1:8789/html/?platform=web',{waitUntil:'domcontentloaded',timeout:30000});
+  // Conta exclusivamente fictícia para testes locais de interface. Nenhum cadastro real.
+    await page.addInitScript(() => localStorage.setItem('educaRememberedUser', JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+    await page.goto('http://127.0.0.1:8789/html/?platform=web',{waitUntil:'domcontentloaded',timeout:30000});
   await page.waitForFunction(()=>window.EducaVideoCall?.incoming&&window.EducaFreeMode&&window.EducaLiaWarm,{timeout:15000});
   const init=await page.evaluate(()=>({
    mode:window.EducaLiaWarm.state().mode,
@@ -87,6 +89,7 @@ for(const config of browsers){
  try{
   const p=await desktop.newPage({viewport:{width:1280,height:800}});
   await p.route('**/static/js/lia-free-neural-v11206.js*',r=>r.fulfill({contentType:'application/javascript',body:"window.EducaLiaFreeNeural={prepare:async()=>({}),isReady:()=>true,stop:()=>{},speak:()=>new Promise(()=>{})}"}));
+  await p.addInitScript(() => localStorage.setItem('educaRememberedUser', JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
   await p.goto('http://127.0.0.1:8789/html/?platform=web',{waitUntil:'domcontentloaded'});
   await p.waitForFunction(()=>window.EducaVideoCall&&window.EducaFreeMode);
   await p.evaluate(()=>{window.EducaFreeView.isTraining=()=>true;window.EducaFreeMode.start();window.EducaVideoCall.incoming();document.body.classList.add('prototype-focus');});
