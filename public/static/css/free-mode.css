@@ -181,3 +181,9 @@ html.a11y-high-contrast #freeIntroView.is-active button{background:#000!importan
 #freeIntroView .free-intro-safe{padding:12px;text-align:center;font-size:calc(13px * var(--ed-font-factor,1));}
 #freeIntroView .free-intro-actions{gap:8px;}
 #freeIntroView #freeIntroCancel{border-color:transparent;background:transparent;}
+
+/* V112.72 — estado de leitura antes de começar a história. */
+#freeIntroView #freeIntroStart:disabled{background:#d9e3ef!important;color:#324b67!important;cursor:not-allowed;box-shadow:none;opacity:1;}
+#freeIntroView #freeIntroStart:disabled svg{visibility:hidden;}
+#freeIntroView #freeIntroStart:not(:disabled){background:#155db3;}
+#freeIntroView #freeIntroStartLabel{min-width:0;}
