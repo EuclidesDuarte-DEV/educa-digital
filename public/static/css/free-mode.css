@@ -205,3 +205,15 @@ html.a11y-high-contrast #freeIntroView.is-active button{background:#000!importan
 html.a11y-high-contrast #freeIntroView.is-active .free-intro-story{background:#000!important;color:#fff!important;border:1px solid #fff!important;}
 html.a11y-high-contrast #freeIntroView.is-active .free-intro-story .free-intro-question{color:#fff!important;}
 html.a11y-high-contrast #freeIntroView.is-active #freeIntroStart:not(:disabled){background:#fff!important;color:#000!important;}
+
+/* V112.72 — leitura confortável e aviso transitório sem bloquear a navegação. */
+#freeIntroView .free-intro-hero{padding:20px 14px 22px;}
+#freeIntroView .free-intro-kicker{display:block;margin-bottom:10px;}
+#freeIntroView .free-intro-story p{font-size:calc(21px * var(--ed-font-factor,1));line-height:1.5;}
+#freeIntroView .free-intro-story em{font-weight:500;}
+#freeIntroView #freeIntroCancel{min-height:48px;background:#fff;border:1.5px solid #7b9dbf;color:#174578;border-radius:12px;font-size:calc(16px * var(--ed-font-factor,1));font-weight:750;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+#freeIntroView #freeIntroCancel svg{width:20px;height:20px;flex:none;}
+#freeIntroView #freeIntroCancel:hover{background:#e8f0fa;border-color:#174578;}
+#freeIntroView .free-intro-notice[hidden]{display:none!important;}
+#freeIntroView .free-intro-notice:not([hidden]){position:absolute;z-index:20;top:40px;left:12px;right:12px;box-sizing:border-box;background:#17385e;color:#fff;border:1px solid #86b0d9;border-radius:14px;padding:14px;font-size:calc(16px * var(--ed-font-factor,1));font-weight:650;line-height:1.4;box-shadow:0 5px 18px #102a493d;pointer-events:none;overflow-wrap:anywhere;text-align:center;}
+html.a11y-high-contrast #freeIntroView.is-active .free-intro-notice{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
