@@ -16,6 +16,19 @@ for(const engine of [chromium,webkit]){
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeIntroView .free-intro-steps').count(),0);
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
+    const design=await page.evaluate(()=>{
+     const title=getComputedStyle(document.querySelector('#freeIntroTitle'));
+     const narrative=getComputedStyle(document.querySelector('.free-intro-story em'));
+     const paper=getComputedStyle(document.querySelector('.free-intro-story'));
+     const header=getComputedStyle(document.querySelector('.free-intro-hero'));
+     const action=document.getElementById('freeIntroStart').getBoundingClientRect();
+     return {titleSize:parseFloat(title.fontSize),titleWeight:parseInt(title.fontWeight),storySize:parseFloat(narrative.fontSize),storyStyle:narrative.fontStyle,storyColor:narrative.color,titleColor:title.color,storyBackground:paper.backgroundColor,headerBackground:header.backgroundColor,buttonHeight:action.height};
+    });
+    assert.ok(design.titleSize>design.storySize&&design.titleWeight>=700,'Hierarquia de título insuficiente '+JSON.stringify(design));
+    assert.equal(design.storyStyle,'italic');
+    assert.notEqual(design.storyColor,design.titleColor);
+    assert.notEqual(design.storyBackground,design.headerBackground);
+    assert.ok(design.buttonHeight>=54,'Botão principal pequeno');
     assert.equal(await page.locator('#freeIntroView .free-intro-safe').innerText(),'Tudo é simulado. Não informe dados reais.');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
