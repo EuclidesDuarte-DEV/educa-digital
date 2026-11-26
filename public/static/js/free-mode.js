@@ -393,9 +393,13 @@ for(const name of ['educa:system-home','educa:system-learning','educa:system-bac
 $('#gestureHome')?.addEventListener('click',e=>{if(!state.active)return;e.stopImmediatePropagation();home();},true);
 // Rolagem, toque ou teclado indicam que a pessoa quer ler os resultados.
 const summaryScroller=$('#freeSummaryView .v106-summary');
-for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
- summaryScroller?.addEventListener(eventName,pauseSummaryTransition,
-  ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
+for(const eventName of ['wheel','touchstart','pointerdown','keydown']){
+ summaryScroller?.addEventListener(eventName,event=>{
+  // Mantenha o botão no mesmo lugar até o navegador concluir o toque.
+  if((eventName==='pointerdown'||eventName==='touchstart')&&event.target.closest?.('button'))return;
+  pauseSummaryTransition();
+ },{passive:eventName!=='keydown'});
+}
 // V112.72 — tempo mínimo de leitura da narrativa, sem início automático.
 const INTRO_READ_MS=5000;
 let introTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
