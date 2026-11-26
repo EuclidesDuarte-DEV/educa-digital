@@ -183,3 +183,16 @@ html:is(.a11y-high-contrast,.a11y-distinct-colors) #phoneScreen #learningView #f
 #phoneScreen #learningView .learning-surface>.learning-account-options{order:6!important;}
 
 /* V112.44 — ordem reforçada no stylesheet de origem V111.47. */
+
+/* V112.68 — espaçamento uniforme entre todos os cartões de assuntos na Web.
+   A especificidade do seletor da grade não pode zerar a margem inferior do Pix. */
+html[data-educa-platform="web"] #phoneScreen #learningView .learning-surface{
+ --ed-learning-card-gap:12px;
+}
+html[data-educa-platform="web"] #phoneScreen #learningView .learning-surface>#freeModeEntry,
+html[data-educa-platform="web"] #phoneScreen #learningView .learning-surface>.learning-featured{
+ margin-block-end:var(--ed-learning-card-gap)!important;
+}
+html[data-educa-platform="web"] #phoneScreen #learningView .learning-surface>.learning-grid{
+ row-gap:var(--ed-learning-card-gap)!important;
+}
