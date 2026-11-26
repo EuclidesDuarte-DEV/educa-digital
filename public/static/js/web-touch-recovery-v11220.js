@@ -33,6 +33,12 @@
   }
   g.clicked=true;
  },true);
+ // Um gesto de arrastar nunca vira clique recuperado, mesmo se voltar ao ponto inicial.
+ phone.addEventListener('pointermove',e=>{
+  const g=gesture;
+  if(g&&e.pointerId===g.id&&Math.hypot(e.clientX-g.x,e.clientY-g.y)>10)clear();
+ },{capture:true,passive:true});
+ phone.addEventListener('scroll',clear,{capture:true,passive:true});
  phone.addEventListener('pointerup',e=>{
   const g=gesture;
   if(!g||e.pointerType!=='touch'||e.pointerId!==g.id)return;
