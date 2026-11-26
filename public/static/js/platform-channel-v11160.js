@@ -44,7 +44,7 @@
     webSheet.href = '/static/channels/web/overrides.css?v=11190&fix=11208&touch=11255';
     document.head.appendChild(webSheet);
     const webScript = document.createElement('script');
-    webScript.src = '/static/channels/web/overrides.js?v=11190&fix=11212&account=11263';
+    webScript.src = '/static/channels/web/overrides.js?v=11190&fix=11212&account=11263&pretest=11267';
     webScript.defer = true;
     document.head.appendChild(webScript);
   }
@@ -55,7 +55,7 @@
   sheet.href = base + 'overrides.css?v=' + version + (platform === 'web' ? '&fix=11208&touch=11255' : '');
   document.head.appendChild(sheet);
   const script = document.createElement('script');
-  script.src = base + 'overrides.js?v=' + version + (platform === 'web' ? '&fix=11212&account=11263' : '');
+  script.src = base + 'overrides.js?v=' + version + (platform === 'web' ? '&fix=11212&account=11263&pretest=11267' : '');
   script.defer = true;
   document.head.appendChild(script);
   window.EducaReleaseChannel = Object.freeze({
