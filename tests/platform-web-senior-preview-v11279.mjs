@@ -11,7 +11,7 @@ for(const engine of [chromium,webkit]){
   const page=await browser.newPage({viewport,hasTouch:viewport.width<1000});
   const key=engine.name()+'-'+viewport.width+'x'+viewport.height;
   try{
-   await page.goto('http://127.0.0.1:8789/static/channels/web/senior-preview-v11279/index.html',{waitUntil:'domcontentloaded'});
+   await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.EducaAccessibility);
    await page.locator('#openAccessibilitySettings').click();
    await page.locator('#seniorPreviewToggle').waitFor({state:'visible'});
@@ -30,6 +30,10 @@ for(const engine of [chromium,webkit]){
    assert.equal(improved.overflow,false,'Rolagem horizontal no painel');
    assert.ok(improved.font>original.font,'Alternância não alterou tipografia');
    assert.deepEqual(improved.prefs,original.prefs,'Preferências alteradas pela alternância');
+   await page.reload({waitUntil:'domcontentloaded'});
+   await page.locator('#openAccessibilitySettings').click();
+   await page.locator('#seniorPreviewToggle').waitFor({state:'visible'});
+   assert.equal(await page.locator('#seniorPreviewStyles').evaluate(e=>e.disabled),true,'Retorno ao visual anterior deve persistir após recarga');
    await page.locator('#seniorPreviewToggle').click();
    await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
    await page.locator('#a11yFinish').scrollIntoViewIfNeeded();
