@@ -377,7 +377,7 @@ function openFreeIntro(){
  if(!isWebTraining()){start();return;}
  if(state.active)return;
  show('free-intro');
- const intro=$('#freeIntroView .free-intro-surface');if(intro)intro.scrollTop=0;
+ const intro=$('#freeIntroView .free-intro-content');if(intro)intro.scrollTop=0;
  $('#freeIntroTitle')?.focus?.({preventScroll:true});
 }
 function closeFreeIntro(){if(visible()==='free-intro'&&!state.active)bridge()?.openLearningHub();}
