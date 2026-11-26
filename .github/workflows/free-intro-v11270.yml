@@ -1,0 +1,27 @@
+name: V112.70 — introdução e navegação do Modo Livre
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/html/index.html'
+      - 'public/static/js/free-mode.js'
+      - 'public/static/css/free-mode.css'
+      - 'scripts/validar-free-intro-v11270.mjs'
+      - '.github/workflows/free-intro-v11270.yml'
+permissions:
+  contents: read
+jobs:
+  intro:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - run: |
+          python3 -m http.server 8789 --directory public >/tmp/free-intro.log 2>&1 &
+          node scripts/validar-free-intro-v11270.mjs
