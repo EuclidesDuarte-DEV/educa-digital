@@ -55,6 +55,8 @@
   const returnPhoneForm = $('#returnPhoneForm');
   const returnCodeForm = $('#returnCodeForm');
   let returningPhone = '';
+  let confirmingReturnCode = false;
+  let requestingReturnCode = false;
   const clock = $('#clock');
   const glanceDate = $('#glanceDate');
   const chatWallpaper = $('#chatWallpaper');
@@ -1329,6 +1331,7 @@
     returnModal.setAttribute('aria-hidden', 'false');
     returnPhoneStep.hidden = false;
     returnCodeStep.hidden = true;
+    if (returnCode) returnCode.value = '';
     if (returnPhoneMessage) returnPhoneMessage.hidden = true;
     if (returnCodeMessage) returnCodeMessage.hidden = true;
     if (demoCodeBox) demoCodeBox.hidden = true;
@@ -2018,6 +2021,8 @@
     const phone = formatPhone(returnPhone?.value || '');
     const digits = phone.replace(/\D/g, '');
     if (digits.length < 10) return showReturnMessage(returnPhoneMessage, 'Digite seu celular com DDD.');
+    if (requestingReturnCode || confirmingReturnCode) return;
+    requestingReturnCode = true;
     returningPhone = digits;
     try {
       const response = await fetch('/api/login/codigo', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:digits}) });
@@ -2028,14 +2033,18 @@
       if (data.demo_code) { demoCodeValue.textContent = data.demo_code; demoCodeBox.hidden = false; }
       window.setTimeout(() => returnCode?.focus(), 100);
     } catch (_) {
-      showReturnMessage(returnPhoneMessage, 'Não foi possível conectar ao servidor. Abra o site pelo Flask ou PythonAnywhere.');
-    }
+      showReturnMessage(returnPhoneMessage, 'Não foi possível conectar ao servidor. Tente novamente.');
+    } finally { requestingReturnCode = false; }
   });
   returnCodeForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (confirmingReturnCode || requestingReturnCode) return;
     const code = (returnCode?.value || '').replace(/\D/g, '');
     if (code.length !== 6) return showReturnMessage(returnCodeMessage, 'Digite os 6 números do código.');
-    // V111.49: entrar com código não solicita fullscreen automaticamente.
+    confirmingReturnCode = true;
+    const submit = returnCodeForm.querySelector('button[type="submit"]');
+    if (submit) { submit.disabled = true; submit.textContent = 'Entrando...'; }
+    if (returnCodeMessage) returnCodeMessage.hidden = true;
     try {
       const response = await fetch('/api/login/confirmar', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({phone:returningPhone, code}) });
       const data = await response.json();
@@ -2046,6 +2055,9 @@
       startTraining({ focus: true, boot: true });
     } catch (_) {
       showReturnMessage(returnCodeMessage, 'Não foi possível conectar ao servidor para entrar.');
+    } finally {
+      confirmingReturnCode = false;
+      if (submit) { submit.disabled = false; submit.textContent = 'Continuar meu treino'; }
     }
   });
   $('#learnMoreBtn')?.addEventListener('click', () => openInfoModal());
