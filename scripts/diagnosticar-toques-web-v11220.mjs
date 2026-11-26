@@ -114,7 +114,6 @@ try{
        console.log('DIAG_JOURNEY_SMS '+name);
      }
    }catch(err){console.log('DIAG_JOURNEY_FAIL '+name+' '+String(err).slice(0,1400));fail++;}
-   await page.evaluate(()=>window.EducaFreeMode.stop());
    // Auditoria das principais telas depois da chamada: botões por toque real.
    const otherApps=[
     {id:'photos',steps:async()=>{await page.locator('[data-webx="photo-tab"][data-value="collections"]').tap({timeout:7000});

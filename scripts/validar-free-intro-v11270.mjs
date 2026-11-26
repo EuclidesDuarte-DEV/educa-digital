@@ -1,4 +1,4 @@
-import {chromium,webkit} from 'playwright';
+import {chromium,devices,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER||engine.name()===process.env.EDUCA_BROWSER)){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
@@ -153,5 +153,29 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
     console.log('FREE_INTRO_V11270_OK',engine.name(),viewport.width,viewport.height);
    }finally{await page.close();}
   }
+  const platform=engine===webkit?'ios':'android';
+  const device=devices[platform==='ios'?'iPhone 13':'Pixel 7'];
+  const userAgent=device.userAgent+(platform==='ios'?' EducaNativeIOS/1.1':' EducaNativeAndroid/1.1');
+  const nativePage=await browser.newPage({viewport:device.viewport,isMobile:true,hasTouch:true,userAgent});
+  try{
+   await nativePage.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+   await nativePage.goto('http://127.0.0.1:8789/html/?app=1&platform='+platform+'&experience=web',{waitUntil:'domcontentloaded'});
+   await nativePage.waitForFunction(()=>window.EducaFreeView?.canFreeMode?.()&&window.EducaFreeMode);
+   assert.equal(await nativePage.evaluate(()=>window.EducaReleaseChannel.platform),platform);
+   assert.equal(await nativePage.evaluate(()=>window.EducaReleaseChannel.renderPlatform),'web');
+   await nativePage.evaluate(()=>{document.body.classList.add('prototype-focus');window.EducaFreeView.openLearningHub();});
+   await nativePage.locator('#freeModeEntry').tap();
+   assert.equal(await nativePage.locator('#freeIntroChannel').innerText(),'WhatsApp');
+   assert.equal(await nativePage.locator('#freeIntroNotice').evaluate(e=>getComputedStyle(e).position),'static');
+   assert.equal(await nativePage.locator('.free-intro-surface').evaluate(e=>getComputedStyle(e).overflowY),'auto');
+   await nativePage.locator('#freeIntroStart').tap({timeout:10000});
+   await nativePage.locator('#freeEventOpen').tap({timeout:10000});
+   await nativePage.evaluate(()=>window.EducaFreeMode.reportContact());
+   await nativePage.locator('#freeIntroView.is-active').waitFor({state:'visible'});
+   assert.equal(await nativePage.locator('#freeIntroChannel').innerText(),'Videochamada');
+   await nativePage.locator('#freeIntroBack').tap();
+   assert.equal(await nativePage.evaluate(()=>window.EducaFreeMode.isActive()),false);
+   console.log('FREE_INTRO_NATIVE_ROUTE_OK',platform);
+  }finally{await nativePage.close();}
  }finally{await browser.close();}
 }
