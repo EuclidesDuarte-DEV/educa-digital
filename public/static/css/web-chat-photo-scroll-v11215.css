@@ -125,3 +125,24 @@ html[data-educa-platform="web"] #phoneScreen .android-view.is-active :is(.chat-w
  overscroll-behavior-y:contain!important;overflow-y:auto!important;min-height:0!important;
  scroll-behavior:auto!important;
 }
+
+/* V112.69 — a altura da conversa é definida pela moldura, nunca pelas mensagens.
+   A regra vale também para o WhatsApp normal e para o treino guiado. */
+html[data-educa-platform="web"] #phoneScreen :is(#chatView,#normalChatView).android-view.is-active {
+ position:absolute!important;inset:0!important;
+ box-sizing:border-box!important;width:100%!important;
+ height:100%!important;min-height:0!important;max-height:100%!important;
+ overflow:hidden!important;
+}
+html[data-educa-platform="web"] #phoneScreen :is(#chatView,#normalChatView).android-view.is-active > .chat-surface {
+ position:absolute!important;inset:0!important;
+ box-sizing:border-box!important;height:100%!important;min-height:0!important;max-height:100%!important;
+ display:grid!important;grid-template-rows:minmax(55px,auto) minmax(0,1fr) auto auto!important;
+ overflow:hidden!important;
+}
+html[data-educa-platform="web"] #phoneScreen :is(#chatView,#normalChatView).android-view.is-active .chat-wallpaper {
+ position:relative!important;inset:auto!important;
+ align-self:stretch!important;min-height:0!important;height:0!important;min-block-size:100%!important;max-height:100%!important;
+ box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;
+ touch-action:pan-y!important;overscroll-behavior-y:contain!important;
+}
