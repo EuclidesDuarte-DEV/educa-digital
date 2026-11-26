@@ -16,7 +16,7 @@ const stages={
  landing:{buttons:['#startNowBtn','#openAccessibilitySettings'],text:['#inicio h1','.hero-subtitle','#startNowLabel']},
  login:{buttons:['#quickSaveBtn','#quickPhone'],text:['#startModalTitle','#startModalIntro','#quickStartForm label span']},
  learning:{buttons:['#freeModeEntry','#exitFullscreen','#openAccessibilitySettings','#learningView .learning-card'],text:['#learningGreeting','#freeModeEntry .free-entry-copy strong','#freeModeEntry .free-entry-copy em']},
- intro:{buttons:['#freeIntroBack','#freeIntroStart','#freeIntroCancel'],text:['#freeIntroTitle','.free-intro-story p']},
+ intro:{buttons:['#freeIntroBack','#freeIntroStart'],text:['#freeIntroTitle','.free-intro-story p']},
  accessibility:{buttons:['#accessibilityDialog button'],text:['#a11yTitle','#a11yIntro']}
 };
 async function audit(page,stage,key,mode='normal'){
@@ -93,9 +93,9 @@ for(const engine of [chromium,webkit]){
     await audit(page,'intro',key,'extra');
     // Teste complementar de ampliação de texto: duplica o tamanho calculado
     // dos textos principais; não substitui o zoom nativo manual do navegador.
-    await page.evaluate(()=>{window.EducaAccessibility.update({text:'normal'});const nodes=[...document.querySelectorAll('#freeIntroTitle,.free-intro-story p,#freeIntroBack span,#freeIntroCancel span,#freeIntroStartLabel')];const sizes=nodes.map(e=>parseFloat(getComputedStyle(e).fontSize));nodes.forEach((e,i)=>e.style.setProperty('font-size',sizes[i]*2+'px','important'));});
+    await page.evaluate(()=>{window.EducaAccessibility.update({text:'normal'});const nodes=[...document.querySelectorAll('#freeIntroTitle,.free-intro-story p,#freeIntroBack span,#freeIntroStartLabel')];const sizes=nodes.map(e=>parseFloat(getComputedStyle(e).fontSize));nodes.forEach((e,i)=>e.style.setProperty('font-size',sizes[i]*2+'px','important'));});
     await audit(page,'intro',key,'text200');
-    await page.evaluate(()=>document.querySelectorAll('#freeIntroTitle,.free-intro-story p,#freeIntroBack span,#freeIntroCancel span,#freeIntroStartLabel').forEach(e=>e.style.removeProperty('font-size')));
+    await page.evaluate(()=>document.querySelectorAll('#freeIntroTitle,.free-intro-story p,#freeIntroBack span,#freeIntroStartLabel').forEach(e=>e.style.removeProperty('font-size')));
     await page.evaluate(()=>window.EducaAccessibility.update({text:'normal'}));
     await page.locator('#freeIntroBack').click();
     await page.waitForFunction(()=>document.querySelector('#phoneScreen').dataset.currentView==='learning');

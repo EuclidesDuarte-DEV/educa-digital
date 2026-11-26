@@ -124,26 +124,6 @@
 @media(max-width:359px){.v11153-sms-actions button{font-size:11px;padding:6px 3px}.v11153-sms-messages{padding:11px 8px}}
 @media(prefers-reduced-motion:reduce){.v11153-sms-bubble{animation:none!important}}
 
-/* V112.70: navegação e apresentação do Modo Livre no canal Web. */
-html[data-educa-platform="web"] #phoneScreen #freeIntroView.is-active{position:absolute!important;inset:0!important;height:100%!important;min-height:0!important;overflow:hidden!important;background:#f3f7fc;color:#17385e;}
-html[data-educa-platform="web"] #freeIntroView .free-intro-surface{position:absolute;inset:0;box-sizing:border-box;padding:40px 14px 32px;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior-y:contain;display:flex;flex-direction:column;gap:12px;}
-#freeIntroView .free-intro-surface>*{flex-shrink:0;}
-#freeIntroView header button,#freeIntroCancel{display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #c4d8ef;background:#fff;color:#174c8c;border-radius:12px;min-height:44px;padding:8px 12px;font-weight:750;font-size:calc(14px * var(--ed-font-factor,1));}
-#freeIntroView header button svg,#freeIntroStart svg{width:20px;height:20px;flex:none;}
-#freeIntroView .free-intro-hero{border-radius:20px;background:linear-gradient(145deg,#103b77,#176bc2);padding:16px;color:white;text-align:center;}
-#freeIntroView .free-intro-kicker{font-size:11px;font-weight:800;letter-spacing:.08em;color:#e6f2ff;}
-#freeIntroView .free-intro-symbol{width:54px;height:54px;margin:8px auto;display:grid;place-items:center;background:#ffffff20;border-radius:16px;}
-#freeIntroView .free-intro-symbol svg{width:40px;height:40px;}
-#freeIntroView h2{font-size:calc(22px * var(--ed-font-factor,1));line-height:1.2;margin:6px 0 8px;overflow-wrap:anywhere;color:inherit;}
-#freeIntroView p{font-size:calc(14px * var(--ed-font-factor,1));line-height:1.4;margin:0;overflow-wrap:anywhere;}
-#freeIntroView .free-intro-steps{display:grid;gap:8px;}
-#freeIntroView article{display:flex;gap:10px;padding:11px;border:1px solid #d5e3f2;border-radius:13px;background:#fff;}
-#freeIntroView article>span{flex:none;display:grid;place-items:center;background:#e5efff;color:#14518e;font-size:16px;font-weight:850;border-radius:50%;width:32px;height:32px;}
-#freeIntroView article>div{min-width:0;}
-#freeIntroView article strong{display:block;font-size:calc(16px * var(--ed-font-factor,1));margin-bottom:3px;color:#174578;}
-#freeIntroView .free-intro-safe{padding:12px;border:1px solid #b8d8c9;background:#e8f6ef;color:#1e5f46;border-radius:12px;}
-#freeIntroStart{min-height:54px;padding:12px;border:0;border-radius:14px;background:#155db3;color:white;font-size:calc(16px * var(--ed-font-factor,1));font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;}
-#freeIntroStart svg{transform:rotate(180deg);}
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="home"] #homeView .at-a-glance{right:134px!important;width:auto!important;max-width:calc(100% - 150px)!important;}
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="home"] #homeView .at-a-glance strong{white-space:normal!important;line-height:1.2!important;}
 html[data-educa-platform="web"] #phoneScreen.free-active #freeHomeTools{top:53px!important;right:10px!important;}
@@ -154,156 +134,239 @@ html[data-educa-platform="web"] #phoneScreen.free-active .free-app-back:not([hid
 #phoneScreen .free-app-back svg{width:24px;height:24px;}
 html[data-educa-platform="web"] #phoneScreen.free-active #freeFloatingBack{display:flex;align-items:center;gap:7px;min-height:44px;font-size:13px;}
 html[data-educa-platform="web"] #phoneScreen.free-active #freeSummaryExit{border:1px solid #a92535!important;background:#b82e48!important;color:#fff!important;font-weight:800!important;}
-html[data-educa-platform="web"] #phoneScreen :is(.free-app-back,#freeIntroBack,#freeIntroStart,#freeIntroCancel,#freeExitBtn,#freeFloatingBack):focus-visible{outline:3px solid #267cdd!important;outline-offset:2px!important;}
+html[data-educa-platform="web"] #phoneScreen :is(.free-app-back,#freeIntroBack,#freeIntroStart,#freeExitBtn,#freeFloatingBack):focus-visible{outline:3px solid #267cdd!important;outline-offset:2px!important;}
 
-/* V112.70 polimento 2: instruções rolam, ações permanecem visíveis. */
-html[data-educa-platform="web"] #freeIntroView .free-intro-surface{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;overflow:hidden;padding:38px 12px 25px;}
-#freeIntroView .free-intro-content{min-height:0;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior-y:contain;display:flex;flex-direction:column;gap:10px;padding:1px 2px 6px;}
-#freeIntroView .free-intro-content>*{flex-shrink:0;}
-#freeIntroView .free-intro-actions{display:grid;gap:6px;background:#f3f7fc;padding:5px 2px 0;}
-#freeIntroView .free-intro-actions button{width:100%;box-sizing:border-box;min-width:0;white-space:normal;overflow-wrap:anywhere;}
-#freeIntroView .free-intro-hero{padding:12px;}
-#freeIntroView .free-intro-symbol{width:44px;height:44px;margin:6px auto;}
-#freeIntroView .free-intro-symbol svg{width:32px;height:32px;}
-#freeIntroView #freeIntroTitle{margin:4px 0 6px;}
-html.a11y-high-contrast #freeIntroView.is-active :is(.free-intro-hero,article,.free-intro-safe,.free-intro-actions){background:#000!important;color:#fff!important;border:1px solid #fff!important;}
-html.a11y-high-contrast #freeIntroView.is-active :is(article strong,.free-intro-kicker){color:#fff!important;}
-html.a11y-high-contrast #freeIntroView.is-active{background:#000!important;color:#fff!important;}
-html.a11y-high-contrast #freeIntroView.is-active button{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
-
-/* V112.71: introdução reduzida, com leitura simples e ação principal clara. */
-#freeIntroView .free-intro-content{justify-content:safe center;gap:14px;}
-#freeIntroView .free-intro-hero{padding:24px 16px 26px;border-radius:22px;}
-#freeIntroView .free-intro-symbol{width:68px;height:68px;margin:14px auto;}
-#freeIntroView .free-intro-symbol svg{width:46px;height:46px;}
-#freeIntroView #freeIntroTitle{font-size:calc(28px * var(--ed-font-factor,1));margin:8px 0 12px;}
-#freeIntroView .free-intro-hero p{font-size:calc(16px * var(--ed-font-factor,1));line-height:1.5;}
-#freeIntroView .free-intro-safe{padding:12px;text-align:center;font-size:calc(13px * var(--ed-font-factor,1));}
-#freeIntroView .free-intro-actions{gap:8px;}
-#freeIntroView #freeIntroCancel{border-color:transparent;background:transparent;}
-
-/* V112.72 — estado de leitura antes de começar a história. */
-#freeIntroView #freeIntroStart:disabled{background:#d9e3ef!important;color:#324b67!important;cursor:not-allowed;box-shadow:none;opacity:1;}
-#freeIntroView #freeIntroStart:disabled svg{visibility:hidden;}
-#freeIntroView #freeIntroStart:not(:disabled){background:#155db3;}
-#freeIntroView #freeIntroStartLabel{min-width:0;}
-
-/* V112.72 — hierarquia de leitura: título forte, narrativa em papel claro. */
-#freeIntroView .free-intro-content{gap:12px;}
-#freeIntroView .free-intro-hero{padding:16px 14px 20px;}
-#freeIntroView .free-intro-symbol{width:52px;height:52px;margin:8px auto 10px;}
-#freeIntroView .free-intro-symbol svg{width:37px;height:37px;}
-#freeIntroView #freeIntroTitle{font-size:calc(30px * var(--ed-font-factor,1));font-weight:850;line-height:1.15;color:#fff;letter-spacing:-.02em;margin:4px 0 0;text-wrap:balance;}
-#freeIntroView .free-intro-story{box-sizing:border-box;padding:18px 16px;border:1px solid #cbdced;border-radius:16px;background:#e8f0fa;color:#253b55;box-shadow:0 2px 8px #103f8508;}
-#freeIntroView .free-intro-story p{font-size:calc(17px * var(--ed-font-factor,1));line-height:1.6;text-align:left;overflow-wrap:anywhere;}
-#freeIntroView .free-intro-story em{font-style:italic;font-weight:450;color:inherit;}
-#freeIntroView .free-intro-story .free-intro-question{font-weight:750;font-style:normal;color:#17385e;margin-top:12px;}
-#freeIntroView .free-intro-safe{background:transparent;border:0;padding:4px 8px;color:#43596e;}
-#freeIntroView #freeIntroStart{min-height:58px;font-size:calc(18px * var(--ed-font-factor,1));font-weight:850;border-radius:14px;}
-#freeIntroView #freeIntroStart:not(:disabled){background:linear-gradient(135deg,#155db3,#0b4595);color:white;box-shadow:0 5px 14px #104f8838;}
-#freeIntroView #freeIntroStart:disabled{background:#d9e3ef!important;color:#324b67!important;box-shadow:none;}
-html.a11y-high-contrast #freeIntroView.is-active .free-intro-story{background:#000!important;color:#fff!important;border:1px solid #fff!important;}
-html.a11y-high-contrast #freeIntroView.is-active .free-intro-story .free-intro-question{color:#fff!important;}
-html.a11y-high-contrast #freeIntroView.is-active #freeIntroStart:not(:disabled){background:#fff!important;color:#000!important;}
-
-/* V112.72 — leitura confortável e aviso transitório sem bloquear a navegação. */
-#freeIntroView .free-intro-hero{padding:20px 14px 22px;}
-#freeIntroView .free-intro-kicker{display:block;margin-bottom:10px;}
-#freeIntroView .free-intro-story p{font-size:calc(21px * var(--ed-font-factor,1));line-height:1.5;}
-#freeIntroView .free-intro-story em{font-weight:500;}
-#freeIntroView #freeIntroCancel{min-height:48px;background:#fff;border:1.5px solid #7b9dbf;color:#174578;border-radius:12px;font-size:calc(16px * var(--ed-font-factor,1));font-weight:750;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
-#freeIntroView #freeIntroCancel svg{width:20px;height:20px;flex:none;}
-#freeIntroView #freeIntroCancel:hover{background:#e8f0fa;border-color:#174578;}
-#freeIntroView .free-intro-notice[hidden]{display:none!important;}
-#freeIntroView .free-intro-notice:not([hidden]){position:absolute;z-index:20;top:40px;left:12px;right:12px;box-sizing:border-box;background:#17385e;color:#fff;border:1px solid #86b0d9;border-radius:14px;padding:14px;font-size:calc(16px * var(--ed-font-factor,1));font-weight:650;line-height:1.4;box-shadow:0 5px 18px #102a493d;pointer-events:none;overflow-wrap:anywhere;text-align:center;}
-html.a11y-high-contrast #freeIntroView.is-active .free-intro-notice{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
-
-/* V112.72 — leitura ampliada, identificação discreta e retorno alinhado. */
-#freeIntroView .free-intro-surface>header{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;min-width:0;}
-#freeIntroView .free-intro-surface>header .free-intro-kicker{display:block;margin:0;padding:0;background:none;border:0;box-shadow:none;color:#52677c;font-size:calc(12px * var(--ed-font-factor,1));font-weight:500;letter-spacing:0;text-align:right;line-height:1.35;overflow-wrap:anywhere;}
-#freeIntroView #freeIntroBack{box-sizing:border-box;min-height:48px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px solid #7b9dbf;border-radius:12px;background:#fff;color:#174578;font-size:calc(16px * var(--ed-font-factor,1));font-weight:750;line-height:1.2;cursor:pointer;white-space:nowrap;}
-#freeIntroView #freeIntroBack svg,#freeIntroView #freeIntroCancel svg{display:block;width:28px;height:28px;flex:0 0 28px;}
-#freeIntroView #freeIntroBack span,#freeIntroView #freeIntroCancel span{min-width:0;line-height:1.2;}
-#freeIntroView #freeIntroBack:hover,#freeIntroView #freeIntroCancel:hover{background:#e8f0fa;border-color:#174578;}
-#freeIntroView #freeIntroCancel{min-height:52px;font-size:calc(17px * var(--ed-font-factor,1));gap:10px;}
-#freeIntroView .free-intro-hero{padding:20px 12px;}
-#freeIntroView #freeIntroTitle{font-size:calc(34px * var(--ed-font-factor,1));font-weight:850;line-height:1.15;margin:0;}
-#freeIntroView .free-intro-story{padding:16px 14px;}
-#freeIntroView .free-intro-story p{font-size:calc(26px * var(--ed-font-factor,1));line-height:1.45;}
-#freeIntroView .free-intro-story .free-intro-question{font-weight:800;}
-html.a11y-high-contrast #freeIntroView.is-active header .free-intro-kicker{color:#fff!important;}
-
-/* V112.73 — introdução compacta, com leitura integral na maioria das telas. */
-#freeIntroView .free-intro-surface>header{gap:7px;}
-#freeIntroView .free-intro-surface>header .free-intro-kicker{font-size:calc(11px * var(--ed-font-factor,1));}
-#freeIntroView #freeIntroBack{min-height:44px;padding:6px 9px;gap:6px;font-size:calc(14px * var(--ed-font-factor,1));}
-#freeIntroView #freeIntroBack svg,#freeIntroView #freeIntroCancel svg{width:24px;height:24px;flex-basis:24px;}
-#freeIntroView .free-intro-content{justify-content:safe center;gap:10px;padding:0 1px 4px;scrollbar-width:thin;scrollbar-color:#9cb2c9 transparent;}
-#freeIntroView .free-intro-hero{padding:12px 10px;border-radius:15px;}
-#freeIntroView #freeIntroTitle{font-size:calc(23px * var(--ed-font-factor,1));font-weight:800;line-height:1.2;letter-spacing:0;}
-#freeIntroView .free-intro-story{padding:13px 12px;border-radius:13px;box-shadow:none;}
-#freeIntroView .free-intro-story p{margin:0;font-size:calc(19px * var(--ed-font-factor,1));line-height:1.45;}
-#freeIntroView .free-intro-actions{gap:7px;padding-top:4px;}
-#freeIntroView #freeIntroStart{min-height:50px;font-size:calc(16px * var(--ed-font-factor,1));box-shadow:none;}
-#freeIntroView #freeIntroCancel{min-height:44px;font-size:calc(14px * var(--ed-font-factor,1));gap:7px;}
-
-/* V112.75 — preservar alvos de toque mesmo sob regras genéricas do telefone. */
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView #freeIntroStart{box-sizing:border-box!important;min-height:54px!important;height:auto!important;max-height:none!important;}
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView :is(#freeIntroBack,#freeIntroCancel){min-height:48px!important;height:auto!important;max-height:none!important;}
-
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView :is(#freeIntroBack,#freeIntroCancel)>svg{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;flex:0 0 24px!important;}
-
-/* V112.78 — ícones de retorno com margem para o ajuste de escala do protótipo. */
-html[data-educa-platform="web"] body #phoneHardware #phoneScreen #freeIntroView.is-active :is(#freeIntroBack,#freeIntroCancel)>svg{display:block!important;box-sizing:content-box!important;width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;max-width:none!important;max-height:none!important;flex:0 0 32px!important;align-self:center!important;transform:none!important;margin:0!important;}
-html[data-educa-platform="web"] body #phoneHardware #phoneScreen #freeIntroView.is-active :is(#freeIntroBack,#freeIntroCancel){align-items:center!important;gap:6px!important;}
-
-/* V112.81 — narrativa integrada, reflow em vez de espaços verticais artificiais. */
-html[data-educa-platform="web"] body #phoneHardware #phoneScreen #freeIntroView .free-intro-surface {
- display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;gap:14px!important;
- padding: max(38px,env(safe-area-inset-top,0px)) 14px max(32px,env(safe-area-inset-bottom,0px))!important;
- overflow-y:auto!important;overflow-x:hidden!important;scroll-padding:16px;
+/* V112.82 — uma abertura ilustrada para os quatro canais do Modo Livre. */
+html[data-educa-platform="web"] #phoneScreen #freeIntroView.is-active {
+  position: absolute !important;
+  inset: 0 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: #e8f3ff;
+  color: #092e65;
 }
+
+#phoneHardware #phoneScreen #freeIntroView .free-intro-surface {
+  position: absolute;
+  inset: max(38px, env(safe-area-inset-top, 0px)) 0 max(24px, env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  container-type: inline-size;
+  overflow: hidden auto;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  scroll-padding-block-start: 88px;
+  background: #fff;
+}
+
 #freeIntroView .free-intro-surface:focus-visible {
- outline:3px solid #267cdd;outline-offset:-3px;
+  outline: 3px solid #267cdd;
+  outline-offset: -3px;
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-content {
- display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:12px!important;flex:0 0 auto!important;overflow:visible!important;min-width:0!important;padding:0!important;
+
+#freeIntroView .free-intro-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 6px clamp(14px, 4vw, 22px) 10px;
+  padding-inline: clamp(14px, 4cqw, 22px);
+  background: #e8f3ff;
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-hero {
- display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px!important;text-align:left!important;background:linear-gradient(150deg,#123f78,#165ba5)!important;color:#fff!important;padding:16px!important;border-radius:18px!important;
+
+#freeIntroView .free-intro-mode {
+  color: #092e65;
+  font-size: calc(16px * var(--ed-font-factor, 1));
+  font-weight: 750;
+  line-height: 1.3;
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story-icon {
- display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#ffffff26;color:#fff;
+
+#phoneHardware #phoneScreen #freeIntroView #freeIntroBack {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-sizing: border-box;
+  min-height: 48px !important;
+  height: auto !important;
+  padding: 7px 12px;
+  border: 1.5px solid #133e79;
+  border-radius: 13px;
+  background: #fff;
+  color: #092e65;
+  font-size: calc(16px * var(--ed-font-factor, 1));
+  font-weight: 750;
+  line-height: 1.2;
+  cursor: pointer;
 }
-#freeIntroView .free-intro-story-icon svg {width:26px;height:26px;}
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-channel {
- font-size:calc(14px * var(--ed-font-factor,1))!important;font-weight:700;line-height:1.35;color:#fff!important;overflow-wrap:anywhere;
+
+#phoneHardware #phoneScreen #freeIntroView #freeIntroBack svg {
+  flex: 0 0 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  max-width: none !important;
+  max-height: none !important;
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView #freeIntroTitle {
- grid-column:1/-1;color:#fff!important;margin:0!important;font-size:calc(24px * var(--ed-font-factor,1))!important;line-height:1.2!important;text-align:left!important;overflow-wrap:anywhere!important;
+
+#freeIntroView .free-intro-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: clamp(110px, 29vh, 270px);
+  height: clamp(110px, min(29vh, 58cqw), 270px);
+  overflow: hidden;
+  background: linear-gradient(#c5e6fb, #bde1fa);
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story {
- border:1px solid #c8d9ed!important;background:#fff!important;border-radius:16px!important;padding:17px!important;
+
+#freeIntroView #freeIntroIllustration {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  padding-bottom: 18px;
+  box-sizing: border-box;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 13%, #000 87%, transparent);
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story p {
- color:#233c59!important;font-style:normal!important;font-weight:450!important;line-height:1.55!important;font-size:calc(19px * var(--ed-font-factor,1))!important;margin:0!important;
+
+#freeIntroView .free-intro-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  gap: 12px;
+  min-width: 0;
+  margin-top: -17px;
+  padding: 16px clamp(15px, 4vw, 23px) 14px;
+  padding-inline: clamp(15px, 4.5cqw, 23px);
+  border-radius: 32px 48px 0 0;
+  background: #fff;
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView #freeIntroNotice:not([hidden]) {
- position:static!important;inset:auto!important;display:flex!important;align-items:flex-start!important;gap:9px!important;text-align:left!important;
- background:#e8f1fb!important;color:#24486f!important;box-shadow:none!important;border:1px solid #c4d9ef!important;padding:12px!important;border-radius:12px!important;font-size:calc(15px * var(--ed-font-factor,1))!important;line-height:1.45!important;font-weight:550!important;
+
+#freeIntroView .free-intro-channel-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #092e65;
+  font-size: calc(16px * var(--ed-font-factor, 1));
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
-#freeIntroView #freeIntroNotice svg {width:24px;height:24px;flex:0 0 24px;}
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-actions {
- position:static!important;margin:0!important;padding:0!important;background:transparent!important;gap:10px!important;flex:0 0 auto!important;
+
+#freeIntroView .free-intro-story-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: #10539e;
+  color: #fff;
 }
-html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-actions button {
- min-height:50px!important;height:auto!important;white-space:normal!important;overflow-wrap:anywhere!important;
+
+#freeIntroView .free-intro-story-icon svg {
+  width: 23px;
+  height: 23px;
 }
-html.a11y-high-contrast[data-educa-platform="web"] #phoneScreen #freeIntroView :is(.free-intro-hero,.free-intro-story,#freeIntroNotice:not([hidden])) {
- color:#fff!important;background:#000!important;border:2px solid #fff!important;
+
+#phoneScreen #freeIntroView #freeIntroTitle {
+  margin: 0;
+  color: #092e65;
+  font-size: calc(clamp(26px, 7.5vw, 32px) * var(--ed-font-factor, 1));
+  font-weight: 850;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
-html.a11y-high-contrast[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story p {color:#fff!important;}
-@media(max-width:360px){
- html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-hero{padding:14px!important;}
- html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story{padding:13px!important;}
+
+#phoneScreen #freeIntroView .free-intro-story p {
+  margin: 0;
+  color: #1d3047;
+  font-size: calc(19px * var(--ed-font-factor, 1));
+  line-height: 1.46;
+  overflow-wrap: anywhere;
+}
+
+#freeIntroView #freeIntroNotice:not([hidden]) {
+  position: static;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #e1efff;
+  color: #0c386d;
+  font-size: calc(15px * var(--ed-font-factor, 1));
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+#freeIntroView #freeIntroNotice svg {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+}
+
+#freeIntroView .free-intro-actions {
+  margin-top: auto;
+  padding-top: 2px;
+}
+
+#phoneHardware #phoneScreen #freeIntroView #freeIntroStart {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 54px !important;
+  height: auto !important;
+  padding: 10px 13px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  background: #064fb5;
+  color: #fff;
+  font-size: calc(18px * var(--ed-font-factor, 1));
+  font-weight: 850;
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+#phoneHardware #phoneScreen #freeIntroView #freeIntroStart:disabled {
+  background: #dce9f7;
+  color: #2c4c71;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+html.a11y-high-contrast #phoneHardware #phoneScreen #freeIntroView :is(.free-intro-surface, .free-intro-header, .free-intro-content) {
+  background: #000;
+}
+
+html.a11y-high-contrast #phoneHardware #phoneScreen #freeIntroView :is(.free-intro-mode, .free-intro-channel-row, #freeIntroTitle, .free-intro-story p) {
+  color: #fff;
+}
+
+html.a11y-high-contrast #phoneHardware #phoneScreen #freeIntroView :is(#freeIntroBack, #freeIntroNotice:not([hidden]), #freeIntroStart:disabled) {
+  border: 1px solid #fff;
+  background: #000;
+  color: #fff;
+}
+
+html.a11y-high-contrast #phoneHardware #phoneScreen #freeIntroView #freeIntroStart:not(:disabled) {
+  background: #fff;
+  color: #000;
 }

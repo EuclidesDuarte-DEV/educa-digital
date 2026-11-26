@@ -1,5 +1,13 @@
 import {chromium,devices,webkit} from 'playwright';
 import assert from 'node:assert/strict';
+
+async function checkIllustration(page,channel){
+ const image=page.locator('#freeIntroIllustration');
+ assert.equal(await image.getAttribute('src'),'/static/img/free-story-v11282/'+channel+'.webp');
+ await page.waitForFunction(()=>{const image=document.getElementById('freeIntroIllustration');return image.complete&&image.naturalWidth>0;});
+ assert.equal(await image.getAttribute('alt'),'');
+}
+
 for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER||engine.name()===process.env.EDUCA_BROWSER)){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
@@ -48,13 +56,13 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
-    assert.equal(await page.locator('#freeIntroView .free-intro-steps').count(),0);
-    assert.equal(await page.locator('#freeIntroView .free-intro-symbol').count(),0);
+    assert.equal(await page.locator('#freeIntroView button').count(),2);
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
+    await checkIllustration(page,'whatsapp');
     const design=await page.evaluate(()=>{
      const title=getComputedStyle(document.querySelector('#freeIntroTitle'));
      const narrative=getComputedStyle(document.querySelector('.free-intro-story p'));
-     const paper=getComputedStyle(document.querySelector('.free-intro-story'));
+     const paper=getComputedStyle(document.querySelector('.free-intro-content'));
      const header=getComputedStyle(document.querySelector('.free-intro-hero'));
      const action=document.getElementById('freeIntroStart').getBoundingClientRect();
      return {titleSize:parseFloat(title.fontSize),titleWeight:parseInt(title.fontWeight),storySize:parseFloat(narrative.fontSize),storyStyle:narrative.fontStyle,storyColor:narrative.color,titleColor:title.color,storyBackground:paper.backgroundColor,headerBackground:header.backgroundColor,buttonHeight:action.height};
@@ -68,19 +76,17 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
     assert.ok(design.titleSize>=23,'Título pequeno');
     const layout=await page.evaluate(()=>{
       const q=s=>document.querySelector(s), rect=s=>{const b=q(s).getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,cy:b.top+b.height/2};};
-      const style=getComputedStyle(q('#freeIntroBack')),tag=getComputedStyle(q('#freeIntroView .free-intro-kicker'));
-      return {header:rect('#freeIntroView header'),back:rect('#freeIntroBack'),arrow:rect('#freeIntroBack svg'),label:rect('#freeIntroBack span'),tag:rect('#freeIntroView .free-intro-kicker'),border:parseFloat(style.borderTopWidth),cursor:style.cursor,tagBg:tag.backgroundColor,tagWeight:parseInt(tag.fontWeight),lowerArrow:rect('#freeIntroCancel svg'),lowerLabel:rect('#freeIntroCancel span')};
+      const style=getComputedStyle(q('#freeIntroBack'));
+      return {header:rect('#freeIntroView header'),back:rect('#freeIntroBack'),arrow:rect('#freeIntroBack svg'),label:rect('#freeIntroBack span'),tag:rect('#freeIntroView .free-intro-mode'),border:parseFloat(style.borderTopWidth),cursor:style.cursor};
     });
     assert.ok(layout.back.height>=44&&layout.border>=1&&layout.cursor==='pointer','Voltar sem aparência de botão');
-    assert.ok(layout.arrow.width>=24&&layout.lowerArrow.width>=24,'Seta pequena '+JSON.stringify(layout));
-    assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados '+JSON.stringify(layout));
-    assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1&&layout.tagBg==='rgba(0, 0, 0, 0)'&&layout.tagWeight<=500,'Identificação sobreposta ou destacada');
+    assert.ok(layout.arrow.width>=24,'Seta pequena '+JSON.stringify(layout));
+    assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2,'Seta e texto desalinhados '+JSON.stringify(layout));
+    assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1,'Identificação sobreposta ou cortada');
     const notice=page.locator('#freeIntroNotice');
-    assert.match(await notice.innerText(),/Treinamento seguro.*dados fictícios/);
+    assert.match(await notice.innerText(),/Simulação\. Use apenas dados fictícios/);
     assert.equal(await notice.evaluate(e=>getComputedStyle(e).position),'static','O aviso não pode sobrepor a tela');
     assert.ok(await notice.isVisible(),'Aviso não apareceu');
-    const returnStyle=await page.locator('#freeIntroCancel').evaluate(e=>({height:e.getBoundingClientRect().height,border:parseFloat(getComputedStyle(e).borderTopWidth),cursor:getComputedStyle(e).cursor}));
-    assert.ok(returnStyle.height>=44&&returnStyle.border>=1&&returnStyle.cursor==='pointer','Retorno sem destaque');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     await page.locator('#freeIntroStart').evaluate(b=>b.click());
@@ -100,7 +106,7 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
     });
     assert.ok(inside,'Botão inicial cortado na fonte extra');
     await page.evaluate(()=>window.EducaAccessibility.update({text:'normal'}));
-    await page.locator('#freeIntroCancel').click();
+    await page.locator('#freeIntroBack').click();
     await view('learning');
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
@@ -136,6 +142,7 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
     await view('free-intro');
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma videochamada inesperada');
     assert.equal(await page.locator('#freeIntroChannel').innerText(),'Videochamada');
+    await checkIllustration(page,'video');
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     assert.ok(await page.locator('#freeIntroNotice').isVisible());
     await page.locator('#freeIntroStart').click({timeout:10000});
@@ -145,6 +152,7 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
     await page.locator('#freeSummaryNext').click();
     await view('free-intro');
     assert.equal(await page.locator('#freeIntroChannel').innerText(),'Ligação telefônica');
+    await checkIllustration(page,'call');
     await page.locator('#freeIntroBack').click();
     await view('learning');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
@@ -166,6 +174,7 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
    await nativePage.evaluate(()=>{document.body.classList.add('prototype-focus');window.EducaFreeView.openLearningHub();});
    await nativePage.locator('#freeModeEntry').tap();
    assert.equal(await nativePage.locator('#freeIntroChannel').innerText(),'WhatsApp');
+   await checkIllustration(nativePage,'whatsapp');
    assert.equal(await nativePage.locator('#freeIntroNotice').evaluate(e=>getComputedStyle(e).position),'static');
    assert.equal(await nativePage.locator('.free-intro-surface').evaluate(e=>getComputedStyle(e).overflowY),'auto');
    await nativePage.locator('#freeIntroStart').tap({timeout:10000});
@@ -173,6 +182,7 @@ for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER|
    await nativePage.evaluate(()=>window.EducaFreeMode.reportContact());
    await nativePage.locator('#freeIntroView.is-active').waitFor({state:'visible'});
    assert.equal(await nativePage.locator('#freeIntroChannel').innerText(),'Videochamada');
+   await checkIllustration(nativePage,'video');
    await nativePage.locator('#freeIntroBack').tap();
    assert.equal(await nativePage.evaluate(()=>window.EducaFreeMode.isActive()),false);
    console.log('FREE_INTRO_NATIVE_ROUTE_OK',platform);

@@ -108,6 +108,8 @@ try{
        const channel=page.locator('#freeIntroView.is-active #freeIntroChannel');
        await channel.waitFor({state:'visible',timeout:8000});
        if(await channel.innerText()!=='Mensagens (SMS)')throw Error('O próximo desafio deve apresentar uma história de SMS');
+       const smsArt=await page.locator('#freeIntroIllustration').getAttribute('src');
+       if(smsArt!=='/static/img/free-story-v11282/sms.webp')throw Error('A história de SMS deve usar a ilustração de mensagem de texto');
        await page.locator('#freeIntroStart').tap({timeout:10000});
        await page.locator('#freeEventOpen').tap({timeout:8000});
        await page.locator('#freeSmsView.is-active').waitFor({state:'visible',timeout:8000});
