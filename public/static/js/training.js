@@ -1785,9 +1785,9 @@
     if (coachCard) { coachCard.hidden = true; coachCard.classList.remove('is-visible'); }
     if (accountCard) accountCard.hidden = true;
 
-    // V112.75: todas as entradas autenticadas passam por aqui, inclusive
+    // V112.77: todas as entradas autenticadas na Web, desktop e mobile, inclusive
     // cadastro, código de retorno e conta lembrada. Não dependa de gesto antigo.
-    if (accessMode === 'registered' && autoPrototypeMobile) {
+    if (accessMode === 'registered' && autoPrototypeWeb) {
       openAutomaticPrototype();
       focus = true;
     }
@@ -3003,7 +3003,7 @@
   }
 
   async function closePhoneFullscreen() {
-    if (autoPrototypeMobile) {
+    if (autoPrototypeWeb) {
       document.removeEventListener('click', promoteToNativeFullscreen, true);
       if (autoPrototypeLanding && !trainingStarted) document.body.classList.remove('prototype-focus');
       autoPrototypeLanding = false;
@@ -3123,11 +3123,10 @@
   const mobileOrTablet = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
     (navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches);
-  const autoPrototypeMobile = !nativeMobile && !isInstalledDisplayMode() &&
-    rootForAutoFullscreen.dataset.educaPlatform === 'web' && mobileOrTablet;
+  const autoPrototypeWeb = !nativeMobile && rootForAutoFullscreen.dataset.educaPlatform === 'web';
   let autoPrototypeLanding = false;
   function openAutomaticPrototype(){
-    if (!autoPrototypeMobile) return;
+    if (!autoPrototypeWeb) return;
     autoPrototypeLanding = !trainingStarted;
     rootForAutoFullscreen.classList.add('educa-immersive-active');
     document.body.classList.add('prototype-focus');
@@ -3137,20 +3136,31 @@
     document.addEventListener('click', promoteToNativeFullscreen, true);
     syncFullscreenControls();
     window.scrollTo({top:0,behavior:'auto'});
+    // Quando o gesto de login ainda está ativo, tentar fullscreen nativo já.
+    // Se a resposta do servidor demorou, o modo imersivo já está ativo.
+    if (navigator.userActivation?.isActive && !isInstalledDisplayMode()) void requestAuthenticatedFullscreen();
   }
   async function promoteToNativeFullscreen(event){
     if (!event.isTrusted || !rootForAutoFullscreen.classList.contains('educa-immersive-active') ||
         event.target.closest?.('#exitFullscreen,input,textarea,select,[contenteditable]') ||
         document.fullscreenElement) return;
-    document.removeEventListener('click', promoteToNativeFullscreen, true);
-    if (!rootForAutoFullscreen.requestFullscreen || !document.fullscreenEnabled) return;
+    await requestAuthenticatedFullscreen();
+  }
+  let requestingAuthenticatedFullscreen = false;
+  async function requestAuthenticatedFullscreen(){
+    if (requestingAuthenticatedFullscreen || isInstalledDisplayMode() ||
+        !rootForAutoFullscreen.classList.contains('educa-immersive-active') ||
+        !rootForAutoFullscreen.requestFullscreen || !document.fullscreenEnabled || document.fullscreenElement) return;
+    requestingAuthenticatedFullscreen = true;
     try {
       await rootForAutoFullscreen.requestFullscreen({navigationUI:'hide'});
       if (document.fullscreenElement) {
+        document.removeEventListener('click', promoteToNativeFullscreen, true);
         // Preserva o fallback caso o teclado ou navegador encerre fullscreen.
         syncFullscreenControls();
       }
     } catch (_) { /* O protótipo continua ampliado no viewport. */ }
+    finally { requestingAuthenticatedFullscreen = false; }
   }
 
   accountForm?.addEventListener('submit', async (event) => {
@@ -3210,7 +3220,7 @@
   trainingStarted = false;
   setView('home');
   applyLandingPretest();
-  if (autoPrototypeMobile) {
+  if (autoPrototypeWeb && mobileOrTablet) {
     const user = getRememberedUser();
     // Conta válida retorna ao treino; convidado permanece no pré-teste bloqueado.
     if (user?.phone && /^[a-f0-9]{64}$/.test(user.levelToken || '')) {
