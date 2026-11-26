@@ -3092,6 +3092,38 @@
   // ESC, F11 ou a saída automática também restauram o botão de ampliar.
   syncFullscreenControls();
 
+  // V112.73: Web em celular/tablet abre ampliada desde a primeira renderização.
+  // A Fullscreen API exige uma interação confiável; até lá, usa o viewport.
+  const rootForAutoFullscreen = document.documentElement;
+  const nativeMobile = rootForAutoFullscreen.classList.contains('educa-mobile-app') ||
+    rootForAutoFullscreen.classList.contains('educa-mobile-web-parity') ||
+    /EducaNative(?:Android|IOS)/i.test(navigator.userAgent);
+  const mobileOrTablet = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+    (navigator.maxTouchPoints > 0 && matchMedia('(pointer: coarse)').matches);
+  if (!nativeMobile && !isInstalledDisplayMode() &&
+      rootForAutoFullscreen.dataset.educaPlatform === 'web' && mobileOrTablet) {
+    rootForAutoFullscreen.classList.add('educa-immersive-active');
+    syncFullscreenControls();
+    const promoteToNativeFullscreen = async (event) => {
+      if (!event.isTrusted) return;
+      document.removeEventListener('click', promoteToNativeFullscreen);
+      if (!rootForAutoFullscreen.classList.contains('educa-immersive-active') ||
+          event.target.closest?.('#exitFullscreen') || document.fullscreenElement) return;
+      if (!rootForAutoFullscreen.requestFullscreen || !document.fullscreenEnabled) return;
+      try {
+        await rootForAutoFullscreen.requestFullscreen({ navigationUI: 'hide' });
+        if (document.fullscreenElement) {
+          rootForAutoFullscreen.classList.remove('educa-immersive-active');
+          syncFullscreenControls();
+        }
+      } catch (_) {
+        // Safari/iPhone e navegadores com bloqueio continuam no modo visual.
+      }
+    };
+    document.addEventListener('click', promoteToNativeFullscreen);
+  }
+
   accountForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const phone = ($('#accountPhone')?.value || '').trim();
