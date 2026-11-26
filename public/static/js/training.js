@@ -2976,8 +2976,12 @@
   // disponibiliza a Fullscreen API para o documento em abas normais;
   // neste caso ampliamos o simulador para o viewport visível, sem mudar
   // a atividade nem abrir a central de aprendizagem automaticamente.
+  function isNativePhoneFullscreen() {
+    return document.fullscreenElement === document.documentElement;
+  }
+
   function isPhoneExpanded() {
-    return Boolean(document.fullscreenElement || document.documentElement.classList.contains('educa-immersive-active'));
+    return isNativePhoneFullscreen() || document.documentElement.classList.contains('educa-immersive-active');
   }
 
   async function openPhoneFullscreen() {
@@ -3009,7 +3013,7 @@
       autoPrototypeLanding = false;
     }
     document.documentElement.classList.remove('educa-immersive-active');
-    if (document.fullscreenElement && document.exitFullscreen) {
+    if (isNativePhoneFullscreen() && document.exitFullscreen) {
       try { await document.exitFullscreen(); } catch (_) {}
     }
     syncFullscreenControls();
@@ -3084,6 +3088,12 @@
   // V74: controles de tela cheia mutuamente exclusivos, fora da área do celular.
   // O alvo da Fullscreen API é o elemento <html>, não #phoneStage.
   function syncFullscreenControls() {
+    const nativeFullscreen = isNativePhoneFullscreen();
+    if (nativeFullscreen) {
+      // A ampliação é temporária. Ao sair pelo navegador, volte ao tamanho normal.
+      document.documentElement.classList.remove('educa-immersive-active');
+      document.removeEventListener('click', promoteToNativeFullscreen, true);
+    }
     const expanded = isPhoneExpanded();
     document.documentElement.classList.toggle('educa-fullscreen-active', expanded);
     if (fullscreenBtn) {
@@ -3091,6 +3101,8 @@
       fullscreenBtn.setAttribute('aria-hidden', expanded ? 'true' : 'false');
     }
     if (exitFullscreen) {
+      const label = nativeFullscreen ? 'Sair da tela cheia' : 'Reduzir simulador';
+      if (exitFullscreen.textContent !== label) exitFullscreen.textContent = label;
       exitFullscreen.hidden = !expanded;
       exitFullscreen.setAttribute('aria-hidden', expanded ? 'false' : 'true');
     }
@@ -3112,6 +3124,7 @@
   });
   exitFullscreen?.addEventListener('click', closePhoneFullscreen);
   document.addEventListener('fullscreenchange', syncFullscreenControls);
+  window.addEventListener('pageshow', syncFullscreenControls);
   // ESC, F11 ou a saída automática também restauram o botão de ampliar.
   syncFullscreenControls();
 
@@ -3154,11 +3167,7 @@
     requestingAuthenticatedFullscreen = true;
     try {
       await rootForAutoFullscreen.requestFullscreen({navigationUI:'hide'});
-      if (document.fullscreenElement) {
-        document.removeEventListener('click', promoteToNativeFullscreen, true);
-        // Preserva o fallback caso o teclado ou navegador encerre fullscreen.
-        syncFullscreenControls();
-      }
+      syncFullscreenControls();
     } catch (_) { /* O protótipo continua ampliado no viewport. */ }
     finally { requestingAuthenticatedFullscreen = false; }
   }
