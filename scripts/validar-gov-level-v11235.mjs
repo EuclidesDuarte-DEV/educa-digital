@@ -6,7 +6,9 @@ for(const engine of [chromium,webkit]){
  for(const [platform,width,height] of [['web',320,568],['web',390,844],['web',1366,650],['web',1920,1080],['web',896,414],['android',320,568],['android',430,932],['ios',390,844],['ios',768,1024]]){
  const page=await browser.newPage({viewport:{width,height},hasTouch:width<800});
  try{
- await page.goto('http://127.0.0.1:8789/html/?'+(platform==='web'?'platform=web':'app=1&platform='+platform+'&experience=web'),{waitUntil:'domcontentloaded'});
+ // Sessão fictícia local: estes testes verificam funcionalidades após cadastro.
+   await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+   await page.goto('http://127.0.0.1:8789/html/?'+(platform==='web'?'platform=web':'app=1&platform='+platform+'&experience=web'),{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>window.EducaFreeView&&window.EducaReleaseChannel);
  await page.evaluate(()=>{document.body.classList.add('prototype-focus');window.EducaFreeView.isTraining=()=>true;window.EducaFreeView.setView('govbr-home');});
  for(const full of [false,true]){

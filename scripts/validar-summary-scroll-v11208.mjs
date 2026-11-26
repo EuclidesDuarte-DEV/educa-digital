@@ -20,6 +20,8 @@ try{
   const name=config.width+'x'+config.height+'-'+config.font;
   const page=await browser.newPage({viewport:{width:config.width,height:config.height}});
   try{
+   // Sessão fictícia: o resumo pertence ao Modo Livre após cadastro, sem API real.
+   await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeMode&&window.EducaFreeView&&window.EducaAccessibility&&document.documentElement.dataset.educaPlatform==='web',{timeout:15000});
    await page.evaluate(font=>{

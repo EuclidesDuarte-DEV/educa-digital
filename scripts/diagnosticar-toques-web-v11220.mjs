@@ -25,6 +25,8 @@ try{
   const ctx=await browser.newContext({viewport,isMobile:viewport.width<600,hasTouch:true,colorScheme:'dark'});
   const page=await ctx.newPage();const name=viewport.width+'x'+viewport.height;
   try{
+   // Sessão fictícia local: estes testes verificam funcionalidades após cadastro.
+   await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeMode&&window.EducaFreeView&&
      window.EducaWebReal&&document.documentElement.dataset.educaPlatform==='web',{timeout:16000});
