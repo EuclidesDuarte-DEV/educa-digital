@@ -31,7 +31,9 @@ try{
    isMobile:c.width<600,userAgent:c.ua,colorScheme:'dark',deviceScaleFactor:2});
   const page=await ctx.newPage();
   try{
-   await page.goto('http://127.0.0.1:8789/html/?app=1&platform='+c.platform+'&experience=web',
+   // Conta exclusivamente fictícia para testes locais de interface. Nenhum cadastro real.
+    await page.addInitScript(() => localStorage.setItem('educaRememberedUser', JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+    await page.goto('http://127.0.0.1:8789/html/?app=1&platform='+c.platform+'&experience=web',
     {waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaReleaseChannel&&window.EducaFreeMode&&
      window.EducaWebReal&&window.EducaWebMoreAppsV11219&&window.EducaWebAppsV11216,
