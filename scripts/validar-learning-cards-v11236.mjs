@@ -9,7 +9,9 @@ for(const engine of [chromium,webkit]){
  for(const [platform,width,height] of cases){
   const page=await browser.newPage({viewport:{width,height}});
   try{
-   await page.goto('http://127.0.0.1:8789/html/?'+(platform==='web'?'platform=web':'app=1&platform='+platform+'&experience=web'),{waitUntil:'domcontentloaded'});
+   // Conta exclusivamente fictícia para testes locais de interface. Nenhum cadastro real.
+    await page.addInitScript(() => localStorage.setItem('educaRememberedUser', JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+    await page.goto('http://127.0.0.1:8789/html/?'+(platform==='web'?'platform=web':'app=1&platform='+platform+'&experience=web'),{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.EducaFreeView&&window.EducaFreeMode);
    await page.evaluate(()=>{document.body.classList.add('prototype-focus');window.EducaFreeView.setView('learning');});
    for(const size of ['normal','large','extra']){
