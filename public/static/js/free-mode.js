@@ -38,7 +38,7 @@ const visible=()=>els.phone?.getAttribute('data-current-view')||'';
 const now=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 const privateData=t=>/(?:\d[\s.-]?){6,}|https?:\/\/|www\.|\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(t);
 function show(name){bridge()?.setView(name);syncUI();}
-function syncUI(){const familyChat=state.active&&visible()==='chat'&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal';const showFamilyActions=familyChat&&(!isWebTraining()||!!document.documentElement?.dataset?.educaNativePlatform);if(els.familyActions)els.familyActions.hidden=!showFamilyActions;els.phone?.classList.toggle('free-family-chat',showFamilyActions);if(els.tools)els.tools.hidden=!state.active||visible()!=='home';if(els.floating)els.floating.hidden=!state.active||['home','whatsapp','chat','normal-chat'].includes(visible())||visible().startsWith('free-');if(els.solved)els.solved.textContent=isWebTraining()?`${state.finished} situações · ${state.score} pontos`:`${state.finished} situações`;if(els.form)els.form.hidden=!state.active||visible()!=='chat';updateUnread();}
+function syncUI(){const familyChat=state.active&&visible()==='chat'&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal';const showFamilyActions=familyChat&&(!isWebTraining()||!!document.documentElement?.dataset?.educaNativePlatform);if(els.familyActions)els.familyActions.hidden=!showFamilyActions;els.phone?.classList.toggle('free-family-chat',showFamilyActions);if(els.tools)els.tools.hidden=!state.active||visible()!=='home';if(els.floating)els.floating.hidden=!state.active||['home','whatsapp','chat','normal-chat'].includes(visible())||visible().startsWith('free-')||(isWebTraining()&&['bank-home','govbr-home','webreal'].includes(visible()));for(const id of ['freeBankBack','freeWhatsappBack','freeGovBack']){const button=$('#'+id);if(button)button.hidden=!state.active||!isWebTraining();}if(els.solved)els.solved.textContent=isWebTraining()?`${state.finished} situações · ${state.score} pontos`:`${state.finished} situações`;if(els.form)els.form.hidden=!state.active||visible()!=='chat';updateUnread();}
 function stopVoice(){state.callHandsFree=false;state.callUtterance=null;window.EducaLiaNeuralPlayback?.stop?.('call');try{state.recognizer?.stop();}catch(_){}state.recognizer=null;}
 function clearRequest(){state.request?.abort();state.request=null;state.replying=false;if(els.typing)els.typing.hidden=true;if(els.send)els.send.disabled=false;if(els.smsSend)els.smsSend.disabled=false;}
 function clearTransition(){clearTimeout(state.transitionTimer);state.transitionTimer=null;}
@@ -99,7 +99,7 @@ function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);s
  if(list&&state.baseline)for(const {row,preview,time,badgeHidden,hidden} of state.baseline){row.hidden=hidden;row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
  els.phone?.classList.remove('free-active','free-family-chat');if(els.notice)els.notice.hidden=true;if(els.form)els.form.hidden=true;setStatus('');syncUI();}
 function exit(){stop();bridge()?.openLearningHub();}
-function home(){if(!state.active)return;clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
+function home(){if(!state.active)return;clearRequest();clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
 // V112.57 — mensagens fictícias surgem apenas quando o evento acontece.
 // Retirar as linhas do DOM evita que pesquisa e filtros revelem desafios futuros.
 // A lista original das atividades guiadas é restaurada em stop().
@@ -372,7 +372,21 @@ const summaryScroller=$('#freeSummaryView .v106-summary');
 for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
  summaryScroller?.addEventListener(eventName,pauseSummaryTransition,
   ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
-$('#freeModeEntry')?.addEventListener('click',start);$('#freeExitBtn')?.addEventListener('click',exit);$('#freeSummaryExit')?.addEventListener('click',exit);$('#freeSummaryHome')?.addEventListener('click',home);$('#freeSummaryNext')?.addEventListener('click',continueTraining);
+function openFreeIntro(){
+ if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;
+ if(!isWebTraining()){start();return;}
+ if(state.active)return;
+ show('free-intro');
+ const intro=$('#freeIntroView .free-intro-surface');if(intro)intro.scrollTop=0;
+ $('#freeIntroTitle')?.focus?.({preventScroll:true});
+}
+function closeFreeIntro(){if(visible()==='free-intro'&&!state.active)bridge()?.openLearningHub();}
+$('#freeModeEntry')?.addEventListener('click',openFreeIntro);
+$('#freeIntroStart')?.addEventListener('click',()=>{if(visible()==='free-intro'&&!state.active)start();});
+$('#freeIntroBack')?.addEventListener('click',closeFreeIntro);
+$('#freeIntroCancel')?.addEventListener('click',closeFreeIntro);
+for(const id of ['freeBankBack','freeWhatsappBack','freeGovBack'])$('#'+id)?.addEventListener('click',home);
+$('#freeExitBtn')?.addEventListener('click',exit);$('#freeSummaryExit')?.addEventListener('click',exit);$('#freeSummaryHome')?.addEventListener('click',home);$('#freeSummaryNext')?.addEventListener('click',continueTraining);
 $('#freeEventOpen')?.addEventListener('click',openPending);$('#freeEventDismiss')?.addEventListener('click',dismiss);$('#freeFloatingBack')?.addEventListener('click',home);
 els.form?.addEventListener('submit',e=>{e.preventDefault();const t=els.input.value;if(!t.trim())return;els.input.value='';send(t);});
 $('#freeFamilyVerify')?.addEventListener('click',()=>{if(state.active&&state.scenario?.channel==='whatsapp'&&state.scenario?.kind!=='normal'&&visible()==='chat')show('free-contacts');});
