@@ -629,7 +629,7 @@
   }
 
   // Ponte opcional: o modo livre navega sem alterar as atividades guiadas.
-  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted, canFreeMode: () => trainingStarted && !pretestLocked() };
+  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted, canFreeMode: () => trainingStarted && !pretestLocked(), canNavigateSystem: () => !pretestLocked() };
 
   function clearGuide({ keepState = false } = {}) {
     guideEpoch += 1;
