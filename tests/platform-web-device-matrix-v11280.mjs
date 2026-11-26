@@ -6,13 +6,17 @@ await mkdir(out,{recursive:true});
 const sizes=[[280,653],[320,568],[360,800],[390,844],[412,915],[430,932],[844,390],[600,960],[768,1024],[1024,768],[1280,720],[1366,768],[1920,1080],[2560,1440]];
 const report=[];
 const base='http://127.0.0.1:8789/static/channels/web/senior-preview-v11279/index.html';
-for(const engine of [chromium,webkit,firefox]){
+const engines=[chromium,webkit,firefox].filter(engine=>!process.env.EDUCA_BROWSER||engine.name()===process.env.EDUCA_BROWSER);
+assert.ok(engines.length,'Motor de navegador desconhecido');
+for(const engine of engines){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
   for(const [width,height] of sizes){
    const key=engine.name()+'-'+width+'x'+height;
    const context=await browser.newContext({viewport:{width,height},hasTouch:width<1100});
    const page=await context.newPage();
+   page.setDefaultTimeout(12000);
+   page.setDefaultNavigationTimeout(20000);
    try{
     await page.route('**/api/**',async route=>{
      const path=new URL(route.request().url()).pathname;
@@ -81,5 +85,5 @@ for(const engine of [chromium,webkit,firefox]){
 }
 await writeFile(out+'/report.json',JSON.stringify(report,null,2));
 const findings=report.filter(x=>x.issues.length);
-console.log('DEVICE_MATRIX_SUMMARY',JSON.stringify({observations:report.length,findings:findings.length,viewports:sizes.length,engines:3}));
+console.log('DEVICE_MATRIX_SUMMARY',JSON.stringify({observations:report.length,findings:findings.length,viewports:sizes.length,engines:engines.length}));
 assert.equal(findings.length,0,'Revisar ocorrências e exceções no relatório antes de publicar');
