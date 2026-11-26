@@ -8,10 +8,12 @@ for(const engine of [chromium,webkit]){
    const page=await browser.newPage({viewport,hasTouch:true});
    try{
     const phone='65900000001',token='a'.repeat(64);
+    let confirmations=0;
     await page.route('**/api/**',async route=>{
      const path=new URL(route.request().url()).pathname;
+     if(path==='/api/login/confirmar'){confirmations++;assert.equal(route.request().postDataJSON().code,'012345');await new Promise(resolve=>setTimeout(resolve,300));}
      const data=path==='/api/conta'?{needs_login:true,message:'Conta existente'}:
-       path==='/api/login/codigo'?{demo_code:'123456'}:
+       path==='/api/login/codigo'?{demo_code:'012345'}:
        path==='/api/login/confirmar'?{name:'Participante',phone,level_token:token}:
        {ok:true,progress:[],activities:[],level:1};
      await route.fulfill({status:path==='/api/conta'?409:200,contentType:'application/json',body:JSON.stringify(data)});
@@ -22,9 +24,10 @@ for(const engine of [chromium,webkit]){
     await page.locator('#startNowBtn').click();
     await page.locator('#quickPhone').fill(phone);
     await page.locator('#quickSaveBtn').click();
-    await page.locator('#returnCode').fill('123456');
-    await page.locator('#returnCodeForm').locator('button[type=submit]').click();
+    await page.locator('#returnCode').fill('012345');
+    await page.locator('#returnCodeForm').evaluate(form=>{form.requestSubmit();form.requestSubmit();});
     await page.waitForFunction(()=>document.body.classList.contains('prototype-focus')&&document.documentElement.classList.contains('educa-fullscreen-active')&&document.querySelector('#phoneScreen').dataset.currentView==='learning');
+    assert.equal(confirmations,1,'Confirmação duplicada do PIN');
     assert.ok(await page.locator('#exitFullscreen').isVisible(),'Saída da tela cheia precisa permanecer acessível');
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('educaRememberedUser')).phone),phone);
     console.log('LOGIN_AUTO_FULLSCREEN_V11275_OK',engine.name(),viewport.width,viewport.height);
