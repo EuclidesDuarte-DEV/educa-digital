@@ -33,8 +33,8 @@
       const d=JSON.parse(localStorage.getItem(key)||'{}');
       const pending=Array.isArray(d.pending)?d.pending.filter(e=>/^[a-zA-Z0-9_-]{12,80}$/.test(e?.eventId||'')&&['safe','risk'].includes(e?.outcome)):[];
       const confirmed=clamp(d.confirmed??d.xp);
-      return {xp:clamp(d.xp),confirmed,pending,synced:false};
-    }catch(_){return {xp:0,confirmed:0,pending:[],synced:false};}
+      return {xp:clamp(d.xp),confirmed,pending,synced:false,authRequired:false};
+    }catch(_){return {xp:0,confirmed:0,pending:[],synced:false,authRequired:false};}
   }
   let account=accountInfo(),model=restore(account.key);
   let dialog=null, focusBefore=null;
@@ -48,7 +48,7 @@
   function refreshAccount(){
     const next=accountInfo(),changed=next.key!==account.key,tokenChanged=next.token!==account.token;
     if(changed){account=next;model=restore(next.key);closeDialog();updateBadge();}
-    else if(tokenChanged){account=next;model.synced=false;}
+    else if(tokenChanged){account=next;model.synced=false;model.authRequired=false;}
     return changed||tokenChanged;
   }
   async function sync(){
@@ -59,12 +59,15 @@
     const headers={Authorization:'Bearer '+identity.token,'Content-Type':'application/json'};
     try{
       const get=await window.fetch('/api/modo-livre/nivel',{headers,cache:'no-store'});
+      if(get.status===401){target.authRequired=true;throw Error('Sessão expirada');}
       if(!get.ok)throw Error('Nível indisponível');
+      target.authRequired=false;
       const data=await get.json();if(!data.ok||!Number.isFinite(Number(data.xp)))throw Error('Resposta inválida');
       target.confirmed=clamp(data.xp);recalculate(target);persist(target,identity.key);
       while(target.pending.length&&model===target&&account.token===identity.token){
         const item=target.pending[0];
         const res=await window.fetch('/api/modo-livre/nivel',{method:'POST',headers,body:JSON.stringify(item),cache:'no-store'});
+        if(res.status===401){target.authRequired=true;throw Error('Sessão expirada');}
         if(!res.ok)throw Error('Nível indisponível');
         const result=await res.json();if(!result.ok||!Number.isFinite(Number(result.xp)))throw Error('Resposta inválida');
         target.confirmed=clamp(result.xp);target.pending=target.pending.filter(e=>e.eventId!==item.eventId);
@@ -156,7 +159,13 @@
     sheet.append(element('p','ed-modo-count',info.next?info.xp+' de '+info.next+' XP para o próximo nível':info.xp+' XP acumulados · nível máximo'));
     sheet.append(element('p','ed-modo-info','Somente decisões tomadas no Modo Livre mudam seu nível.'));
     sheet.append(element('p','ed-modo-info','Decisão segura: +20 XP. Decisão arriscada: −15 XP. Erros da IA ou da conexão não retiram pontos.'));
-    sheet.append(element('p','ed-modo-footnote',!account.registered?'Progresso de visitante neste navegador.':model.synced?'Nível sincronizado com sua conta.':account.token?'Nível salvo nesta conta; sincronização pendente.':'Nível salvo nesta conta neste aparelho. Entre novamente para ativar a sincronização.'));
+    sheet.append(element('p','ed-modo-footnote',!account.registered?'Progresso de visitante neste navegador.':model.synced?'Nível sincronizado com sua conta.':account.token&&!model.authRequired?'Nível salvo nesta conta; sincronização pendente.':'Nível salvo nesta conta neste aparelho. Entre novamente para ativar a sincronização.'));
+    if(account.registered&&(!account.token||model.authRequired)){
+      const renew=element('button','ed-modo-close-session','Entrar novamente para sincronizar');
+      renew.type='button';
+      renew.addEventListener('click',()=>{closeDialog();void window.EducaFreeView?.reauthenticateLevel?.();});
+      sheet.append(renew);
+    }
   }
   badge.addEventListener('click',progressView);
   function showResult(result){
