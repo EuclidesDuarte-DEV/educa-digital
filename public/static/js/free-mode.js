@@ -372,17 +372,44 @@ const summaryScroller=$('#freeSummaryView .v106-summary');
 for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
  summaryScroller?.addEventListener(eventName,pauseSummaryTransition,
   ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
+// V112.72 — tempo mínimo de leitura da narrativa, sem início automático.
+const INTRO_READ_MS=5000;
+let introTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
+function cancelIntroReading(){
+ clearInterval(introTimer);introTimer=null;introRemaining=INTRO_READ_MS;
+ const button=$('#freeIntroStart');if(button)button.disabled=true;
+ const label=$('#freeIntroStartLabel');if(label)label.textContent='Leia a história · 5 s';
+}
+function tickIntroReading(){
+ if(visible()!=='free-intro'||state.active){cancelIntroReading();return;}
+ const now=performance.now();
+ if(!document.hidden)introRemaining=Math.max(0,introRemaining-(now-introLastTick));
+ introLastTick=now;
+ const button=$('#freeIntroStart'),label=$('#freeIntroStartLabel');
+ if(introRemaining<=0){
+  clearInterval(introTimer);introTimer=null;
+  if(button)button.disabled=false;
+  if(label)label.textContent='Começar história';
+  const status=$('#freeIntroReady');if(status)status.textContent='Você já pode começar a história.';
+ }else if(label)label.textContent='Leia a história · '+Math.ceil(introRemaining/1000)+' s';
+}
+document.addEventListener('visibilitychange',()=>{introLastTick=performance.now();});
+window.addEventListener('educa:training-view',e=>{if(e.detail?.view!=='free-intro')cancelIntroReading();});
 function openFreeIntro(){
  if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;
  if(!isWebTraining()){start();return;}
  if(state.active)return;
+ cancelIntroReading();
  show('free-intro');
+ if(visible()!=='free-intro')return;
  const intro=$('#freeIntroView .free-intro-content');if(intro)intro.scrollTop=0;
+ const status=$('#freeIntroReady');if(status)status.textContent='';
  $('#freeIntroTitle')?.focus?.({preventScroll:true});
+ introLastTick=performance.now();introTimer=setInterval(tickIntroReading,100);
 }
-function closeFreeIntro(){if(visible()==='free-intro'&&!state.active)bridge()?.openLearningHub();}
+function closeFreeIntro(){if(visible()==='free-intro'&&!state.active){cancelIntroReading();bridge()?.openLearningHub();}}
 $('#freeModeEntry')?.addEventListener('click',openFreeIntro);
-$('#freeIntroStart')?.addEventListener('click',()=>{if(visible()==='free-intro'&&!state.active)start();});
+$('#freeIntroStart')?.addEventListener('click',()=>{if(visible()==='free-intro'&&!state.active&&introRemaining<=0&&!$('#freeIntroStart').disabled){cancelIntroReading();start();}});
 $('#freeIntroBack')?.addEventListener('click',closeFreeIntro);
 $('#freeIntroCancel')?.addEventListener('click',closeFreeIntro);
 for(const id of ['freeBankBack','freeWhatsappBack','freeGovBack'])$('#'+id)?.addEventListener('click',home);
