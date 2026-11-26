@@ -1,0 +1,1498 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Educa+ Digital</title>
+  <meta name="theme-color" content="#f7faff">
+  <link rel="manifest" href="/static/manifest.webmanifest?v=11222">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Educa+">
+  <link rel="apple-touch-icon" href="/static/icons_pwa/icon-192.png">
+  <script>
+    // Somente PWA instalado, WebView Android próprio ou atalho ?app=1.
+    // A vitrine do site normal permanece inalterada.
+    (function(){
+      const query=new URLSearchParams(location.search);
+      const installed=matchMedia('(display-mode:standalone)').matches
+        || matchMedia('(display-mode:fullscreen)').matches
+        || navigator.standalone===true;
+      const nativeAndroid=navigator.userAgent.includes('EducaNativeAndroid/');
+      // O app nativo pode usar a mesma página inicial da Web, sem forçar o telefone imersivo.
+      const parity=query.get('experience')==='web' &&
+        (['android','ios'].includes(query.get('platform')) || installed || nativeAndroid);
+      if(!parity && (installed||nativeAndroid||query.get('app')==='1')){
+        document.documentElement.classList.add('educa-mobile-app');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/app.css?v=106">
+  <link rel="stylesheet" href="/static/css/accessibility.css?v=11140">
+  <link rel="stylesheet" href="/static/css/onboarding.css?v=11145">
+  <link rel="stylesheet" href="/static/css/android-system.css?v=104">
+  <link rel="stylesheet" href="/static/css/free-mode.css?v=11153&intro=11278">
+  <link rel="stylesheet" href="/static/css/web-real.css?v=109">
+  <link rel="stylesheet" href="/static/css/web-apps-v11216.css?v=11216">
+  <link rel="stylesheet" href="/static/css/web-gmail-light-v11217.css?v=11217">
+  <link rel="stylesheet" href="/static/css/free-video.css?v=11112">
+  <link rel="stylesheet" href="/static/css/lia-fotorreal.css?v=11131">
+  <!-- Módulos usados somente quando a chamada de treinamento é atendida. -->
+
+<link rel="stylesheet" href="/static/css/lia-female-voice.css?v=11111">
+<link rel="stylesheet" href="/static/css/hierarchy-v11146.css?v=11146">
+<link rel="stylesheet" href="/static/css/responsive-v11147.css?v=11147&order=11244">
+<link rel="stylesheet" href="/static/css/responsive-v11148.css?v=11148">
+<link rel="stylesheet" href="/static/css/responsive-v11149.css?v=11149">
+<link rel="stylesheet" href="/static/css/fullscreen-v11150.css?v=11150">
+<link rel="stylesheet" href="/static/css/phone-entry-v11151.css?v=11151">
+<link rel="stylesheet" href="/static/css/responsive-v11154.css?v=11155"><link rel="stylesheet" href="/static/css/lia-call-v11156.css?v=11156"><link rel="stylesheet" href="/static/css/mobile-app-v11158.css?v=11158"><link rel="stylesheet" href="/static/css/responsive-v11172.css?v=11172"><link rel="stylesheet" href="/static/css/responsive-v11173.css?v=11173"><link rel="stylesheet" href="/static/css/responsive-v11174.css?v=11174"><link rel="stylesheet" href="/static/css/responsive-v11175.css?v=11175"><script src="/static/js/platform-channel-v11160.js?v=11222&webfix=11212&nativeheader=11231&dock=11255&account=11263&pretest=11267"></script>  <link rel="stylesheet" href="/static/css/lia-fullscreen-v11206.css?v=11206">
+<link rel="stylesheet" href="/static/css/web-quick-result-v11210.css?v=11210">
+<link rel="stylesheet" href="/static/css/web-level-badge-v11211.css?v=11211">
+<link rel="stylesheet" href="/static/css/web-family-photo-v11212.css?v=11212">
+<link rel="stylesheet" href="/static/css/web-contact-profile-v11214.css?v=11214">
+<link rel="stylesheet" href="/static/css/web-chat-photo-scroll-v11215.css?v=11215&scroll=11269">
+<link rel="stylesheet" href="/static/css/web-apps-light-notices-v11218.css?v=11218">
+<link rel="stylesheet" href="/static/css/web-light-youtube-maps-agenda-v11219.css?v=11219">
+<link rel="stylesheet" href="/static/css/web-call-touch-light-v11220.css?v=11220">
+<link rel="stylesheet" href="/static/css/web-compact-toolbars-v11221.css?v=11221&fix=11224">
+<link rel="stylesheet" href="/static/css/lia-zoom-v11230.css?v=11233&touch=11256">
+<link rel="stylesheet" href="/static/css/mobile-safe-header-v11231.css?v=11231">
+<link rel="stylesheet" href="/static/css/sms-responsive-v11234.css?v=11234">
+<link rel="stylesheet" href="/static/css/gov-level-responsive-v11235.css?v=11235">
+<link rel="stylesheet" href="/static/css/learning-cards-v11236.css?v=11244&spacing=11268">
+<link rel="stylesheet" href="/static/css/home-responsive-v11238.css?v=11244&expand=11275">
+<link rel="stylesheet" href="/static/css/home-fullscreen-parity-v11253.css?v=11253">
+<link rel="stylesheet" href="/static/css/security-path-polish-v11252.css?v=11252&header=11258&all=11259">
+  <link id="seniorPreviewStyles" rel="stylesheet" href="/static/channels/web/senior-preview-v11279/styles.css?v=11279">
+</head>
+<body class="training-page home-training-page">
+  <header class="site-header home-simple-header">
+    <a class="brand" href="/" aria-label="Educa+ Digital — início">
+      <img src="/static/img/logo.png" alt="Educa+ Digital">
+    </a>
+    <div class="header-actions">
+  <!-- V111.50: atalho na mesma barra que a saída quando o celular é ampliado. -->
+  <aside class="educa-external-access" aria-label="Ferramentas de acessibilidade do Educa+ Digital">
+    <button id="openAccessibilitySettings" class="a11y-header-button" type="button" aria-haspopup="dialog" aria-controls="accessibilityDialog" aria-label="Abrir ajustes de acessibilidade"><span class="a11y-icon-bubble" aria-hidden="true"><svg class="a11y-icon-figure" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13.7" stroke="currentColor" stroke-width="1.35"/><circle cx="16" cy="8.6" r="2.05" fill="currentColor"/><path d="m8.2 13.7 7.8 1.55 7.8-1.55M16 15.25v5.55m0 0-4.85 5.45M16 20.8l4.85 5.45" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="a11y-header-word">Acessibilidade</span></button>
+  </aside>
+
+      <button id="openGuidedTour" class="educa-tour-replay" type="button" aria-label="Ver tutorial de primeiros passos" title="Ver tutorial de primeiros passos">? <span>Como usar</span></button>
+      <span class="header-trust" id="headerTrust">Pré-teste gratuito</span>
+      <button class="header-logout" id="logoutBtn" type="button" hidden>Sair</button>
+    </div>
+  </header>
+
+
+  <!-- V111.40: painel lateral sob demanda, com ações claras e sem pop-up central. -->
+  <dialog id="accessibilityDialog" class="a11y-dialog" aria-labelledby="a11yTitle" aria-describedby="a11yIntro">
+    <div class="a11y-dialog-header">
+      <div class="a11y-dialog-titlebar">
+        <span class="a11y-panel-emblem" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13.5" stroke="currentColor" stroke-width="1.35"/><circle cx="16" cy="8.2" r="2" fill="currentColor"/><path d="m8.2 13.7 7.8 1.55 7.8-1.55M16 15.25v5.5m0 0-4.8 5.3M16 20.75l4.8 5.3" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/></svg>
+        </span>
+        <div class="a11y-panel-heading">
+          <p class="a11y-eyebrow">SEU EDUCA+ DO SEU JEITO</p>
+          <h2 id="a11yTitle">Acessibilidade</h2>
+        </div>
+        <button id="a11ySkip" class="a11y-dialog-close" type="button" aria-label="Fechar painel de acessibilidade" title="Fechar painel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <p class="a11y-intro" id="a11yIntro">Escolha o que facilita seu aprendizado. As mudanças acontecem na hora e você pode alterar quando quiser.</p>
+    </div>
+    <div class="a11y-options">
+      <section class="a11y-option" aria-labelledby="a11yFontLabel">
+        <div class="a11y-option-heading" id="a11yFontLabel">
+          <span class="a11y-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="m3 19 5-13 5 13M5 15h6M15 9h6M18 6v13M15 19h6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><strong>Letras maiores</strong><span>Leia com mais conforto.</span></div>
+        </div>
+        <label for="a11yFontSize" class="a11y-select-label">Tamanho do texto</label>
+        <select id="a11yFontSize"><option value="normal">Tamanho padrão</option><option value="large">Letras grandes</option><option value="extra">Letras muito grandes</option></select>
+      </section>
+      <section class="a11y-option" aria-label="Cores mais fáceis de distinguir">
+        <label class="a11y-switch-row" for="a11yColors">
+          <span class="a11y-option-icon a11y-option-icon-contrast" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="8.3"/><path d="M12 3.7A8.3 8.3 0 0 0 12 20.3Z" fill="currentColor" stroke="none"/></svg></span>
+          <span class="a11y-switch-copy"><strong>Mais contraste</strong><span>Realça cores e contornos.</span></span>
+          <input type="checkbox" id="a11yColors" class="a11y-toggle" aria-label="Ativar contraste reforçado">
+        </label>
+      </section>
+      <section class="a11y-option" aria-label="Leitura de texto em voz alta">
+        <label class="a11y-switch-row" for="a11yReading">
+          <span class="a11y-option-icon a11y-option-icon-audio" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l4 3.4V6.6L7 10H4ZM15 9a4 4 0 0 1 0 6m2.6-8.5a8 8 0 0 1 0 11"/></svg></span>
+          <span class="a11y-switch-copy"><strong>Leitura em voz alta</strong><span>O guia fala depois do primeiro toque. Desative quando quiser.</span></span>
+          <input type="checkbox" id="a11yReading" class="a11y-toggle" aria-label="Ler automaticamente as orientações do guia após o primeiro toque">
+        </label>
+        <button id="a11yExample" class="a11y-example" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z" stroke-linecap="round" stroke-linejoin="round"/></svg> Ouvir exemplo</button>
+        <div class="a11y-inline-reader" aria-label="Controles de leitura desta tela">
+          <button id="a11yReadNow" class="a11y-read-button" type="button" hidden>Ouvir esta tela</button>
+          <span id="a11yReadStatus" class="a11y-read-status" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+      <p class="a11y-privacy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5 20 6v6c0 5-3 8-8 10-5-2-8-5-8-10V6l8-3.5Z"/><path d="m8.7 12 2.3 2.3 4.5-4.6" stroke-linecap="round" stroke-linejoin="round"/></svg> Suas escolhas ficam salvas neste navegador. Não é necessário cadastro.</p>
+    </div>
+    <div class="a11y-dialog-footer">
+      <div class="a11y-footer-autosave"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4.2 4.2L19 6.5" stroke-linecap="round"/></svg> Ajustes aplicados automaticamente</div>
+      <div class="a11y-footer-actions">
+        <button id="a11yReset" class="a11y-secondary" type="button">Restaurar padrão</button>
+        <button id="a11yFinish" class="a11y-primary" type="button">Concluir <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m5 12 4 4 10-10" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <button id="seniorPreviewToggle" class="a11y-secondary" type="button" aria-pressed="true">Voltar ao visual anterior</button>
+      <p id="a11yFeedback" class="a11y-feedback" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+  <!-- Guia de primeiros passos: ilumina o alvo real da tela. -->
+  <div id="educaTour" class="educa-tour" hidden>
+    <div class="educa-tour-scrim" aria-hidden="true"></div>
+    <div id="educaTourSpotlight" class="educa-tour-spotlight" aria-hidden="true"></div>
+    <button id="educaTourHotspot" class="educa-tour-hotspot" type="button" aria-label="Tocar no item destacado"></button>
+    <section id="educaTourCard" class="educa-tour-card" role="dialog" aria-modal="true" aria-labelledby="educaTourTitle" aria-describedby="educaTourText" tabindex="-1">
+      <div class="educa-tour-top"><span id="educaTourProgress" class="educa-tour-progress">PASSO 1 DE 3</span><button id="educaTourClose" type="button" class="educa-tour-close" aria-label="Fechar tutorial">×</button></div>
+      <h2 id="educaTourTitle">Vamos começar?</h2>
+      <p id="educaTourText">Siga o destaque para conhecer o Educa+ Digital.</p>
+      <div class="educa-tour-controls">
+        <button id="educaTourSkip" class="educa-tour-skip" type="button">Pular guia</button>
+        <div class="educa-tour-nav">
+          <button id="educaTourBack" class="educa-tour-back" type="button" disabled>Voltar</button>
+          <button id="educaTourNext" class="educa-tour-next" type="button">Próximo <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <div class="browser-fullscreen-gate" id="browserFullscreenGate" hidden>
+    <div class="browser-fullscreen-gate-card">
+      <img src="/static/img/logo.png" alt="Educa+ Digital">
+      <strong>Abrir o Educa+ em tela cheia</strong>
+      <span>O Chrome exige um toque para liberar a tela cheia na aba normal.</span>
+      <button id="browserFullscreenGateBtn" type="button">Entrar em tela cheia</button>
+      <small>Se instalar o Educa+ como aplicativo, ele pode abrir sem a barra do navegador.</small>
+    </div>
+  </div>
+
+  <div class="prototype-boot" id="prototypeBoot" hidden aria-hidden="true">
+    <div class="prototype-boot-card">
+      <img src="/static/img/logo.png" alt="Educa+ Digital">
+      <strong id="prototypeBootTitle">Preparando seu treino</strong>
+      <span id="prototypeBootText">Abrindo seu celular de prática...</span>
+      <div class="prototype-boot-progress" aria-hidden="true"><i></i></div>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero-experience" id="inicio">
+      <div class="hero-copy">
+        <p class="hero-eyebrow">UM LUGAR SEGURO PARA APRENDER</p>
+        <h1>Aprenda no seu ritmo. <span>Pratique com segurança.</span></h1>
+        <p class="hero-subtitle">Treine Pix, mensagens e serviços com segurança, sem dinheiro real nem dados pessoais.</p>
+        <div class="hero-trust-row" aria-label="Benefícios da experiência">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg> Sem dinheiro real</span><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg> Sem CPF ou senha</span>
+        </div>
+        <div class="hero-actions">
+          <button class="hero-primary" id="startNowBtn" type="button">
+            <span id="startNowLabel">Começar meu treino</span>
+            <span class="hero-primary-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </button>
+          <span class="hero-action-note" id="heroActionNote">Sem cadastro</span>
+        </div>
+      </div>
+
+      <div class="phone-preview-wrap">
+        <div class="preview-badge training-badge" aria-live="polite">
+          <span class="badge-kicker" id="miniCoachKicker">PRIMEIRA ATIVIDADE · PIX</span>
+          <strong id="miniCoachTitle">Abra o Banco</strong>
+          <small id="miniCoachText">Toque no Banco para experimentar o Pix.</small>
+        </div>
+        <div id="pretestStepBar" class="pretest-step-bar" hidden role="status" aria-live="polite">
+          <strong id="pretestStepLabel">PRÉ-TESTE DE PIX</strong>
+          <span id="pretestStepHint">Abra o Banco para começar.</span>
+        </div>
+        <div class="phone-tools">
+          <button class="phone-fullscreen-launch" id="fullscreenBtn" type="button" aria-label="Abrir celular em tela cheia" title="Tela cheia">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 4H4V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 4H20V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 20H4V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 20H20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Tela cheia</span>
+          </button>
+        </div>
+        <section class="phone-stage" id="phoneStage" aria-label="Celular Android de treinamento">
+          <button class="focus-logout" id="focusLogoutBtn" type="button" hidden aria-label="Sair da conta">Sair</button>
+          <button class="focus-expand" id="focusExpandBtn" type="button" hidden aria-label="Abrir celular em tela cheia" title="Tela cheia">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4H4V8M16 4H20V8M8 20H4V16M16 20H20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Ampliar celular</span>
+          </button>
+          <div class="phone-hardware" id="phoneHardware">
+            <span class="hardware-button power" aria-hidden="true"></span>
+            <span class="hardware-button volume-up" aria-hidden="true"></span>
+            <span class="hardware-button volume-down" aria-hidden="true"></span>
+
+            <div class="phone-screen" id="phoneScreen">
+              <div class="status-bar" aria-hidden="true">
+                <strong id="clock">15:18</strong>
+                <div class="status-icons">
+                  <svg id="wifiIcon" viewBox="0 0 24 24"><path d="M2 8.8C7.6 3.9 16.4 3.9 22 8.8l-2.1 2.3c-4.5-3.8-11.3-3.8-15.8 0L2 8.8Zm4.2 4.7c3.3-2.7 8.3-2.7 11.6 0l-2.1 2.4c-2.1-1.6-5.3-1.6-7.4 0l-2.1-2.4Zm4.2 4.7c.9-.8 2.3-.8 3.2 0L12 20l-1.6-1.8Z"/></svg>
+                  <svg id="signalIcon" viewBox="0 0 24 24"><path d="M3 20h3V14H3v6Zm5 0h3V10H8v10Zm5 0h3V6h-3v14Zm5 0h3V2h-3v18Z"/></svg>
+                  <span class="battery" id="batteryShell"><i id="batteryFill"></i></span><b id="batteryPercent">84%</b>
+                </div>
+              </div>
+              <span class="camera-hole" aria-hidden="true"></span>
+              <!-- V103: recursos do sistema Android simulado. Não alteram Wi-Fi ou dados reais. -->
+              <button class="android-shade-trigger" id="androidShadeTrigger" type="button"
+                aria-label="Abrir notificações e ajustes rápidos" aria-controls="androidShade" aria-expanded="false"></button>
+              <section class="android-system-shade" id="androidShade" aria-label="Central de notificações e ajustes rápidos"
+                role="dialog" aria-modal="false" hidden>
+                <header class="system-shade-head">
+                  <div><span id="androidShadeClock">15:18</span><small id="androidShadeDate">Segunda-feira</small></div>
+                  <button type="button" id="closeAndroidShade" aria-label="Fechar notificações">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                  </button>
+                </header>
+                <div class="system-shade-guide">Arraste para baixo para abrir · para cima para fechar</div>
+                <div class="system-quick-grid" aria-label="Controles simulados do Android">
+                  <button class="system-quick-tile is-on" type="button" data-system-toggle="wifi" aria-pressed="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.8 8.9a14 14 0 0 1 18.4 0M6 12a9.1 9.1 0 0 1 12 0M9.4 15.3a4.1 4.1 0 0 1 5.2 0M12 19h.01"/></svg>
+                    <span>Internet<small id="systemWifiState">Conectado (simulado)</small></span>
+                  </button>
+                  <button class="system-quick-tile" type="button" data-system-toggle="bluetooth" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10-5 4V3l5 4L7 17"/></svg>
+                    <span>Bluetooth<small id="systemBluetoothState">Desligado</small></span>
+                  </button>
+                  <button class="system-quick-tile" type="button" data-system-toggle="silent" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6m-3 3v-3M5 10c0-4 2-6 7-6s7 2 7 6v5l2 3H3l2-3v-5Z"/></svg>
+                    <span>Silencioso<small id="systemSilentState">Desligado</small></span>
+                  </button>
+                  <button class="system-quick-tile" type="button" data-system-toggle="airplane" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 8 2V4a1 1 0 0 1 2 0v9l8-2v3l-8 4v3l-2-1-2 1v-3l-6-4v-3Z"/></svg>
+                    <span>Modo avião<small id="systemAirplaneState">Desligado</small></span>
+                  </button>
+                </div>
+                <div class="system-brightness">
+                  <label for="androidBrightness"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg> Brilho da tela</label>
+                  <input id="androidBrightness" type="range" min="40" max="100" value="100" step="5" aria-label="Brilho da tela simulada">
+                </div>
+                <section class="system-notifications" aria-label="Notificações de exemplo">
+                  <div class="system-notification-heading"><strong>Notificações</strong><span>Ambiente de treino</span></div>
+                  <article class="system-notice"><span class="system-notice-icon">E+</span><div><strong>Educa+ Digital</strong><p>Pratique com calma. Nenhuma operação real será realizada.</p></div></article>
+                  <article class="system-notice"><span class="system-notice-icon blue">✓</span><div><strong>Dica de segurança</strong><p>Desconfie de links e pedidos urgentes de Pix.</p></div></article>
+                </section>
+                <footer class="system-shade-footer"><button id="androidOpenSettings" type="button">Ajustes do celular</button><span>Controles ilustrativos, sem alterar o aparelho real</span></footer>
+              </section>
+              <section class="android-recents" id="androidRecents" role="dialog" aria-modal="false" aria-label="Aplicativos recentes" hidden>
+                <header><strong>Aplicativos recentes</strong><button id="closeAndroidRecents" type="button" aria-label="Fechar aplicativos recentes">Fechar</button></header>
+                <p>Seu treino continua salvo. Escolha para onde voltar.</p>
+                <button type="button" id="androidReturnTraining" class="recent-card"><span class="recent-icon">E+</span><span><strong>Educa+ Digital</strong><small>Voltar às atividades</small></span></button>
+                <button type="button" id="androidReturnHome" class="recent-card"><span class="recent-icon pale">⌂</span><span><strong>Tela inicial</strong><small>Ver os aplicativos do Android</small></span></button>
+                <small class="recent-note">Esta área simula a navegação do Android. Nenhum app real é aberto.</small>
+              </section>
+              <div class="android-display-dimmer" id="androidDisplayDimmer" aria-hidden="true"></div>
+
+
+              <div class="android-view is-active" data-view="home" id="homeView">
+                <div class="wallpaper"></div>
+                <section class="at-a-glance" aria-hidden="true">
+                  <strong id="glanceDate">domingo, 27 de setembro</strong>
+                  <span>31° · Ensolarado</span>
+                </section>
+
+                <div class="launcher-grid" aria-label="Aplicativos">
+                  <button class="app-tile" data-open-app="bank" aria-label="Banco Educa"><span class="adaptive-icon shape-squircle bank-launcher-icon"><img src="/static/icons/bank.svg" alt=""></span><span>Banco</span></button>
+                  <button class="app-tile" data-open-app="whatsapp" aria-label="WhatsApp"><span class="adaptive-icon shape-squircle"><img src="/static/icons/whatsapp.svg" alt=""></span><span>WhatsApp</span></button>
+                  <button class="app-tile" data-open-app="camera" aria-label="Câmera"><span class="adaptive-icon shape-squircle"><img src="/static/icons/camera.svg" alt=""></span><span>Câmera</span></button>
+                  <button class="app-tile" data-open-app="photos" aria-label="Fotos"><span class="adaptive-icon shape-squircle"><img src="/static/icons/photos.svg" alt=""></span><span>Fotos</span></button>
+                  <button class="app-tile" data-open-app="gmail" aria-label="Gmail"><span class="adaptive-icon shape-squircle"><img src="/static/icons/gmail.svg" alt=""></span><span>Gmail</span></button>
+                  <button class="app-tile" data-open-app="maps" aria-label="Maps"><span class="adaptive-icon shape-squircle"><img src="/static/icons/maps.svg" alt=""></span><span>Maps</span></button>
+                  <button class="app-tile" data-open-app="youtube" aria-label="YouTube"><span class="adaptive-icon shape-squircle"><img src="/static/icons/youtube.svg" alt=""></span><span>YouTube</span></button>
+                  <button class="app-tile" data-open-app="govbr" aria-label="GOV.BR"><span class="adaptive-icon shape-squircle"><img src="/static/icons/govbr.svg" alt=""></span><span>GOV.BR</span></button>
+                  <button class="app-tile" data-open-app="playstore" aria-label="Play Store"><span class="adaptive-icon shape-squircle"><img src="/static/icons/playstore.svg" alt=""></span><span>Play Store</span></button>
+                  <button class="app-tile" data-open-app="settings" aria-label="Configurações"><span class="adaptive-icon shape-squircle"><img src="/static/icons/settings.svg" alt=""></span><span>Ajustes</span></button>
+                  <button class="app-tile" data-open-app="calendar" aria-label="Calendário"><span class="adaptive-icon shape-squircle calendar-icon"><img src="/static/icons/calendar.svg" alt=""></span><span>Agenda</span></button>
+                  <button class="app-tile" data-open-app="chrome" aria-label="Chrome"><span class="adaptive-icon shape-circle"><img src="/static/icons/chrome.svg" alt=""></span><span>Chrome</span></button>
+                </div>
+
+                <div class="launcher-bottom">
+                  <div class="favorite-row" aria-label="Aplicativos favoritos">
+                    <button data-open-app="phone" aria-label="Telefone"><img src="/static/icons/phone.svg" alt=""></button>
+                    <button data-open-app="messages" aria-label="Mensagens"><img src="/static/icons/messages.svg" alt=""></button>
+                    <button data-open-app="chrome" aria-label="Chrome"><img src="/static/icons/chrome.svg" alt=""></button>
+                    <button data-open-app="camera" aria-label="Câmera"><img src="/static/icons/camera.svg" alt=""></button>
+                  </div>
+                  <button class="google-search" type="button" aria-label="Pesquisar no Google"><img src="/static/icons/google.svg" alt=""><span>Pesquisar</span><svg class="launcher-search-mic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4m-4 0h8"/></svg><svg class="launcher-search-lens" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/><path d="m12 5 2 4m-8 5 4 3"/></svg></button>
+                </div>
+              </div>
+
+              <!-- V109: recursos REAIS permitidos na web. Sem fingir que o site controla o Android. -->
+              <div class="android-view webreal-app" data-view="webreal" id="webRealView" aria-label="Aplicativo com recursos do aparelho">
+                <header class="webreal-header">
+                  <button type="button" id="webRealBack" aria-label="Voltar à tela inicial">‹</button>
+                  <img id="webRealIcon" src="/static/icons/camera.svg" alt="">
+                  <div><strong id="webRealTitle">Aplicativo</strong><small id="webRealSubtitle">Recursos do aparelho, com permissão</small></div>
+                </header>
+                <div class="webreal-scroll" id="webRealBody"></div>
+                <div class="webreal-status" id="webRealStatus" role="status" aria-live="polite" hidden></div>
+              </div>
+
+              <div class="android-view" data-view="learning" id="learningView">
+                <div class="learning-surface">
+                  <header class="learning-header">
+                    <small>EDUCA+ DIGITAL</small>
+                    <strong id="learningGreeting">O que você quer aprender hoje?</strong>
+                    
+                  </header>
+<button class="free-mode-entry" id="freeModeEntry" type="button">
+                    <span class="free-entry-copy">
+                      <small class="free-entry-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m2 7 5 4 5-7 5 7 5-4-3 12H5L2 7Z"/><path d="M6 21h12v1H6z"/></svg>Carro-chefe</small>
+                      <strong>Modo Livre</strong>
+                      <em>Treine WhatsApp, SMS e chamadas com IA.</em>
+                    </span>
+                    <span class="free-entry-art" aria-hidden="true">
+                      <svg viewBox="0 0 120 136" fill="none" focusable="false">
+                        <g transform="rotate(13 66 69)">
+                          <rect x="36" y="12" width="63" height="110" rx="13" fill="#9fc3ec" opacity=".65"/>
+                          <rect x="31" y="7" width="63" height="110" rx="13" fill="#f7fbff" stroke="#bfd8f5" stroke-width="3"/>
+                          <rect x="36" y="14" width="53" height="96" rx="9" fill="#d9ecff"/>
+                          <rect x="51" y="10" width="23" height="5" rx="2.5" fill="#91b5df"/>
+                          <rect x="45" y="40" width="35" height="7" rx="3.5" fill="#fff"/>
+                          <rect x="45" y="54" width="28" height="7" rx="3.5" fill="#fff"/>
+                          <rect x="45" y="87" width="34" height="12" rx="6" fill="#b9d7f9"/>
+                        </g>
+                        <g transform="rotate(-8 27 38)">
+                          <rect x="6" y="19" width="42" height="40" rx="11" fill="#0e9d65"/>
+                          <image href="/static/icons/whatsapp.svg" x="9" y="22" width="36" height="34"/>
+                        </g>
+                        <g transform="rotate(12 95 61)">
+                          <path d="M76 41h29a9 9 0 0 1 9 9v22a9 9 0 0 1-9 9h-8l-7 7v-7H76a9 9 0 0 1-9-9V50a9 9 0 0 1 9-9Z" fill="#0868ee"/>
+                          <circle cx="79" cy="61" r="3" fill="#fff"/><circle cx="90" cy="61" r="3" fill="#fff"/><circle cx="101" cy="61" r="3" fill="#fff"/>
+                        </g>
+                        <g transform="rotate(10 23 88)">
+                          <rect x="5" y="71" width="38" height="38" rx="10" fill="#2587f5"/>
+                          <path d="M17 79c-4 1-5 5-2 10 3 6 8 11 14 12 4 0 7-3 5-6l-5-3-4 3c-4-2-7-5-8-9l3-3-3-4Z" fill="#fff"/>
+                        </g>
+                        <path d="m105 7 3-6m6 12 5-3m-10 10 8 1" stroke="#ffe086" stroke-width="3" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <span class="free-entry-chevron" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  </button>
+                  <button class="learning-featured" type="button" data-learning-topic="pix">
+                    <span class="learning-featured-icon" aria-hidden="true">
+                      <img src="/static/icons/pix.svg" alt="">
+                    </span>
+                    <span class="learning-featured-copy">
+                      <small>COMECE POR AQUI</small>
+                      <strong>Pix</strong>
+                      <span>Confira os dados antes de pagar.</span>
+                    </span>
+                    <span class="learning-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  </button>
+
+                  <div class="learning-grid" aria-label="Assuntos para aprender">
+                    <button class="learning-card" type="button" data-learning-topic="security">
+                      <span class="learning-card-icon learning-card-shield" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M12 2.5 20 5.7v5.6c0 4.9-3.2 8.8-8 10.2-4.8-1.4-8-5.3-8-10.2V5.7L12 2.5Zm0 4.1-4.3 1.7v3c0 3.1 1.7 5.7 4.3 6.9 2.6-1.2 4.3-3.8 4.3-6.9v-3L12 6.6Z"/></svg>
+                      </span>
+                      <strong>Segurança</strong>
+                      <small>Reconheça golpes e links falsos.</small>
+                      <span class="learning-card-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </button>
+                    <button class="learning-card" type="button" data-learning-topic="whatsapp">
+                      <span class="learning-card-icon"><img src="/static/icons/whatsapp.svg" alt=""></span>
+                      <strong>WhatsApp</strong>
+                      <small>Envie mensagens e faça chamadas.</small>
+                      <span class="learning-card-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </button>
+                    <button class="learning-card" type="button" data-learning-topic="settings">
+                      <span class="learning-card-icon"><img src="/static/icons/settings.svg" alt=""></span>
+                      <strong>Ajustes</strong>
+                      <small>Ajuste letras, som e Wi-Fi.</small>
+                      <span class="learning-card-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </button>
+                    <button class="learning-card" type="button" data-learning-topic="govbr">
+                      <span class="learning-card-icon"><img src="/static/icons/govbr.svg" alt=""></span>
+                      <strong>GOV.BR</strong>
+                      <small>Acesse serviços com segurança.</small>
+                      <span class="learning-card-arrow" aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    </button>
+                  </div>
+                  
+                  
+                  <label class="free-learning-consent" style="display:flex;gap:10px;align-items:flex-start;max-width:100%;font-size:0.82rem;line-height:1.4;padding:12px 8px">
+                    <input type="checkbox" id="freeLearningConsent" style="margin-top:3px;width:19px;height:19px;flex:none">
+                    <span><strong>Melhorar os treinos com a comunidade (opcional).</strong>
+                    Compartilhar apenas contagens anônimas de decisões e dúvidas simuladas.
+                    Não guardamos mensagens, áudio, telefone ou dados bancários.</span>
+                  </label>
+                  <label class="free-example-consent" style="display:flex;gap:10px;align-items:flex-start;max-width:100%;font-size:0.82rem;line-height:1.4;padding:8px 8px 14px">
+                    <input type="checkbox" id="freeExampleConsent" style="margin-top:3px;width:19px;height:19px;flex:none">
+                    <span><strong>Compartilhar exemplos de conversas do treino (opcional).</strong>
+                    Apenas falas filtradas, por até 7 dias e para revisão da equipe. Nunca digite informações pessoais.</span>
+                  </label>
+                  <div class="learning-account-options" id="learningAccountOptions">
+                    <button id="learningSaveProgressBtn" type="button" class="learning-save-optional">Criar conta · Salvar meu progresso</button>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- V112.70: introdução antes do início de uma sessão Web. -->
+              <div class="android-view" data-view="free-intro" id="freeIntroView">
+                <section class="free-intro-surface" aria-labelledby="freeIntroTitle">
+                  <header><button id="freeIntroBack" type="button" aria-label="Voltar às atividades"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg><span>Voltar</span></button><span class="free-intro-kicker">Modo Livre · História 01</span></header>
+                  <div class="free-intro-content"><div class="free-intro-hero">
+
+                    <h2 id="freeIntroTitle" tabindex="-1">Uma mensagem do seu filho</h2>
+                  </div>
+                  <div class="free-intro-story" aria-label="Texto da história">
+                    <p><em>Imagine que você é mãe de Rafael, que mora longe. Você está em casa e recebe uma mensagem que parece ser do seu filho.</em></p>
+                  </div>
+                  </div>
+                  <div id="freeIntroNotice" class="free-intro-notice" role="status" aria-live="polite" hidden>Tudo é simulado. Não informe dados reais.</div>
+                  <footer class="free-intro-actions"><button id="freeIntroStart" type="button" disabled><span id="freeIntroStartLabel">Leia a história · 5 s</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></button>
+                  <span id="freeIntroReady" class="sr-only" role="status" aria-live="polite"></span><button id="freeIntroCancel" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg><span>Voltar às atividades</span></button></footer>
+                </section>
+              </div>
+              <!-- V106: o Modo Livre usa a tela Android ORIGINAL (homeView). -->
+              <div id="freeHomeTools" class="free-home-tools" hidden>
+                <button id="freeExitBtn" class="free-micro-control" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H5v16h6m3-12 4 4-4 4m4-4H9"/></svg><span>Sair do Modo Livre</span></button>
+              </div>
+              <!-- V111.53 — SMS fictícios recebidos automaticamente no próprio celular simulado. -->
+              <div class="android-view" data-view="free-sms" id="freeSmsView">
+                <section class="v11153-sms" aria-label="SMS de treinamento: nenhuma mensagem é enviada ao telefone real">
+                  <header class="v11153-sms-header">
+                    <button id="freeSmsBack" type="button" aria-label="Voltar à tela do celular">‹</button>
+                    <div><strong id="freeSmsSender">Remetente desconhecido</strong><small>SMS SIMULADO · TREINAMENTO</small></div>
+                  </header>
+                  <div class="v11153-sms-messages" id="freeSmsMessages" role="log" aria-live="polite" aria-relevant="additions text"></div>
+                  <p id="freeSmsStatus" class="v11153-sms-status" role="status">SMS fictício · nenhum link é necessário</p>
+                  <div class="v11153-sms-actions" role="group" aria-label="Ações seguras para SMS suspeito">
+                    <button type="button" id="freeSmsVerify">Conferir no canal oficial</button>
+                    <button type="button" id="freeSmsBlock">Ignorar e bloquear</button>
+                  </div>
+                  <form id="freeSmsForm" class="v11153-sms-compose" autocomplete="off">
+                    <label class="sr-only" for="freeSmsInput">Responder à mensagem fictícia</label>
+                    <input id="freeSmsInput" maxlength="350" placeholder="Responder ao SMS de treino" spellcheck="true">
+                    <button id="freeSmsSend" type="submit" aria-label="Enviar resposta apenas na simulação">Enviar</button>
+                  </form>
+                </section>
+              </div>
+              <div class="android-view" data-view="free-call" id="freeCallView">
+                <section class="v106-call-screen">
+                  <span class="v106-sim-tag">LIGAÇÃO DE TREINAMENTO</span><div class="v106-caller-avatar">☎</div>
+                  <h2 id="freeCallName">Número desconhecido</h2><p id="freeCallLine">Chamada recebida</p>
+                  <div id="freeCallTranscript" class="v106-call-transcript" aria-live="polite"></div>
+                  <form id="freeCallForm" class="v106-call-compose" hidden><label for="freeCallInput">Sua resposta na ligação</label><div><input id="freeCallInput" maxlength="350" autocomplete="off" placeholder="Fale por texto..."/><button type="submit">Enviar</button></div></form>
+                  <div class="v106-call-buttons"><button id="freeCallAnswer" type="button" class="answer">Atender</button><button id="freeCallHangup" type="button" class="hangup">Recusar / encerrar</button></div>
+                  <div class="v106-voice-actions"><button id="freeCallSpeak" type="button">🔊 Ouvir personagem</button><button id="freeCallMic" type="button">🎙 Responder por voz</button></div>
+                  <button id="freeCallVerify" type="button" class="v106-verify">Conferir pelo canal oficial</button>
+                  <p class="v106-app-note">Sem ligação real. Voz disponível conforme o navegador.</p>
+                </section>
+              </div>
+              <!-- V110: videochamada educativa com pessoa fictícia e diálogo real da IA. -->
+              <div class="android-view" data-view="free-video" id="freeVideoView">
+                <section class="v110-video" aria-label="Videochamada de simulação com avatar de inteligência artificial">
+                  <!-- V111.5: o próprio rosto realista do vídeo Lovable, NUNCA o avatar 3D antigo. -->
+                  <div class="v110-video-photo lia-photo-real" id="freeVideoPortrait" aria-label="Lia realista, personagem fictícia da simulação">
+                    <img id="liaPhotoPoster" src="/static/img/lia-lovable-poster.jpg" alt="Retrato realista da personagem fictícia Lia">
+                    <video id="liaPhotoIdle" class="lia-photo-idle" src="/static/videos/lia-ouvindo.mp4" playsinline muted preload="metadata" hidden aria-label="Lia ouvindo em silêncio"></video>
+                    <video id="liaPhotoIdleNext" class="lia-photo-idle lia-photo-idle-next" playsinline muted preload="metadata" hidden aria-hidden="true"></video>
+                    <video id="liaPhotoSpeech" class="lia-photo-video" playsinline muted preload="auto" hidden aria-label="Lia gesticulando enquanto fala"></video>
+                    <video id="liaPhotoSpeechNext" class="lia-photo-video" playsinline muted preload="auto" hidden aria-hidden="true"></video>
+                    <div class="lia-photo-indicator" id="liaPhotoIndicator">Rosto realista • aguardando fala</div>
+                    <button type="button" id="liaPhotoPlay" hidden class="lia-photo-play">▶ Reproduzir resposta gerada</button>
+                    
+                  </div>
+                  <!-- V111.14 — chamada imersiva inspirada na organização do WhatsApp, sem marca ou alegações de E2EE. -->
+                  <header class="v110-video-top">
+                    <button type="button" id="freeVideoExpand" class="wa-top-button" aria-label="Expandir videochamada" title="Expandir videochamada"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v4m12 12h4a2 2 0 0 0 2-2v-4M3 9l6-6m12 12-6 6"/></svg></button>
+                    <div class="wa-contact-info">
+                      <strong id="freeVideoName">Lia</strong>
+                      <span class="v110-training-mark">SIMULAÇÃO COM IA · PERSONAGEM FICTÍCIA</span>
+                      <span id="freeVideoDuration">Videochamada recebida</span>
+                      <span id="freeVideoVoiceProgress" role="status" aria-live="polite" hidden></span>
+                    </div>
+                    <button id="freeVideoText" type="button" class="wa-top-button" hidden aria-label="Abrir conversa escrita" aria-expanded="false" aria-controls="freeVideoForm" title="Abrir conversa escrita"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
+                  </header>
+                  <div class="v110-selfie" id="freeVideoSelfie" aria-label="Prévia da sua câmera"><span>Você</span><span id="freeVideoSelfPlaceholder" class="v110-self-silhouette" aria-hidden="true"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-3v10l-4-3z"/></svg></span><video id="freeVideoCamera" playsinline autoplay muted hidden></video></div>
+                  <div class="v110-video-bottom">
+                    <div class="v112-caption-box" id="freeVideoCaptionBox"><div id="freeVideoSubtitle" class="v110-video-subtitle" aria-live="polite">Uma pessoa desconhecida está chamando por vídeo.</div><button id="freeVideoCaptionToggle" type="button" aria-controls="freeVideoSubtitle" aria-expanded="false" hidden>Ler tudo</button></div>
+                    <form id="freeVideoForm" class="v110-video-chat" hidden autocomplete="off"><label class="sr-only" for="freeVideoInput">Sua resposta por texto</label><input id="freeVideoInput" maxlength="350" placeholder="Escreva sua resposta…"><button id="freeVideoSend" type="submit" aria-label="Enviar mensagem à personagem">➤</button></form>
+                    <div class="v110-video-toolbar" aria-label="Controles da chamada">
+                      <details class="v112-video-more" id="freeVideoMore"><summary aria-label="Mais opções da chamada" title="Mais opções"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></summary>
+                        <div class="v112-video-more-content">
+                          <div id="freeVideoState" class="v110-video-state" role="status" aria-live="polite">Videochamada educativa · IA fictícia · nenhum Pix real</div>
+                          <button type="button" id="freeVideoCaptionsSwitch" aria-pressed="false">Ativar legendas</button>
+                          <div class="v110-video-actions" id="freeVideoActions" hidden><button type="button" id="freeVideoVerify">Conferir identidade</button></div>
+                          <div class="v113-extra-actions">
+                            <button id="freeVideoRepeat" type="button" hidden>Ouvir novamente</button>
+                            <button type="button" id="freeVideoPix">Pix de treino</button>
+                          </div>
+                          <button type="button" id="liaPhotoConfigure" class="lia-photo-configure">Verificar avatar com IA</button>
+                          <label class="lia-voice-style-label" for="freeVideoVoiceEngine">Voz da Lia
+                            <select id="freeVideoVoiceEngine" aria-label="Escolher voz da Lia">
+                              <option value="feminina" selected>Kokoro pf_dora · voz feminina neural</option>
+                              <option value="padrao">Voz feminina do aparelho (alternativa)</option>
+                            </select>
+                          </label>
+                          <label class="lia-voice-style-label" for="freeVideoVoiceStyle">Jeito de falar da Lia
+                            <select id="freeVideoVoiceStyle" aria-label="Jeito de falar da Lia">
+                              <option value="natural" selected>Natural · conversa</option>
+                              <option value="calma">Calma · pausas suaves</option>
+                              <option value="clara">Clara · articulação</option>
+                            </select>
+                          </label><label class="lia-voice-style-label" for="freeVideoLatencyMode">Prioridade da chamada
+<select id="freeVideoLatencyMode" aria-label="Preferência de rapidez ou sincronismo labial">
+<option value="rapida">Resposta rápida (voz primeiro)</option>
+<option value="sinc">Sincronizar a boca (aguardar vídeo até 16 s)</option>
+</select></label>
+                          <button type="button" id="freeVideoVoiceSettings">Escolher voz feminina</button>
+                        </div>
+                      </details>
+                      <button id="freeVideoCameraToggle" type="button" class="v110-tool" hidden aria-label="Ligar câmera" aria-pressed="false" title="Ligar câmera"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-3v10l-4-3z"/></svg></button>
+                      <button id="freeVideoSpeaker" type="button" class="v110-tool" hidden aria-label="Silenciar som da Lia" aria-pressed="false" title="Silenciar som da Lia"><svg class="wa-icon wa-speaker-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7m3-10a9 9 0 0 1 0 13"/></svg><svg class="wa-icon wa-speaker-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path d="m16 9 5 6m0-6-5 6"/></svg></button>
+                      <button id="freeVideoMic" type="button" class="v110-tool" hidden aria-label="Ativar microfone para conversar" aria-pressed="false" title="Ativar microfone para conversar"><svg class="wa-icon wa-mic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/></svg><svg class="wa-icon wa-mic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9v2a3 3 0 0 0 5.1 2.1M15 9V5a3 3 0 0 0-5.7-1.3M5 10a7 7 0 0 0 12 4.7M19 10v2m-7 5v5m-4 0h8M2 2l20 20"/></svg><span class="sr-only v110-mic-label">Conversar</span></button>
+                      <button id="freeVideoAnswer" type="button" class="v110-tool v110-accept" aria-label="Atender chamada" title="Atender chamada"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3c-.8 0-1.5.5-1.7 1.3-1.4 6.6 6.8 15 13.5 16.4.8.2 1.6-.2 1.9-.9l1.5-3.1-4.7-3.4-2.2 2.1a13 13 0 0 1-4.7-4.7l2.1-2.2L7.3 3.8 5 3Z"/></svg></button>
+                      <button id="freeVideoHangup" type="button" class="v110-tool v110-hangup" aria-label="Encerrar chamada" title="Encerrar chamada"><svg class="wa-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.1 12.2c5-4.2 12.8-4.2 17.8 0l.7.6a2 2 0 0 1 .1 2.9l-1.7 1.7a2 2 0 0 1-2.5.3l-2.5-1.4a2 2 0 0 1-.9-1.7v-1.4a14.3 14.3 0 0 0-4.2 0v1.4a2 2 0 0 1-.9 1.7l-2.5 1.4a2 2 0 0 1-2.5-.3L2.3 15.7a2 2 0 0 1 .1-2.9Z"/></svg></button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="android-view" data-view="free-contacts" id="freeContactsView"><section class="v106-app-screen v106-contacts"><header class="v106-header"><button id="freeContactsBack" type="button" aria-label="Voltar">‹</button><div><strong>Contatos</strong><small>Agenda fictícia</small></div></header><h3>Confirme por um contato que você já conhece</h3><button id="freeContactKnown" type="button">☎ Rafael · contato antigo (treino)</button><button id="freeContactBank" type="button">☎ Banco · central oficial (treino)</button><p class="v106-app-note">A verificação é simulada e não liga para números reais.</p></section></div>
+              <div class="android-view" data-view="free-pix" id="freePixView"><section class="v106-app-screen v106-pix"><header class="v106-header"><button id="freePixBack" type="button" aria-label="Voltar ao banco">‹</button><div><strong>Banco Educa · Pix</strong><small>Somente valores fictícios</small></div></header><div class="v106-pix-content"><div class="v106-bank-banner"><small>CONTA DE TREINO</small><strong>Transferência simulada</strong><span>Nenhum dinheiro de verdade sai da sua conta.</span></div><label for="freePixKey">Chave fictícia recebida</label><input id="freePixKey" value="CHAVE-TREINO-RAFAEL" readonly><label for="freePixAmount">Valor (R$ fictícios)</label><input id="freePixAmount" value="350,00" readonly><div class="v106-pix-receiver"><small>Nome que aparece no banco</small><strong id="freePixReceiver">Lucas Almeida · pessoa desconhecida</strong><span>A chave e o nome são apenas exemplos de treinamento.</span></div><p id="freePixContext" class="v106-pix-warning">A pessoa da conversa dizia ser Rafael. O nome no banco é diferente.</p><div class="v106-pix-buttons"><button type="button" id="freePixCancel">Cancelar e verificar</button><button type="button" id="freePixConfirm">Confirmar Pix fictício</button></div></div></section></div>
+              <div class="android-view" data-view="free-summary" id="freeSummaryView"><section class="v106-app-screen v106-summary"><div class="v106-summary-icon" id="freeSummaryIcon">✓</div><h2 id="freeSummaryTitle">Situação concluída</h2><p id="freeSummaryText">Veja o que podemos aprender.</p><p id="freeSummaryAuto" class="v112-summary-auto" role="status" aria-live="polite" hidden>Avançando automaticamente…</p><div class="v106-summary-detail"><strong>O que você aprendeu</strong><p id="freeSummaryDetail"></p></div><button type="button" id="freeSummaryNext" hidden>Próximo: videochamada com IA</button><button type="button" id="freeSummaryHome">Voltar ao celular</button><button type="button" id="freeSummaryExit">Sair do Modo Livre</button></section></div>
+              <div id="freeEventNotice" class="free-event-notice" hidden role="status" aria-live="polite"><span id="freeEventIcon" class="v106-alert-icon" aria-hidden="true">✉</span><span class="free-event-copy"><strong id="freeEventTitle">Nova mensagem</strong><small id="freeEventText">Chegou uma mensagem</small></span><button id="freeEventOpen" type="button">Abrir</button><button id="freeEventDismiss" type="button" aria-label="Dispensar notificação">×</button></div>
+              <div id="freeFloatingHome" class="free-floating-home" hidden><button id="freeFloatingBack" type="button" aria-label="Voltar ao celular"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg><span>Voltar</span></button><span id="freeSolved">0 situações</span></div>
+              <div class="android-view" data-view="module-path" id="modulePathView">
+                <div class="app-surface module-path-surface">
+                  <header class="module-path-header">
+                    <button id="modulePathBack" type="button" aria-label="Voltar aos assuntos"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <div>
+                      <strong id="modulePathTitle">PIX</strong>
+                    </div>
+                  </header>
+                  <main class="module-path-content">
+                    <section class="module-path-intro">
+                      <span class="module-path-icon" id="modulePathIcon" aria-hidden="true">+</span>
+                      <div>
+                        <small id="modulePathEyebrow">PASSO A PASSO</small>
+                        <strong id="modulePathHeadline">Aprenda com segurança</strong>
+                        <p id="modulePathIntro">Veja a orientação e pratique com calma.</p>
+                      </div>
+                    </section>
+                    <div class="module-path-progress" aria-label="Progresso do assunto">
+                      <div><strong id="modulePathProgressText">0 de 3 atividades</strong><span id="modulePathProgressPct">0%</span></div>
+                      <i><b id="modulePathProgressFill"></b></i>
+                    </div>
+                    <section class="module-lesson-list" id="moduleLessonList" aria-label="Atividades do assunto"></section>
+                    <div class="module-path-note"><span aria-hidden="true">✓</span><p>Faça uma etapa por vez. Continue quando quiser.</p></div>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="video-lesson" id="videoLessonView">
+                <div class="app-surface video-lesson-surface">
+                  <header class="video-lesson-header"><button id="videoLessonBack" type="button" aria-label="Voltar às atividades"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small id="videoLessonKicker">ANTES DA ATIVIDADE</small><strong id="videoLessonTitle">Aprenda antes de praticar</strong></div></header>
+                  <main class="video-lesson-content">
+                    <div class="video-frame-shell"><video id="lessonVideo" controls playsinline preload="metadata" aria-label="Vídeo educativo da atividade"></video></div>
+                    <button id="videoFullscreenBtn" class="video-enlarge-btn" type="button" aria-label="Ampliar vídeo educativo para facilitar a leitura"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Ampliar vídeo</button>
+                    <p id="videoLessonSummary">Veja a explicação e depois pratique no celular de treino.</p>
+                    <div class="video-safe-note"><span>✓</span><div><strong>Treino seguro</strong><small>O vídeo usa situações simuladas e não pede dados pessoais.</small></div></div>
+                    <button id="videoPracticeBtn" class="video-practice-btn" type="button">Agora quero praticar</button>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-home" id="bankHomeView">
+                <div class="bank-app bank-home-screen">
+                  <header class="bank-topbar"><button id="freeBankBack" class="free-app-back" type="button" aria-label="Voltar ao celular do Modo Livre" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></button>
+                    <div class="bank-brand"><span class="bank-logo-mini">B</span><strong>Banco Educa</strong></div>
+                    <button class="bank-round-btn" type="button" aria-label="Ajuda">?</button>
+                  </header>
+                  <main class="bank-content">
+                    <section class="bank-welcome">
+                      <small>CONTA DE TREINO · DADOS FICTÍCIOS</small>
+                      <h2 id="bankGreeting">Olá, visitante</h2>
+                      <div class="bank-balance-card">
+                        <span>Saldo disponível</span>
+                        <strong>R$ 1.250,00</strong>
+                        <small>Conta •••• 4521</small>
+                      </div>
+                    </section>
+                    <section class="bank-shortcuts" aria-label="Atalhos do banco">
+                      <button id="bankPixBtn" class="bank-shortcut bank-pix-shortcut" type="button">
+                        <span class="bank-shortcut-icon"><img src="/static/icons/pix.svg" alt=""></span>
+                        <strong>Pix</strong><small>Enviar e receber</small>
+                      </button>
+                      <button class="bank-shortcut" type="button"><span class="bank-shortcut-icon bank-generic-icon">▦</span><strong>Pagar</strong><small>Boletos e contas</small></button>
+                      <button id="bankExtractBtn" class="bank-shortcut" type="button"><span class="bank-shortcut-icon bank-generic-icon">≡</span><strong>Extrato</strong><small>Entradas e saídas</small></button>
+                      <button class="bank-shortcut" type="button"><span class="bank-shortcut-icon bank-generic-icon">▰</span><strong>Cartão</strong><small>Fatura e limite</small></button>
+                    </section>
+                    <section class="bank-movements">
+                      <div class="bank-section-title"><strong>Últimas movimentações</strong><span>Hoje</span></div>
+                      <div class="bank-movement"><span class="movement-dot in">↓</span><div><strong>Maria Souza</strong><small>Pix recebido</small></div><b>+ R$ 50,00</b></div>
+                      <div class="bank-movement"><span class="movement-dot out">↑</span><div><strong>Mercado Central</strong><small>Pagamento</small></div><b>- R$ 85,40</b></div>
+                    </section>
+                    <section class="real-app-companion bank-real-apps">
+                      <div><small>DEPOIS DO TREINO</small><strong>Abra um app bancário oficial</strong><span>No Android, o Educa+ apenas abre o aplicativo instalado. Nunca lê sua conta, saldo ou senha.</span></div>
+                      <div class="real-app-actions"><button id="openRealBbBtn" type="button">Abrir BB</button><button id="openRealCaixaBtn" type="button">Abrir CAIXA</button></div>
+                    </section>
+                  </main>
+                  <nav class="bank-bottom-nav" aria-label="Navegação do banco"><button class="active" type="button">⌂<span>Início</span></button><button type="button">≡<span>Extrato</span></button><button type="button">?<span>Ajuda</span></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-pix" id="bankPixView">
+                <div class="bank-app bank-sub-screen">
+                  <header class="bank-sub-header">
+                    <button class="bank-back-btn" type="button" data-bank-back="bank-home" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <div><small>BANCO EDUCA</small><strong>Pix</strong></div>
+                    <img class="bank-pix-mark" src="/static/icons/pix.svg" alt="">
+                  </header>
+                  <main class="bank-content bank-pix-content">
+                    <p class="bank-lead">O que você quer fazer?</p>
+                    <button id="bankSendPixBtn" class="bank-action-primary" type="button"><span class="bank-action-symbol">↑</span><div><strong>Enviar Pix</strong><small>Transferir para uma pessoa ou empresa</small></div><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <div class="bank-action-grid">
+                      <button type="button"><span>⌗</span><strong>Ler QR Code</strong><small>Usar a câmera</small></button>
+                      <button type="button"><span>⧉</span><strong>Copia e Cola</strong><small>Colar um código Pix</small></button>
+                      <button type="button"><span>↓</span><strong>Receber Pix</strong><small>Mostrar seus dados</small></button>
+                      <button id="bankKeysBtn" type="button"><span>◆</span><strong>Minhas chaves</strong><small>CPF, celular, e-mail...</small></button>
+                    </div>
+                    <button id="bankSecurityBtn" class="bank-help-card" type="button"><span>🛡</span><div><strong>Segurança no Pix</strong><small>Golpes, limites e como agir</small></div><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-send" id="bankSendView">
+                <div class="bank-app bank-sub-screen">
+                  <header class="bank-sub-header"><button class="bank-back-btn" type="button" data-bank-back="bank-pix" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small>PIX</small><strong>Enviar Pix</strong></div><span></span></header>
+                  <main class="bank-content bank-form-screen">
+                    <div class="bank-training-note"><strong>Treino</strong><span>Use os dados fictícios abaixo. Nenhum dinheiro será enviado.</span></div>
+                    <div class="pix-practice-progress" role="status">ETAPA 3 DE 4 · CHAVE E VALOR DE EXEMPLO</div>
+                    <div class="pix-form-checklist" aria-label="Dados da transferência fictícia">
+                      <p>1. Escolha o tipo de chave</p>
+                      <div class="pix-type-grid" id="pixTypeGrid" role="group" aria-label="Tipo de chave Pix">
+                        <button type="button" data-pix-type="email">✉ E-mail</button>
+                        <button type="button" data-pix-type="phone">▣ Celular</button>
+                        <button type="button" data-pix-type="cpf">◉ CPF</button>
+                      </div>
+                      <p>2. Toque na chave pronta de João</p>
+                      <button id="pixDemoKey" type="button" class="pix-demo-option" disabled aria-label="Escolha um tipo de chave acima"><b>João Pereira · exemplo</b><small>Escolha E-mail, Celular ou CPF acima para ver a chave fictícia pronta.</small></button>
+                      <p>3. Escolha o valor fictício do exercício</p>
+                      <div class="pix-amount-grid" id="pixAmountGrid" role="group" aria-label="Valor do Pix de treino">
+                        <button type="button" data-pix-amount="50">R$ 50,00</button>
+                        <button type="button" data-pix-amount="500">R$ 500,00</button>
+                      </div>
+                    </div>
+                    <p class="pix-practice-feedback" id="pixPracticeFeedback" role="status">Nenhum dinheiro será movimentado. Faça os três passos acima.</p>
+                    <button id="bankContinuePix" class="bank-main-btn" type="button">Conferir destinatário</button>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-review" id="bankReviewView">
+                <div class="bank-app bank-sub-screen">
+                  <header class="bank-sub-header"><button class="bank-back-btn" type="button" data-bank-back="bank-send" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small>PIX</small><strong>Confira antes de pagar</strong></div><span></span></header>
+                  <main class="bank-content bank-review-screen">
+                    <div class="bank-warning-card"><span>!</span><div><strong>Confira todos os dados</strong><small>Você esperava enviar para João Pereira.</small></div></div>
+                    <div class="bank-review-card">
+                      <div><span>Quem vai receber</span><strong>Carlos Almeida</strong></div>
+                      <div><span>CPF</span><strong>***.845.321-**</strong></div>
+                      <div><span>Instituição</span><strong>Banco Exemplo</strong></div>
+                      <div><span>Chave Pix</span><strong id="pixReviewKey">joao@exemplo.teste</strong></div>
+                      <div class="bank-review-value"><span>Valor</span><strong id="pixReviewAmount">R$ 500,00</strong></div>
+                    </div>
+                    <p class="bank-question">João pediu o dinheiro, mas apareceu <strong>Carlos Almeida</strong>. O que é mais seguro fazer?</p>
+                    <div class="bank-review-options" id="bankReviewOptions">
+                      <button type="button" data-bank-answer="correct"><span>Cancelar e confirmar com João</span><b></b></button>
+                      <button type="button" data-bank-answer="wrong"><span>Confirmar o Pix mesmo assim</span><b></b></button>
+                    </div>
+                    <p class="bank-answer-feedback" id="bankAnswerFeedback" hidden></p>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-keys" id="bankKeysView">
+                <div class="bank-app bank-sub-screen">
+                  <header class="bank-sub-header"><button class="bank-back-btn" type="button" data-bank-back="bank-pix" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small>PIX</small><strong>Minhas chaves</strong></div><span></span></header>
+                  <main class="bank-content bank-keys-screen">
+                    <p class="bank-lead">Uma chave ajuda a identificar quem vai receber um Pix.</p>
+                    <div class="bank-key-list"><div><span>CPF</span><strong>***.456.789-**</strong></div><div><span>Celular</span><strong>(65) *****-4321</strong></div><div><span>E-mail</span><strong>maria@exemplo.teste</strong></div><div><span>Chave aleatória</span><strong>••••-••••-••••</strong></div></div>
+                    <button id="bankKeysLearnedBtn" class="bank-main-btn" type="button">Entendi</button>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-security" id="bankSecurityView">
+                <div class="bank-app bank-sub-screen">
+                  <header class="bank-sub-header"><button class="bank-back-btn" type="button" data-bank-back="bank-pix" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small>PIX</small><strong>Segurança</strong></div><span></span></header>
+                  <main class="bank-content bank-security-screen">
+                    <div class="bank-scam-message"><small>MENSAGEM RECEBIDA</small><strong>“Mãe, troquei de número. Preciso de R$ 850 agora. Faz um Pix pra mim?”</strong></div>
+                    <p class="bank-question">O pedido é urgente e veio de um número novo. O que fazer?</p>
+                    <div class="bank-review-options" id="bankScamOptions">
+                      <button type="button" data-bank-scam-answer="correct"><span>Confirmar com a pessoa por outro contato conhecido</span><b></b></button>
+                      <button type="button" data-bank-scam-answer="wrong"><span>Fazer o Pix imediatamente</span><b></b></button>
+                    </div>
+                    <p class="bank-answer-feedback" id="bankScamFeedback" hidden></p>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="bank-extract" id="bankExtractView">
+                <div class="bank-app bank-sub-screen">
+                  <header class="bank-sub-header"><button class="bank-back-btn" type="button" data-bank-back="bank-home" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div><small>BANCO EDUCA</small><strong>Extrato</strong></div><span></span></header>
+                  <main class="bank-content"><p class="bank-lead">Movimentações da conta de treino</p><div class="bank-extract-date">Hoje</div><div class="bank-movement"><span class="movement-dot in">↓</span><div><strong>Maria Souza</strong><small>Pix recebido · 14:20</small></div><b>+ R$ 50,00</b></div><div class="bank-movement"><span class="movement-dot out">↑</span><div><strong>Mercado Central</strong><small>Pagamento · 10:11</small></div><b>- R$ 85,40</b></div></main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="whatsapp" id="whatsappView">
+                <div class="app-surface whatsapp-surface">
+                  <header class="wa-topbar"><button id="freeWhatsappBack" class="free-app-back" type="button" aria-label="Voltar ao celular do Modo Livre" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></button>
+                    <strong>WhatsApp</strong>
+                    <div class="wa-top-actions">
+                      <button type="button" class="wa-icon-btn" aria-label="Câmera" title="Câmera">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5 10.3 3h3.4L15 4.5h2.6A2.4 2.4 0 0 1 20 6.9v9.7a2.4 2.4 0 0 1-2.4 2.4H6.4A2.4 2.4 0 0 1 4 16.6V6.9a2.4 2.4 0 0 1 2.4-2.4H9Zm3 3.2a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4Zm0 1.8a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8Z"/></svg>
+                      </button>
+                      <button type="button" class="wa-icon-btn" aria-label="Pesquisar" title="Pesquisar">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16.6 15.2 4.1 4.1-1.4 1.4-4.1-4.1a7 7 0 1 1 1.4-1.4ZM5.5 10.5a5 5 0 1 0 10 0 5 5 0 0 0-10 0Z"/></svg>
+                      </button>
+                      <button type="button" class="wa-icon-btn" id="waMoreBtn" aria-label="Mais opções" title="Mais opções">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+                      </button>
+                    </div>
+                    <div class="wa-menu" id="waMenu" hidden>
+                      <button type="button" id="waSettingsBtn">Configurações</button>
+                      <button type="button" id="waOpenRealBtn">Abrir WhatsApp real</button>
+                    </div>
+                  </header>
+
+                  <button class="whatsapp-search" type="button" aria-label="Pesquisar no WhatsApp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16.6 15.2 4.1 4.1-1.4 1.4-4.1-4.1a7 7 0 1 1 1.4-1.4ZM5.5 10.5a5 5 0 1 0 10 0 5 5 0 0 0-10 0Z"/></svg>
+                    <span>Pergunte à Meta AI ou pesquise</span>
+                  </button>
+
+                  <div class="wa-search-inline" id="waSearchInline" hidden><label for="waSearchInput">Buscar uma conversa</label><input type="search" id="waSearchInput" placeholder="Digite o nome, por exemplo Maria" autocomplete="off"/><button type="button" id="waSearchClose">Fechar</button></div>
+                  <div class="whatsapp-filters" role="tablist" aria-label="Filtros de conversas">
+                    <button class="active" type="button">Todas</button>
+                    <button type="button">Favoritas</button>
+                    <button type="button">Não lidas</button>
+                    <button type="button">Grupos</button>
+                  </div>
+
+                  <button class="wa-archived" type="button">
+                    <span class="wa-archive-icon" aria-hidden="true">⌄</span>
+                    <strong>Arquivadas</strong>
+                  </button>
+
+                  <p id="waSearchEmpty" class="wa-search-empty" hidden>Nenhuma conversa encontrada. Confira o nome e tente outra vez.</p>
+                  <div class="chat-list wa-chat-list">
+                    <button class="chat-row training-chat" data-scenario="family">
+                      <span class="avatar wa-avatar blue">F</span>
+                      <span class="chat-copy"><strong>Filho — número novo</strong><small>Mãe, meu celular quebrou. Preciso...</small></span>
+                      <span class="chat-meta"><small>15:12</small><b>1</b></span>
+                    </button>
+                    <button class="chat-row training-chat" data-scenario="bank">
+                      <span class="avatar wa-avatar bank-avatar">B</span>
+                      <span class="chat-copy"><strong>Banco • Atendimento</strong><small>Sua conta será bloqueada. Acesse...</small></span>
+                      <span class="chat-meta"><small>14:57</small><b>1</b></span>
+                    </button>
+                    <button class="chat-row training-chat" data-scenario="code">
+                      <span class="avatar wa-avatar purple">?</span>
+                      <span class="chat-copy"><strong>Contato desconhecido</strong><small>Me envie o código que chegou por SMS...</small></span>
+                      <span class="chat-meta"><small>14:31</small><b>1</b></span>
+                    </button>
+                    <button class="chat-row normal-chat" data-normal-chat="daughter">
+                      <span class="avatar wa-avatar">M</span>
+                      <span class="chat-copy"><strong>Maria (filha)</strong><small>Até mais tarde ❤️</small></span>
+                      <span class="chat-meta"><small>13:40</small></span>
+                    </button>
+                    <button class="chat-row normal-chat" data-normal-chat="family-group">
+                      <span class="avatar wa-avatar green">G</span>
+                      <span class="chat-copy"><strong>Grupo da família</strong><small>João: mandei as fotos</small></span>
+                      <span class="chat-meta"><small>12:05</small></span>
+                    </button>
+                  </div>
+
+                  <button class="whatsapp-fab" aria-label="Nova conversa" title="Nova conversa">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm2.5 5.5h9v2h-9v-2Zm0 4h6v2h-6v-2Z"/></svg>
+                  </button>
+
+                  <nav class="whatsapp-bottom" aria-label="Navegação do WhatsApp">
+                    <button class="active" type="button" aria-label="Conversas">
+                      <span class="wa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H8l-4 4V4Zm3 4v2h10V8H7Zm0 4v2h7v-2H7Z"/></svg></span><small>Conversas</small>
+                    </button>
+                    <button type="button" aria-label="Atualizações">
+                      <span class="wa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 1-8.4 12.2l1.9-.7A7 7 0 1 0 7 6.7L9 8V3H4l1.6 1.6A9 9 0 0 1 12 3Z"/></svg></span><small>Atualizações</small>
+                    </button>
+                    <button type="button" aria-label="Comunidades">
+                      <span class="wa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm9 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2 20v-2.1C2 15.2 4.5 13 7.5 13s5.5 2.2 5.5 4.9V20H2Zm12 0v-2.1c0-1.4-.5-2.6-1.4-3.6 1-.8 2.4-1.3 3.9-1.3 2.7 0 5 2 5 4.5V20H14Z"/></svg></span><small>Comunidades</small>
+                    </button>
+                    <button type="button" aria-label="Ligações">
+                      <span class="wa-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 3.5 10 8l-2.2 2.2a14.2 14.2 0 0 0 6 6L16 14l4.5 2.8-.8 3.7c-.2.9-1 1.5-2 1.5C9.6 22 2 14.4 2 6.3c0-1 .6-1.8 1.5-2L7.2 3.5Z"/></svg></span><small>Ligações</small>
+                    </button>
+                  </nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="wa-settings" id="waSettingsView">
+                <div class="app-surface wa-settings-surface">
+                  <header class="wa-settings-header">
+                    <button class="android-back wa-back" data-back-home="whatsapp" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    <strong>Configurações</strong>
+                    <button class="wa-icon-btn" type="button" aria-label="Pesquisar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m16.6 15.2 4.1 4.1-1.4 1.4-4.1-4.1a7 7 0 1 1 1.4-1.4ZM5.5 10.5a5 5 0 1 0 10 0 5 5 0 0 0-10 0Z"/></svg></button>
+                  </header>
+                  <section class="wa-profile-card">
+                    <span class="wa-profile-avatar">M</span>
+                    <div><strong>Maria</strong><small>Disponível</small></div>
+                    <button type="button" aria-label="QR code">▦</button>
+                  </section>
+                  <div class="wa-settings-list">
+                    <button type="button"><span>🔑</span><div><strong>Conta</strong><small>Notificações de segurança, mudar número</small></div></button>
+                    <button type="button"><span>🔒</span><div><strong>Privacidade</strong><small>Bloqueio de contatos, mensagens temporárias</small></div></button>
+                    <button type="button"><span>🙂</span><div><strong>Avatar</strong><small>Criar, editar, foto do perfil</small></div></button>
+                    <button type="button"><span>☷</span><div><strong>Listas</strong><small>Gerenciar pessoas e grupos</small></div></button>
+                    <button type="button"><span>💬</span><div><strong>Conversas</strong><small>Tema, papéis de parede, histórico</small></div></button>
+                    <button type="button"><span>🔔</span><div><strong>Notificações</strong><small>Mensagens, grupos e ligações</small></div></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="chat" id="chatView">
+                <div class="app-surface chat-surface">
+                  <header class="chat-header">
+                    <button class="android-back chat-icon-btn" data-back-home="whatsapp" aria-label="Voltar">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.41 12l5.3 5.3a1 1 0 1 1-1.42 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.41 0Z"/></svg>
+                    </button>
+                    <span class="avatar blue small" id="scenarioAvatar">F</span>
+                    <span><strong id="scenarioTitle">Filho — número novo</strong><small id="scenarioSubtitle">online</small></span>
+                    <div class="chat-header-actions">
+                      <button class="chat-icon-btn" aria-label="Videochamada">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 7A2.5 2.5 0 0 1 17 9.5v.88l2.79-1.86A1.4 1.4 0 0 1 22 9.68v4.64a1.4 1.4 0 0 1-2.21 1.16L17 13.62v.88A2.5 2.5 0 0 1 14.5 17h-8A2.5 2.5 0 0 1 4 14.5v-5A2.5 2.5 0 0 1 6.5 7h8Z"/></svg>
+                      </button>
+                      <button class="chat-icon-btn" aria-label="Ligação">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20a1 1 0 0 1-1 1C10.06 21 3 13.94 3 5a1 1 0 0 1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.12.35.03.75-.24 1.02l-2.21 2.2Z"/></svg>
+                      </button>
+                      <button class="chat-icon-btn" aria-label="Menu">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 12 7Zm0 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 12 14Zm0 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 12 21Z"/></svg>
+                      </button>
+                    </div>
+                  </header>
+                  <div class="chat-wallpaper" id="chatWallpaper"></div>
+                  <div class="chat-composer"><button>☺</button><span>Mensagem</span><button>⌕</button><button>◉</button><button class="mic">●</button></div>
+                  <!-- V111.10: ações educativas no WhatsApp original para concluir o primeiro desafio. -->
+                  <div id="freeFamilyActions" class="free-family-actions" hidden aria-label="Opções seguras para esta mensagem suspeita">
+                    <button type="button" id="freeFamilyVerify">Conferir por outro canal</button>
+                    <button type="button" id="freeFamilyBlock">Bloquear contato</button>
+                  </div>
+                  <!-- V108: conversa de IA SOBRE o WhatsApp original, sem criar outro aplicativo. -->
+                  <form id="freeOriginalComposer" class="free-original-compose" hidden autocomplete="off">
+                    <input id="freeOriginalInput" type="text" maxlength="350" aria-label="Mensagem no WhatsApp simulado" placeholder="Mensagem" spellcheck="true" />
+                    <button id="freeOriginalSend" type="submit" aria-label="Enviar mensagem">➤</button>
+                  </form>
+                  <div id="freeOriginalAiStatus" class="free-original-ai-status" role="status" aria-live="polite" hidden></div>
+                  <span id="freeOriginalTyping" class="free-original-typing" hidden aria-live="polite">digitando…</span>
+                  <div class="decision-sheet" id="decisionSheet"><strong>O que é mais seguro fazer?</strong><div id="decisionOptions"></div><p class="scenario-answer-feedback" id="scenarioAnswerFeedback" hidden></p></div>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="normal-chat" id="normalChatView">
+                <div class="app-surface chat-surface">
+                  <header class="chat-header"><button class="android-back chat-icon-btn" data-back-home="whatsapp" aria-label="Voltar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.41 12l5.3 5.3a1 1 0 1 1-1.42 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.41 0Z"/></svg></button><span class="avatar small" id="normalAvatar">M</span><span><strong id="normalTitle">Maria (filha)</strong><small>online</small></span><div class="chat-header-actions"><button class="chat-icon-btn" aria-label="Videochamada"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 7A2.5 2.5 0 0 1 17 9.5v.88l2.79-1.86A1.4 1.4 0 0 1 22 9.68v4.64a1.4 1.4 0 0 1-2.21 1.16L17 13.62v.88A2.5 2.5 0 0 1 14.5 17h-8A2.5 2.5 0 0 1 4 14.5v-5A2.5 2.5 0 0 1 6.5 7h8Z"/></svg></button><button class="chat-icon-btn" id="normalCallBtn" aria-label="Ligação"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.32.57 3.57.57.55 0 1 .45 1 1V20a1 1 0 0 1-1 1C10.06 21 3 13.94 3 5a1 1 0 0 1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.12.35.03.75-.24 1.02l-2.21 2.2Z"/></svg></button><button class="chat-icon-btn" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 12 7Zm0 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 12 14Zm0 7a1.75 1.75 0 1 0 0-3.5A1.75 1.75 0 0 0 12 21Z"/></svg></button></div></header>
+                  <div class="chat-wallpaper normal-wallpaper" id="normalMessages"></div>
+                  <div class="chat-composer active-composer"><button>☺</button><input id="normalMessageInput" type="text" placeholder="Mensagem" aria-label="Mensagem"><button>⌕</button><button>◉</button><button class="mic" id="sendNormalMessage">➤</button></div>
+                </div>
+              </div>
+
+
+              <div class="android-view" data-view="settings-main" id="settingsMainView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-settings-header">
+                    <button class="pixel-round-btn settings-home-back" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button>
+                    <strong>Configurações</strong>
+                    <button class="pixel-round-btn" type="button" aria-label="Pesquisar"><svg viewBox="0 0 24 24"><path d="m16.6 15.2 4.1 4.1-1.4 1.4-4.1-4.1a7 7 0 1 1 1.4-1.4ZM5.5 10.5a5 5 0 1 0 10 0 5 5 0 0 0-10 0Z"/></svg></button>
+                  </header>
+                  <button class="pixel-settings-search" type="button"><svg viewBox="0 0 24 24"><path d="m16.6 15.2 4.1 4.1-1.4 1.4-4.1-4.1a7 7 0 1 1 1.4-1.4ZM5.5 10.5a5 5 0 1 0 10 0 5 5 0 0 0-10 0Z"/></svg><span>Pesquisar nas Configurações</span></button>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" id="settingsNetworkRow" data-settings-nav="settings-network" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 9c5-4 13-4 18 0M6 13c3-2 9-2 12 0M9 17h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Rede e Internet</strong><small>Internet, chips e ponto de acesso</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4h10v16H7zM10 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Dispositivos conectados</strong><small>Bluetooth, pareamento</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Apps</strong><small>Apps recentes e permissões</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon orange"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Notificações</strong><small>Histórico, conversas e alertas</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" type="button"><span class="settings-row-icon mint"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8h15v9H4zM20 11h2v3M7 11h6v3H7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Bateria</strong><small>84% · estimativa de duração</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon yellow"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5h16v14H4zM4 13h16M16 16h.01M19 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Armazenamento</strong><small>Espaço usado no aparelho</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" id="settingsSoundRow" data-settings-nav="settings-sound" type="button"><span class="settings-row-icon pink"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10h4l5-4v12l-5-4H4zM17 9c2 2 2 4 0 6M19 6c4 4 4 8 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Som e vibração</strong><small>Volume, toque e vibração</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" id="settingsDisplayRow" data-settings-nav="settings-display" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v13H4zM8 20h8M12 17v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Tela e toque</strong><small>Brilho, texto, modo noturno</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v16H4zM6 16l5-5 3 3 3-4 2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Plano de fundo e estilo</strong><small>Cores, ícones e tela de bloqueio</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" id="settingsAccessibilityRow" data-settings-nav="settings-accessibility" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a1 1 0 1 0 .01 0M4 8l8 2 8-2M12 10v11M12 14l-5 7M12 14l5 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Acessibilidade</strong><small>Tela Simplificada, ampliação e leitura</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 20 5v6c0 5-3.3 8.6-8 11-4.7-2.4-8-6-8-11V5zM9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Segurança e privacidade</strong><small>Bloqueio, permissões e proteção</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon red"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12ZM12 9v.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Localização</strong><small>Apps com acesso à localização</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon orange"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s-9-5.5-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.5-9 12-9 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Segurança e emergência</strong><small>Contatos e alertas de emergência</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 12a4 4 0 1 1 3.6 3.98L8 20H5v-3l3-3M16 8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Senhas, chaves e contas</strong><small>Contas e preenchimento automático</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Bem-estar digital</strong><small>Tempo de uso e controles</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 3v18M3 9h18M9 15h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Google</strong><small>Serviços do Google</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon gray"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Sistema</strong><small>Idiomas, gestos e atualização</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon gray"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM12 10v7M12 7v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Sobre o dispositivo</strong><small>Modelo e versão do Android</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                  <button class="native-companion" id="openRealSettingsBtn" type="button">Abrir Ajustes reais deste aparelho</button>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="settings-display" id="settingsDisplayView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-sub-header"><button class="pixel-round-btn" data-settings-back="settings-main" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button><strong>Tela e toque</strong></header>
+                  <section class="pixel-settings-group">
+                    <div class="settings-slider-row"><span><strong>Nível de brilho</strong><small>72%</small></span><input type="range" min="0" max="100" value="72" aria-label="Nível de brilho"></div>
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet">◐</span><span><strong>Tema escuro</strong><small>Desativado</small></span><span class="pixel-switch"></span></button>
+                    <button class="settings-row" id="settingsTextSizeRow" data-settings-nav="settings-text" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19 10 5h4l6 14M6 14h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Texto e tamanho de exibição</strong><small>Tamanho da fonte e dos itens</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon orange"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 15a8 8 0 0 1-11-11 8.5 8.5 0 1 0 11 11Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Modo noturno</strong><small>Desativado</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v16H4zM12 7v5l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Tempo limite da tela</strong><small>2 minutos</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" type="button"><span class="settings-row-icon pink"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18 3 3 0 0 0 3-3 2 2 0 0 1 2-2h1a3 3 0 0 0 3-3 10 10 0 0 0-9-10ZM8 8h.01M15 7h.01M6 14h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Cores</strong><small>Adaptáveis</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21V11M12 11a3 3 0 1 0-3-3M8 15a6 6 0 1 1 8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Sensibilidade ao toque</strong><small>Toque adaptável</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="settings-text" id="settingsTextView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-sub-header"><button class="pixel-round-btn" data-settings-back="settings-display" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button><strong>Texto e tamanho de exibição</strong></header>
+                  <div class="font-preview-card"><small>PRÉVIA</small><strong id="fontPreviewTitle">Uma mensagem fácil de ler</strong><span id="fontPreviewText">Escolha o tamanho que ficar mais confortável para você.</span></div>
+                  <section class="pixel-settings-group setting-slider-card" id="fontSizeCard">
+                    <label for="fontSizeSlider"><strong>Tamanho da fonte</strong><small id="fontSizeLabel">Padrão</small></label>
+                    <input id="fontSizeSlider" type="range" min="0" max="4" value="2" step="1" aria-label="Tamanho da fonte">
+                    <div class="slider-ends"><span>A</span><strong>A</strong></div>
+                  </section>
+                  <section class="pixel-settings-group setting-slider-card">
+                    <label><strong>Tamanho de exibição</strong><small>Padrão</small></label>
+                    <input type="range" min="0" max="4" value="2" step="1" aria-label="Tamanho de exibição">
+                    <div class="slider-ends"><span>▣</span><strong>▣</strong></div>
+                  </section>
+                  <p class="settings-help-note">Aumentar a fonte muda o tamanho das palavras sem alterar seus dados.</p>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="settings-sound" id="settingsSoundView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-sub-header"><button class="pixel-round-btn" data-settings-back="settings-main" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button><strong>Som e vibração</strong></header>
+                  <section class="pixel-settings-group volume-card" id="volumeTrainingCard">
+                    <label><span>♫</span><div><strong>Volume da mídia</strong><small id="mediaVolumeValue">62%</small></div></label><input id="mediaVolumeSlider" type="range" min="0" max="100" value="62">
+                    <label><span>☎</span><div><strong>Volume das ligações</strong><small>70%</small></div></label><input type="range" min="0" max="100" value="70">
+                    <label><span>●</span><div><strong>Toque e notificações</strong><small>54%</small></div></label><input type="range" min="0" max="100" value="54">
+                    <label><span>⏰</span><div><strong>Alarme</strong><small>78%</small></div></label><input type="range" min="0" max="100" value="78">
+                  </section>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4h8v16H8zM4 9v6M20 9v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Vibração e retorno tátil</strong><small>Ativado</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18V5l11-2v13M9 17a3 3 0 1 1-3-3M20 16a3 3 0 1 1-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Toque</strong><small>Som padrão</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 6-2 7-2 9h16c0-2-2-3-2-9M10 21h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Som de notificação padrão</strong><small>Pixel Sounds</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="settings-network" id="settingsNetworkView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-sub-header"><button class="pixel-round-btn" data-settings-back="settings-main" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button><strong>Rede e Internet</strong></header>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" id="settingsInternetRow" data-settings-nav="settings-internet" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 9c5-4 13-4 18 0M6 13c3-2 9-2 12 0M12 19v.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Internet</strong><small>Casa_Maria · conectado</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 3h11l4 4v14H5zM9 11h7v6H9z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Chips</strong><small>Rede móvel</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon orange"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Ponto de acesso e tethering</strong><small>Desativado</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet">✈</span><span><strong>Modo avião</strong><small>Desativado</small></span><span class="pixel-switch"></span></button>
+                  </section>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="settings-internet" id="settingsInternetView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-sub-header"><button class="pixel-round-btn" data-settings-back="settings-network" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button><strong>Internet</strong></header>
+                  <section class="pixel-settings-group wifi-master"><div><strong>Wi‑Fi</strong><small>Ativado</small></div><span class="pixel-switch on"></span></section>
+                  <p class="settings-section-label">REDES DISPONÍVEIS</p>
+                  <section class="pixel-settings-group wifi-list">
+                    <button class="wifi-network" id="wifiCasaRow" type="button"><span class="wifi-symbol">⌁</span><span><strong>Casa_Maria</strong><small id="wifiCasaStatus">Conectado · rede salva</small></span><b>⚙</b></button>
+                    <button class="wifi-network" type="button"><span class="wifi-symbol">⌁</span><span><strong>WiFi_Visitantes</strong><small>Protegida por senha</small></span><b>🔒</b></button>
+                    <button class="wifi-network warning" type="button"><span class="wifi-symbol">⌁</span><span><strong>WiFi_Gratis_Sem_Senha</strong><small>Rede aberta</small></span><b>!</b></button>
+                  </section>
+                  <button class="settings-add-network" type="button">+ Adicionar rede</button>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="settings-accessibility" id="settingsAccessibilityView">
+                <div class="app-surface pixel-settings-surface">
+                  <header class="pixel-sub-header"><button class="pixel-round-btn" data-settings-back="settings-main" type="button" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"/></svg></button><strong>Acessibilidade</strong></header>
+                  <p class="settings-section-label">ACESSO RÁPIDO</p>
+                  <section class="pixel-settings-group">
+                    <button class="settings-row" type="button"><span class="settings-row-icon blue"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Tela Simplificada</strong><small>Facilita a leitura e o uso do celular</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon violet"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16ZM17 17l4 4M11 7v8M7 11h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Ampliação</strong><small>Amplie temporariamente o conteúdo</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" type="button"><span class="settings-row-icon green"><svg class="settings-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 10v4M7 7v10M11 4v16M15 7v10M19 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span><strong>Selecionar para ouvir</strong><small>Ouça o conteúdo da tela</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="settings-row" data-open-educa-accessibility type="button"><span class="settings-row-icon blue">Aa</span><span><strong>Personalizar o Educa+</strong><small>Tamanho do texto, cores e leitura em voz alta</small></span><b>›</b></button>
+                  </section>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-login" id="govbrLoginView">
+                <div class="app-surface gov-app-surface gov-real-intro">
+                  
+                  <div class="gov-real-hero" aria-hidden="true">
+                    <div class="gov-real-strip left"></div>
+                    <div class="gov-real-strip center"></div>
+                    <div class="gov-real-strip right"></div>
+                    
+                  </div>
+                  <img class="gov-real-logo" src="/static/icons/govbr.svg" alt="gov.br">
+                  <div class="gov-real-actions">
+                    <button class="gov-primary-btn gov-real-login-btn" id="govLoginBtn" type="button">Entrar com gov.br</button>
+                    <p>Clique para criar ou acessar sua conta gov.br</p>
+                    <button class="gov-link-row" data-gov-nav="govbr-qr" type="button"><span>⌗</span><strong>Ler QR code</strong></button>
+                  </div>
+                  <div class="gov-safety-note"><strong>Treino seguro</strong><span>Esta é uma simulação educativa baseada no app oficial. Não use CPF, senha ou documentos reais.</span></div>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-auth" id="govbrAuthView">
+                <div class="app-surface gov-app-surface gov-auth-screen">
+                  <header class="gov-browser-header"><button type="button" class="gov-browser-round" data-gov-nav="govbr-login">✕</button><strong>sso.acesso.gov.br · treino</strong><button type="button" class="gov-browser-round">☰</button></header>
+                  <div class="gov-browser-brand-row"><img src="/static/icons/govbr.svg" alt="gov.br"><div class="gov-browser-icons"><span>◐</span><span>♿</span></div></div>
+                  <section class="gov-auth-card">
+                    <h2>Identifique-se no gov.br com:</h2>
+                    <div class="gov-auth-method"><span>🪪</span><div><strong>Número do CPF</strong><p>Digite seu CPF para criar ou acessar sua conta gov.br</p></div></div>
+                    <label class="gov-field-label" for="govAuthCpf">CPF</label>
+                    <input id="govAuthCpf" class="gov-auth-input" inputmode="numeric" maxlength="14" placeholder="CPF demonstrativo, sem dados reais" autocomplete="off" readonly aria-label="CPF fictício de demonstração; use o botão Usar CPF de treino">
+                    <p class="gov-demo-helper">Neste treino, toque no botão abaixo para preencher automaticamente. Não digite seu CPF.</p><div class="gov-auth-demo-actions"><button class="gov-secondary-btn gov-fill-demo" id="govUseDemoCpfBtn" type="button">Usar CPF de treino</button></div>
+                    <button class="gov-primary-btn" id="govAuthContinueBtn" type="button" disabled>Continuar</button>
+                    <section class="gov-auth-options">
+                      <h3>Outras opções de identificação:</h3>
+                      <button type="button"><span class="green">💳</span><div><strong>Login com seu banco</strong><small>Sua conta será prata</small></div></button>
+                      <button type="button"><span>📱</span><div><strong>Seu aplicativo gov.br</strong><small>Gerar o código pelo aplicativo</small></div></button>
+                      <button type="button"><span>🔐</span><div><strong>Seu certificado digital</strong><small>Identificação com certificado</small></div></button>
+                      <button type="button"><span>☁</span><div><strong>Seu certificado digital em nuvem</strong><small>Certificado armazenado em nuvem</small></div></button>
+                    </section>
+                  </section>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-2fa-prompt" id="govbrTwoFactorPromptView">
+                <div class="app-surface gov-app-surface gov-2fa-prompt-screen">
+                  
+                  <main class="gov-2fa-prompt-content">
+                    <h2>Deseja ativar a verificação em duas etapas?</h2>
+                    <strong>Recomendamos que você utilize a Verificação em duas etapas em sua conta.</strong>
+                    <p>A Verificação em duas etapas é um recurso adicional para a segurança da sua conta gov.br. A cada novo acesso você precisa gerar um código em seu aplicativo gov.br e informá-lo quando estiver realizando o login.</p>
+                    <p>Você pode ativar ou desativar a Verificação em duas etapas acessando a opção "Segurança da conta" no seu aplicativo gov.br.</p>
+                  </main>
+                  <div class="gov-2fa-prompt-actions"><button class="gov-primary-btn" id="govEnable2faBtn" type="button">Ativar verificação em duas etapas</button><button class="gov-secondary-btn gov-outline-strong" id="govSkip2faBtn" type="button">Agora não</button></div>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-home" id="govbrHomeView">
+                <div class="app-surface gov-app-surface gov-real-home-screen">
+                  <header class="gov-real-topbar"><button id="freeGovBack" class="free-app-back" type="button" aria-label="Voltar ao celular do Modo Livre" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></button><img src="/static/icons/govbr.svg" alt="gov.br"><div class="gov-topbar-actions"><span>🔔</span><button class="gov-avatar-photo" id="govHeaderProfileBtn" type="button" aria-label="Meus dados">◯</button></div></header>
+                  <div class="gov-real-home-scroll">
+                  <section class="gov-real-banner">
+                    <small>Olá, <strong id="govWelcomeName">MARIA</strong></small>
+                    <h2>SUA CONTA É NÍVEL PRATA</h2>
+                    <div class="gov-banner-progress"><span></span><span></span><span></span></div>
+                    <button type="button" data-gov-detail="Aumentar nivel" class="gov-banner-cta">↗ AUMENTAR NÍVEL</button>
+                  </section>
+                    <button class="gov-search-card" id="govSearchBox" type="button"><span>Encontre serviços públicos no gov.br</span><b>⌕</b></button>
+                    <section class="gov-home-list-card">
+                      <h3>Serviços</h3>
+                      <button data-gov-detail="Procuracao eletronica" class="gov-home-row" type="button"><span class="icon blue">👥</span><strong>Procuração eletrônica</strong><b class="tag green">NOVO</b><em><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></em></button>
+                      <button data-gov-detail="Caixa Postal" class="gov-home-row" type="button"><span class="icon blue">✉</span><strong>Caixa Postal</strong><em><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></em></button>
+                      <button class="gov-home-row" id="govDocsShortcut" data-gov-nav="govbr-docs" type="button"><span class="icon blue">▣</span><strong>Carteira de documentos</strong><em><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></em></button>
+                      <button data-gov-detail="Assinar documentos digitalmente" class="gov-home-row" type="button"><span class="icon blue">✎</span><strong>Assinar documentos digitalmente</strong><em><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></em></button>
+                      <button class="gov-home-row" id="govAgendaRow" data-gov-nav="govbr-agenda" type="button"><span class="icon blue">🗓</span><strong>Agenda gov.br</strong><em><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></em></button>
+                      <button data-gov-detail="Consultar servicos solicitados" class="gov-home-row" type="button"><span class="icon blue">⌕</span><strong>Consultar serviços solicitados</strong><em><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></em></button>
+                    </section>
+                  </div>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real" aria-label="Navegação do gov.br">
+                    <button class="active" data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button>
+                    <button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button>
+                    <button class="gov-center-nav" id="govServicesNav" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button>
+                    <button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button>
+                    <button id="govProfileNav" data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button>
+                  </nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-services" id="govbrServicesView">
+                <div class="app-surface gov-app-surface gov-real-service-screen">
+                  <header class="gov-browser-header compact"><button class="gov-browser-round" data-gov-nav="govbr-home" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>servicos.acesso.gov.br · treino</strong><button class="gov-browser-round" type="button">☰</button></header>
+                  <div class="gov-services-head">
+                    <div class="gov-services-brandline"><img src="/static/icons/govbr.svg" alt="gov.br"><button type="button" class="gov-shortcuts-pill">▦ Atalhos gov.br</button></div>
+                    <div class="gov-breadcrumb">⌂ <span>Serviços</span></div>
+                    <p>Encontre o serviço que você procura no ambiente de treino.</p>
+                    <label class="gov-real-search" for="govServiceSearch"><input id="govServiceSearch" type="search" placeholder="Digite o nome do serviço ou evento" autocomplete="off" aria-label="Pesquisar serviço"><span>⌕</span></label>
+                    <p class="gov-search-help" id="govSearchHelp" role="status">Digite, por exemplo, “Prova de vida”, “Carteira” ou “Agenda”.</p>
+                  </div>
+                  <div class="gov-service-list real-services inner">
+                    <button data-gov-detail="Procuracao eletronica" class="gov-service-card" type="button"><span class="gov-service-icon blue">👥</span><span><strong>Procuração eletrônica</strong><small>Delegue o uso de serviços específicos</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button data-gov-detail="Caixa Postal" class="gov-service-card" type="button"><span class="gov-service-icon blue">✉</span><span><strong>Caixa Postal</strong><small>Comunicados e mensagens oficiais</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="gov-service-card" data-gov-nav="govbr-docs" type="button"><span class="gov-service-icon blue">▣</span><span><strong>Carteira de documentos</strong><small>Documentos e certificados digitais</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button data-gov-detail="Assinar documentos digitalmente" class="gov-service-card" type="button"><span class="gov-service-icon blue">✎</span><span><strong>Assinar documentos digitalmente</strong><small>Assinatura eletrônica gov.br</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="gov-service-card" id="govAgendaServiceRow" data-gov-nav="govbr-agenda" type="button"><span class="gov-service-icon blue">🗓</span><span><strong>Agenda gov.br</strong><small>Calendário e eventos de serviços públicos</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button data-gov-detail="Consultar servicos solicitados" class="gov-service-card" type="button"><span class="gov-service-icon blue">⌕</span><span><strong>Consultar serviços solicitados</strong><small>Acompanhe protocolos e pedidos</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button data-gov-detail="Baixar certidoes" class="gov-service-card" type="button"><span class="gov-service-icon blue">⬇</span><span><strong>Baixar certidões</strong><small>Links e orientações para emissão</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="gov-service-card" id="govQrLoginRow" data-gov-nav="govbr-qr" type="button"><span class="gov-service-icon green">▦</span><span><strong>Login sem senha (QR code)</strong><small>Leia o QR Code usando o aplicativo</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="gov-service-card" id="govProofRow" data-gov-nav="govbr-proof" type="button"><span class="gov-service-icon green">✓</span><span><strong>Prova de vida</strong><small>Reconhecimento facial quando houver solicitação</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button class="gov-service-card" id="govSecurityServiceRow" data-gov-nav="govbr-security" type="button"><span class="gov-service-icon yellow">◆</span><span><strong>Segurança da conta</strong><small>Nível, biometria e verificação em duas etapas</small></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </div>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav active" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-proof" id="govbrProofView">
+                <div class="app-surface gov-app-surface gov-inner-screen gov-real-detail-screen">
+                  <header class="gov-inner-header"><button class="gov-back-btn" data-gov-nav="govbr-services" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Prova de vida</strong></header>
+                  <div class="gov-proof-hero"><span>✓</span><strong>Prova de vida digital</strong><small>Quando existir uma solicitação pendente, o aplicativo orienta o reconhecimento facial.</small></div>
+                  <section class="gov-info-card"><strong>Como funciona</strong><ol><li>Confira se existe uma prova de vida pendente no seu benefício.</li><li>Toque em Autorizar ou Iniciar quando o serviço estiver disponível.</li><li>Siga as orientações do reconhecimento facial em um local iluminado.</li><li>Ao concluir, acompanhe o resultado no próprio aplicativo.</li></ol></section>
+                  <div class="gov-safety-note"><strong>Importante</strong><span>Nem toda pessoa verá esse serviço com solicitação ativa. No treino, ele aparece para fins educativos.</span></div>
+                  <button class="gov-primary-btn" id="govProofFoundBtn" type="button">Entendi como localizar</button>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-data" id="govbrDataView">
+                <div class="app-surface gov-app-surface gov-data-screen">
+                  <header class="gov-data-topbar"><img src="/static/icons/govbr.svg" alt="gov.br"><button class="gov-avatar-photo small" type="button">◯</button></header>
+                  <div class="gov-data-hero"><button class="gov-back-line" data-gov-nav="govbr-home" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Dados pessoais</strong><div class="gov-data-avatar"></div></div>
+                  <section class="gov-data-card">
+                    <h3>Dados básicos</h3>
+                    <div class="gov-data-row"><small>Nome</small><strong id="govFullNameData">MARIA DA SILVA (EXEMPLO)</strong></div>
+                    <div class="gov-data-row"><small>Nascimento</small><strong>01/01/1980</strong></div>
+                    <div class="gov-data-row"><small>Naturalidade</small><strong>CIDADE EXEMPLO</strong></div>
+                    <div class="gov-data-row"><small>Nome da mãe</small><strong>Dado oculto no treino</strong></div>
+                  </section>
+                  <button class="gov-share-fab" type="button">↗</button>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button class="active" data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-docs" id="govbrDocsView">
+                <div class="app-surface gov-app-surface gov-docs-screen">
+                  <header class="gov-data-topbar"><img src="/static/icons/govbr.svg" alt="gov.br"><button class="gov-avatar-photo small" type="button">◯</button></header>
+                  <header class="gov-docs-header"><button class="gov-back-line" data-gov-nav="govbr-home" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Carteira de documentos</strong></header>
+                  <section class="gov-document-card military"><small>Documento fictício</small><strong id="govFullNameDoc">MARIA DA SILVA (EXEMPLO)</strong><span>Situação</span><b>DOCUMENTO DE EXEMPLO.</b></section>
+                  <button class="gov-add-doc-btn" data-gov-detail="Adicionando documento" type="button">Adicionar documento</button>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button class="active" data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-agenda" id="govbrAgendaView">
+                <div class="app-surface gov-app-surface gov-agenda-screen">
+                  <header class="gov-browser-header compact"><button class="gov-browser-round" data-gov-nav="govbr-home" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>servicos.acesso.gov.br · treino</strong><button class="gov-browser-round" type="button">☰</button></header>
+                  <div class="gov-services-brandline agenda"><img src="/static/icons/govbr.svg" alt="gov.br"><button type="button" class="gov-shortcuts-pill">▦ Atalhos gov.br</button></div>
+                  <div class="gov-breadcrumb agenda">⌂ <span>Agenda</span></div>
+                  <p class="gov-agenda-intro">Calendário dos principais serviços públicos do Brasil.</p>
+                  <label class="gov-real-search agenda-search"><input type="search" placeholder="Digite o nome do Serviço ou Evento" aria-label="Pesquisar na agenda"><span>⌕</span></label>
+                  <div class="gov-agenda-toolbar"><button type="button">≣ Filtros</button><div><span class="active">🗓</span><span>☰</span></div></div>
+                  <div class="gov-calendar-month"><button type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Outubro, 2026</strong><button type="button" aria-label="Próximo mês"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+                  <div class="gov-calendar-grid"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div>
+                  <div class="gov-calendar-table">
+                    <div>27</div><div>28</div><div>29</div><div>30</div><div>01</div><div>02</div><div>03</div>
+                    <div class="event">IRRF ganho de capital</div><div class="event">Multa substitutiva</div>
+                    <div>04</div><div>05</div><div>06</div><div>07</div><div>08</div><div class="selected">09</div><div>10</div>
+                  </div>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav active" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-qr" id="govbrQrView">
+                <div class="app-surface gov-app-surface gov-qr-screen">
+                  <header class="gov-inner-header"><button class="gov-back-btn" data-gov-nav="govbr-services" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Login sem senha (QR code)</strong></header>
+                  <div class="gov-qr-box"><div class="gov-qr-placeholder"></div><strong>Use o aplicativo gov.br para ler um QR Code de acesso</strong><small>Esse recurso permite entrar em alguns serviços sem digitar senha, desde que o serviço exiba um QR Code oficial.</small></div>
+                  <div class="gov-info-card"><strong>No treino</strong><ol><li>Abra o recurso pelo menu de serviços.</li><li>Confirme se o site é oficial.</li><li>Leia o QR Code usando o próprio aplicativo gov.br.</li></ol></div>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav active" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-security" id="govbrSecurityView">
+                <div class="app-surface gov-app-surface gov-security-screen">
+                  <header class="gov-inner-header"><button class="gov-back-btn" data-gov-nav="govbr-menu" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Segurança da conta</strong></header>
+                  <section class="gov-profile-menu gov-security-menu">
+                    <button data-gov-detail="Aumentar nivel" type="button"><span>🪪</span><div><strong>Nível da conta</strong><small>Prata · aumente o nível quando desejar</small></div><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button data-gov-detail="Biometria" type="button"><span>🫆</span><div><strong>Biometria do celular</strong><small>Use biometria para facilitar o login</small></div><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button id="govTwoFactorRow" type="button"><span>🔐</span><div><strong>Verificação em duas etapas</strong><small>Proteção extra com código gerado no aplicativo</small></div><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    <button data-gov-detail="Historico de acessos" type="button"><span>↺</span><div><strong>Histórico de acessos</strong><small>Veja entradas e autorizações recentes</small></div><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                  </section>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button class="active" data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-security-2fa" id="govbrSecurity2faView">
+                <div class="app-surface gov-app-surface gov-2fa-prompt-screen inner-twofa">
+                  <header class="gov-inner-header"><button class="gov-back-btn" data-gov-nav="govbr-security" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Verificação em duas etapas</strong></header>
+                  <main class="gov-2fa-prompt-content compact">
+                    <h2>Ative a verificação em duas etapas</h2>
+                    <strong>O código é gerado no próprio aplicativo gov.br.</strong>
+                    <p>Quando esse recurso estiver ativado, cada novo acesso poderá pedir um código gerado no aplicativo. Isso ajuda a proteger sua conta mesmo se alguém descobrir sua senha.</p>
+                    <p>No ambiente de treino, o objetivo é aprender onde esse recurso fica e como ele aumenta a segurança.</p>
+                  </main>
+                  <div class="gov-2fa-prompt-actions"><button class="gov-primary-btn" id="gov2faLearnBtn" type="button">Ativar verificação em duas etapas</button><button class="gov-secondary-btn gov-outline-strong" data-gov-nav="govbr-security" type="button">Agora não</button></div>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-menu" id="govbrMenuView">
+                <div class="app-surface gov-app-surface gov-menu-screen">
+                  <div class="gov-menu-sheet">
+                    
+                    <h2>gov.br</h2>
+                    <p>Versão demonstrativa · V85</p>
+                    <section class="gov-menu-options">
+                      <div class="gov-menu-option switcher"><span>🫆</span><strong>Ativar login com biometria do celular</strong><i></i></div>
+                      <button data-gov-detail="Rever telas" type="button"><span>↺</span><strong>Rever telas de entrada do aplicativo</strong></button>
+                      <button data-gov-detail="Termos e privacidade" type="button"><span>🛡</span><strong>Termo de Uso e Aviso de Privacidade</strong></button>
+                      <button id="govSecurityMenuRow" data-gov-nav="govbr-security" type="button"><span>🔐</span><strong>Segurança da conta</strong></button>
+                      <button id="govLogoutBtn" type="button"><span>⇥</span><strong>Sair e desvincular sua conta deste aparelho</strong></button>
+                    </section>
+                  </div>
+                  <nav class="gov-bottom-nav gov-bottom-nav-real"><button data-gov-nav="govbr-home" type="button"><span>⌂</span><small>Início</small></button><button data-gov-nav="govbr-data" type="button"><span>👤</span><small>Dados</small></button><button class="gov-center-nav" data-gov-nav="govbr-qr" type="button"><span>▦</span><small>QR Code</small></button><button data-gov-nav="govbr-docs" type="button"><span>▣</span><small>Carteira</small></button><button class="active" data-gov-nav="govbr-menu" type="button"><span>☰</span><small>Menu</small></button></nav>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="govbr-exit-review" id="govbrExitReviewView">
+                <div class="app-surface gov-app-surface gov-inner-screen">
+                  <header class="gov-inner-header"><button class="gov-back-btn" data-gov-nav="govbr-menu" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong>Encerrar a sessão</strong></header>
+                  <section class="gov-exit-confirm"><span aria-hidden="true"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span><h2>Deseja sair da conta?</h2><p>Quando usar um aparelho compartilhado, saia ao terminar e confira se voltou à tela de entrada do aplicativo.</p><button id="govConfirmExitBtn" class="gov-primary-btn" type="button">Sim, sair da conta simulada</button><button class="gov-secondary-btn" data-gov-nav="govbr-menu" type="button">Continuar na conta</button></section>
+                </div>
+              </div>
+              <div class="android-view" data-view="govbr-extra-detail" id="govbrExtraDetailView">
+                <div class="app-surface gov-app-surface gov-inner-screen gov-real-detail-screen">
+                  <header class="gov-inner-header"><button class="gov-back-btn" id="govExtraBack" type="button" aria-label="Voltar"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><strong id="govExtraTitle">Serviço</strong></header>
+                  <section class="gov-proof-hero"><span>ℹ</span><strong id="govExtraHeading">Informações do serviço</strong><small>SIMULAÇÃO EDUCATIVA · NÃO É UM SERVIÇO OFICIAL</small></section>
+                  <section class="gov-info-card"><strong>Como utilizar no aplicativo real</strong><p id="govExtraText" style="font-size:10px;line-height:1.7;color:#526680;margin:10px 0">Procure esse assunto nos canais oficiais e confira as orientações.</p></section>
+                  <div class="gov-safety-note"><strong>Aprendizado seguro</strong><span>Este ambiente não consulta dados pessoais nem executa serviços públicos reais.</span></div>
+                  <button class="gov-primary-btn" id="govExtraDone" type="button" style="margin:12px 14px;width:calc(100% - 28px)">Voltar ao aplicativo</button>
+                </div>
+              </div>
+              <div class="android-view" data-view="playstore-home" id="playStoreHomeView">
+                <div class="app-surface playstore-surface">
+                  <header class="playstore-header"><button class="playstore-search" type="button"><span>⌕</span><b>Pesquisar apps e jogos</b><i>M</i></button></header>
+                  <main class="playstore-content">
+                    <div class="playstore-safety-banner"><span>✓</span><div><strong>Play Protect está ativado</strong><small>Ajuda a verificar apps e detectar comportamentos nocivos.</small></div><button id="playProtectBtn" type="button">Ver</button></div>
+                    <p class="playstore-kicker">APLICATIVOS DE EXEMPLO</p>
+                    <div class="playstore-app-list">
+                      <button class="playstore-app-card" id="playWhatsAppCard" type="button"><img src="/static/icons/whatsapp.svg" alt=""><span><strong>WhatsApp Messenger</strong><small>WhatsApp LLC</small><em>Comunicação</em></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                      <button class="playstore-app-card" type="button"><img src="/static/icons/govbr.svg" alt=""><span><strong>gov.br</strong><small>Serviços e Informações do Brasil</small><em>Governo</em></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                      <button class="playstore-app-card bank-official" type="button"><span class="app-letter bb">BB</span><span><strong>BB: Banco, Conta, Pix, Cartão</strong><small>Banco do Brasil SA</small><em>Finanças</em></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                      <button class="playstore-app-card bank-official" type="button"><span class="app-letter caixa">CX</span><span><strong>CAIXA</strong><small>Caixa Econômica Federal</small><em>Finanças</em></span><b><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg></b></button>
+                    </div>
+                    <p class="playstore-training-note">Treino educativo: os nomes dos desenvolvedores acima são referências oficiais. A aparência da loja pode mudar após atualizações.</p>
+                    <button class="native-companion playstore-native-btn" id="openRealPlayStoreBtn" type="button">Abrir Google Play real</button>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="playstore-detail" id="playStoreDetailView">
+                <div class="app-surface playstore-surface">
+                  <header class="playstore-detail-header"><button id="playStoreDetailBack" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span>Detalhes do app</span></header>
+                  <main class="playstore-detail-content">
+                    <section class="playstore-app-hero"><img src="/static/icons/whatsapp.svg" alt=""><div><h2>WhatsApp Messenger</h2><strong>WhatsApp LLC</strong><small>Comunicação · aplicativo oficial</small></div></section>
+                    <div class="official-developer-card"><span>✓</span><div><strong>Confira quem publicou o aplicativo</strong><small>Nome parecido e ícone conhecido não bastam. Verifique também o desenvolvedor.</small></div></div>
+                    <section class="playstore-detail-facts"><div><small>APP</small><strong>WhatsApp Messenger</strong></div><div><small>DESENVOLVEDOR</small><strong>WhatsApp LLC</strong></div><div><small>ONDE BAIXAR</small><strong>Google Play Store</strong></div></section>
+                    <button id="playDeveloperLearnedBtn" class="playstore-main-btn" type="button">Entendi como conferir</button>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="playstore-protect" id="playStoreProtectView">
+                <div class="app-surface playstore-surface protect-screen">
+                  <header class="playstore-detail-header"><button id="playProtectBack" type="button"><svg class="nav-vector" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span>Play Protect</span></header>
+                  <main class="protect-content">
+                    <div class="protect-shield">✓</div>
+                    <h2>Nenhum app nocivo encontrado</h2>
+                    <p>O Play Protect verifica aplicativos e pode alertar sobre comportamentos potencialmente perigosos.</p>
+                    <div class="protect-setting"><span><strong>Verificar apps com o Play Protect</strong><small>Recomendado</small></span><i class="toggle-on"></i></div>
+                    <button id="playProtectLearnedBtn" class="playstore-main-btn" type="button">Concluir treino</button>
+                    <p class="playstore-training-note">Simulação educativa baseada nos caminhos atuais do Google Play. A interface real pode mudar.</p>
+                  </main>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="wa-call-active" id="waCallActiveView">
+                <div class="wa-call-screen"><small>WHATSAPP · CHAMADA DE TREINO</small><div class="wa-call-avatar">M</div><h2>Maria (filha)</h2><p id="waCallStatus">Chamando…</p><div class="wa-call-controls"><span>♫<small>Áudio</small></span><span>▦<small>Teclado</small></span><span>◉<small>Alto-falante</small></span></div><button id="waHangUpBtn" type="button" class="wa-hangup"><span aria-hidden="true">☎</span> Encerrar ligação de treino</button><p>Esta chamada é apenas uma simulação. Nenhuma ligação real será feita.</p></div>
+              </div>
+              <div class="android-view" data-view="guided-practice" id="guidedPracticeView">
+                <div class="guided-surface">
+                  <header class="guided-header">
+                    <button class="guided-back" id="guidedBackBtn" type="button" aria-label="Voltar aos assuntos">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.7 5.3a1 1 0 0 1 0 1.4L10.41 12l5.3 5.3a1 1 0 1 1-1.42 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.41 0Z"/></svg>
+                    </button>
+                    <div><small id="guidedKicker">SEU TREINO</small><strong id="guidedTitle">Atividade</strong></div>
+                  </header>
+                  <p class="guided-instruction" id="guidedInstruction"></p>
+                  <div class="guided-example" id="guidedExample"></div>
+                  <div class="guided-options" id="guidedOptions"></div>
+                  <p class="guided-feedback" id="guidedFeedback" hidden></p>
+                </div>
+              </div>
+
+              <div class="android-view" data-view="success" id="successView">
+                <div class="success-screen lesson-success-screen">
+                  <div class="success-symbol">✓</div>
+                  <small class="success-kicker" id="successKicker">ATIVIDADE CONCLUÍDA</small>
+                  <h2 id="successTitle">Muito bem!</h2>
+                  <p id="successText">Você concluiu esta atividade.</p>
+                  <div class="learned" id="successLearned">Continue no seu ritmo.</div>
+                  <div class="lesson-success-actions">
+                    <button class="success-next" id="nextLessonBtn" type="button">Continuar próximo treino</button>
+                    <button class="success-back" id="backSubjectsBtn" type="button">Voltar aos assuntos</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="guide-overlay" id="guideOverlay" hidden aria-hidden="true">
+                <div class="guide-spotlight" id="guideSpotlight" aria-hidden="true"></div>
+                <div class="guide-pointer" id="guidePointer" aria-hidden="true">
+                  <span>Toque aqui</span>
+                  <i></i>
+                </div>
+              </div>
+
+              <button class="gesture-pill" id="gestureHome" aria-label="Navegar: toque para voltar aos treinos ou segure para ver os aplicativos recentes" title="Toque para navegar; segure para ver aplicativos recentes"></button>
+            </div>
+          </div>
+          <button class="exit-fullscreen" id="exitFullscreen" type="button" hidden>Sair da tela cheia</button>
+        </section>
+      </div>
+    </section>
+
+    
+
+
+
+    <div class="start-modal" id="startModal" hidden aria-hidden="true">
+      <div class="start-backdrop" id="startBackdrop"></div>
+      <div class="start-dialog start-dialog-simple" role="dialog" aria-modal="true" aria-labelledby="startModalTitle" aria-describedby="startModalIntro">
+        <button class="start-close" id="closeStartModal" type="button" aria-label="Fechar">×</button>
+        <span class="modal-kicker" id="startModalKicker">ENTRAR NO EDUCA+</span>
+        <h2 id="startModalTitle">Digite seu celular</h2>
+        <p class="start-modal-intro" id="startModalIntro">Para começar ou continuar seu treino.</p>
+        <form id="quickStartForm" class="quick-start-form" novalidate>
+          <label for="quickPhone">
+            <span>Celular com DDD</span>
+            <input id="quickPhone" name="quickPhone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="16" required placeholder="(65) 99999-9999" aria-describedby="phoneOnlyNotice">
+          </label>
+          <p class="quick-start-trust" id="phoneOnlyNotice">Não precisa informar nome ou senha.</p>
+          <p class="quick-start-message" id="quickStartMessage" hidden role="alert" aria-live="polite"></p>
+          <button class="quick-start-primary" id="quickSaveBtn" type="submit">Continuar <span aria-hidden="true">→</span></button>
+        </form>
+      </div>
+    </div>
+
+    <div class="return-modal" id="returnModal" hidden aria-hidden="true">
+      <div class="return-backdrop" id="returnBackdrop"></div>
+      <div class="return-dialog" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle">
+        <button class="return-close" id="closeReturnModal" type="button" aria-label="Fechar">×</button>
+
+        <section id="returnPhoneStep">
+          <span class="modal-kicker">CONTINUAR MEU TREINO</span>
+          <h2 id="returnModalTitle">Vamos encontrar seu progresso.</h2>
+          <p>Digite o celular que você usou antes.</p>
+          <form id="returnPhoneForm" class="return-form" novalidate>
+            <label>
+              <span>Seu celular</span>
+              <input id="returnPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(63) 99999-9999">
+            </label>
+            <p class="return-message" id="returnPhoneMessage" hidden></p>
+            <button class="return-primary" type="submit">Mostrar código de treino</button>
+          </form>
+        </section>
+
+        <section id="returnCodeStep" hidden>
+          <span class="modal-kicker">SÓ MAIS UM PASSO</span>
+          <h2>Digite o código de demonstração.</h2>
+          <p>Para esta demonstração, o código aparece na própria tela. Não é uma verificação real de telefone e nenhum SMS será enviado.</p>
+          <div class="demo-code" id="demoCodeBox" hidden>
+            <small>Código mostrado somente neste treino:</small>
+            <strong id="demoCodeValue">000000</strong>
+          </div>
+          <form id="returnCodeForm" class="return-form" novalidate>
+            <label>
+              <span>Código de 6 números</span>
+              <input id="returnCode" class="code-input" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="_ _ _ _ _ _">
+            </label>
+            <p class="return-message" id="returnCodeMessage" hidden></p>
+            <button class="return-primary" type="submit">Continuar meu treino</button>
+            <button class="return-secondary" id="changePhoneBtn" type="button">Corrigir número</button>
+          </form>
+        </section>
+      </div>
+    </div>
+
+        <div class="info-modal" id="infoModal" hidden aria-hidden="true">
+      <div class="info-backdrop" id="infoBackdrop"></div>
+      <div class="info-dialog" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+        <button class="info-close" id="closeInfoModal" type="button" aria-label="Fechar">×</button>
+        <span class="modal-kicker">COMO FUNCIONA</span>
+        <h2 id="infoModalTitle">Primeiro você experimenta.</h2>
+        <p>Experimente as atividades. Para guardar seu progresso, basta informar um celular com DDD neste protótipo.</p>
+        <ul class="info-steps">
+          <li><b>1</b><span>Toque em <strong>Começar agora</strong>.</span></li>
+          <li><b>2</b><span>Informe apenas <strong>seu celular com DDD</strong>.</span></li>
+          <li><b>3</b><span>Pratique no celular de treino e volte depois do mesmo ponto.</span></li>
+        </ul>
+        <button class="info-confirm" id="infoConfirmBtn" type="button">Entendi</button>
+      </div>
+    </div>
+
+<section class="coach-card" id="coachCard" hidden aria-live="polite">
+      <span class="coach-kicker">TREINO DE SEGURANÇA</span>
+      <h2 id="coachTitle">Abra o WhatsApp</h2>
+      <p id="coachText">Toque no ícone do WhatsApp no celular.</p>
+      <div class="training-mini-progress"><span id="trainingProgress">1 de 4</span><div><i id="progressFill"></i></div></div>
+      <div class="coach-actions"><button type="button" id="speakBtn">🔊 Ouvir</button><button type="button" id="hintBtn">💡 Dica</button></div>
+      <p class="hint" id="hintText" hidden></p>
+      <div class="coach-status" id="coachStatus" aria-live="assertive"></div>
+      <p class="no-account-note">Você pode experimentar tudo isso sem criar conta.</p>
+    </section>
+
+    <section class="account-card" id="accountCard" hidden aria-live="polite">
+      <span class="coach-kicker">VOCÊ EXPERIMENTOU O EDUCA+</span>
+      <h2>Gostou? Quer continuar aprendendo?</h2>
+      <p>Digite só seu celular com DDD para guardar seu progresso e continuar depois.</p>
+      <form id="accountForm" class="basic-account-form" novalidate>
+        <label><span>Seu celular com DDD</span><input id="accountPhone" name="phone" type="tel" inputmode="numeric" maxlength="16" autocomplete="tel-national" placeholder="(65) 99999-9999" required><small>Neste protótipo, você pode continuar com um código demonstrativo.</small></label>
+        <button class="create-account-btn" type="submit">Quero continuar aprendendo</button>
+        <button class="skip-account-btn" id="skipAccount" type="button">Continuar sem conta</button>
+      </form>
+      <div class="account-message" id="accountMessage" hidden></div>
+      <p class="privacy-note">Este é um protótipo educativo: o código demonstrativo não comprova quem possui o telefone.</p>
+    </section>
+  </main>
+
+  <script src="/static/js/home-responsive-v11238.js?v=11238"></script>
+  <script src="/static/js/accessibility.js?v=11148&neural=11261&guide=11262"></script>
+  <script src="/static/js/accessibility-external.js?v=11150&nativeheader=11231"></script>
+  <script src="/static/js/android-bridge.js"></script>
+  <script src="/static/js/training.js?v=11155&layout=11172&guide=11241&voice=11262&account=11263&pretest=11267&mobilefull=11277"></script>
+  <script src="/static/js/onboarding.js?v=11149"></script>
+  <script src="/static/js/free-mode.js?v=11189&patch=11189&warm=11195&neural=11196&examples=11197&naturalvoice=11202&summaryscroll=11208&score=11210&familyphoto=11212&flow=11214&cleanchat=11229&guard=11251&arrivals=11257&callvoice=11261&contacts=11263&pretest=11267&chat=11269&intro=11278"></script>
+<script src="/static/js/web-contact-profile-v11214.js?v=11214&contacts=11263"></script>
+<script src="/static/js/web-chat-photo-scroll-v11215.js?v=11215"></script>
+  
+  <script src="/static/js/lia-female-voice.js?v=11193"></script>
+  <script src="/static/js/lia-kokoro-browser.js?v=11157&mirror=2&warm=11191&intro=11192&free=11194"></script>
+  <script src="/static/js/lia-free-neural-v11206.js?v=11223&wasm=11226&memory=11227"></script>
+  <script src="/static/js/lia-voice-warm-v11223.js?v=11223"></script>
+  <script src="/static/js/lia-neural-playback-v11261.js?v=11262"></script>
+  <script src="/static/js/free-video.js?v=11191&patch=11191&natural=11192&hq=11193&free=11194&live=11195&webfix=11201&naturalvoice=11202&roberta=11203&robertareal=11205&neuralfree=11223&voicepriority=11224&autoplay=11225&motion=11226&memory=11227&liveavatar=11228&zoomfit=11230"></script>
+  <script src="/static/js/web-real.js?v=11219"></script>
+  <script src="/static/js/web-apps-v11216.js?v=11221"></script>
+  <script src="/static/js/web-more-apps-v11219.js?v=11221"></script>
+   <script src="/static/js/web-touch-recovery-v11220.js?v=11220&scroll=11269"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js?v=11223&lia=stable&voicepriority=11224&autoplay=11225&motion=11226&memory=11227&liveavatar=11228&cleanchat=11229&zoomfit=11230&nativeheader=11231&normalfit=11233&smsfit=11234&govfit=11235&cards=11244&home=11244&guard=11251&pretest=11267&intro=11278', {updateViaCache:'none'}).catch(() => {});
+      });
+    }
+  </script>
+  <script src="/static/js/mobile-app-v11158.js?v=11158"></script>
+  <script src="/static/js/android-system.js?v=104&pretest=11267" defer></script>
+  <script src="/static/channels/web/senior-preview-v11279/toggle.js?v=11279" defer></script>
+</body>
+</html>
