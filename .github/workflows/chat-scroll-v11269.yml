@@ -1,0 +1,30 @@
+name: V112.69 — rolagem interna e duplicatas no chat
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'public/static/js/free-mode.js'
+      - 'public/static/js/web-touch-recovery-v11220.js'
+      - 'public/static/css/web-chat-photo-scroll-v11215.css'
+      - 'public/html/index.html'
+      - 'tests/web-chat-scroll-v11269.test.js'
+      - 'scripts/validar-chat-scroll-v11269.mjs'
+      - '.github/workflows/chat-scroll-v11269.yml'
+permissions:
+  contents: read
+jobs:
+  scroll:
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/web-chat-scroll-v11269.test.js
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - run: |
+          python3 -m http.server 8789 --directory public >/tmp/chat-scroll.log 2>&1 &
+          node scripts/validar-chat-scroll-v11269.mjs
