@@ -11,6 +11,8 @@ try{
   const context=await browser.newContext({viewport,isMobile:viewport.width<500,hasTouch:true,deviceScaleFactor:2});
   const page=await context.newPage();
   try{
+   // Sessão fictícia local: estes testes verificam funcionalidades após cadastro.
+   await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
    await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>!!(window.EducaFreeMode&&window.EducaWebReal&&window.EducaWebAppsV11216&&document.documentElement.dataset.educaPlatform==='web'),null,{timeout:15000});
    await page.evaluate(()=>{
