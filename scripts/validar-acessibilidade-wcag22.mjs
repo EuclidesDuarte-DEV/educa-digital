@@ -33,6 +33,7 @@ async function audit(page,stage,key,mode='normal'){
     if(r.width<43.5||r.height<43.5)issues.push('Alvo abaixo de 44 CSS px: '+name+' '+Math.round(r.width)+'x'+Math.round(r.height));
     if(e.scrollWidth>e.clientWidth+2&&style.overflowX!=='visible')issues.push('Controle cortado: '+name);
     if(e.disabled)continue;
+    if(r.width>0&&r.height>0&&r.left>=0&&r.right<=innerWidth&&r.top>=0&&r.bottom<=innerHeight){const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);if(hit&&!e.contains(hit)&&!hit.contains(e))issues.push('Controle encoberto: '+name);}
     if(!name&&e.tagName==='BUTTON')issues.push('Controle sem nome: '+selector);
    }
   }
@@ -89,6 +90,11 @@ for(const engine of [chromium,webkit]){
     await audit(page,'intro',key);
     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
     await audit(page,'intro',key,'extra');
+    // Teste complementar de ampliação de texto: duplica o tamanho calculado
+    // dos textos principais; não substitui o zoom nativo manual do navegador.
+    await page.evaluate(()=>{window.EducaAccessibility.update({text:'normal'});const nodes=[...document.querySelectorAll('#freeIntroTitle,.free-intro-story p,#freeIntroBack span,#freeIntroCancel span,#freeIntroStartLabel')];const sizes=nodes.map(e=>parseFloat(getComputedStyle(e).fontSize));nodes.forEach((e,i)=>e.style.setProperty('font-size',sizes[i]*2+'px','important'));});
+    await audit(page,'intro',key,'text200');
+    await page.evaluate(()=>document.querySelectorAll('#freeIntroTitle,.free-intro-story p,#freeIntroBack span,#freeIntroCancel span,#freeIntroStartLabel').forEach(e=>e.style.removeProperty('font-size')));
     await page.evaluate(()=>window.EducaAccessibility.update({text:'normal'}));
     await page.locator('#freeIntroBack').click();
     await page.waitForFunction(()=>document.querySelector('#phoneScreen').dataset.currentView==='learning');
