@@ -49,7 +49,10 @@
     return String(Math.min(.55, ambient + (panelOpen ? .12 : 0)));
   }
 
+  const navigationLocked = () => window.EducaFreeView?.canNavigateSystem?.() === false;
+
   function showShade() {
+    if (navigationLocked()) return;
     if (!recents.hidden) hideRecents();
     if (!shade.hidden) return;
     temporarilySuspendGuide();
@@ -71,6 +74,7 @@
   }
 
   function showRecents() {
+    if (navigationLocked()) return;
     if (!shade.hidden) hideShade();
     if (!recents.hidden) return;
     temporarilySuspendGuide();
@@ -215,6 +219,7 @@
   // o comportamento de navegação já existente na V102.
   gestureBar.addEventListener('pointerdown', () => {
     window.clearTimeout(longPressTimer);
+    if (navigationLocked()) return;
     longPressTimer = window.setTimeout(() => {
       suppressGestureClick = true;
       showRecents();

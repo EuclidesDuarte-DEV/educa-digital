@@ -54,7 +54,8 @@ try {
  app.on('framenavigated',frame=>{if(frame===app.mainFrame())nav++;});
  app.on('request',r=>{if(r.url().includes('/api/lia-model/'))heavyCalls++;});
  app.on('request',r=>{if(r.url().includes('/api/lia/voz-web/speak'))webPaidCalls++;});
- await app.goto(root+'/html/',{waitUntil:'domcontentloaded',timeout:40000});
+ await app.addInitScript(() => localStorage.setItem('educaRememberedUser', JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+  await app.goto(root+'/html/',{waitUntil:'domcontentloaded',timeout:40000});
  await app.waitForFunction(()=>window.EducaVideoCall&&document.documentElement.dataset.educaPlatform==='web',{timeout:15000});
  const active=await app.evaluate(()=>{
   const v=document.querySelector('#freeVideoVoiceEngine');
@@ -91,6 +92,7 @@ try {
   phone.on('framenavigated',frame=>{if(frame===phone.mainFrame())navigations++;});
   phone.on('crash',()=>{crashes++;});
   context.on('request',r=>{if(/\.jsep\.|ort\.webgpu|\/api\/lia-model\//.test(r.url()))heavy++;if(r.url().includes('/api/lia/voz-web/speak'))paid++;});
+  await phone.addInitScript(() => localStorage.setItem('educaRememberedUser', JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
   await phone.goto(root+'/html/?platform=web',{waitUntil:'domcontentloaded',timeout:40000});
   await phone.waitForFunction(()=>window.EducaVideoCall&&window.EducaLiaWarm?.isMemorySensitive?.(),null,{timeout:15000});
   await phone.evaluate(()=>{window.EducaFreeView.isTraining=()=>true;window.EducaFreeMode.start();window.EducaVideoCall.incoming();});

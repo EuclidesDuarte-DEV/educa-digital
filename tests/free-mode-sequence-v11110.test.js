@@ -30,7 +30,7 @@ function setup(){
   createTextNode(value){return value;},
   addEventListener(type,fn){listeners[type]=fn;}
  };
- const window={EducaFreeView:{isTraining(){return true;},setView(name){phone.dataset.currentView=name;}},
+ const window={EducaFreeView:{isTraining(){return true;},canFreeMode(){return true;},setView(name){phone.dataset.currentView=name;}},
   EducaVideoCall:{incoming(s){requests.push(s.id);window.EducaFreeMode.enterVideo();phone.dataset.currentView='free-video';},close(){}},
   addEventListener(){},speechSynthesis:{cancel(){}}};
  const sandbox={document,window,MutationObserver:class{observe(){}},

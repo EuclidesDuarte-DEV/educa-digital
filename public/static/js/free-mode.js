@@ -80,7 +80,7 @@ function registerWebRisk(s,message){
 }
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
-function start(){if(!bridge()?.isTraining())return;stop();state.active=true;
+function start(){if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;stop();state.active=true;
  state.learningConsent=document.documentElement?.dataset?.educaPlatform==='web'&&
    document.getElementById('freeLearningConsent')?.checked===true;
  state.exampleConsent=document.documentElement?.dataset?.educaPlatform==='web'&&
