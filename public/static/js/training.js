@@ -119,7 +119,8 @@
   let guideScrollParents = [];
   let guideResizeObserver = null;
   let accessMode = 'guest';
-  let isGuestPretest = false; // O foco inicial no Banco é opcional.
+  let isGuestPretest = false;
+  let pretestFinished = false;
   const guestCompletedLessons = new Set(); // Progresso de visita, sem dados pessoais.
   const topicEntryApps = { security: 'whatsapp', whatsapp: 'whatsapp', pix: 'bank', settings: 'settings', govbr: 'govbr', playstore: 'playstore' };
   const waMoreBtn = $('#waMoreBtn');
@@ -560,7 +561,31 @@
     ['Você está indo muito bem', 'Complete as três situações de segurança para finalizar a experiência.', 'Você pode voltar à lista de conversas e escolher as que ainda não têm o ✓.']
   ];
 
+  // A restrição não depende da seta/overlay, que é apenas orientação visual.
+  function pretestLocked() { return accessMode !== 'registered'; }
+  function pretestAllowsView(name, started, finished) {
+    if (!started) return name === 'home';
+    if (finished) return name === 'success';
+    return ['bank-home','bank-pix','bank-send','bank-review'].includes(name);
+  }
+  function pretestAllowsControl(view, control) {
+    if (!control) return true;
+    const allowed = {
+      home: '[data-open-app="bank"]',
+      'bank-home': '#bankPixBtn',
+      'bank-pix': '#bankSendPixBtn, [data-bank-back="bank-home"]',
+      'bank-send': '[data-pix-type], #pixDemoKey, [data-pix-amount], #bankContinuePix, [data-bank-back="bank-pix"]',
+      'bank-review': '[data-bank-answer], [data-bank-back="bank-send"]',
+      success: '#nextLessonBtn, #backSubjectsBtn'
+    };
+    return Boolean(allowed[view] && control.matches(allowed[view]));
+  }
+  function blockPretestNavigation() {
+    announce(pretestFinished ? 'Entre com seu celular para continuar.' : 'Conclua a atividade de Pix para continuar.', false);
+    if (pretestFinished) openStartModal({ fromPretest: true });
+  }
   function setView(name) {
+    if (pretestLocked() && !pretestAllowsView(name, trainingStarted, pretestFinished)) return false;
     // Every screen change invalidates pending arrows from the previous screen.
     guideEpoch += 1;
     if (guideTimer) {
@@ -604,7 +629,7 @@
   }
 
   // Ponte opcional: o modo livre navega sem alterar as atividades guiadas.
-  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted };
+  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted, canFreeMode: () => trainingStarted && !pretestLocked() };
 
   function clearGuide({ keepState = false } = {}) {
     guideEpoch += 1;
@@ -959,10 +984,10 @@
     learningAccess?.classList.toggle('registered', registered);
     learningAccess?.classList.toggle('demo', !registered);
     if (learningAccountOptions) learningAccountOptions.hidden = registered;
-    // V102: removido aviso de acesso dentro do celular; escolha livre continua disponível.
+    // O visitante só pode praticar o pré-teste de Pix.
     if (learningAccessText) learningAccessText.textContent = registered
       ? 'Escolha qualquer assunto ou atividade, na ordem que preferir.'
-      : 'Todas as atividades estão disponíveis. Salvar o progresso é opcional.';
+      : 'Conclua o pré-teste e entre com seu celular para liberar as atividades.';
     if (featuredAccessNote) featuredAccessNote.textContent = 'Escolha qualquer atividade do Pix';
     $$('[data-learning-topic]').forEach(card => {
       card.classList.remove('is-locked');
@@ -973,6 +998,7 @@
   }
 
   function startGuidedTopic(topicId) {
+    if (pretestLocked()) return blockPretestNavigation();
     const topic = learningTopics[topicId];
     if (!topic || !topic.lessons?.length) return;
     isGuestPretest = false;
@@ -1014,6 +1040,7 @@
   }
 
   function openModulePath(topicId) {
+    if (pretestLocked()) return blockPretestNavigation();
     clearLandingPretest();
     clearGuide();
     const topic = learningTopics[topicId];
@@ -1180,6 +1207,8 @@
     progressSaved = true;
     accessMode = 'registered';
     updateReturningUI();
+    // Somente após cadastro/login bem-sucedido vinculamos a atividade gratuita.
+    attachGuestPretest(phone);
     window.dispatchEvent(new CustomEvent('educa:account-change'));
   }
 
@@ -1195,20 +1224,54 @@
     const user = getRememberedUser();
     if (!user?.phone || !activityCode) return;
     try {
-      await fetch('/api/progresso', {
+      const response = await fetch('/api/progresso', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: user.phone, activity_code: activityCode, event: eventName })
       });
+      return response.ok && (await response.json()).ok === true;
     } catch (_) {
       // A experiência continua offline; o localStorage ainda preserva o estado neste aparelho.
+      return false;
     }
   }
+
+  const pretestSyncing = new Set();
+  const pretestPending = new Set();
+  const pendingPretestKey = phone => lessonsKey(phone) + ':pretest-pending';
+  function attachGuestPretest(phone) {
+    if (!phone || !guestCompletedLessons.has(lessonKey('pix', 0))) return;
+    selectLessonsOwner(phone);
+    completedLessons.add(lessonKey('pix', 0));
+    persistLessons();
+    const key = pendingPretestKey(phone);
+    pretestPending.add(key);
+    try { localStorage.setItem(key, '1'); } catch (_) {}
+    guestCompletedLessons.clear();
+    void flushPretestProgress(phone);
+  }
+  async function flushPretestProgress(phone) {
+    const digits = String(phone || '').replace(/\D/g, '');
+    if (!digits || digits !== String(getRememberedUser()?.phone || '').replace(/\D/g, '')) return;
+    const key = pendingPretestKey(digits);
+    let pending = pretestPending.has(key);
+    try { pending = pending || localStorage.getItem(key) === '1'; } catch (_) {}
+    if (!pending || pretestSyncing.has(key)) return;
+    pretestSyncing.add(key);
+    try {
+      if (await syncProgressEvent(learningTopics.pix.lessons[0][2], 'complete')) {
+        pretestPending.delete(key);
+        try { localStorage.removeItem(key); } catch (_) {}
+      }
+    } finally { pretestSyncing.delete(key); }
+  }
+  window.addEventListener('online', () => { void flushPretestProgress(getRememberedUser()?.phone); });
 
   async function loadServerProgress(phone) {
     const digits = String(phone || '').replace(/\D/g, '');
     if (digits.length < 10) return;
     selectLessonsOwner(digits);
+    void flushPretestProgress(digits);
     try {
       const response = await fetch(`/api/progresso?phone=${encodeURIComponent(digits)}`);
       if (!response.ok) return;
@@ -1254,7 +1317,7 @@
       if (accessMode !== 'demo') accessMode = 'guest';
       if (headerTrust) headerTrust.textContent = 'Pré-teste gratuito';
       if (startNowLabel) startNowLabel.textContent = 'Começar meu treino';
-      if (heroActionNote) heroActionNote.textContent = 'Acesso livre, sem cadastro';
+      if (heroActionNote) heroActionNote.textContent = 'Pré-teste gratuito';
       if (logoutBtn) logoutBtn.hidden = true;
     }
     updateLearningAccessUI();
@@ -1313,6 +1376,7 @@
   }
 
   function openStartModal({ unlock = false, fromPretest = false, entry = false } = {}) {
+    if (pretestLocked() && trainingStarted && !pretestFinished) return blockPretestNavigation();
     if (!startModal) return;
     // V111.51: mesma entrada simples para usuários novos e antigos.
     // Apenas telefone e um botão. A identificação da conta é automática.
@@ -1460,6 +1524,7 @@
   }
 
   function openLearningHub() {
+    if (pretestLocked()) return blockPretestNavigation();
     isGuestPretest = false;
     trainingStarted = true;
     clearLandingPretest();
@@ -1522,6 +1587,8 @@
 
   function returnToLandingPretest() {
     if (accessMode === 'registered') return openLearningHub();
+    if (trainingStarted && !pretestFinished) return blockPretestNavigation();
+    pretestFinished = false;
     isGuestPretest = false;
     lessonVideo?.pause();
     exitPrototypeFocus();
@@ -1560,6 +1627,10 @@
     if (!topic) return returnToLandingPretest();
     const isLast = currentLessonIndex >= topic.lessons.length - 1;
     const demoFinished = isGuestPretest && accessMode !== 'registered';
+    if (demoFinished) {
+      if (pretestFinished || currentTopicAction !== 'pix-recipient' || phoneScreen?.dataset.currentView !== 'bank-review') return;
+      pretestFinished = true;
+    }
     saveLessonComplete(currentLearningTopic, currentLessonIndex);
     if (successKicker) successKicker.textContent = demoFinished ? 'PRÉ-TESTE CONCLUÍDO' : 'ATIVIDADE CONCLUÍDA';
     if (successTitle) successTitle.textContent = 'Muito bem!';
@@ -1695,6 +1766,7 @@
   }
 
   function startTraining({ fullscreen = false, focus = false, boot = false, firstActivity = false } = {}) {
+    if (pretestLocked()) return trainingStarted ? blockPretestNavigation() : openStartModal({ entry: true });
     clearLandingPretest();
     trainingStarted = true;
     clearGuide();
@@ -1829,6 +1901,9 @@
     // Zere o estado ANTES de restaurar o pré-teste; caso contrário,
     // applyLandingPretest() interpreta que o treino ainda está aberto.
     trainingStarted = false;
+    pretestFinished = false;
+    isGuestPretest = false;
+    guestCompletedLessons.clear();
     completed = new Set();
     accountPromptShown = false;
     currentLearningTopic = '';
@@ -2265,10 +2340,12 @@
     btn.addEventListener('click', () => {
       nativeHaptic('tap');
       const app = btn.dataset.openApp;
+      if (pretestLocked() && (trainingStarted || app !== 'bank')) return blockPretestNavigation();
       if (!trainingStarted && app === 'bank') {
         const remembered = getRememberedUser();
         clearLandingPretest();
         isGuestPretest = !remembered?.phone;
+        pretestFinished = false;
         if (!remembered?.name || !remembered?.phone) accessMode = 'guest';
         trainingStarted = true;
         clearGuide();
@@ -2785,6 +2862,26 @@
     }
   });
 
+  // Captura antes dos handlers dos aplicativos, mesmo enquanto a seta é reposicionada.
+  document.addEventListener('click', (event) => {
+    if (!pretestLocked()) return;
+    const control = event.target.closest?.('button, a, [role="button"]');
+    if (!control || !(phoneScreen?.contains(control) || control.id === 'gestureHome')) return;
+    const view = phoneScreen?.dataset.currentView || 'home';
+    if (pretestAllowsControl(view, control)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    blockPretestNavigation();
+  }, true);
+
+  for (const name of ['educa:system-home','educa:system-learning','educa:system-back']) {
+    window.addEventListener(name, event => {
+      if (!pretestLocked()) return;
+      event.stopImmediatePropagation();
+      blockPretestNavigation();
+    }, true);
+  }
+
   // Durante uma etapa guiada, só a ação iluminada pode ser executada.
   // Isso evita cliques acidentais e mantém uma ação por vez, como sugerido na mentoria.
   phoneScreen?.addEventListener('click', (event) => {
@@ -2795,11 +2892,6 @@
     if (!guideOverlay || guideOverlay.hidden) return;
     const target = $('.guide-target', phoneScreen);
     if (!target || !target.getClientRects().length || target.contains(event.target)) return;
-    if (document.body.classList.contains('landing-pretest-active') && event.target.closest('[data-open-app]')) {
-      clearGuide();
-      clearLandingPretest();
-      return;
-    }
     event.preventDefault();
     event.stopImmediatePropagation();
     nativeHaptic('error');
@@ -3016,10 +3108,7 @@
   });
 
   skipAccount?.addEventListener('click', () => {
-    accountForm.hidden = true;
-    accountMessage.hidden = false;
-    accountMessage.className = 'account-message neutral';
-    accountMessage.textContent = 'Tudo bem. Você pode continuar usando a experiência sem conta.';
+    if (pretestLocked()) return openStartModal({ fromPretest: pretestFinished });
   });
 
   function updateClock() {
@@ -3037,6 +3126,7 @@
   });
 
   updateReturningUI();
+  void flushPretestProgress(getRememberedUser()?.phone);
   updateClock();
   syncAndroidStatus();
   window.setInterval(syncAndroidStatus, 60000);
