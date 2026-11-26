@@ -53,14 +53,14 @@ for(const engine of [chromium,webkit]){
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
     const design=await page.evaluate(()=>{
      const title=getComputedStyle(document.querySelector('#freeIntroTitle'));
-     const narrative=getComputedStyle(document.querySelector('.free-intro-story em'));
+     const narrative=getComputedStyle(document.querySelector('.free-intro-story p'));
      const paper=getComputedStyle(document.querySelector('.free-intro-story'));
      const header=getComputedStyle(document.querySelector('.free-intro-hero'));
      const action=document.getElementById('freeIntroStart').getBoundingClientRect();
      return {titleSize:parseFloat(title.fontSize),titleWeight:parseInt(title.fontWeight),storySize:parseFloat(narrative.fontSize),storyStyle:narrative.fontStyle,storyColor:narrative.color,titleColor:title.color,storyBackground:paper.backgroundColor,headerBackground:header.backgroundColor,buttonHeight:action.height};
     });
     assert.ok(design.titleSize>design.storySize&&design.titleWeight>=700,'Hierarquia de título insuficiente '+JSON.stringify(design));
-    assert.equal(design.storyStyle,'italic');
+    assert.equal(design.storyStyle,'normal');
     assert.ok(design.storySize>=19,'Narrativa pequena '+JSON.stringify(design));
     assert.notEqual(design.storyColor,design.titleColor);
     assert.notEqual(design.storyBackground,design.headerBackground);
@@ -76,23 +76,26 @@ for(const engine of [chromium,webkit]){
     assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados '+JSON.stringify(layout));
     assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1&&layout.tagBg==='rgba(0, 0, 0, 0)'&&layout.tagWeight<=500,'Identificação sobreposta ou destacada');
     const notice=page.locator('#freeIntroNotice');
-    assert.equal(await notice.innerText(),'Tudo é simulado. Não informe dados reais.');
+    assert.match(await notice.innerText(),/Treinamento seguro.*dados fictícios/);
+    assert.equal(await notice.evaluate(e=>getComputedStyle(e).position),'static','O aviso não pode sobrepor a tela');
     assert.ok(await notice.isVisible(),'Aviso não apareceu');
     const returnStyle=await page.locator('#freeIntroCancel').evaluate(e=>({height:e.getBoundingClientRect().height,border:parseFloat(getComputedStyle(e).borderTopWidth),cursor:getComputedStyle(e).cursor}));
     assert.ok(returnStyle.height>=44&&returnStyle.border>=1&&returnStyle.cursor==='pointer','Retorno sem destaque');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     await page.locator('#freeIntroStart').evaluate(b=>b.click());
-    await notice.waitFor({state:'hidden',timeout:3000});
+    await page.waitForTimeout(2100);
+    assert.ok(await notice.isVisible(),'Aviso integrado deve permanecer durante a leitura');
     assert.ok(await page.locator('#freeIntroStart').isDisabled(),'Aviso liberou o início cedo demais');
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
-    // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
+    // Fonte ampliada: o botão continua alcançável pela rolagem do próprio vidro.
     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
+    await page.locator('#freeIntroStart').scrollIntoViewIfNeeded();
     const inside=await page.evaluate(()=>{
      const p=document.getElementById('phoneScreen').getBoundingClientRect();
      const b=document.getElementById('freeIntroStart').getBoundingClientRect();
-     const c=document.querySelector('#freeIntroView .free-intro-content');
+     const c=document.querySelector('#freeIntroView .free-intro-surface');
      return b.top>=p.top&&b.bottom<=p.bottom+1&&b.height>=44&&c.clientHeight>0&&getComputedStyle(c).overflowY==='auto';
     });
     assert.ok(inside,'Botão inicial cortado na fonte extra');
@@ -124,7 +127,18 @@ for(const engine of [chromium,webkit]){
      await page.locator('#'+id).click();
      await view('home');
     }
-    await exit.click();
+    await page.locator('#freeEventOpen').waitFor({state:'visible',timeout:15000});
+    await page.locator('#freeEventOpen').click();
+    await view('chat');
+    await page.evaluate(()=>window.EducaFreeMode.reportContact());
+    await view('free-summary');
+    await page.locator('#freeSummaryNext').click();
+    await view('free-intro');
+    assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma videochamada inesperada');
+    assert.equal(await page.locator('#freeIntroChannel').innerText(),'Videochamada');
+    assert.ok(await page.locator('#freeIntroStart').isDisabled());
+    assert.ok(await page.locator('#freeIntroNotice').isVisible());
+    await page.locator('#freeIntroCancel').click();
     await view('learning');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeExitBtn').isVisible(),false);
