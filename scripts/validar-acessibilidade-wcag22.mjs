@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 const out='artifacts/accessibility';
 await mkdir(out,{recursive:true});
 const report=[];
-const base='http://127.0.0.1:8789/html/';
+const base=process.env.EDUCA_AUDIT_URL || 'http://127.0.0.1:8789/html/';
 const viewports=[
  {width:320,height:640},{width:390,height:844},{width:844,height:390},
  {width:768,height:1024},{width:1024,height:768},{width:1366,height:768},
@@ -59,14 +59,15 @@ async function audit(page,stage,key,mode='normal'){
  const incomplete=axe.incomplete.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)}));
  report.push({key,stage,mode,...metrics,violations,incomplete});
  await page.screenshot({path:out+'/'+key+'-'+stage+'-'+mode+'.png',fullPage:true});
- console.log(key,stage,mode,'UX issues',metrics.issues.length,'WCAG violations',violations.length);
+ console.log(key,stage,mode,'UX issues',metrics.issues.length,'WCAG violations',violations.length,JSON.stringify({issues:metrics.issues,violations}));
 }
 for(const engine of [chromium,webkit]){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
   for(const viewport of viewports){
    const key=engine.name()+'-'+viewport.width+'x'+viewport.height;
-   const page=await browser.newPage({viewport,hasTouch:viewport.width<1100});
+   const context=await browser.newContext({viewport,hasTouch:viewport.width<1100});
+   const page=await context.newPage();
    try{
     await page.route('**/api/**',route=>{
       const path=new URL(route.request().url()).pathname;
@@ -107,8 +108,8 @@ for(const engine of [chromium,webkit]){
     await page.keyboard.press('Tab');
     const focused=await page.evaluate(()=>{const e=document.activeElement;return Boolean(e&&e.closest('#accessibilityDialog')&&e.getClientRects().length&&getComputedStyle(e).visibility==='visible');});
     if(!focused)report.push({key,stage:'keyboard',issues:['Foco não permaneceu visível no diálogo'],violations:[]});
-   }catch(error){report.push({key,stage:'flow',issues:[String(error)],violations:[]});}
-   finally{await page.close();}
+   }catch(error){console.error('AUDIT_FLOW_ERROR',key,String(error));report.push({key,stage:'flow',issues:[String(error)],violations:[]});}
+   finally{await context.close();}
   }
  }finally{await browser.close();}
 }
