@@ -22,6 +22,7 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright@1.56.1 @axe-core/playwright@4.11.1
       - name: Renderizar todas as telas em diversos dispositivos
         env:
+          HOME: /root
           EDUCA_BROWSER: ${{ matrix.browser }}
         run: |
           python3 -m http.server 8789 --directory public >/tmp/matrix.log 2>&1 &
