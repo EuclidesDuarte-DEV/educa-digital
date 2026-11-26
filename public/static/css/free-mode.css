@@ -155,3 +155,18 @@ html[data-educa-platform="web"] #phoneScreen.free-active .free-app-back:not([hid
 html[data-educa-platform="web"] #phoneScreen.free-active #freeFloatingBack{display:flex;align-items:center;gap:7px;min-height:44px;font-size:13px;}
 html[data-educa-platform="web"] #phoneScreen.free-active #freeSummaryExit{border:1px solid #a92535!important;background:#b82e48!important;color:#fff!important;font-weight:800!important;}
 html[data-educa-platform="web"] #phoneScreen :is(.free-app-back,#freeIntroBack,#freeIntroStart,#freeIntroCancel,#freeExitBtn,#freeFloatingBack):focus-visible{outline:3px solid #267cdd!important;outline-offset:2px!important;}
+
+/* V112.70 polimento 2: instruções rolam, ações permanecem visíveis. */
+html[data-educa-platform="web"] #freeIntroView .free-intro-surface{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;overflow:hidden;padding:38px 12px 25px;}
+#freeIntroView .free-intro-content{min-height:0;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;overscroll-behavior-y:contain;display:flex;flex-direction:column;gap:10px;padding:1px 2px 6px;}
+#freeIntroView .free-intro-content>*{flex-shrink:0;}
+#freeIntroView .free-intro-actions{display:grid;gap:6px;background:#f3f7fc;padding:5px 2px 0;}
+#freeIntroView .free-intro-actions button{width:100%;box-sizing:border-box;min-width:0;white-space:normal;overflow-wrap:anywhere;}
+#freeIntroView .free-intro-hero{padding:12px;}
+#freeIntroView .free-intro-symbol{width:44px;height:44px;margin:6px auto;}
+#freeIntroView .free-intro-symbol svg{width:32px;height:32px;}
+#freeIntroView #freeIntroTitle{margin:4px 0 6px;}
+html.a11y-high-contrast #freeIntroView.is-active :is(.free-intro-hero,article,.free-intro-safe,.free-intro-actions){background:#000!important;color:#fff!important;border:1px solid #fff!important;}
+html.a11y-high-contrast #freeIntroView.is-active :is(article strong,.free-intro-kicker){color:#fff!important;}
+html.a11y-high-contrast #freeIntroView.is-active{background:#000!important;color:#fff!important;}
+html.a11y-high-contrast #freeIntroView.is-active button{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
