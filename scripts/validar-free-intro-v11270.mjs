@@ -4,8 +4,8 @@ for(const engine of [chromium,webkit]){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
   // V112.75 — autenticação real da interface com respostas isoladas do servidor.
-  for(const viewport of [{width:390,height:844},{width:820,height:1180}]){
-   const page=await browser.newPage({viewport,hasTouch:true});
+  for(const viewport of [{width:390,height:844},{width:820,height:1180},{width:1366,height:768},{width:1920,height:1080}]){
+   const page=await browser.newPage({viewport,hasTouch:viewport.width<1000});
    try{
     const phone='65900000001',token='a'.repeat(64);
     let confirmations=0;
@@ -30,7 +30,7 @@ for(const engine of [chromium,webkit]){
     assert.equal(confirmations,1,'Confirmação duplicada do PIN');
     assert.ok(await page.locator('#exitFullscreen').isVisible(),'Saída da tela cheia precisa permanecer acessível');
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('educaRememberedUser')).phone),phone);
-    console.log('LOGIN_AUTO_FULLSCREEN_V11275_OK',engine.name(),viewport.width,viewport.height);
+    console.log('LOGIN_AUTO_FULLSCREEN_V11277_OK',engine.name(),viewport.width,viewport.height);
    }finally{await page.close();}
   }
   for(const viewport of [{width:320,height:640},{width:390,height:844},{width:1366,height:768}]){
