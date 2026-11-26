@@ -9,7 +9,7 @@ const sync=source.split('function syncUI(){')[1].split('\n')[0];
 function exercise(dataset,view='chat',active=true,kind='pix'){
  const els={familyActions:{hidden:false},phone:{classList:{toggle:(name,value)=>{assert.equal(name,'free-family-chat');els.reserved=value;}}},form:{hidden:true}};
  const state={active,scenario:{channel:'whatsapp',kind}};
- const context={els,state,visible:()=>view,isWebTraining:()=>dataset.educaPlatform==='web',document:{documentElement:{dataset}},updateUnread:()=>{}};
+ const context={$:()=>null,els,state,visible:()=>view,isWebTraining:()=>dataset.educaPlatform==='web',document:{documentElement:{dataset}},updateUnread:()=>{}};
  vm.runInNewContext('function syncUI(){'+sync+'\nsyncUI();',context);
  return {hidden:els.familyActions.hidden,reserved:els.reserved,formHidden:els.form.hidden};
 }
