@@ -629,7 +629,7 @@
   }
 
   // Ponte opcional: o modo livre navega sem alterar as atividades guiadas.
-  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted, canFreeMode: () => trainingStarted && !pretestLocked(), canNavigateSystem: () => !pretestLocked() };
+  window.EducaFreeView = { setView, openLearningHub, isTraining: () => trainingStarted, canFreeMode: () => trainingStarted && !pretestLocked(), canNavigateSystem: () => !pretestLocked(), reauthenticateLevel };
 
   function clearGuide({ keepState = false } = {}) {
     guideEpoch += 1;
@@ -1375,6 +1375,15 @@
     window.setTimeout(() => returnCode?.focus(), 120);
   }
 
+  async function reauthenticateLevel() {
+    const phone = getRememberedUser()?.phone;
+    if (!phone || pretestLocked()) return;
+    openStartModal({ entry: true });
+    if (quickPhone) quickPhone.value = formatPhone(phone);
+    try { await openExistingAccountCode(phone); }
+    catch (error) { showQuickStartMessage(error?.message || 'Não foi possível renovar sua sessão. Tente novamente.'); }
+  }
+
   function openStartModal({ unlock = false, fromPretest = false, entry = false } = {}) {
     if (pretestLocked() && trainingStarted && !pretestFinished) return blockPretestNavigation();
     if (!startModal) return;
@@ -1932,6 +1941,7 @@
     const user = getRememberedUser();
     if (user?.name && user?.phone) {
       participantName = user.name; progressSaved = true; accessMode = 'registered';
+      if (!/^[a-f0-9]{64}$/.test(user.levelToken || '')) { void reauthenticateLevel(); return; }
       void loadServerProgress(user.phone);
       // Tela cheia é sempre escolha explícita pelo botão "Tela cheia".
       startTraining({ focus: true, boot: true });
