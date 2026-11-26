@@ -45,110 +45,110 @@ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-par
 }
 
 /* V112.80 — reflow por largura efetiva, não pelo modelo do aparelho. */
-html[data-educa-platform="web"] #openAccessibilitySettings {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #openAccessibilitySettings {
  min-width:48px!important;min-height:48px!important;
 }
-html[data-educa-platform="web"] body .hero-copy .hero-subtitle,
-html[data-educa-platform="web"] #startModal #startModalIntro {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) body .hero-copy .hero-subtitle,
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #startModal #startModalIntro {
  font-size:calc(18px * var(--ed-font-factor,1))!important;line-height:1.5!important;overflow-wrap:anywhere!important;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry {
  box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
  height:auto!important;max-height:none!important;
  grid-template-columns:minmax(0,1fr) minmax(44px,27%)!important;
  grid-template-rows:auto!important;overflow:visible!important;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry::before {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry::before {
  inset:0!important;height:100%!important;transform:none!important;border-radius:inherit!important;opacity:.14;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-copy {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-copy {
  min-width:0!important;max-width:100%!important;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-copy em {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-copy em {
  font-size:calc(18px * var(--ed-font-factor,1))!important;line-height:1.45!important;
  white-space:normal!important;overflow-wrap:anywhere!important;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-art {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-art {
  max-width:100%!important;max-height:100%!important;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-chevron {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-chevron {
  margin:0!important;align-self:end!important;justify-self:end!important;
 }
  
 
-html[data-educa-platform="web"]:is(.a11y-text-large,.a11y-text-extra) #phoneHardware #phoneScreen #learningView #freeModeEntry {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity):is(.a11y-text-large,.a11y-text-extra) #phoneHardware #phoneScreen #learningView #freeModeEntry {
  grid-template-columns:minmax(0,1fr) 44px!important;
 }
 @media (max-width:480px), (max-height:480px) {
- html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry {
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry {
   grid-template-columns:minmax(0,1fr) 44px!important;padding:14px!important;
  }
- html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-art {display:none!important;}
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView #freeModeEntry .free-entry-art {display:none!important;}
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #gestureHome {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #gestureHome {
  height:24px!important;min-height:24px!important;bottom:0!important;
  background:transparent!important;display:grid!important;place-items:center;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #gestureHome::before {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #gestureHome::before {
  content:"";display:block;width:100%;height:4px;border-radius:999px;background:#171b21;pointer-events:none;
 }
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #gestureHome:focus-visible {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #gestureHome:focus-visible {
  outline:3px solid #1266c4!important;outline-offset:-3px!important;
 }
-html[data-educa-platform="web"] #freeIntroView .free-intro-story p,
-html[data-educa-platform="web"] #freeIntroView .free-intro-story em {color:#253b55!important;}
-html[data-educa-platform="web"] #freeIntroView #freeIntroCancel {color:#174578!important;background:#fff!important;}
-html.a11y-high-contrast #freeIntroView .free-intro-story p,
-html.a11y-high-contrast #freeIntroView .free-intro-story em{color:#fff!important;}
-html[data-educa-platform="web"] #accessibilityDialog[open] {animation:none!important;}
-html[data-educa-platform="web"] #accessibilityDialog #a11yReadNow:not([hidden]) {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #freeIntroView .free-intro-story p,
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #freeIntroView .free-intro-story em {color:#253b55!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #freeIntroView #freeIntroCancel {color:#174578!important;background:#fff!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity).a11y-high-contrast #freeIntroView .free-intro-story p,
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity).a11y-high-contrast #freeIntroView .free-intro-story em{color:#fff!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog[open] {animation:none!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog #a11yReadNow:not([hidden]) {
  position:static!important;width:auto!important;min-width:48px!important;height:auto!important;
  min-height:48px!important;font-size:calc(16px * var(--ed-font-factor,1))!important;
 }
-html[data-educa-platform="web"] #accessibilityDialog #a11yReadNow::before {content:none!important;}
-html[data-educa-platform="web"] #accessibilityDialog #a11yReadStatus {position:static!important;max-width:100%!important;}
-html[data-educa-platform="web"] #accessibilityDialog :is(.a11y-option,.a11y-switch-copy,.a11y-panel-heading) {min-width:0!important;overflow-wrap:anywhere;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog #a11yReadNow::before {content:none!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog #a11yReadStatus {position:static!important;max-width:100%!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog :is(.a11y-option,.a11y-switch-copy,.a11y-panel-heading) {min-width:0!important;overflow-wrap:anywhere;}
 /* O conteúdo de cada app deve poder encolher sem forçar a largura do vidro.
    Preserva a rolagem interna e as áreas especiais de vídeo/chat. */
-html[data-educa-platform="web"] #phoneScreen .android-view {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen .android-view {
  box-sizing:border-box;min-width:0;max-width:100%;min-height:0;
 }
-html[data-educa-platform="web"] #phoneScreen .android-view :is(input:not([type=checkbox]):not([type=radio]),textarea,select) {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen .android-view :is(input:not([type=checkbox]):not([type=radio]),textarea,select) {
  min-width:0;max-width:100%;box-sizing:border-box;
 }
-html[data-educa-platform="web"] #phoneScreen .android-view :is(img,video,canvas) {max-width:100%;}
-html[data-educa-platform="web"] #phoneScreen .android-view :is(p,h1,h2,h3,h4,label) {overflow-wrap:anywhere;}
-html[data-educa-platform="web"] #phoneScreen .android-view :is(button,a,input,select,textarea):focus-visible {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen .android-view :is(img,video,canvas) {max-width:100%;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen .android-view :is(p,h1,h2,h3,h4,label) {overflow-wrap:anywhere;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen .android-view :is(button,a,input,select,textarea):focus-visible {
  outline:3px solid #124b92;outline-offset:-3px;
 }
 
 /* Revisão V112.80.1: janela baixa, orientação horizontal e zoom.
    O palco pode rolar; não reduz o tamanho dos controles para caber. */
-html[data-educa-platform="web"] #phoneScreen .android-view.is-active {animation:none!important;}
-html[data-educa-platform="web"] #phoneHardware #phoneScreen #learningView .learning-surface {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen .android-view.is-active {animation:none!important;}
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneHardware #phoneScreen #learningView .learning-surface {
   padding-bottom:max(32px,env(safe-area-inset-bottom,0px))!important;
 }
-html[data-educa-platform="web"] #phoneScreen #gestureHome::before {
+html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #phoneScreen #gestureHome::before {
   max-width:112px;
 }
 @media (min-width:601px) and (max-height:520px) {
- html[data-educa-platform="web"].educa-fullscreen-active body.prototype-focus .hero-experience {
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity).educa-fullscreen-active body.prototype-focus .hero-experience {
    overflow-y:auto!important;overflow-x:hidden!important;
  }
- html[data-educa-platform="web"].educa-fullscreen-active body.prototype-focus #phoneStage {
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity).educa-fullscreen-active body.prototype-focus #phoneStage {
    box-sizing:border-box!important;min-height:0!important;max-height:100%!important;
    overflow-y:auto!important;overflow-x:hidden!important;align-items:flex-start!important;
  }
- html[data-educa-platform="web"].educa-fullscreen-active body.prototype-focus #phoneHardware {
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity).educa-fullscreen-active body.prototype-focus #phoneHardware {
    width:min(420px,calc(100vw - 32px))!important;min-width:0!important;
    height:auto!important;max-height:none!important;aspect-ratio:9/19.7!important;
    flex:0 0 auto!important;margin:0 auto!important;
  }
 }
 @media (max-width:600px) {
- html[data-educa-platform="web"] #exitFullscreen:not([hidden]) {min-height:48px!important;}
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #exitFullscreen:not([hidden]) {min-height:48px!important;}
 }
 @media(max-width:360px){
- html[data-educa-platform="web"] #accessibilityDialog .a11y-option-icon {display:none!important;}
- html[data-educa-platform="web"] #accessibilityDialog .a11y-switch-row {gap:8px!important;}
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog .a11y-option-icon {display:none!important;}
+ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-parity) #accessibilityDialog .a11y-switch-row {gap:8px!important;}
 }
