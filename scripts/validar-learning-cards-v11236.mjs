@@ -50,7 +50,7 @@ for(const engine of [chromium,webkit]){
    }
    await page.evaluate(()=>{window.EducaAccessibility.update({text:'normal'});window.EducaFreeView.isTraining=()=>true;});
    await page.locator('#freeModeEntry').click();
-   await page.locator('#freeIntroStart').click();
+   await page.locator('#freeIntroStart').click({timeout:10000});
    await page.waitForFunction(()=>document.querySelector('#homeView')?.classList.contains('is-active'));
   }finally{await page.close();}
  }
