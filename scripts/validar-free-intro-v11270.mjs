@@ -1,6 +1,6 @@
-import {chromium,webkit} from 'playwright';
+import {chromium,devices,webkit} from 'playwright';
 import assert from 'node:assert/strict';
-for(const engine of [chromium,webkit]){
+for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER||engine.name()===process.env.EDUCA_BROWSER)){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
   // V112.75 — autenticação real da interface com respostas isoladas do servidor.
@@ -33,7 +33,7 @@ for(const engine of [chromium,webkit]){
     console.log('LOGIN_AUTO_FULLSCREEN_V11277_OK',engine.name(),viewport.width,viewport.height);
    }finally{await page.close();}
   }
-  for(const viewport of [{width:320,height:640},{width:390,height:844},{width:1366,height:768}]){
+  for(const viewport of [{width:280,height:653},{width:320,height:640},{width:390,height:844},{width:844,height:390},{width:1366,height:768}]){
    const page=await browser.newPage({viewport,hasTouch:viewport.width<500});
    try{
     await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
@@ -53,14 +53,14 @@ for(const engine of [chromium,webkit]){
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma mensagem do seu filho');
     const design=await page.evaluate(()=>{
      const title=getComputedStyle(document.querySelector('#freeIntroTitle'));
-     const narrative=getComputedStyle(document.querySelector('.free-intro-story em'));
+     const narrative=getComputedStyle(document.querySelector('.free-intro-story p'));
      const paper=getComputedStyle(document.querySelector('.free-intro-story'));
      const header=getComputedStyle(document.querySelector('.free-intro-hero'));
      const action=document.getElementById('freeIntroStart').getBoundingClientRect();
      return {titleSize:parseFloat(title.fontSize),titleWeight:parseInt(title.fontWeight),storySize:parseFloat(narrative.fontSize),storyStyle:narrative.fontStyle,storyColor:narrative.color,titleColor:title.color,storyBackground:paper.backgroundColor,headerBackground:header.backgroundColor,buttonHeight:action.height};
     });
     assert.ok(design.titleSize>design.storySize&&design.titleWeight>=700,'Hierarquia de título insuficiente '+JSON.stringify(design));
-    assert.equal(design.storyStyle,'italic');
+    assert.equal(design.storyStyle,'normal');
     assert.ok(design.storySize>=19,'Narrativa pequena '+JSON.stringify(design));
     assert.notEqual(design.storyColor,design.titleColor);
     assert.notEqual(design.storyBackground,design.headerBackground);
@@ -76,23 +76,26 @@ for(const engine of [chromium,webkit]){
     assert.ok(Math.abs(layout.arrow.cy-layout.label.cy)<=2&&Math.abs(layout.lowerArrow.cy-layout.lowerLabel.cy)<=2,'Seta e texto desalinhados '+JSON.stringify(layout));
     assert.ok(layout.tag.left>=layout.back.right&&layout.tag.right<=layout.header.right+1&&layout.tagBg==='rgba(0, 0, 0, 0)'&&layout.tagWeight<=500,'Identificação sobreposta ou destacada');
     const notice=page.locator('#freeIntroNotice');
-    assert.equal(await notice.innerText(),'Tudo é simulado. Não informe dados reais.');
+    assert.match(await notice.innerText(),/Treinamento seguro.*dados fictícios/);
+    assert.equal(await notice.evaluate(e=>getComputedStyle(e).position),'static','O aviso não pode sobrepor a tela');
     assert.ok(await notice.isVisible(),'Aviso não apareceu');
     const returnStyle=await page.locator('#freeIntroCancel').evaluate(e=>({height:e.getBoundingClientRect().height,border:parseFloat(getComputedStyle(e).borderTopWidth),cursor:getComputedStyle(e).cursor}));
     assert.ok(returnStyle.height>=44&&returnStyle.border>=1&&returnStyle.cursor==='pointer','Retorno sem destaque');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     await page.locator('#freeIntroStart').evaluate(b=>b.click());
-    await notice.waitFor({state:'hidden',timeout:3000});
+    await page.waitForTimeout(2100);
+    assert.ok(await notice.isVisible(),'Aviso integrado deve permanecer durante a leitura');
     assert.ok(await page.locator('#freeIntroStart').isDisabled(),'Aviso liberou o início cedo demais');
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
-    // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
+    // Fonte ampliada: o botão continua alcançável pela rolagem do próprio vidro.
     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
+    await page.locator('#freeIntroStart').scrollIntoViewIfNeeded();
     const inside=await page.evaluate(()=>{
      const p=document.getElementById('phoneScreen').getBoundingClientRect();
      const b=document.getElementById('freeIntroStart').getBoundingClientRect();
-     const c=document.querySelector('#freeIntroView .free-intro-content');
+     const c=document.querySelector('#freeIntroView .free-intro-surface');
      return b.top>=p.top&&b.bottom<=p.bottom+1&&b.height>=44&&c.clientHeight>0&&getComputedStyle(c).overflowY==='auto';
     });
     assert.ok(inside,'Botão inicial cortado na fonte extra');
@@ -101,6 +104,7 @@ for(const engine of [chromium,webkit]){
     await view('learning');
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
+    assert.equal(await page.locator('.free-intro-surface').evaluate(e=>e.scrollTop),0,'Ao reabrir, a história deve começar no topo');
     const since=Date.now();
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     await page.waitForFunction(()=>!document.getElementById('freeIntroStart').disabled);
@@ -124,7 +128,24 @@ for(const engine of [chromium,webkit]){
      await page.locator('#'+id).click();
      await view('home');
     }
-    await exit.click();
+    await page.locator('#freeEventOpen').waitFor({state:'visible',timeout:15000});
+    await page.locator('#freeEventOpen').click();
+    await view('chat');
+    await page.evaluate(()=>window.EducaFreeMode.reportContact());
+    await view('free-summary');
+    await view('free-intro');
+    assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma videochamada inesperada');
+    assert.equal(await page.locator('#freeIntroChannel').innerText(),'Videochamada');
+    assert.ok(await page.locator('#freeIntroStart').isDisabled());
+    assert.ok(await page.locator('#freeIntroNotice').isVisible());
+    await page.locator('#freeIntroStart').click({timeout:10000});
+    await view('free-video');
+    await page.locator('#freeVideoHangup').click();
+    await view('free-summary');
+    await page.locator('#freeSummaryNext').click();
+    await view('free-intro');
+    assert.equal(await page.locator('#freeIntroChannel').innerText(),'Ligação telefônica');
+    await page.locator('#freeIntroBack').click();
     await view('learning');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeExitBtn').isVisible(),false);
@@ -132,5 +153,29 @@ for(const engine of [chromium,webkit]){
     console.log('FREE_INTRO_V11270_OK',engine.name(),viewport.width,viewport.height);
    }finally{await page.close();}
   }
+  const platform=engine===webkit?'ios':'android';
+  const device=devices[platform==='ios'?'iPhone 13':'Pixel 7'];
+  const userAgent=device.userAgent+(platform==='ios'?' EducaNativeIOS/1.1':' EducaNativeAndroid/1.1');
+  const nativePage=await browser.newPage({viewport:device.viewport,isMobile:true,hasTouch:true,userAgent});
+  try{
+   await nativePage.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
+   await nativePage.goto('http://127.0.0.1:8789/html/?app=1&platform='+platform+'&experience=web',{waitUntil:'domcontentloaded'});
+   await nativePage.waitForFunction(()=>window.EducaFreeView?.canFreeMode?.()&&window.EducaFreeMode);
+   assert.equal(await nativePage.evaluate(()=>window.EducaReleaseChannel.platform),platform);
+   assert.equal(await nativePage.evaluate(()=>window.EducaReleaseChannel.renderPlatform),'web');
+   await nativePage.evaluate(()=>{document.body.classList.add('prototype-focus');window.EducaFreeView.openLearningHub();});
+   await nativePage.locator('#freeModeEntry').tap();
+   assert.equal(await nativePage.locator('#freeIntroChannel').innerText(),'WhatsApp');
+   assert.equal(await nativePage.locator('#freeIntroNotice').evaluate(e=>getComputedStyle(e).position),'static');
+   assert.equal(await nativePage.locator('.free-intro-surface').evaluate(e=>getComputedStyle(e).overflowY),'auto');
+   await nativePage.locator('#freeIntroStart').tap({timeout:10000});
+   await nativePage.locator('#freeEventOpen').tap({timeout:10000});
+   await nativePage.evaluate(()=>window.EducaFreeMode.reportContact());
+   await nativePage.locator('#freeIntroView.is-active').waitFor({state:'visible'});
+   assert.equal(await nativePage.locator('#freeIntroChannel').innerText(),'Videochamada');
+   await nativePage.locator('#freeIntroBack').tap();
+   assert.equal(await nativePage.evaluate(()=>window.EducaFreeMode.isActive()),false);
+   console.log('FREE_INTRO_NATIVE_ROUTE_OK',platform);
+  }finally{await nativePage.close();}
  }finally{await browser.close();}
 }

@@ -72,9 +72,11 @@ try{
      await page.locator('#freeSummaryView.is-active').waitFor({state:'visible',timeout:8000});
      console.log('DIAG_JOURNEY_BLOCK_MENU '+name);
      await page.locator('#freeSummaryNext').tap({timeout:8000});
+     await page.locator('#freeIntroStart').tap({timeout:10000});
      await page.locator('#freeVideoView.is-active').waitFor({state:'visible',timeout:8000});
      await page.locator('#freeVideoHangup').tap({timeout:8000});
      await page.locator('#freeSummaryNext').tap({timeout:8000});
+     await page.locator('#freeIntroStart').tap({timeout:10000});
      await page.locator('#freeCallView.is-active').waitFor({state:'visible',timeout:8000});
      const bank=await page.locator('#freeCallName').innerText();
      console.log('DIAG_JOURNEY_CALL '+name+' '+bank);
@@ -101,6 +103,16 @@ try{
      const view=await page.locator('#phoneScreen').getAttribute('data-current-view');
      console.log('DIAG_JOURNEY_RESULT '+name+' '+view);
      if(view!=='free-summary')fail++;
+     if(viewport.width===320){
+       await page.locator('#freeSummaryNext').tap({timeout:8000});
+       const channel=page.locator('#freeIntroView.is-active #freeIntroChannel');
+       await channel.waitFor({state:'visible',timeout:8000});
+       if(await channel.innerText()!=='Mensagens (SMS)')throw Error('O próximo desafio deve apresentar uma história de SMS');
+       await page.locator('#freeIntroStart').tap({timeout:10000});
+       await page.locator('#freeEventOpen').tap({timeout:8000});
+       await page.locator('#freeSmsView.is-active').waitFor({state:'visible',timeout:8000});
+       console.log('DIAG_JOURNEY_SMS '+name);
+     }
    }catch(err){console.log('DIAG_JOURNEY_FAIL '+name+' '+String(err).slice(0,1400));fail++;}
    // Auditoria das principais telas depois da chamada: botões por toque real.
    const otherApps=[

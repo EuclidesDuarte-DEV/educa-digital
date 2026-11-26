@@ -256,3 +256,54 @@ html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView :is(#
 /* V112.78 — ícones de retorno com margem para o ajuste de escala do protótipo. */
 html[data-educa-platform="web"] body #phoneHardware #phoneScreen #freeIntroView.is-active :is(#freeIntroBack,#freeIntroCancel)>svg{display:block!important;box-sizing:content-box!important;width:32px!important;height:32px!important;min-width:32px!important;min-height:32px!important;max-width:none!important;max-height:none!important;flex:0 0 32px!important;align-self:center!important;transform:none!important;margin:0!important;}
 html[data-educa-platform="web"] body #phoneHardware #phoneScreen #freeIntroView.is-active :is(#freeIntroBack,#freeIntroCancel){align-items:center!important;gap:6px!important;}
+
+/* V112.81 — narrativa integrada, reflow em vez de espaços verticais artificiais. */
+html[data-educa-platform="web"] body #phoneHardware #phoneScreen #freeIntroView .free-intro-surface {
+ display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:stretch!important;gap:14px!important;
+ padding: max(38px,env(safe-area-inset-top,0px)) 14px max(32px,env(safe-area-inset-bottom,0px))!important;
+ overflow-y:auto!important;overflow-x:hidden!important;scroll-padding:16px;
+}
+#freeIntroView .free-intro-surface:focus-visible {
+ outline:3px solid #267cdd;outline-offset:-3px;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-content {
+ display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:12px!important;flex:0 0 auto!important;overflow:visible!important;min-width:0!important;padding:0!important;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-hero {
+ display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:9px!important;text-align:left!important;background:linear-gradient(150deg,#123f78,#165ba5)!important;color:#fff!important;padding:16px!important;border-radius:18px!important;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story-icon {
+ display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#ffffff26;color:#fff;
+}
+#freeIntroView .free-intro-story-icon svg {width:26px;height:26px;}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-channel {
+ font-size:calc(14px * var(--ed-font-factor,1))!important;font-weight:700;line-height:1.35;color:#fff!important;overflow-wrap:anywhere;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView #freeIntroTitle {
+ grid-column:1/-1;color:#fff!important;margin:0!important;font-size:calc(24px * var(--ed-font-factor,1))!important;line-height:1.2!important;text-align:left!important;overflow-wrap:anywhere!important;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story {
+ border:1px solid #c8d9ed!important;background:#fff!important;border-radius:16px!important;padding:17px!important;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story p {
+ color:#233c59!important;font-style:normal!important;font-weight:450!important;line-height:1.55!important;font-size:calc(19px * var(--ed-font-factor,1))!important;margin:0!important;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView #freeIntroNotice:not([hidden]) {
+ position:static!important;inset:auto!important;display:flex!important;align-items:flex-start!important;gap:9px!important;text-align:left!important;
+ background:#e8f1fb!important;color:#24486f!important;box-shadow:none!important;border:1px solid #c4d9ef!important;padding:12px!important;border-radius:12px!important;font-size:calc(15px * var(--ed-font-factor,1))!important;line-height:1.45!important;font-weight:550!important;
+}
+#freeIntroView #freeIntroNotice svg {width:24px;height:24px;flex:0 0 24px;}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-actions {
+ position:static!important;margin:0!important;padding:0!important;background:transparent!important;gap:10px!important;flex:0 0 auto!important;
+}
+html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-actions button {
+ min-height:50px!important;height:auto!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+html.a11y-high-contrast[data-educa-platform="web"] #phoneScreen #freeIntroView :is(.free-intro-hero,.free-intro-story,#freeIntroNotice:not([hidden])) {
+ color:#fff!important;background:#000!important;border:2px solid #fff!important;
+}
+html.a11y-high-contrast[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story p {color:#fff!important;}
+@media(max-width:360px){
+ html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-hero{padding:14px!important;}
+ html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-story{padding:13px!important;}
+}

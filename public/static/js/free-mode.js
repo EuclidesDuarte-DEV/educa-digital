@@ -30,6 +30,28 @@ const WEB_SCRIPTED_ORDER=Object.freeze(['family-photo','video','bank']);
 const BONUS_ORDER=Object.freeze(['sms-delivery','relative','call-tech','sms-bank','account','sms-prize','prize','code','delivery']);
 const WEB_BONUS_ORDER=Object.freeze([...BONUS_ORDER,'family']);
 const byId=Object.fromEntries(SCENARIOS.map(s=>[s.id,s]));
+// V112.81: contextos narrativos educativos, sem revelar a resposta do desafio.
+const STORY_CONTEXT=Object.freeze({
+ 'family-photo':['Uma mensagem do seu filho','Você está em casa depois de um dia tranquilo. Rafael, seu filho, mora longe e costuma conversar com você pelo celular. Enquanto descansa, percebe que chegou uma nova mensagem.'],
+ family:['Uma conversa em família','Você está organizando o dia e lembra de conversar com seu filho, que vive em outra cidade. Uma nova notificação aparece no celular.'],
+ video:['Uma videochamada inesperada','É um fim de tarde tranquilo. Você está usando o celular quando recebe uma solicitação de videochamada. Decida como quer lidar com essa situação.'],
+ bank:['Uma ligação durante o dia','Você acabou de terminar algumas tarefas de casa. O telefone toca enquanto você está descansando. A ligação parece estar relacionada à sua conta bancária.'],
+ code:['Uma solicitação no celular','Enquanto conversa pelo WhatsApp, você recebe uma mensagem sobre acesso a uma conta. Observe a conversa e escolha o que fazer.'],
+ delivery:['Esperando uma encomenda','Você está aguardando uma entrega em casa. Durante a tarde, recebe uma mensagem relacionada a uma encomenda.'],
+ 'call-tech':['Um telefonema sobre seu aparelho','Você está aprendendo a usar os recursos do celular quando recebe uma ligação relacionada a suporte técnico.'],
+ relative:['Notícias de uma prima','Você costuma manter contato com parentes pelo celular. Hoje, uma mensagem chega enquanto você está fazendo suas atividades.'],
+ account:['Um aviso sobre sua conta','Você está conferindo suas mensagens quando aparece um aviso relacionado ao acesso a uma conta.'],
+ prize:['Uma novidade nas mensagens','Você abre o celular para ver as novidades do dia e encontra uma mensagem sobre uma promoção.'],
+ 'sms-delivery':['Uma mensagem sobre entrega','Você está em casa aguardando uma encomenda e recebe um SMS. Abra o aplicativo de mensagens para entender a situação.'],
+ 'sms-bank':['Um aviso por SMS','Durante suas atividades do dia, chega uma mensagem de texto relacionada a uma conta bancária.'],
+ 'sms-prize':['Uma promoção por SMS','Você está usando o celular quando chega um SMS sobre uma promoção. Observe a mensagem e tome sua decisão.'],
+ friend:['Uma amiga quer conversar','Você está praticando o uso do WhatsApp e recebe uma mensagem de uma amiga. Aproveite para treinar uma conversa cotidiana.'],
+ daughter:['Uma mensagem da sua filha','Sua filha costuma perguntar como foi seu dia. Uma nova mensagem chega enquanto você está em casa.'],
+ 'family-group':['Notícias do grupo da família','Você recebe uma notificação do grupo da família. É hora de praticar como acompanhar conversas em grupo.']
+});
+const STORY_CHANNELS={whatsapp:'WhatsApp',sms:'Mensagens (SMS)',call:'Ligação telefônica',video:'Videochamada'};
+let storyScenario=null,storyReadId=null;
+
 const video=()=>window.EducaVideoCall;
 const state={active:false,scenario:null,pending:null,unread:new Set(),conversations:new Map(),delivered:0,seen:[],finished:0,completedSteps:new Set(),timer:null,replying:false,blocked:false,callAccepted:false,lastSpoken:'',recognizer:null,request:null,baseline:null,transitionTimer:null,callHandsFree:false,callUtterance:null,learningConsent:false,exampleConsent:false,score:100,riskyScenarios:new Set()};
 const els={phone:$('#phoneScreen'),notice:$('#freeEventNotice'),noticeTitle:$('#freeEventTitle'),noticeText:$('#freeEventText'),noticeIcon:$('#freeEventIcon'),tools:$('#freeHomeTools'),floating:$('#freeFloatingHome'),solved:$('#freeSolved'),wallpaper:$('#chatWallpaper'),form:$('#freeOriginalComposer'),input:$('#freeOriginalInput'),send:$('#freeOriginalSend'),status:$('#freeOriginalAiStatus'),typing:$('#freeOriginalTyping'),familyActions:$('#freeFamilyActions'),callName:$('#freeCallName'),callLine:$('#freeCallLine'),callLog:$('#freeCallTranscript'),callForm:$('#freeCallForm'),callInput:$('#freeCallInput'),answer:$('#freeCallAnswer'),smsMessages:$('#freeSmsMessages'),smsSender:$('#freeSmsSender'),smsForm:$('#freeSmsForm'),smsInput:$('#freeSmsInput'),smsSend:$('#freeSmsSend'),smsStatus:$('#freeSmsStatus')};
@@ -80,7 +102,7 @@ function registerWebRisk(s,message){
 }
 function setStatus(message){els.status.textContent=message||'';els.status.hidden=!message;}
 function updateUnread(){const w=$('#homeView [data-open-app="whatsapp"]');w?.classList.toggle('free-has-unread',state.active&&[...state.unread].some(id=>byId[id]?.channel==='whatsapp'));for(const row of document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')){const id=row.dataset.freeScenario||row.dataset.scenario||row.dataset.normalChat;row.classList.toggle('free-unread',state.unread.has(id));const badge=row.querySelector('.chat-meta b');if(badge)badge.hidden=!state.unread.has(id)&&state.active;}}
-function start(){if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;stop();state.active=true;
+function start(){if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;stop();state.active=true;storyReadId=isWebTraining()?WEB_SCRIPTED_ORDER[0]:null;
  state.learningConsent=document.documentElement?.dataset?.educaPlatform==='web'&&
    document.getElementById('freeLearningConsent')?.checked===true;
  state.exampleConsent=document.documentElement?.dataset?.educaPlatform==='web'&&
@@ -94,12 +116,12 @@ function start(){if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;s
  if(document.documentElement?.dataset?.educaPlatform==='web')
   void window.EducaLiaVoice?.waitForFemale?.(500)?.catch?.(()=>{});
  state.finished=0;state.score=100;state.riskyScenarios.clear();state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden,hidden:row.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;prepareContactRows();show('home');schedule(1800,3200);}
-function stop(){clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.exampleConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
+function stop(){clearTransition();cancelIntroReading();storyScenario=null;storyReadId=null;video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.exampleConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
  const list=$('#whatsappView .wa-chat-list');for(const dynamic of document.querySelectorAll('#whatsappView [data-free-scenario]'))dynamic.remove();
  if(list&&state.baseline)for(const {row,preview,time,badgeHidden,hidden} of state.baseline){row.hidden=hidden;row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
  els.phone?.classList.remove('free-active','free-family-chat');if(els.notice)els.notice.hidden=true;if(els.form)els.form.hidden=true;setStatus('');syncUI();}
 function exit(){stop();bridge()?.openLearningHub();}
-function home(){if(!state.active)return;clearRequest();clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
+function home(){if(!state.active)return;if(isWebTraining()&&visible()==='free-intro'){closeFreeIntro();return;}clearRequest();clearTransition();video()?.close?.();stopVoice();const wasResult=visible()==='free-summary';show('home');if(wasResult){state.scenario=null;state.blocked=false;const next=nextScriptedScenario();schedule(next?.id==='video'?1900:7000,next?.id==='video'?2900:11500);}}
 // V112.57 — mensagens fictícias surgem apenas quando o evento acontece.
 // Retirar as linhas do DOM evita que pesquisa e filtros revelem desafios futuros.
 // A lista original das atividades guiadas é restaurada em stop().
@@ -140,8 +162,9 @@ function nextScriptedScenario(){
  return byId[order.find(id=>!state.completedSteps.has(id))||
    bonus.find(id=>!state.completedSteps.has(id))]||null;
 }
-function chooseScenario(){let s=nextScriptedScenario();if(!s){const pool=[...(isWebTraining()?[byId['family-photo']]:[]),byId.code,byId.delivery,byId.relative,byId.account,byId.prize,byId['sms-bank'],byId['sms-delivery'],byId['sms-prize'],byId['call-tech'],byId.friend,byId.family,byId.bank,byId.video].filter(x=>!state.seen.slice(-3).includes(x.id));s=pool[Math.floor(Math.random()*pool.length)];}state.delivered++;state.seen.push(s.id);return s;}
-function triggerEvent(){if(!state.active)return;if(state.blocked||visible()==='free-pix'||visible()==='free-call'||visible()==='free-video'||visible()==='free-sms'||visible()==='chat'){schedule(12000,22000);return;}const s=chooseScenario();state.pending=s;
+function chooseScenario(){let s=nextScriptedScenario();if(!s){const pool=[...(isWebTraining()?[byId['family-photo']]:[]),byId.code,byId.delivery,byId.relative,byId.account,byId.prize,byId['sms-bank'],byId['sms-delivery'],byId['sms-prize'],byId['call-tech'],byId.friend,byId.family,byId.bank,byId.video].filter(x=>!state.seen.slice(-3).includes(x.id));s=pool[Math.floor(Math.random()*pool.length)];}return s;}
+function triggerEvent(){if(!state.active||visible()==='free-intro')return;if(state.blocked||visible()==='free-pix'||visible()==='free-call'||visible()==='free-video'||visible()==='free-sms'||visible()==='chat'){schedule(12000,22000);return;}const s=chooseScenario();if(isWebTraining()&&storyReadId!==s.id){openScenarioStory(s);return;}deliverScenario(s);}
+function deliverScenario(s){if(!state.active||!s)return;state.delivered++;state.seen.push(s.id);state.pending=s;
  if(s.channel==='whatsapp'||s.channel==='sms'){const list=state.conversations.get(s.id)||[];if(!list.length)list.push({role:'assistant',content:s.intro});state.conversations.set(s.id,list.slice(-14));state.unread.add(s.id);updatePreview(s);}
  els.noticeIcon.textContent=s.channel==='call'?'☎':s.channel==='video'?'▣':s.channel==='sms'?'✉':'●';els.noticeTitle.textContent=s.notification;els.noticeText.textContent=s.name+': '+s.intro.slice(0,82);els.notice.hidden=false;updateUnread();clearTimeout(state.timer);state.timer=null;
  if(s.channel==='call')showIncomingCall(s);else if(s.channel==='video')video()?.incoming(s);
@@ -279,7 +302,7 @@ function finish(kind='safe',reason=''){
   if(text)text.textContent=message+(['family','family-photo'].includes(s.id)&&next?.id==='video'?' A seguir, uma videochamada com a LIA: ver um rosto não garante a identidade.':'')+(isWebTraining()?' Pontuação: '+state.score+' pontos.'+(pixLoss?' (−'+pixLoss+' pontos pelo Pix fictício confirmado.)':commitmentLoss?' (−15 pontos por aceitar enviar antes de verificar.)':''):'');
   if(detail)detail.textContent=(commitmentLoss?'Você assumiu risco ao concordar em enviar dinheiro sem confirmar a identidade. ':'')+(reason?reason+' ':'')+s.tips;
   if(nextButton){nextButton.hidden=false;nextButton.textContent='Avançar agora';}
-  if(transition){transition.hidden=false;transition.textContent=next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}
+  if(transition){transition.hidden=false;transition.textContent=isWebTraining()?'Preparando a próxima história…':next?.id==='video'?'Abrindo videochamada automaticamente…':next?.id==='bank'?'Iniciando ligação telefônica automaticamente…':next?.channel==='sms'?'Um SMS de treinamento chegará em seguida…':'Preparando a próxima atividade automaticamente…';}
  }
  if(isWebTraining()){
   const panel=$('#freeSummaryView .v106-summary');
@@ -295,6 +318,7 @@ function continueTraining(){
  clearTransition();clearTimeout(state.timer);state.timer=null;
  state.scenario=null;state.blocked=false;state.pending=null;
  const next=nextScriptedScenario();
+ if(isWebTraining()){openScenarioStory(next||chooseScenario());return;}
  if(next?.id==='video'){
   // Reutiliza a mesma integração da Lia, apenas eliminando o clique intermediário.
   if(video()?.incoming){video().incoming(next);return;}
@@ -369,30 +393,25 @@ for(const name of ['educa:system-home','educa:system-learning','educa:system-bac
 $('#gestureHome')?.addEventListener('click',e=>{if(!state.active)return;e.stopImmediatePropagation();home();},true);
 // Rolagem, toque ou teclado indicam que a pessoa quer ler os resultados.
 const summaryScroller=$('#freeSummaryView .v106-summary');
-for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
- summaryScroller?.addEventListener(eventName,pauseSummaryTransition,
-  ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
+for(const eventName of ['wheel','touchstart','pointerdown','keydown']){
+ summaryScroller?.addEventListener(eventName,event=>{
+  // Mantenha o botão no mesmo lugar até o navegador concluir o toque.
+  if((eventName==='pointerdown'||eventName==='touchstart')&&event.target.closest?.('button'))return;
+  pauseSummaryTransition();
+ },{passive:eventName!=='keydown'});
+}
 // V112.72 — tempo mínimo de leitura da narrativa, sem início automático.
 const INTRO_READ_MS=5000;
-let introTimer=null,introNoticeTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
-function hideIntroNotice(){
- clearTimeout(introNoticeTimer);introNoticeTimer=null;
- const notice=$('#freeIntroNotice');if(notice)notice.hidden=true;
-}
-function showIntroNotice(){
- hideIntroNotice();
- const notice=$('#freeIntroNotice');if(!notice)return;
- notice.hidden=false;
- introNoticeTimer=setTimeout(hideIntroNotice,2000);
-}
+let introTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
 function cancelIntroReading(){
- hideIntroNotice();
- clearInterval(introTimer);introTimer=null;introRemaining=INTRO_READ_MS;
+ const notice=$('#freeIntroNotice');if(notice)notice.hidden=true;
+ if(introTimer!==null)clearInterval(introTimer);
+ introTimer=null;introRemaining=INTRO_READ_MS;
  const button=$('#freeIntroStart');if(button)button.disabled=true;
  const label=$('#freeIntroStartLabel');if(label)label.textContent='Leia a história · 5 s';
 }
 function tickIntroReading(){
- if(visible()!=='free-intro'||state.active){cancelIntroReading();return;}
+ if(visible()!=='free-intro'){cancelIntroReading();return;}
  const now=performance.now();
  if(!document.hidden)introRemaining=Math.max(0,introRemaining-(now-introLastTick));
  introLastTick=now;
@@ -405,23 +424,49 @@ function tickIntroReading(){
  }else if(label)label.textContent='Leia a história · '+Math.ceil(introRemaining/1000)+' s';
 }
 document.addEventListener('visibilitychange',()=>{introLastTick=performance.now();});
-window.addEventListener('educa:training-view',e=>{if(e.detail?.view!=='free-intro')cancelIntroReading();});
+window.addEventListener('educa:training-view',e=>{
+ if(e.detail?.view==='free-intro'||!storyScenario)return;
+ if(state.active){stop();return;}
+ cancelIntroReading();storyScenario=null;
+});
+function openScenarioStory(s){
+ if(!s||!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;
+ cancelIntroReading();clearTimeout(state.timer);state.timer=null;
+ if(els.notice)els.notice.hidden=true;
+ const copy=STORY_CONTEXT[s.id]||['Uma nova situação','Você recebe uma nova comunicação no celular de treinamento. Leia com calma e decida como agir.'];
+ const title=$('#freeIntroTitle'),body=$('#freeIntroView .free-intro-story p'),kicker=$('#freeIntroView .free-intro-kicker'),channel=$('#freeIntroChannel');
+ if(title)title.textContent=copy[0];
+ if(body)body.textContent=copy[1];
+ if(kicker)kicker.textContent='Modo Livre · História '+String(state.active?state.delivered+1:1).padStart(2,'0');
+ if(channel)channel.textContent=STORY_CHANNELS[s.channel]||'Celular';
+ show('free-intro');
+ if(visible()!=='free-intro')return;
+ storyScenario=s;
+ const intro=$('#freeIntroView .free-intro-surface');if(intro)intro.scrollTop=0;
+ const status=$('#freeIntroReady');if(status)status.textContent='';
+ $('#freeIntroTitle')?.focus?.({preventScroll:true});
+ const notice=$('#freeIntroNotice');if(notice)notice.hidden=false;
+ introLastTick=performance.now();introTimer=setInterval(tickIntroReading,100);
+}
 function openFreeIntro(){
  if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;
  if(!isWebTraining()){start();return;}
  if(state.active)return;
- cancelIntroReading();
- show('free-intro');
- if(visible()!=='free-intro')return;
- const intro=$('#freeIntroView .free-intro-content');if(intro)intro.scrollTop=0;
- const status=$('#freeIntroReady');if(status)status.textContent='';
- $('#freeIntroTitle')?.focus?.({preventScroll:true});
- showIntroNotice();
- introLastTick=performance.now();introTimer=setInterval(tickIntroReading,100);
+ openScenarioStory(byId[WEB_SCRIPTED_ORDER[0]]);
 }
-function closeFreeIntro(){if(visible()==='free-intro'&&!state.active){cancelIntroReading();bridge()?.openLearningHub();}}
+function closeFreeIntro(){
+ if(visible()!=='free-intro')return;
+ cancelIntroReading();storyScenario=null;
+ if(state.active)exit();else bridge()?.openLearningHub();
+ $('#freeModeEntry')?.focus?.();
+}
 $('#freeModeEntry')?.addEventListener('click',openFreeIntro);
-$('#freeIntroStart')?.addEventListener('click',()=>{if(visible()==='free-intro'&&!state.active&&introRemaining<=0&&!$('#freeIntroStart').disabled){cancelIntroReading();start();}});
+$('#freeIntroStart')?.addEventListener('click',()=>{
+ if(visible()!=='free-intro'||!storyScenario||introRemaining>0||$('#freeIntroStart').disabled)return;
+ const s=storyScenario;cancelIntroReading();storyScenario=null;
+ if(!state.active){start();return;}
+ storyReadId=s.id;show('home');deliverScenario(s);
+});
 $('#freeIntroBack')?.addEventListener('click',closeFreeIntro);
 $('#freeIntroCancel')?.addEventListener('click',closeFreeIntro);
 for(const id of ['freeBankBack','freeWhatsappBack','freeGovBack'])$('#'+id)?.addEventListener('click',home);
