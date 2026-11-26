@@ -14,6 +14,9 @@ for(const engine of [chromium,webkit]){
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
+    assert.equal(await page.locator('#freeIntroView .free-intro-steps').count(),0);
+    assert.equal(await page.locator('#freeIntroTitle').innerText(),'Modo Livre');
+    assert.equal(await page.locator('#freeIntroView .free-intro-safe').innerText(),'Tudo é simulado. Não informe dados reais.');
     assert.equal(await page.locator('#freeEventNotice').isVisible(),false);
     // Fonte ampliada: o botão principal permanece no vidro sem exigir rolagem.
     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
