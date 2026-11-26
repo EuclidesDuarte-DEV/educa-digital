@@ -148,9 +148,12 @@ html:not(.educa-fullscreen-active) body:not(.prototype-focus) #fullscreenBtn svg
 }
 html:not(.educa-fullscreen-active) #fullscreenBtn:focus-visible {outline:3px solid #f0a400!important;outline-offset:2px!important;}
 html.educa-fullscreen-active #exitFullscreen:not([hidden]) {
-  border:1px solid #ccdcec!important; border-radius:12px!important;
-  background:#fff!important; color:#214f7b!important; box-shadow:none!important;
+  border:1px solid #a92535!important; border-radius:12px!important;
+  background:#b82e48!important; color:#fff!important; box-shadow:none!important;
   min-height:44px!important;
+}
+html.educa-fullscreen-active #exitFullscreen:not([hidden]):hover {
+  background:#a92535!important;
 }
 /* Textos do Android legíveis sem apertar os cards; reflow nos modos acessíveis. */
 #learningView .learning-card strong {font-size:clamp(14px,1.05vw,16px)!important;line-height:1.3!important;}

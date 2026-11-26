@@ -2,7 +2,7 @@ import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 await mkdir('artifacts/home-fullscreen-v11253',{recursive:true});
-for(const engine of [chromium,webkit]){
+for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER||engine.name()===process.env.EDUCA_BROWSER)){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
  for(const [name,width,height] of [['desktop',1640,900],['notebook',1366,768],['compact',1024,650],['tablet',768,1024]]){
@@ -22,11 +22,20 @@ for(const engine of [chromium,webkit]){
      tileCount:e('#homeView .launcher-grid').querySelectorAll('.app-tile').length};
    });
    const before=await sample();
+   await page.locator('#exitFullscreen').waitFor({state:'hidden'});
    assert.deepEqual(before.old,['none','none','none']);
    assert.equal(before.tileCount,12);
    await page.screenshot({path:'artifacts/home-fullscreen-v11253/'+engine.name()+'-'+name+'-normal.png',animations:'disabled'});
    await page.locator('#fullscreenBtn').click();
    await page.waitForFunction(()=>document.documentElement.classList.contains('educa-fullscreen-active'));
+   assert.equal(await page.locator('#exitFullscreen').innerText(),await page.evaluate(()=>document.fullscreenElement===document.documentElement?'Sair da tela cheia':'Reduzir simulador'));
+   const exitStyle=await page.locator('#exitFullscreen').evaluate(button=>{
+    const style=getComputedStyle(button);
+    return {background:style.backgroundColor,color:style.color,height:button.getBoundingClientRect().height};
+   });
+   assert.equal(exitStyle.background,'rgb(184, 46, 72)');
+   assert.equal(exitStyle.color,'rgb(255, 255, 255)');
+   assert.ok(exitStyle.height>=44);
    const after=await sample();
    assert.deepEqual(after.old,['none','none','none'],'fullscreen trouxe a home antiga');
    assert.equal(after.title,before.title);assert.equal(after.button,before.button);assert.equal(after.tileCount,12);
@@ -41,9 +50,44 @@ for(const engine of [chromium,webkit]){
    await page.screenshot({path:'artifacts/home-fullscreen-v11253/'+engine.name()+'-'+name+'-fullscreen.png',animations:'disabled'});
    await page.locator('#exitFullscreen').click();
    await page.waitForFunction(()=>!document.documentElement.classList.contains('educa-fullscreen-active'));
+   await page.locator('#exitFullscreen').waitFor({state:'hidden'});
    const restored=await sample();assert.deepEqual(restored.old,['none','none','none']);
    console.log('FULLSCREEN_PARITY_V11253_OK',JSON.stringify({engine:engine.name(),name,before:before.font,after:after.font}));
   }finally{await page.close();}
  }
+ const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});
+ try{
+  await page.addInitScript(()=>{
+   localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)}));
+   // Controle determinístico das transições da API, inclusive no WebKit de CI.
+   let current=null;
+   const change=element=>{current=element;document.dispatchEvent(new Event('fullscreenchange'));};
+   Object.defineProperty(document,'fullscreenEnabled',{get:()=>true});
+   Object.defineProperty(document,'fullscreenElement',{get:()=>current});
+   Element.prototype.requestFullscreen=async function(){change(this);};
+   document.exitFullscreen=async()=>change(null);
+   window.enterVideoFullscreen=()=>change(document.querySelector('#freeVideoView'));
+  });
+  await page.route('**/api/**',route=>route.fulfill({json:{ok:true,progress:[],activities:[]}}));
+  await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded'});
+  const exit=page.locator('#exitFullscreen');
+  await exit.waitFor({state:'visible'});
+  assert.equal(await exit.innerText(),'Reduzir simulador');
+  await page.locator('#freeModeEntry').tap();
+  await page.waitForFunction(()=>document.fullscreenElement===document.documentElement);
+  assert.equal(await exit.innerText(),'Sair da tela cheia');
+  assert.equal(await page.locator('html').evaluate(root=>root.classList.contains('educa-immersive-active')),false);
+  // A saída iniciada pelo navegador precisa desligar também a ampliação anterior.
+  await page.evaluate(()=>document.exitFullscreen());
+  await exit.waitFor({state:'hidden'});
+  assert.equal(await page.locator('#phoneScreen').getAttribute('data-current-view'),'free-intro');
+  await page.locator('#focusExpandBtn').waitFor({state:'visible'});
+  // O fullscreen do player não é o fullscreen do simulador.
+  await page.evaluate(()=>window.enterVideoFullscreen());
+  await exit.waitFor({state:'hidden'});
+  assert.equal(await page.locator('html').evaluate(root=>root.classList.contains('educa-fullscreen-active')),false);
+  await page.evaluate(()=>document.exitFullscreen());
+  console.log('FULLSCREEN_BROWSER_EXIT_V11283_OK',engine.name());
+ }finally{await page.close();}
  }finally{await browser.close();}
 }
