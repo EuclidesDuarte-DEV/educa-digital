@@ -11,7 +11,7 @@ for(const engine of [chromium,webkit]){
   const page=await browser.newPage({viewport,hasTouch:viewport.width<1000});
   const key=engine.name()+'-'+viewport.width+'x'+viewport.height;
   try{
-   await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded'});
+   await page.goto('http://127.0.0.1:8789/static/channels/web/senior-preview-v11279/index.html',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>window.EducaAccessibility);
    await page.locator('#openAccessibilitySettings').click();
    await page.locator('#seniorPreviewToggle').waitFor({state:'visible'});
