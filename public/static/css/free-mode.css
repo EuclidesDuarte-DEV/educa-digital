@@ -263,6 +263,9 @@ html[data-educa-platform="web"]:not(.educa-mobile-app):not(.educa-mobile-web-par
  padding: max(38px,env(safe-area-inset-top,0px)) 14px max(32px,env(safe-area-inset-bottom,0px))!important;
  overflow-y:auto!important;overflow-x:hidden!important;scroll-padding:16px;
 }
+#freeIntroView .free-intro-surface:focus-visible {
+ outline:3px solid #267cdd;outline-offset:-3px;
+}
 html[data-educa-platform="web"] #phoneScreen #freeIntroView .free-intro-content {
  display:flex!important;flex-direction:column!important;justify-content:flex-start!important;gap:12px!important;flex:0 0 auto!important;overflow:visible!important;min-width:0!important;padding:0!important;
 }

@@ -21,8 +21,6 @@
     apply(original);
     try{localStorage.setItem(key,original?'original':'ampliado');}catch(_){}
   });
-  const content=document.querySelector('#freeIntroView .free-intro-content');
-  if(content){content.tabIndex=0;content.setAttribute('role','region');content.setAttribute('aria-label','História do Modo Livre');}
   const code=document.getElementById('returnCode'), message=document.getElementById('returnCodeMessage');
   if(code&&message){code.setAttribute('aria-describedby',message.id);message.setAttribute('role','alert');}
 })();

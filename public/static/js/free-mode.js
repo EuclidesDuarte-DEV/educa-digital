@@ -116,7 +116,7 @@ function start(){if(!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;s
  if(document.documentElement?.dataset?.educaPlatform==='web')
   void window.EducaLiaVoice?.waitForFemale?.(500)?.catch?.(()=>{});
  state.finished=0;state.score=100;state.riskyScenarios.clear();state.delivered=0;state.seen=[];state.completedSteps.clear();state.unread.clear();state.conversations.clear();state.blocked=false;state.callHandsFree=false;state.baseline=[...document.querySelectorAll('#whatsappView .wa-chat-list .chat-row')].map(row=>({row,preview:row.querySelector('.chat-copy small')?.textContent,time:row.querySelector('.chat-meta small')?.textContent,badgeHidden:row.querySelector('.chat-meta b')?.hidden,hidden:row.hidden}));els.phone?.classList.add('free-active');els.notice.hidden=true;prepareContactRows();show('home');schedule(1800,3200);}
-function stop(){cancelIntroReading();storyScenario=null;storyReadId=null;clearTransition();video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.exampleConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
+function stop(){clearTransition();cancelIntroReading();storyScenario=null;storyReadId=null;video()?.close?.();clearTimeout(state.timer);state.timer=null;clearRequest();stopVoice();state.active=false;state.learningConsent=false;state.exampleConsent=false;state.pending=null;state.scenario=null;state.blocked=false;state.unread.clear();
  const list=$('#whatsappView .wa-chat-list');for(const dynamic of document.querySelectorAll('#whatsappView [data-free-scenario]'))dynamic.remove();
  if(list&&state.baseline)for(const {row,preview,time,badgeHidden,hidden} of state.baseline){row.hidden=hidden;row.classList.remove('free-unread');if(row.querySelector('.chat-copy small'))row.querySelector('.chat-copy small').textContent=preview;if(row.querySelector('.chat-meta small'))row.querySelector('.chat-meta small').textContent=time;if(row.querySelector('.chat-meta b'))row.querySelector('.chat-meta b').hidden=badgeHidden;list.append(row);}state.baseline=null;
  els.phone?.classList.remove('free-active','free-family-chat');if(els.notice)els.notice.hidden=true;if(els.form)els.form.hidden=true;setStatus('');syncUI();}
@@ -398,17 +398,11 @@ for(const eventName of ['wheel','touchstart','pointerdown','keydown'])
   ['wheel','touchstart','pointerdown'].includes(eventName)?{passive:true}:false);
 // V112.72 — tempo mínimo de leitura da narrativa, sem início automático.
 const INTRO_READ_MS=5000;
-let introTimer=null,introNoticeTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
-function hideIntroNotice(){
- clearTimeout(introNoticeTimer);introNoticeTimer=null;
- const notice=$('#freeIntroNotice');if(notice)notice.hidden=true;
-}
-function showIntroNotice(){
- const notice=$('#freeIntroNotice');if(notice)notice.hidden=false;
-}
+let introTimer=null,introRemaining=INTRO_READ_MS,introLastTick=0;
 function cancelIntroReading(){
- hideIntroNotice();
- clearInterval(introTimer);introTimer=null;introRemaining=INTRO_READ_MS;
+ const notice=$('#freeIntroNotice');if(notice)notice.hidden=true;
+ if(introTimer!==null)clearInterval(introTimer);
+ introTimer=null;introRemaining=INTRO_READ_MS;
  const button=$('#freeIntroStart');if(button)button.disabled=true;
  const label=$('#freeIntroStartLabel');if(label)label.textContent='Leia a história · 5 s';
 }
@@ -426,7 +420,11 @@ function tickIntroReading(){
  }else if(label)label.textContent='Leia a história · '+Math.ceil(introRemaining/1000)+' s';
 }
 document.addEventListener('visibilitychange',()=>{introLastTick=performance.now();});
-window.addEventListener('educa:training-view',e=>{if(e.detail?.view!=='free-intro'){cancelIntroReading();storyScenario=null;}});
+window.addEventListener('educa:training-view',e=>{
+ if(e.detail?.view==='free-intro'||!storyScenario)return;
+ if(state.active){stop();return;}
+ cancelIntroReading();storyScenario=null;
+});
 function openScenarioStory(s){
  if(!s||!bridge()?.isTraining()||!bridge()?.canFreeMode?.())return;
  cancelIntroReading();clearTimeout(state.timer);state.timer=null;
@@ -440,10 +438,10 @@ function openScenarioStory(s){
  show('free-intro');
  if(visible()!=='free-intro')return;
  storyScenario=s;
- const intro=$('#freeIntroView .free-intro-content');if(intro)intro.scrollTop=0;
+ const intro=$('#freeIntroView .free-intro-surface');if(intro)intro.scrollTop=0;
  const status=$('#freeIntroReady');if(status)status.textContent='';
  $('#freeIntroTitle')?.focus?.({preventScroll:true});
- showIntroNotice();
+ const notice=$('#freeIntroNotice');if(notice)notice.hidden=false;
  introLastTick=performance.now();introTimer=setInterval(tickIntroReading,100);
 }
 function openFreeIntro(){
@@ -455,7 +453,8 @@ function openFreeIntro(){
 function closeFreeIntro(){
  if(visible()!=='free-intro')return;
  cancelIntroReading();storyScenario=null;
- if(state.active){exit();return;}bridge()?.openLearningHub();
+ if(state.active)exit();else bridge()?.openLearningHub();
+ $('#freeModeEntry')?.focus?.();
 }
 $('#freeModeEntry')?.addEventListener('click',openFreeIntro);
 $('#freeIntroStart')?.addEventListener('click',()=>{

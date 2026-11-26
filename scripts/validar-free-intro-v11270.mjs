@@ -1,6 +1,6 @@
 import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
-for(const engine of [chromium,webkit]){
+for(const engine of [chromium,webkit].filter(engine=>!process.env.EDUCA_BROWSER||engine.name()===process.env.EDUCA_BROWSER)){
  const browser=await engine.launch({headless:true,...(engine===chromium?{args:['--no-sandbox']}:{})});
  try{
   // V112.75 — autenticação real da interface com respostas isoladas do servidor.
@@ -33,7 +33,7 @@ for(const engine of [chromium,webkit]){
     console.log('LOGIN_AUTO_FULLSCREEN_V11277_OK',engine.name(),viewport.width,viewport.height);
    }finally{await page.close();}
   }
-  for(const viewport of [{width:320,height:640},{width:390,height:844},{width:1366,height:768}]){
+  for(const viewport of [{width:280,height:653},{width:320,height:640},{width:390,height:844},{width:844,height:390},{width:1366,height:768}]){
    const page=await browser.newPage({viewport,hasTouch:viewport.width<500});
    try{
     await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
@@ -104,6 +104,7 @@ for(const engine of [chromium,webkit]){
     await view('learning');
     await page.locator('#freeModeEntry').click();
     await view('free-intro');
+    assert.equal(await page.locator('.free-intro-surface').evaluate(e=>e.scrollTop),0,'Ao reabrir, a história deve começar no topo');
     const since=Date.now();
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     await page.waitForFunction(()=>!document.getElementById('freeIntroStart').disabled);
@@ -132,13 +133,19 @@ for(const engine of [chromium,webkit]){
     await view('chat');
     await page.evaluate(()=>window.EducaFreeMode.reportContact());
     await view('free-summary');
-    await page.locator('#freeSummaryNext').click();
     await view('free-intro');
     assert.equal(await page.locator('#freeIntroTitle').innerText(),'Uma videochamada inesperada');
     assert.equal(await page.locator('#freeIntroChannel').innerText(),'Videochamada');
     assert.ok(await page.locator('#freeIntroStart').isDisabled());
     assert.ok(await page.locator('#freeIntroNotice').isVisible());
-    await page.locator('#freeIntroCancel').click();
+    await page.locator('#freeIntroStart').click({timeout:10000});
+    await view('free-video');
+    await page.locator('#freeVideoHangup').click();
+    await view('free-summary');
+    await page.locator('#freeSummaryNext').click();
+    await view('free-intro');
+    assert.equal(await page.locator('#freeIntroChannel').innerText(),'Ligação telefônica');
+    await page.locator('#freeIntroBack').click();
     await view('learning');
     assert.equal(await page.evaluate(()=>window.EducaFreeMode.isActive()),false);
     assert.equal(await page.locator('#freeExitBtn').isVisible(),false);
