@@ -9,7 +9,7 @@ function setup(){
  db.exec(readFileSync(new URL('../banco/schema.sql',import.meta.url),'utf8'));
  const d1={prepare(sql){return {bind(...args){return {
     async first(){return db.prepare(sql).get(...args)||null},
-    async run(){return db.prepare(sql).run(...args)},
+    async run(){const result=db.prepare(sql).run(...args);return {success:true,meta:{changes:Number(result.changes)}}},
     async all(){return {results:db.prepare(sql).all(...args)}}
  }}}}};
  const env={DB:d1,ASSETS:{fetch:async(req)=>new Response('PUBLIC_ASSET:'+new URL(req.url).pathname)}};
@@ -55,8 +55,10 @@ test('demo account, saved progress, code login, and accessibility',async()=>{
  assert.equal(r.perfil.tamanho_fonte,'extra_grande');assert.equal(r.perfil.alto_contraste,1);
  [status,r]=await api('/api/login/codigo','POST',{phone:'65999990000'});
  assert.equal(status,200);const code=r.demo_code;assert.match(code,/^\d{6}$/);
- [status,r]=await api('/api/login/confirmar','POST',{phone:'65999990000',code:'000000'});
- if(code!=='000000')assert.equal(status,400);
+ [status,r]=await api('/api/login/codigo','POST',{phone:'65999990000'});
+ assert.equal(status,200);assert.equal(r.demo_code,code,'Solicitação repetida deve manter o PIN vigente');
+ [status,r]=await api('/api/login/confirmar','POST',{phone:'65999990000',code:code==='000000'?'000001':'000000'});
+ assert.equal(status,400);
  [status,r]=await api('/api/login/confirmar','POST',{phone:'65999990000',code});
  assert.equal(status,200);assert.equal(r.name,'Maria Exemplo');
  [status,r]=await api('/api/login/confirmar','POST',{phone:'65999990000',code});

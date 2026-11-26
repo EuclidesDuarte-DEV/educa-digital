@@ -147,15 +147,20 @@ async function criarCodigo(request, env) {
      ON CONFLICT(usuario_id) DO UPDATE SET
        pin = excluded.pin,
        expira_em = excluded.expira_em,
-       criado_em = CURRENT_TIMESTAMP`,
+       criado_em = CURRENT_TIMESTAMP
+     WHERE codigos_acesso.expira_em <= ?`,
     usuario.id,
     codigo,
-    vencimento
+    vencimento,
+    Math.floor(Date.now() / 1000)
   ).run();
+  // Requisições simultâneas reutilizam o código vigente, sem invalidar o exibido.
+  const vigente = await consulta(env, 'SELECT pin, expira_em FROM codigos_acesso WHERE usuario_id = ?', usuario.id).first();
+  if (!vigente) return erro(409, 'Não foi possível gerar o código. Solicite novamente.');
 
   return responder({
     ok: true,
-    demo_code: codigo,
+    demo_code: String(vigente.pin).padStart(6, '0'),
     message: 'Código gerado para esta demonstração. Não é enviado por SMS.'
   });
 }
@@ -180,20 +185,21 @@ async function confirmarCodigo(request, env) {
     usuario.id
   ).first();
 
-  if (!registro || registro.pin !== codigo) {
+  if (!registro || String(registro.pin).padStart(6, '0') !== codigo) {
     return erro(400, 'Esse código não confere. Tente novamente.');
   }
 
-  if (Number(registro.expira_em) < Math.floor(Date.now() / 1000)) {
+  if (Number(registro.expira_em) <= Math.floor(Date.now() / 1000)) {
     await consulta(
       env,
-      'DELETE FROM codigos_acesso WHERE usuario_id = ?',
-      usuario.id
+      'DELETE FROM codigos_acesso WHERE usuario_id = ? AND pin = ? AND expira_em <= ?',
+      usuario.id, registro.pin, Math.floor(Date.now() / 1000)
     ).run();
     return erro(400, 'Esse código expirou. Gere um novo.');
   }
 
-  await consulta(env, 'DELETE FROM codigos_acesso WHERE usuario_id = ?', usuario.id).run();
+  const consumido = await consulta(env, 'DELETE FROM codigos_acesso WHERE usuario_id = ? AND pin = ? AND expira_em > ?', usuario.id, registro.pin, Math.floor(Date.now() / 1000)).run();
+  if (consumido.meta?.changes !== 1) return erro(409, 'Este código já foi utilizado ou expirou. Solicite um novo.');
   await consulta(
     env,
     'UPDATE usuarios SET ultimo_login=CURRENT_TIMESTAMP, atualizado_em=CURRENT_TIMESTAMP WHERE id=?',

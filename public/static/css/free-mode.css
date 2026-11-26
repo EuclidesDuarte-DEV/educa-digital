@@ -246,3 +246,9 @@ html.a11y-high-contrast #freeIntroView.is-active header .free-intro-kicker{color
 #freeIntroView .free-intro-actions{gap:7px;padding-top:4px;}
 #freeIntroView #freeIntroStart{min-height:50px;font-size:calc(16px * var(--ed-font-factor,1));box-shadow:none;}
 #freeIntroView #freeIntroCancel{min-height:44px;font-size:calc(14px * var(--ed-font-factor,1));gap:7px;}
+
+/* V112.75 — preservar alvos de toque mesmo sob regras genéricas do telefone. */
+html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView #freeIntroStart{box-sizing:border-box!important;min-height:54px!important;height:auto!important;max-height:none!important;}
+html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView :is(#freeIntroBack,#freeIntroCancel){min-height:48px!important;height:auto!important;max-height:none!important;}
+
+html[data-educa-platform="web"] #phoneHardware #phoneScreen #freeIntroView :is(#freeIntroBack,#freeIntroCancel)>svg{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;flex:0 0 24px!important;}

@@ -387,3 +387,6 @@ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus)
 html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap #fullscreenBtn:not([hidden])>svg{
  flex:0 0 19px!important;width:19px!important;height:19px!important;
 }
+
+/* V112.75 — botão de ampliação da home com alvo de toque seguro. */
+html[data-educa-platform="web"]:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap .phone-tools #fullscreenBtn:not([hidden]){min-height:48px!important;height:auto!important;max-height:none!important;}
