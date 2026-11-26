@@ -8,6 +8,8 @@ try{
   const page=await browser.newPage({viewport});
   try{
    const suffix=platform?'?app=1&platform='+platform+'&experience=web':'';
+   // Sessão fictícia local: estes testes verificam funcionalidades após cadastro.
+   await page.addInitScript(()=>localStorage.setItem('educaRememberedUser',JSON.stringify({name:'Participante',phone:'65900000001',levelToken:'a'.repeat(64)})));
    await page.goto('http://127.0.0.1:8789/html/'+suffix,{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForFunction(()=>window.EducaFreeView&&window.EducaAccessibility&&document.documentElement.dataset.educaPlatform==='web');
    if(platform)assert.equal(await page.locator('html').getAttribute('data-educa-native-platform'),platform);
