@@ -1782,6 +1782,12 @@
     if (coachCard) { coachCard.hidden = true; coachCard.classList.remove('is-visible'); }
     if (accountCard) accountCard.hidden = true;
 
+    // V112.75: todas as entradas autenticadas passam por aqui, inclusive
+    // cadastro, código de retorno e conta lembrada. Não dependa de gesto antigo.
+    if (accessMode === 'registered' && autoPrototypeMobile) {
+      openAutomaticPrototype();
+      focus = true;
+    }
     if (focus && accessMode === 'registered') enterPrototypeFocus({ boot });
     else phoneStage?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -3113,6 +3119,10 @@
     autoPrototypeLanding = !trainingStarted;
     rootForAutoFullscreen.classList.add('educa-immersive-active');
     document.body.classList.add('prototype-focus');
+    // A autenticação é assíncrona; rearmar a promoção no primeiro toque
+    // depois do login, sem depender da ativação transitória do formulário.
+    document.removeEventListener('click', promoteToNativeFullscreen, true);
+    document.addEventListener('click', promoteToNativeFullscreen, true);
     syncFullscreenControls();
     window.scrollTo({top:0,behavior:'auto'});
   }
@@ -3125,12 +3135,11 @@
     try {
       await rootForAutoFullscreen.requestFullscreen({navigationUI:'hide'});
       if (document.fullscreenElement) {
-        rootForAutoFullscreen.classList.remove('educa-immersive-active');
+        // Preserva o fallback caso o teclado ou navegador encerre fullscreen.
         syncFullscreenControls();
       }
     } catch (_) { /* O protótipo continua ampliado no viewport. */ }
   }
-  if (autoPrototypeMobile) document.addEventListener('click', promoteToNativeFullscreen, true);
 
   accountForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -3193,13 +3202,11 @@
     const user = getRememberedUser();
     // Conta válida retorna ao treino; convidado permanece no pré-teste bloqueado.
     if (user?.phone && /^[a-f0-9]{64}$/.test(user.levelToken || '')) {
-      openAutomaticPrototype();
       void loadServerProgress(user.phone);
       startTraining({focus:true,boot:false});
-    } else if (!user?.phone) {
-      openAutomaticPrototype();
     }
-    // Conta que precisa autenticar novamente mantém o botão de entrada disponível.
+    // Visitantes e contas que precisam autenticar mantêm a tela de entrada.
+    // Somente após login/cadastro bem-sucedido ampliamos o protótipo.
   }
 
 })();
