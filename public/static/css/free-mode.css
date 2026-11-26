@@ -170,3 +170,14 @@ html.a11y-high-contrast #freeIntroView.is-active :is(.free-intro-hero,article,.f
 html.a11y-high-contrast #freeIntroView.is-active :is(article strong,.free-intro-kicker){color:#fff!important;}
 html.a11y-high-contrast #freeIntroView.is-active{background:#000!important;color:#fff!important;}
 html.a11y-high-contrast #freeIntroView.is-active button{background:#000!important;color:#fff!important;border:2px solid #fff!important;}
+
+/* V112.71: introdução reduzida, com leitura simples e ação principal clara. */
+#freeIntroView .free-intro-content{justify-content:safe center;gap:14px;}
+#freeIntroView .free-intro-hero{padding:24px 16px 26px;border-radius:22px;}
+#freeIntroView .free-intro-symbol{width:68px;height:68px;margin:14px auto;}
+#freeIntroView .free-intro-symbol svg{width:46px;height:46px;}
+#freeIntroView #freeIntroTitle{font-size:calc(28px * var(--ed-font-factor,1));margin:8px 0 12px;}
+#freeIntroView .free-intro-hero p{font-size:calc(16px * var(--ed-font-factor,1));line-height:1.5;}
+#freeIntroView .free-intro-safe{padding:12px;text-align:center;font-size:calc(13px * var(--ed-font-factor,1));}
+#freeIntroView .free-intro-actions{gap:8px;}
+#freeIntroView #freeIntroCancel{border-color:transparent;background:transparent;}
