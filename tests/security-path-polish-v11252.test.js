@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-test('polimento Segurança limita-se à Web e não altera outros temas',async()=>{
+test('V112.88: Segurança herda a geometria do Pix e preserva o tema roxo',async()=>{
  const css=await readFile('public/static/css/security-path-polish-v11252.css','utf8');
- assert.ok(css.includes('html[data-educa-platform="web"] #modulePathView[data-topic="security"]'));
- const scopes=css.match(/#modulePathView\[data-topic="security"\]/g)||[];
- assert.ok(scopes.length>12);
- assert.doesNotMatch(css,/#[a-z]+View\[data-topic="(pix|whatsapp|govbr)"\]/);
+ const common=await readFile('public/static/channels/web/overrides.css','utf8');
+ assert.doesNotMatch(css,/\[data-topic=/);
+ assert.doesNotMatch(css,/\.module-lesson-card|\.module-path-content|\.module-path-intro/);
+ assert.match(common,/min-height:92px\s*!important/);
+ assert.match(common,/\.is-theme-security\s*\{[\s\S]*?--ed-topic-accent:#7457C7/);
 });
 test('fluxo Segurança mantém quatro lições e controles originais',async()=>{
  const html=await readFile('public/html/index.html','utf8');
