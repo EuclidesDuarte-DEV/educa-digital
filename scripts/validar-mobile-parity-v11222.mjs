@@ -24,6 +24,10 @@ const inspect=page=>page.evaluate(()=>{
    stage:sel('#phoneStage'),title:document.querySelector('.hero-copy h1')?.textContent||'',
    launcher:document.querySelectorAll('.educa-ios-safety-launcher').length};
 });
+const waitForViewport=page=>page.waitForFunction(()=>{
+ const height=window.visualViewport?.height||innerHeight;
+ return parseFloat(document.documentElement.style.getPropertyValue('--educa-visible-h'))===Math.round(height);
+});
 try{
  for(const c of cases){
   const key=c.platform+'-'+c.width+'x'+c.height+'-'+(process.env.EDUCA_BROWSER||'chromium');
@@ -125,36 +129,34 @@ try{
    assert.ok(await page.locator('.webv-day-list').isVisible());
    await page.locator('[data-wv="cal-add"]').first().tap({timeout:8000});
    assert.ok(await page.locator('#wvAgendaForm').isVisible());
-   // V112.85: estado visual isolado, sem iniciar chamada nem enviar mensagem.
+   // Abre o WhatsApp simulado pelo fluxo do Modo Livre para manter o estado ativo.
    await page.evaluate(()=>{
     window.EducaFreeMode.stop();
     document.body.classList.add('prototype-focus');
     document.documentElement.classList.add('educa-fullscreen-active');
-    window.EducaFreeView.setView('chat');
-    const phone=document.getElementById('phoneScreen');
-    phone.classList.add('free-active');
-    document.getElementById('freeOriginalComposer').hidden=false;
-    document.querySelector('#chatView .chat-composer').hidden=true;
-    document.getElementById('freeOriginalInput').focus();
+    window.EducaFreeMode.start();
+    window.EducaFreeMode.triggerEvent();
    });
+   await page.locator('#freeEventOpen').tap({timeout:8000});
+   await page.locator('#freeOriginalInput').focus();
    await page.setViewportSize({width:c.width,height:Math.max(340,c.height-300)});
    await page.locator('#freeOriginalInput').focus();
-   await page.waitForTimeout(150);
+   await waitForViewport(page);
+   await page.locator('#chatView').evaluate(view=>Promise.allSettled(view.getAnimations().map(animation=>animation.finished)));
    const keyboard=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
     const phone=rect('phoneScreen'),input=rect('freeOriginalInput'),send=rect('freeOriginalSend');
-    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,viewport:window.visualViewport?.height||innerHeight,gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:input.height,sendWidth:send.width};
+    const top=window.visualViewport?.offsetTop||0;
+    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,sendTop:send.top,top,bottom:top+(window.visualViewport?.height||innerHeight),gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:document.getElementById('freeOriginalInput').offsetHeight,sendWidth:document.getElementById('freeOriginalSend').offsetWidth};
    });
-   assert.ok(keyboard.composerHeight>=44&&keyboard.sendWidth>=44,key+' compositor sem área de toque '+JSON.stringify(keyboard));
+   assert.ok(keyboard.composerHeight>=43.5&&keyboard.sendWidth>=43.5,key+' compositor sem área de toque '+JSON.stringify(keyboard));
    assert.ok(keyboard.inputBottom<=keyboard.phoneBottom-12&&keyboard.sendBottom<=keyboard.phoneBottom-12,key+' compositor invade navegação '+JSON.stringify(keyboard));
-   assert.ok(keyboard.sendBottom<=keyboard.viewport+1,key+' enviar abaixo do teclado '+JSON.stringify(keyboard));
+   assert.ok(keyboard.sendTop>=keyboard.top-1&&keyboard.sendBottom<=keyboard.bottom+1,key+' enviar fora da área visível '+JSON.stringify(keyboard));
    assert.equal(keyboard.gesture,'hidden');
    await page.screenshot({path:dir+'/'+key+'-keyboard.png'});
    await page.evaluate(()=>{
     document.getElementById('freeOriginalInput').blur();
-    window.EducaFreeView.setView('free-video');
-    document.getElementById('freeVideoAnswer').hidden=false;
-    document.getElementById('freeVideoHangup').hidden=false;
+    window.EducaVideoCall.incoming();
    });
    await page.setViewportSize({width:c.width,height:c.height});
    const ringing=await page.evaluate(()=>{
@@ -165,8 +167,29 @@ try{
    assert.equal(ringing.avatar,'none',key+' avatar visível antes de atender');
    assert.ok(ringing.offset<=ringing.height*.25&&ringing.answerWidth>=44,key+' atender fora do centro '+JSON.stringify(ringing));
    await page.screenshot({path:dir+'/'+key+'-incoming.png'});
-   await page.evaluate(()=>document.getElementById('freeVideoAnswer').hidden=true);
+   await page.locator('#freeVideoAnswer').tap({timeout:8000});
    assert.notEqual(await page.locator('#freeVideoPortrait').evaluate(e=>getComputedStyle(e).display),'none',key+' avatar não voltou ao atender');
+   await page.locator('#freeVideoText').tap({timeout:8000});
+   assert.equal(await page.locator('#freeVideoText').getAttribute('aria-expanded'),'true');
+   await page.setViewportSize({width:c.width,height:Math.max(300,c.height-340)});
+   await waitForViewport(page);
+   await page.locator('#freeVideoInput').fill('Mensagem de teste');
+   await page.locator('#freeVideoView').evaluate(view=>Promise.allSettled(view.getAnimations().map(animation=>animation.finished)));
+   const typing=await page.evaluate(()=>{
+    const rect=id=>document.getElementById(id).getBoundingClientRect();
+    const input=rect('freeVideoInput'),send=rect('freeVideoSend'),view=visualViewport;
+    const top=view?.offsetTop||0,bottom=top+(view?.height||innerHeight);
+    const hit=document.elementFromPoint(send.x+send.width/2,send.y+send.height/2);
+    return {inputTop:input.top,inputBottom:input.bottom,sendTop:send.top,sendBottom:send.bottom,top,bottom,width:send.width,height:input.height,clickable:hit?.closest('#freeVideoSend')?.id==='freeVideoSend'};
+   });
+   assert.ok(typing.inputTop>=typing.top-1&&typing.inputBottom<=typing.bottom+1&&typing.sendTop>=typing.top-1&&typing.sendBottom<=typing.bottom+1&&typing.width>=43.5&&typing.height>=43.5&&typing.clickable,key+' campo da Lia fora da área visível '+JSON.stringify(typing));
+   await page.screenshot({path:dir+'/'+key+'-lia-keyboard.png'});
+   await page.route('**/api/modo-livre/conversar-web',route=>route.fulfill({json:{ok:true,mode:'ia',reply:'Resposta de teste.'}}));
+   const sent=page.waitForRequest(request=>request.url().endsWith('/api/modo-livre/conversar-web')&&request.method()==='POST');
+   await page.locator('#freeVideoSend').tap({timeout:8000});
+   assert.equal((await sent).postDataJSON().message,'Mensagem de teste');
+   assert.equal(await page.locator('#freeVideoForm').isHidden(),true);
+   await page.setViewportSize({width:c.width,height:c.height});
    console.log('MOBILE_PARITY_V11222_OK '+key+' '+JSON.stringify({render:home.render,native:home.native,color}));
   }finally{await ctx.close();}
  }
