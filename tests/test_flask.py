@@ -1,4 +1,5 @@
 """Testes da API de demonstração Flask V102 (executar com unittest)."""
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
@@ -36,6 +37,17 @@ class EducaFlaskTests(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.json["ok"])
         self.assertTrue(ACTIVITY_CODES)
+
+    def test_guided_progress_on_existing_database(self):
+        code = "guided-falso-sequestro"
+        self.assertEqual(self.client.post("/api/conta", json={"name": "Pessoa Teste", "phone": self.phone}).status_code, 201)
+        with sqlite3.connect(app.config["EDUCA_DB_PATH"]) as connection:
+            connection.execute("DELETE FROM atividades WHERE tipo = 'pratica_guiada'")
+        response = self.client.post("/api/progresso", json={"phone": self.phone, "activity_code": code})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["concluido"], 1)
+        with sqlite3.connect(app.config["EDUCA_DB_PATH"]) as connection:
+            self.assertEqual(connection.execute("SELECT a.codigo FROM progresso p JOIN atividades a ON a.id=p.atividade_id").fetchone(), (code,))
 
     def test_register_login_and_progress(self):
         request = {"name": "Pessoa Teste", "phone": self.phone}

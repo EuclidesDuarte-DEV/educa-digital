@@ -23,7 +23,7 @@ for(const engine of [chromium,webkit]){
      return {order:cards.map(e=>e.id==='freeModeEntry'?'free':e.dataset.learningTopic),hero:r(hero),copy:r(hero.querySelector('.free-entry-copy')),badge:r(hero.querySelector('.free-entry-badge')),title:r(hero.querySelector('strong')),desc:r(hero.querySelector('em')),art:r(hero.querySelector('.free-entry-art')),arrow:r(hero.querySelector('.free-entry-chevron')),surface:r(surface),scroll:surface.scrollWidth,client:surface.clientWidth,secondary:cards.slice(1).map(e=>({card:r(e),icon:r(e.querySelector('.learning-featured-icon,.learning-card-icon')),title:r(e.querySelector('strong')),desc:r(e.querySelector('.learning-featured-copy>span,.learning-card>small')),arrow:r(e.querySelector('.learning-arrow,.learning-card-arrow')),pix:e.querySelector('img')?.getAttribute('src')}))};
     });
     const b=layout;const inside=(a,c)=>a.left>=c.left-1&&a.right<=c.right+1&&a.top>=c.top-1&&a.bottom<=c.bottom+1;
-    assert.deepEqual(b.order,['free','pix','security','whatsapp','settings','govbr']);
+    assert.deepEqual(b.order,['free','pix','security','whatsapp','govbr']);
     assert.ok(b.hero.height>b.secondary[0].card.height,'destaque menor que card secundário');
     assert.ok(inside(b.copy,b.hero)&&inside(b.arrow,b.hero)&&inside(b.badge,b.hero),'conteúdo do destaque cortado '+JSON.stringify(b));
     assert.ok(b.copy.right<=b.arrow.left+1&&b.title.bottom<=b.desc.top+1,'destaque sobreposto '+JSON.stringify(b));
