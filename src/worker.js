@@ -14,7 +14,7 @@ import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
 import { populateReviewedNeuralLibrary } from './lia-neural-library-v11200.js';
-import { refreshPreventionSources } from './lia-prevention-research-v11287.js';
+import { refreshPreventionSources, preventionResearchStatus } from './lia-prevention-research-v11287.js';
 import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
 const CODIGOS_ATIVIDADES = new Set(
@@ -593,7 +593,7 @@ async function rotearApi(request, env, url, ctx) {
   if (metodo === 'POST' && rota === '/api/lia/training/outcome')
     return trainingOutcome(request,env);
   if (metodo === 'GET' && rota === '/api/lia/neural/health')
-    return responder({ok:true,...await neuralReadiness(env),...await trainingReadiness(env)});
+    return responder({ok:true,...await neuralReadiness(env),...await trainingReadiness(env),prevention_research:await preventionResearchStatus(env)});
   if (rota === '/api/lia/neural' || rota.startsWith('/api/lia/neural/'))
     return neuralApi(request,env,url);
   if (metodo === 'GET' && rota === '/api/modo-livre/capacidades') {
