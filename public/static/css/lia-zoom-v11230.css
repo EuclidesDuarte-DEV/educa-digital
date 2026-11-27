@@ -133,3 +133,78 @@ html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAns
  html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-top{top:8%!important}
  html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-bottom{top:65%!important}
 }
+
+/* A área de digitação acompanha a parte visível da tela quando o teclado abre. */
+@media (max-width: 900px), (pointer: coarse) {
+  html[data-educa-platform="web"] body.prototype-focus:has(#freeVideoView.is-active #freeVideoForm:not([hidden])) #phoneStage {
+    position: fixed !important;
+    inset: var(--educa-visible-top, 0px) auto auto var(--educa-visible-left, 0px) !important;
+    width: var(--educa-visible-w, 100vw) !important;
+    height: var(--educa-visible-h, 100dvh) !important;
+    max-height: var(--educa-visible-h, 100dvh) !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+    z-index: 650 !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus:has(#freeVideoView.is-active #freeVideoForm:not([hidden])) #phoneStage #phoneHardware {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus:has(#freeVideoView.is-active #freeVideoForm:not([hidden])) #phoneStage #phoneScreen {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoForm:not([hidden])) .v110-video-bottom {
+    position: absolute !important;
+    inset: auto 8px max(8px, env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus #phoneHardware #freeVideoView.is-active.android-view #freeVideoForm:not([hidden]) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 48px !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus #phoneHardware #freeVideoView.is-active.android-view #freeVideoInput {
+    min-width: 0 !important;
+    flex: 1 1 0 !important;
+    min-height: 44px !important;
+    font-size: max(16px, var(--ed-chat-input, 16px)) !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus #phoneHardware #freeVideoView.is-active.android-view #freeVideoSend {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    flex: 0 0 44px !important;
+  }
+
+  html[data-educa-platform="web"] body.prototype-focus #phoneScreen:has(#freeVideoView.is-active #freeVideoForm:not([hidden])) #gestureHome {
+    display: none !important;
+  }
+}
