@@ -5,7 +5,8 @@ test('V112.88: Segurança herda a geometria do Pix e preserva o tema roxo',async
  const css=await readFile('public/static/css/security-path-polish-v11252.css','utf8');
  const common=await readFile('public/static/channels/web/overrides.css','utf8');
  assert.doesNotMatch(css,/\[data-topic=/);
- assert.doesNotMatch(css,/\.module-lesson-card|\.module-path-content|\.module-path-intro/);
+ assert.doesNotMatch(css,/\.module-path-content|\.module-path-intro/);
+ assert.match(css,/@container \(max-width: 270px\)\s*\{\s*html\[data-educa-platform="web"\] #modulePathView\.web-activity-simple \.module-lesson-card\s*\{/);
  assert.match(common,/min-height:92px\s*!important/);
  assert.match(common,/\.is-theme-security\s*\{[\s\S]*?--ed-topic-accent:#7457C7/);
 });

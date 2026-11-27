@@ -1,5 +1,5 @@
 /* V112.88 — uma única geometria para todas as trilhas, tomando Pix como referência.
-   As dimensões, fontes, espaçamentos e estados vêm de channels/web/overrides.css.
+   A base de dimensões, fontes e estados vem de channels/web/overrides.css.
    Segurança usa apenas o tema roxo do design system compartilhado.
    Não há ajustes exclusivos de tamanho, nem altura fixa para texto ampliado. */
 html[data-educa-platform="web"] #modulePathView.web-activity-simple .module-path-header>div::before{
