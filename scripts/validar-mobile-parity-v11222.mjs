@@ -138,12 +138,14 @@ try{
     document.getElementById('freeOriginalInput').focus();
    });
    await page.setViewportSize({width:c.width,height:Math.max(340,c.height-300)});
+   await page.locator('#freeOriginalInput').focus();
    await page.waitForTimeout(150);
    const keyboard=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
     const phone=rect('phoneScreen'),input=rect('freeOriginalInput'),send=rect('freeOriginalSend');
-    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,viewport:window.visualViewport?.height||innerHeight,gesture:getComputedStyle(document.getElementById('gestureHome')).visibility};
+    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,viewport:window.visualViewport?.height||innerHeight,gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:input.height,sendWidth:send.width};
    });
+   assert.ok(keyboard.composerHeight>=44&&keyboard.sendWidth>=44,key+' compositor sem área de toque '+JSON.stringify(keyboard));
    assert.ok(keyboard.inputBottom<=keyboard.phoneBottom-12&&keyboard.sendBottom<=keyboard.phoneBottom-12,key+' compositor invade navegação '+JSON.stringify(keyboard));
    assert.ok(keyboard.sendBottom<=keyboard.viewport+1,key+' enviar abaixo do teclado '+JSON.stringify(keyboard));
    assert.equal(keyboard.gesture,'hidden');
