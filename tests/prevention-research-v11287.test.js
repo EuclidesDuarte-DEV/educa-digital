@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {PREVENTION_SOURCES,sourceFingerprint,refreshPreventionSources} from '../src/lia-prevention-research-v11287.js';
+import {PREVENTION_SOURCES,sourceFingerprint,refreshPreventionSources,preventionResearchStatus,preventionTip} from '../src/lia-prevention-research-v11287.js';
 test('V112.87: fixed official HTTPS sources',()=>{
  const hosts=new Set(['cartilha.cert.br','www.bcb.gov.br','www.gov.br']);
  for(const item of PREVENTION_SOURCES){const url=new URL(item.url);assert.equal(url.protocol,'https:');assert.ok(hosts.has(url.hostname));}
@@ -28,4 +28,19 @@ test('V112.87: new source changes produce private drafts only, never raw HTML or
  assert.equal(drafts.length,PREVENTION_SOURCES.length);
  for(const draft of drafts){assert.match(draft.q,/'draft','private'/);assert.ok(!JSON.stringify(draft.args).includes('UNTRUSTED_SOURCE_CONTENT'));}
  const second=await refreshPreventionSources(env,{fetcher});assert.equal(second.changed,0);
+});
+
+test('V112.87: public prevention tips are curated and do not accept external text',()=>{
+ for(const scenario of ['video','family-photo','bank','unknown','__proto__']){
+  const tip=preventionTip(scenario);
+  assert.ok(tip.text.length>10&&tip.text.length<=240);
+  assert.ok(tip.source.startsWith('https://'));
+ }
+ assert.equal(preventionTip('unknown'),preventionTip('default'));
+});
+test('V112.87: research status indicates no successful checks before initial run',async()=>{
+ const status=await preventionResearchStatus({LIA_PREVENTION_RESEARCH:'true'});
+ assert.equal(status.interval_hours,6);
+ assert.equal(status.last_check,null);
+ assert.equal(status.checked_sources,0);
 });
