@@ -10,7 +10,7 @@ let session=null;
 const element=(tag,cls='',text='')=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
 const button=(id,label,cls='guided-real-button')=>{const e=element('button',cls,label);e.type='button';e.id=id;return e;};
 function clearNodes(){
- $$('.guided-native-panel,.guided-native-row,.guided-real-scene,.guided-real-flag,.guided-real-inbox-row,.guided-real-verification,.guided-real-topline,.guided-real-detail-card').forEach(el=>el.remove());
+ $('.guided-native-panel,.guided-native-row,.guided-real-scene,.guided-real-flag,.guided-real-inbox-row,.guided-real-verification,.guided-real-topline,.guided-real-detail-card,.guided-real-chat-inspect,.guided-real-chat-disclaimer').forEach(el=>el.remove());
  $('#webRealView')?.removeAttribute('data-guided-flow-app');
  phone?.removeAttribute('data-guided-app-lesson');
  phone?.removeAttribute('data-guided-bank-detail');
