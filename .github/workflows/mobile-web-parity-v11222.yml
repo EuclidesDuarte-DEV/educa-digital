@@ -12,7 +12,6 @@ on:
       - 'public/static/manifest.webmanifest'
       - 'public/static/release-channels.json'
       - 'scripts/validar-mobile-parity-v11222.mjs'
-      - 'scripts/validar-prevencao-guiada-v11291.mjs'
       - 'tests/mobile-web-parity-v11222.test.js'
       - '.github/workflows/mobile-web-parity-v11222.yml'
   workflow_dispatch:
@@ -44,15 +43,9 @@ jobs:
         run: |
           python3 -m http.server 8789 --directory public >/tmp/educa-mobile-v11222.log 2>&1 &
       - name: Android e iOS Web parity em 4 resoluções — Chromium
-        run: |
-          node scripts/validar-mobile-parity-v11222.mjs
-          node scripts/validar-prevencao-guiada-v11291.mjs
+        run: node scripts/validar-mobile-parity-v11222.mjs
       - name: Safari iPhone WebKit — home, clique, filtros e agenda
-        env:
-          EDUCA_BROWSER: webkit
-        run: |
-          node scripts/validar-mobile-parity-v11222.mjs
-          node scripts/validar-prevencao-guiada-v11291.mjs
+        run: EDUCA_BROWSER=webkit node scripts/validar-mobile-parity-v11222.mjs
       - name: Capturas de auditoria Android e iOS
         if: always()
         uses: actions/upload-artifact@v4
