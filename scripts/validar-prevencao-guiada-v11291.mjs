@@ -58,7 +58,7 @@ try {
     for (const [topic, title, code, retry, advice, group] of courses) {
       await hit(home.locator(`[data-learning-topic="${topic}"]`));
       const path = page.locator('#modulePathView.is-active');
-      const lesson = path.locator('[data-module-lesson]').filter({ has: path.getByText(title, { exact: true }) });
+      const lesson = path.locator('[data-module-lesson]').filter({ has: page.getByText(title, { exact: true }) });
       if (group) assert.equal(await path.getByRole('heading', { name: group, exact: true }).count(), 1);
       await hit(lesson);
       const activity = page.locator('#guidedPracticeView.is-active[data-guided-prevention]');
