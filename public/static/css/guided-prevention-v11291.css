@@ -307,3 +307,18 @@
  #phoneScreen[data-guided-app-lesson] .guided-real-verification{margin:8px 4px;padding:14px}
  #phoneScreen[data-guided-app-lesson] .guided-real-button{min-height:48px}
 }
+
+/* In an active bank exercise, the existing banking shell becomes a focused
+   payment / card / help screen after the user opens its real menu shortcut. */
+#phoneScreen[data-guided-bank-detail="pagar"] #bankHomeView.is-active :is(.bank-welcome,.bank-shortcuts,.bank-movements,.bank-real-apps),
+#phoneScreen[data-guided-bank-detail="cartao"] #bankHomeView.is-active :is(.bank-welcome,.bank-shortcuts,.bank-movements,.bank-real-apps),
+#phoneScreen[data-guided-bank-detail="ajuda"] #bankHomeView.is-active :is(.bank-welcome,.bank-shortcuts,.bank-movements,.bank-real-apps){
+  display:none!important
+}
+#phoneScreen[data-guided-bank-detail="qr"] #bankPixView.is-active :is(.bank-lead,.bank-action-primary,.bank-action-grid,.bank-help-card){
+  display:none!important
+}
+#phoneScreen[data-guided-bank-detail] .guided-real-bank-detail {
+  margin:8px 0 22px!important;border:1px solid #b9d9ee!important;
+  border-radius:18px!important;background:#fff!important;box-shadow:0 4px 18px #0b34651a
+}
