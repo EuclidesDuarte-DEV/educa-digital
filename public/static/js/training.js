@@ -1207,27 +1207,50 @@
     const lesson = topic?.lessons?.[lessonIndex];
     if (!lesson) return openModulePath(topicId);
     const video = lessonVideos[lesson[2]];
-    if (!video) return startTopic(topicId, lessonIndex);
+    const activity = guidedActivities[lesson[2]];
+    if (!video && !activity?.signals) return startTopic(topicId, lessonIndex);
+    clearGuide();
+    stopNativeGuidedLesson();
     currentVideoTopic = topicId;
     currentVideoLessonIndex = lessonIndex;
     currentLearningTopic = topicId;
     currentLessonIndex = lessonIndex;
     currentTopicAction = lesson[2];
-    if (videoLessonKicker) videoLessonKicker.textContent = `VÍDEO · CAPÍTULO ${lessonIndex + 1} DE ${topic.lessons.length}`;
-    if (videoLessonTitle) videoLessonTitle.textContent = video.title;
-    if (videoLessonSummary) videoLessonSummary.textContent = video.summary;
-    if (lessonVideo) { lessonVideo.pause(); lessonVideo.src = video.src; lessonVideo.load(); }
+    if (videoLessonKicker) videoLessonKicker.textContent = `${video ? 'VÍDEO' : 'ANTES DA ATIVIDADE'} · ${lessonIndex + 1} DE ${topic.lessons.length}`;
+    if (videoLessonTitle) videoLessonTitle.textContent = video?.title || activity.title;
+    if (videoLessonSummary) videoLessonSummary.textContent = video?.summary || activity.instruction;
+    const introView = $('#videoLessonView');
+    introView?.toggleAttribute('data-video-pending', !video);
+    $('#videoIntroPlaceholder')?.remove();
+    if (lessonVideo) {
+      lessonVideo.pause();
+      if (video) lessonVideo.src = video.src;
+      else lessonVideo.removeAttribute('src');
+      lessonVideo.load();
+    }
+    const note = introView?.querySelector('.video-safe-note small');
+    if (note) note.textContent = video ? 'O vídeo usa situações simuladas e não pede dados pessoais.' : 'A prática usa apenas situações fictícias, sem dinheiro ou dados pessoais.';
+    if (!video) {
+      const card = document.createElement('section');
+      card.id = 'videoIntroPlaceholder';
+      card.className = 'guided-video-placeholder';
+      const icon = document.createElement('span'); icon.className='guided-video-icon'; icon.textContent='✓'; icon.setAttribute('aria-hidden','true');
+      const title = document.createElement('strong'); title.textContent='Vamos praticar juntos';
+      const copy = document.createElement('p'); copy.textContent='O vídeo explicativo será adicionado em breve. Você já pode seguir as setas e orientações no celular de treino.';
+      card.append(icon,title,copy);
+      introView?.querySelector('.video-frame-shell')?.before(card);
+    }
     setView('video-lesson');
     if (miniCoachKicker) miniCoachKicker.textContent = `${topic.title.toUpperCase()} · VÍDEO`;
-    if (miniCoachTitle) miniCoachTitle.textContent = video.title;
-    if (miniCoachText) miniCoachText.textContent = 'Assista e, quando estiver pronto, toque em “Agora quero praticar”.';
+    if (miniCoachTitle) miniCoachTitle.textContent = video?.title || activity.title;
+    if (miniCoachText) miniCoachText.textContent = video ? 'Assista e, quando estiver pronto, toque em “Agora quero praticar”.' : 'Leia a orientação e toque em “Agora quero praticar”.';
   }
 
   function startLessonFlow(topicId, lessonIndex) {
     const topic = learningTopics[topicId];
     if (!topic?.lessons?.[lessonIndex]) return openModulePath(topicId);
     const action = topic.lessons[lessonIndex][2];
-    if (lessonVideos[action]) openLessonVideo(topicId, lessonIndex);
+    if (lessonVideos[action] || guidedActivities[action]?.signals) openLessonVideo(topicId, lessonIndex);
     else startTopic(topicId, lessonIndex);
   }
 
@@ -2041,6 +2064,65 @@
       },'Menu');
     }
   }
+  // Static, prevention-focused examples in the original WhatsApp screen.
+  // No generated messages, links, external calls or transactions.
+  function nativeGuidedWhatsApp(action) {
+    const activity = guidedActivities[action];
+    const list = $('#whatsappView .wa-chat-list');
+    if (!activity || !list) return false;
+    setView('whatsapp');
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.id = 'guidedIncomingChat';
+    row.className = 'chat-row guided-native-row';
+    const avatar = guidedPrototypeElement('span','avatar blue','!');
+    const copy = guidedPrototypeElement('span','chat-copy');
+    copy.append(guidedPrototypeElement('strong','','Contato de treino'),guidedPrototypeElement('small','','Nova mensagem · '+activity.title));
+    const meta = guidedPrototypeElement('span','chat-meta');
+    meta.append(guidedPrototypeElement('small','','Agora'),guidedPrototypeElement('b','','1'));
+    row.append(avatar,copy,meta);
+    list.prepend(row);
+    nativeGuidedStep(row,'Nova mensagem','Toque na conversa destacada para analisar uma situação fictícia.',()=>{
+      currentScenario = null;
+      scenarioTitle.textContent='Contato de treino';
+      scenarioSubtitle.textContent='Conversa simulada';
+      scenarioAvatar.textContent='!';
+      scenarioAvatar.className='avatar blue small';
+      const day=guidedPrototypeElement('span','chat-day','Hoje · SIMULAÇÃO');
+      const message=guidedPrototypeElement('div','message incoming',activity.instruction);
+      const evidence=guidedPrototypeElement('div','security-note',typeof activity.example==='object'?activity.example.evidence:activity.signals[0]);
+      chatWallpaper.replaceChildren(day,message,evidence);
+      decisionOptions.replaceChildren();
+      const actions = {
+        'guided-whatsapp-conta-invadida':'Confirmar pelo contato conhecido',
+        'guided-whatsapp-arquivo-falso':'Fechar sem instalar',
+        'guided-whatsapp-tela':'Encerrar e procurar suporte',
+        'guided-whatsapp-falso-comprador':'Conferir na plataforma',
+        'guided-whatsapp-advogado':'Consultar o escritório conhecido',
+        'guided-whatsapp-romance':'Buscar apoio de confiança',
+        'guided-whatsapp-chantagem':'Buscar ajuda e preservar registros',
+        'guided-whatsapp-voz':'Confirmar por número salvo',
+        'guided-whatsapp-loja':'Consultar a loja por canal oficial'
+      };
+      const label=actions[action]||'Conferir por outro canal';
+      const safe=guidedPrototypeButton(label,'guidedChatSafeAction',()=>{});
+      decisionOptions.append(safe);
+      if(scenarioAnswerFeedback)scenarioAnswerFeedback.hidden=true;
+      setView('chat');
+      nativeGuidedStep(safe,'Proteja seus dados',activity.signals[0]+' Toque em '+label+'.',()=>{
+        openNormalChat('daughter');
+        const panel = guidedPrototypeElement('div','guided-native-panel guided-native-chat-panel');
+        panel.append(guidedPrototypeElement('small','guided-native-badge','CANAL CONHECIDO · TREINO'));
+        panel.append(guidedPrototypeElement('p','guided-native-detail',activity.learned));
+        const done=guidedPrototypeButton('Concluir verificação','guidedChatConfirm',()=>{});
+        panel.append(done);
+        $('#normalMessages').append(panel);
+        nativeGuidedStep(done,'Verificação independente','Leia a orientação e conclua a verificação de treino.',finishNativeGuidedLesson,'Concluir');
+      },'Ação segura');
+    },'Abrir mensagem');
+    return true;
+  }
+
   function openNativeGuidedLesson(action){
     const apps={
       'guided-pix-devolucao':'bank',
@@ -2049,13 +2131,14 @@
       'guided-gov-prova-vida':'govbr',
       'guided-gov-acesso-suspeito':'govbr'
     };
-    const app=apps[action];
+    const app=apps[action] || (action.startsWith('guided-whatsapp-') ? 'whatsapp' : null);
     if(!app)return false;
     stopNativeGuidedLesson();
     nativeGuidedSession={action,step:0,controller:new AbortController()};
     phoneScreen.dataset.guidedAppLesson=action;
     // Igual às atividades originais: a seleção abre diretamente o aplicativo
     // correspondente. A tela de ícones do Modo Livre não faz parte deste fluxo.
+    if(app==='whatsapp') return nativeGuidedWhatsApp(action);
     if(app==='bank'){
       openBankView('bank-home');
       nativeGuidedStep('#bankExtractBtn','Abra o extrato','Toque em Extrato para conferir as movimentações da conta fictícia.',()=>nativeGuidedBankExtract(action),'Extrato');
@@ -2877,6 +2960,7 @@
   });
 
   videoPracticeBtn?.addEventListener('click', () => {
+    if (phoneScreen?.dataset.currentView !== 'video-lesson') return;
     lessonVideo?.pause();
     startTopic(currentVideoTopic || currentLearningTopic || 'pix', currentVideoLessonIndex || 0);
   });
