@@ -405,3 +405,5 @@ html[data-educa-platform="web"]:not(.educa-fullscreen-active) body.home-training
 #phoneScreen #freeVideoMore[open] .v112-video-more-content button:not([hidden]){
  min-width:0!important;width:100%!important;min-height:36px!important;height:auto!important;white-space:normal!important;box-sizing:border-box!important;
 }
+
+#phoneScreen .android-view #playProtectBtn{min-width:44px!important;min-height:44px!important;flex-shrink:0!important;}
