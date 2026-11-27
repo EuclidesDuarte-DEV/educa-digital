@@ -3029,6 +3029,8 @@
     const height = Math.max(1, Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight));
     document.documentElement.style.setProperty('--educa-visible-w', `${width}px`);
     document.documentElement.style.setProperty('--educa-visible-h', `${height}px`);
+    document.documentElement.style.setProperty('--educa-visible-top', `${Math.max(0,Math.round(viewport?.offsetTop||0))}px`);
+    document.documentElement.style.setProperty('--educa-visible-left', `${Math.max(0,Math.round(viewport?.offsetLeft||0))}px`);
   }
 
   updatePrototypeViewportFit();
