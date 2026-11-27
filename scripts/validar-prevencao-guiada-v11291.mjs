@@ -62,19 +62,27 @@ try {
     assert.deepEqual(await home.locator('[data-learning-topic]').evaluateAll(cards => cards.map(card => card.dataset.learningTopic)),
       ['pix', 'security', 'whatsapp', 'govbr']);
     assert.equal(await page.locator('#openAccessibilitySettings').isVisible(), true);
+    assert.ok(await home.locator('#freeModeEntry').isVisible());
+    assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
+    assert.equal(await page.locator('#phoneScreen').evaluate(el=>el.classList.contains('free-active')),false);
+    assert.ok(await page.locator('#freeExitBtn').isHidden());
 
     for (const [topic, title, code, retry, advice, group] of courses) {
       await hit(home.locator(`[data-learning-topic="${topic}"]`));
       const path = page.locator('#modulePathView.is-active');
       const lesson = path.locator('[data-module-lesson]').filter({ has: page.getByText(title, { exact: true }) });
       if (group) assert.equal(await path.getByRole('heading', { name: group, exact: true }).count(), 1);
+      assert.ok(await path.isVisible());
+      assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
       await hit(lesson);
+      assert.equal(await page.locator('#phoneScreen').evaluate(el=>el.classList.contains('free-active')),false);
+      assert.ok(await page.locator('#freeExitBtn').isHidden());
       const nativeRoutes={
-        'guided-pix-devolucao':[['home','#homeView [data-open-app="bank"]'],['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction'],['bank-extract','#nativeGuidedAction']],
-        'guided-comprovante-falso':[['home','#homeView [data-open-app="bank"]'],['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction']],
-        'guided-pix-apos-golpe':[['home','#homeView [data-open-app="bank"]'],['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction'],['bank-extract','#nativeGuidedAction']],
-        'guided-gov-prova-vida':[['home','#homeView [data-open-app="govbr"]'],['govbr-home','#govSearchBox'],['govbr-services','#govProofRow'],['govbr-proof','#govProofFoundBtn']],
-        'guided-gov-acesso-suspeito':[['home','#homeView [data-open-app="govbr"]'],['govbr-home','#govProfileNav'],['govbr-menu','#govSecurityMenuRow'],['govbr-security','#govTwoFactorRow'],['govbr-security-2fa','#gov2faLearnBtn']]
+        'guided-pix-devolucao':[['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction'],['bank-extract','#nativeGuidedAction']],
+        'guided-comprovante-falso':[['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction']],
+        'guided-pix-apos-golpe':[['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction'],['bank-extract','#nativeGuidedAction']],
+        'guided-gov-prova-vida':[['govbr-home','#govSearchBox'],['govbr-services','#govProofRow'],['govbr-proof','#govProofFoundBtn']],
+        'guided-gov-acesso-suspeito':[['govbr-home','#govProfileNav'],['govbr-menu','#govSecurityMenuRow'],['govbr-security','#govTwoFactorRow'],['govbr-security-2fa','#gov2faLearnBtn']]
       };
       if(nativeRoutes[code]){
         assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),code);
@@ -92,6 +100,9 @@ try {
         await hit(success.locator('#nextLessonBtn'));
         assert.match(await lesson.getAttribute('aria-label'),/Concluída/);
         await hit(path.locator('#modulePathBack'));
+      await home.waitFor({state:'visible'});
+      assert.ok(await home.locator('#freeModeEntry').isVisible());
+      assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
         continue;
       }
       const activity = page.locator('#guidedPracticeView.is-active[data-guided-prevention]');
@@ -148,6 +159,9 @@ try {
       await hit(success.locator('#nextLessonBtn'));
       assert.match(await lesson.getAttribute('aria-label'), /Concluída/);
       await hit(path.locator('#modulePathBack'));
+      await home.waitFor({state:'visible'});
+      assert.ok(await home.locator('#freeModeEntry').isVisible());
+      assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
     }
     assert.deepEqual(recorded.filter(event => event.event === 'complete').map(event => event.activity_code).sort(),
       courses.map(([, , code]) => code).sort());
