@@ -1,10 +1,7 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const configs=[{width:320,height:640},{width:390,height:844},{width:1366,height:768},{width:390,height:844,platform:'android'},{width:390,height:844,platform:'ios'}];
-const catalog=JSON.parse(await readFile('data/modulos.json','utf8'));
-const counts=Object.fromEntries(catalog.map(({codigo,capitulos})=>[codigo,capitulos.flatMap(c=>c.atividades).length]));
 try{
  for(const config of configs){
   const {platform,...viewport}=config;
@@ -19,12 +16,13 @@ try{
    for(const font of ['normal','extra']){
     await page.evaluate(font=>window.EducaAccessibility.update({text:font}),font);
     let pixGeometry;
-    for(const topic of Object.keys(counts)){
-     // Apenas no teste, acione Ajustes e Apps seguros pelo handler da trilha.
+    for(const topic of ['pix','security','settings','whatsapp','govbr','playstore']){
+     // Apps seguros integra o catálogo, mas não possui cartão no menu atual.
+     // Apenas no teste, reutilizar o acionador existente e seu handler real.
      await page.evaluate(topic=>{
       const button=document.querySelector('[data-learning-topic="'+topic+'"]');
       if(button){button.click();return;}
-      if(!['settings','playstore'].includes(topic))throw Error('Módulo ausente: '+topic);
+      if(topic!=='playstore')throw Error('Módulo ausente: '+topic);
       const fixture=document.querySelector('[data-learning-topic="govbr"]');
       const before=fixture.dataset.learningTopic;fixture.dataset.learningTopic=topic;
       try{fixture.click();}finally{fixture.dataset.learningTopic=before;}
@@ -40,7 +38,7 @@ try{
      assert.ok(m.titleBox.x>=m.icon.right-1&&m.icon.x>=m.back.right-1,JSON.stringify(m));
      assert.ok(m.textBoxes.length<=2&&m.titleBox.w>=80&&m.header.h<180,JSON.stringify(m));
      assert.ok(m.textBoxes.every(t=>t.right<=m.header.right+1&&t.left>=m.icon.right-1),JSON.stringify(m));
-     assert.equal(m.cards,counts[topic]);
+     assert.equal(m.cards,['pix','settings'].includes(topic)?3:4);
      const geometry=await page.evaluate(()=>{
       const v=document.querySelector('#modulePathView'), q=s=>v.querySelector(s);
       // Compare the layout dimensions, excluding the view's entry animation.

@@ -82,10 +82,6 @@
   const guidedExample = $('#guidedExample');
   const guidedOptions = $('#guidedOptions');
   const guidedFeedback = $('#guidedFeedback');
-  const guidedPracticeView = $('#guidedPracticeView');
-  const guidedRecap = $('#guidedRecap');
-  const guidedSignals = $('#guidedSignals');
-  const guidedContinue = $('#guidedContinue');
   const bankGreeting = $('#bankGreeting');
   const bankPixBtn = $('#bankPixBtn');
   const bankSendPixBtn = $('#bankSendPixBtn');
@@ -266,9 +262,7 @@
         ['Golpe do falso filho', 'Aprenda a confirmar antes de fazer um PIX.', 'family', true],
         ['Link falso do banco', 'Veja como agir quando receber um link urgente.', 'bank', true],
         ['Código por SMS', 'Saiba por que nunca compartilhar códigos.', 'code', true],
-        ['Falsa central bancária', 'Treine como agir quando alguém liga pedindo senha ou instalação de app.', 'fake-bank-call', true],
-        ['Link falso para roubar dados', 'Confira o endereço antes de informar seus dados.', 'guided-link-dados', true],
-        ['Ligação de falso sequestro', 'Pratique como confirmar se sua filha está segura.', 'guided-falso-sequestro', true]
+        ['Falsa central bancária', 'Treine como agir quando alguém liga pedindo senha ou instalação de app.', 'fake-bank-call', true]
       ]
     },
     whatsapp: {
@@ -279,9 +273,7 @@
         ['Encontrar uma conversa', 'Aprenda a localizar uma pessoa na lista.', 'wa-list', true],
         ['Enviar uma mensagem', 'Abra uma conversa e escreva uma mensagem.', 'wa-message', true],
         ['Fazer uma ligação', 'Conheça onde fica o botão de chamada.', 'wa-call', true],
-        ['Proteger código de verificação', 'Aprenda por que códigos nunca devem ser enviados por mensagem.', 'wa-code-safety', true],
-        ['Áudio com voz conhecida', 'Confirme quem enviou um pedido antes de agir.', 'guided-whatsapp-voz', true],
-        ['Loja falsa no WhatsApp', 'Confira quem está vendendo antes de pagar.', 'guided-whatsapp-loja', true]
+        ['Proteger código de verificação', 'Aprenda por que códigos nunca devem ser enviados por mensagem.', 'wa-code-safety', true]
       ]
     },
     pix: {
@@ -291,8 +283,7 @@
       lessons: [
         ['Encontrar o Pix no banco', 'Abra o banco, entre no Pix e confira o destinatário.', 'pix-recipient', true],
         ['Entender as chaves Pix', 'Veja CPF, celular, e-mail e chave aleatória.', 'pix-key', true],
-        ['Reconhecer pedido suspeito', 'Aprenda a parar diante de urgência e número novo.', 'pix-scam', true],
-        ['Golpe do Pix errado', 'Confira o extrato e pratique uma devolução segura.', 'guided-pix-devolucao', true]
+        ['Reconhecer pedido suspeito', 'Aprenda a parar diante de urgência e número novo.', 'pix-scam', true]
       ]
     },
     settings: {
@@ -313,8 +304,7 @@
         ['Entrar com segurança', 'Reconheça o acesso oficial do GOV.BR.', 'gov-login', true],
         ['Encontrar um serviço', 'Saiba onde procurar o que você precisa.', 'gov-service', true],
         ['Sair da conta', 'Proteja seus dados depois de usar.', 'gov-logout', true],
-        ['Verificação em duas etapas', 'Entenda onde o código é gerado e como protegê-lo.', 'gov-2fa', true],
-        ['Falsa prova de vida', 'Consulte o benefício por um canal oficial.', 'guided-gov-prova-vida', true]
+        ['Verificação em duas etapas', 'Entenda onde o código é gerado e como protegê-lo.', 'gov-2fa', true]
       ]
     },
     playstore: {
@@ -448,84 +438,6 @@
   };
 
   const guidedActivities = {
-    'guided-link-dados': {
-      kicker: 'SEGURANÇA · SMS',
-      title: 'Link falso para roubar dados',
-      instruction: 'Você está esperando uma encomenda. Chega um SMS dizendo que a entrega depende de uma atualização. O que você faria?',
-      example: '<small>SMS SIMULADO</small><strong>Suposto aviso de entrega</strong><span>A mensagem manda atualizar seu cadastro hoje e pede CPF e dados do cartão.</span><code>atualiza-entrega.invalid</code>',
-      options: [
-        ['Usar o link da mensagem', false, 'O endereço do SMS pode levar a uma página que imita a transportadora. Confira a entrega por onde fez a compra.'],
-        ['Abrir o app da loja e conferir o pedido', true],
-        ['Responder ao SMS com meu CPF', false, 'Responder também pode expor seus dados. Confira o pedido pelo aplicativo ou site oficial que você já usa.']
-      ],
-      signals: ['O endereço é diferente do site oficial da loja ou transportadora.', 'A mensagem exige uma atualização imediata.', 'O pedido de dados do cartão é inesperado para acompanhar uma entrega.'],
-      learned: 'Abra o aplicativo ou site oficial por conta própria e procure seu pedido. Proteja seu CPF, sua senha e os dados do seu cartão.'
-    },
-    'guided-falso-sequestro': {
-      kicker: 'SEGURANÇA · LIGAÇÃO',
-      title: 'Ligação de falso sequestro',
-      instruction: 'Sua filha saiu para trabalhar. Um número desconhecido liga. Você ouve uma voz chorando que parece a dela. O que você faria?',
-      example: '<small>LIGAÇÃO SIMULADA</small><strong>Número desconhecido</strong><span>A pessoa que assumiu a chamada diz que sua filha foi sequestrada, exige dinheiro e tenta impedir que você desligue.</span>',
-      options: [
-        ['Desligar e ligar para o número salvo da minha filha', true],
-        ['Dizer o nome da minha filha para confirmar', false, 'Dizer o nome dá à pessoa informações que ela pode usar para convencer você. Desligue e procure sua filha pelo contato salvo.'],
-        ['Continuar na ligação e mandar dinheiro', false, 'A pressão pode levar a uma transferência antes de você confirmar a situação. Encerre a chamada e busque um contato conhecido.']
-      ],
-      signals: ['A pessoa exige dinheiro com urgência.', 'Ela tenta impedir que você desligue ou fale com alguém.', 'Uma voz parecida e o número da chamada, sozinhos, não confirmam quem está do outro lado.'],
-      learned: 'Desligue sem confirmar nomes nem enviar dinheiro. Procure sua filha ou alguém próximo a ela por um número conhecido. Em caso de emergência ou suspeita real de sequestro, ligue para a Polícia Militar no 190.'
-    },
-    'guided-pix-devolucao': {
-      kicker: 'PIX · DEVOLUÇÃO',
-      title: 'Golpe do Pix errado',
-      instruction: 'Alguém que você não conhece diz que fez um Pix por engano. Envia um comprovante e pede que você devolva o dinheiro para outra chave.',
-      example: '<small>MENSAGEM SIMULADA</small><strong>Pedido de devolução</strong><span>O comprovante veio por mensagem. A chave que a pessoa passou é diferente da conta de origem.</span>',
-      options: [
-        ['Fazer um Pix novo para a chave que recebi', false, 'Um Pix novo pode ir para outra conta. Confira primeiro se o dinheiro entrou no seu extrato.'],
-        ['Confiar na imagem do comprovante', false, 'Uma imagem pode ser alterada. A confirmação do dinheiro recebido está no extrato do seu banco.'],
-        ['Conferir o extrato e devolver pelo Pix recebido, se ele constar', true]
-      ],
-      signals: ['A pessoa apresenta apenas uma imagem como prova.', 'O pedido de devolução aponta para uma chave diferente da origem.', 'O dinheiro só pode ser confirmado no extrato do seu banco.'],
-      learned: 'Abra o app do seu banco. Se o Pix entrou e você vai devolvê-lo, use a opção Devolver na própria transação. Assim o dinheiro volta para a conta de origem.'
-    },
-    'guided-whatsapp-voz': {
-      kicker: 'WHATSAPP · ÁUDIO',
-      title: 'Áudio com voz conhecida',
-      instruction: 'Você recebe um áudio de um número novo. A voz parece a de seu irmão e pede ajuda para pagar uma despesa. Como você confere?',
-      example: '<small>ÁUDIO SIMULADO · RESUMO</small><strong>Contato desconhecido</strong><span>A pessoa diz que trocou de número e que precisa de dinheiro antes do fim do dia.</span>',
-      options: [
-        ['Ligar para meu irmão pelo contato que já tenho', true],
-        ['Confiar na voz e enviar o dinheiro', false, 'Uma voz familiar pode ser imitada. Uma ligação para o contato que você já conhece ajuda a confirmar o pedido.'],
-        ['Pedir outro áudio no mesmo número', false, 'Outro áudio vindo do mesmo número não confirma a identidade. Procure seu irmão por um contato conhecido.']
-      ],
-      signals: ['O pedido chegou de um número novo.', 'A pessoa pede dinheiro com pressa.', 'Uma voz pode ser imitada, mesmo quando soa familiar.'],
-      learned: 'Confirme o pedido por um número já salvo ou com alguém próximo à pessoa. Só tome uma decisão depois dessa confirmação.'
-    },
-    'guided-whatsapp-loja': {
-      kicker: 'WHATSAPP · COMPRAS',
-      title: 'Loja falsa no WhatsApp',
-      instruction: 'Você quer comprar um presente. Um perfil com foto de uma loja conhecida oferece um desconto se o pagamento for feito logo.',
-      example: '<small>CONVERSA SIMULADA</small><strong>Oferta por mensagem</strong><span>O perfil usa o logo da loja. Para reservar o produto, pede um Pix para uma pessoa que você não conhece.</span>',
-      options: [
-        ['Reservar pelo Pix porque o perfil tem o logo', false, 'O logo pode ser copiado. Procure a oferta e os contatos no site ou aplicativo oficial da loja.'],
-        ['Conferir a oferta e o contato no canal oficial da loja', true],
-        ['Pagar agora e conferir a loja depois', false, 'A pressão para reservar é um alerta. Confirme a loja, a oferta e a forma de pagamento antes de enviar dinheiro.']
-      ],
-      signals: ['O perfil usa o logo, mas o número ainda não foi confirmado.', 'A oferta pressiona você a pagar rápido.', 'O nome de quem vai receber o Pix é diferente do esperado.'],
-      learned: 'Encontre o contato da loja por conta própria. Confirme se a oferta existe e confira o destinatário antes de pagar.'
-    },
-    'guided-gov-prova-vida': {
-      kicker: 'GOV.BR · BENEFÍCIOS',
-      title: 'Falsa prova de vida',
-      instruction: 'Uma mensagem diz que sua aposentadoria será bloqueada hoje se você não atualizar a prova de vida. O que você faria?',
-      example: '<small>MENSAGEM SIMULADA</small><strong>Suposto aviso sobre seu benefício</strong><span>A mensagem ameaça bloquear o benefício e pede que você envie uma foto do documento pelo link recebido.</span>',
-      options: [
-        ['Enviar a foto do documento para evitar o bloqueio', false, 'Uma foto do documento expõe dados pessoais. Confira a situação do benefício dentro do Meu INSS.'],
-        ['Responder à mensagem com meu CPF', false, 'A situação do benefício pode ser consultada pelo canal oficial. Evite enviar dados em resposta à mensagem.'],
-        ['Abrir o Meu INSS por conta própria e conferir a situação', true]
-      ],
-      signals: ['A mensagem ameaça cortar o benefício no mesmo dia.', 'O pedido de foto do documento vem por um link inesperado.', 'O alerta pede dados antes de você poder consultar sua própria conta.'],
-      learned: 'Consulte a prova de vida no aplicativo ou site oficial Meu INSS. Se precisar de orientação, use a Central 135.'
-    },
     'pix-recipient': {
       kicker: 'PIX', title: 'Confira antes de pagar',
       instruction: 'Antes de confirmar um PIX, qual é a atitude mais segura?',
@@ -619,20 +531,6 @@
     }
   };
 
-  for (const lesson of window.EducaGuidedPrevention ?? []) {
-    const topic = learningTopics[lesson.topic];
-    topic.lessons.push([lesson.title, lesson.summary, lesson.code, true, lesson.group]);
-    guidedActivities[lesson.code] = {
-      kicker: topic.title.toUpperCase(),
-      title: lesson.title,
-      instruction: lesson.story,
-      example: { channel: lesson.channel, evidence: lesson.evidence },
-      options: lesson.choices.map(([label, explanation]) => [label, !explanation, explanation]),
-      signals: lesson.signs,
-      learned: lesson.takeaway
-    };
-  }
-
   const normalChats = {
     daughter: {
       title: 'Maria (filha)', avatar: 'M',
@@ -653,10 +551,6 @@
   };
 
   let trainingStarted = false;
-  // V112.98: o launcher Android só pode substituir o menu quando a pessoa
-  // solicita explicitamente explorar o aparelho ou está no Modo Livre.
-  let exploringPhoneLauncher = false;
-  let nativeGuidedSession = null;
   let currentScenario = null;
   let completed = new Set();
   let transitionLock = false;
@@ -693,13 +587,6 @@
     if (pretestFinished) openStartModal({ fromPretest: true });
   }
   function setView(name) {
-    // Um evento tardio de voltar ao início do Android não pode esconder as
-    // trilhas após login. O pré-teste, o Modo Livre e o botão "Explorar"
-    // continuam autorizados a abrir o launcher.
-    if (name === 'home' && trainingStarted && accessMode === 'registered' &&
-        !exploringPhoneLauncher && !window.EducaFreeMode?.isActive?.()) {
-      name = 'learning';
-    }
     if (pretestLocked() && !pretestAllowsView(name, trainingStarted, pretestFinished)) return false;
     // Every screen change invalidates pending arrows from the previous screen.
     guideEpoch += 1;
@@ -1155,7 +1042,6 @@
   }
 
   function openModulePath(topicId) {
-    stopNativeGuidedLesson();
     if (pretestLocked()) return blockPretestNavigation();
     clearLandingPretest();
     clearGuide();
@@ -1189,20 +1075,17 @@
     if (modulePathProgressFill) modulePathProgressFill.style.width = `${pct}%`;
 
     if (moduleLessonList) {
-      let visibleGroup;
       moduleLessonList.innerHTML = topic.lessons.map((lesson, index) => {
-        const [title, summary, , , group] = lesson;
+        const [title, summary] = lesson;
         const complete = isLessonComplete(topicId, index);
         // Cada atividade tem um único título visível e um botão com alvo de toque amplo.
         // O nome do capítulo permanece no catálogo, mas não duplica o título no card.
-        const current = index === currentLessonIndex;
+        const current = index === firstIncompleteLesson(topicId);
         const state = complete ? 'Concluída' : 'Abrir atividade';
         const nextStep = current && !complete;
         const stepLabel = complete ? '<span class="module-lesson-eyebrow is-done">CONCLUÍDA</span>'
           : nextStep ? '<span class="module-lesson-eyebrow is-next">COMECE AQUI</span>' : '';
-        const heading = group && group !== visibleGroup ? `<h3 class="module-lesson-group">${group}</h3>` : '';
-        visibleGroup = group;
-        return `${heading}<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${nextStep ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy">${stepLabel}<strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
+        return `<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${nextStep ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy">${stepLabel}<strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
       }).join('');
     }
     setView('module-path');
@@ -1217,50 +1100,27 @@
     const lesson = topic?.lessons?.[lessonIndex];
     if (!lesson) return openModulePath(topicId);
     const video = lessonVideos[lesson[2]];
-    const activity = guidedActivities[lesson[2]];
-    if (!video && !activity?.signals) return startTopic(topicId, lessonIndex);
-    clearGuide();
-    stopNativeGuidedLesson();
+    if (!video) return startTopic(topicId, lessonIndex);
     currentVideoTopic = topicId;
     currentVideoLessonIndex = lessonIndex;
     currentLearningTopic = topicId;
     currentLessonIndex = lessonIndex;
     currentTopicAction = lesson[2];
-    if (videoLessonKicker) videoLessonKicker.textContent = `${video ? 'VÍDEO' : 'ANTES DA ATIVIDADE'} · ${lessonIndex + 1} DE ${topic.lessons.length}`;
-    if (videoLessonTitle) videoLessonTitle.textContent = video?.title || activity.title;
-    if (videoLessonSummary) videoLessonSummary.textContent = video?.summary || activity.instruction;
-    const introView = $('#videoLessonView');
-    introView?.toggleAttribute('data-video-pending', !video);
-    $('#videoIntroPlaceholder')?.remove();
-    if (lessonVideo) {
-      lessonVideo.pause();
-      if (video) lessonVideo.src = video.src;
-      else lessonVideo.removeAttribute('src');
-      lessonVideo.load();
-    }
-    const note = introView?.querySelector('.video-safe-note small');
-    if (note) note.textContent = video ? 'O vídeo usa situações simuladas e não pede dados pessoais.' : 'A prática usa apenas situações fictícias, sem dinheiro ou dados pessoais.';
-    if (!video) {
-      const card = document.createElement('section');
-      card.id = 'videoIntroPlaceholder';
-      card.className = 'guided-video-placeholder';
-      const icon = document.createElement('span'); icon.className='guided-video-icon'; icon.textContent='✓'; icon.setAttribute('aria-hidden','true');
-      const title = document.createElement('strong'); title.textContent='Vamos praticar juntos';
-      const copy = document.createElement('p'); copy.textContent='O vídeo explicativo será adicionado em breve. Você já pode seguir as setas e orientações no celular de treino.';
-      card.append(icon,title,copy);
-      introView?.querySelector('.video-frame-shell')?.before(card);
-    }
+    if (videoLessonKicker) videoLessonKicker.textContent = `VÍDEO · CAPÍTULO ${lessonIndex + 1} DE ${topic.lessons.length}`;
+    if (videoLessonTitle) videoLessonTitle.textContent = video.title;
+    if (videoLessonSummary) videoLessonSummary.textContent = video.summary;
+    if (lessonVideo) { lessonVideo.pause(); lessonVideo.src = video.src; lessonVideo.load(); }
     setView('video-lesson');
     if (miniCoachKicker) miniCoachKicker.textContent = `${topic.title.toUpperCase()} · VÍDEO`;
-    if (miniCoachTitle) miniCoachTitle.textContent = video?.title || activity.title;
-    if (miniCoachText) miniCoachText.textContent = video ? 'Assista e, quando estiver pronto, toque em “Agora quero praticar”.' : 'Leia a orientação e toque em “Agora quero praticar”.';
+    if (miniCoachTitle) miniCoachTitle.textContent = video.title;
+    if (miniCoachText) miniCoachText.textContent = 'Assista e, quando estiver pronto, toque em “Agora quero praticar”.';
   }
 
   function startLessonFlow(topicId, lessonIndex) {
     const topic = learningTopics[topicId];
     if (!topic?.lessons?.[lessonIndex]) return openModulePath(topicId);
     const action = topic.lessons[lessonIndex][2];
-    if (lessonVideos[action] || guidedActivities[action]?.signals) openLessonVideo(topicId, lessonIndex);
+    if (lessonVideos[action]) openLessonVideo(topicId, lessonIndex);
     else startTopic(topicId, lessonIndex);
   }
 
@@ -1677,9 +1537,6 @@
 
   function openLearningHub() {
     if (pretestLocked()) return blockPretestNavigation();
-    exploringPhoneLauncher = false;
-    if (window.EducaFreeMode?.isActive?.()) window.EducaFreeMode.stop();
-    stopNativeGuidedLesson();
     isGuestPretest = false;
     trainingStarted = true;
     clearLandingPretest();
@@ -1712,9 +1569,6 @@
   }
 
   function startTopic(topicId, lessonIndex = 0) {
-    if (pretestLocked()) return blockPretestNavigation();
-    if (window.EducaFreeMode?.isActive?.()) window.EducaFreeMode.stop();
-    stopNativeGuidedLesson();
     waSearchUsed = false;
     govSearchUsed = false;
     const topic = learningTopics[topicId];
@@ -1726,166 +1580,21 @@
     openTopicAction(currentTopicAction);
   }
 
-  // V112.93: every prevention lesson has a local, interactive phone flow.
-  // Source and destination are demonstrations only; no external app, call,
-  // payment, data entry or real account is used.
-  const guidedPrototypeRoutes = Object.freeze({
-    'guided-link-dados':['Mensagens','Abrir SMS','Loja de treino','Consultar pedido'],
-    'guided-falso-sequestro':['Telefone','Ver ligação','Contatos de treino','Ligar para contato salvo'],
-    'guided-pix-devolucao':['Mensagens','Ver pedido','Banco Educa','Conferir extrato e opção Devolver'],
-    'guided-whatsapp-voz':['WhatsApp','Abrir áudio de treino','Contatos de treino','Ligar para contato salvo'],
-    'guided-whatsapp-loja':['WhatsApp','Abrir conversa','Loja de treino','Consultar oferta'],
-    'guided-gov-prova-vida':['Mensagens','Abrir aviso','Meu INSS de treino','Consultar benefício'],
-    'guided-suporte-remoto':['Navegador','Ver aviso','Suporte de treino','Consultar suporte conhecido'],
-    'guided-qr-publico':['Navegador','Ver página','Estabelecimento de treino','Solicitar cardápio'],
-    'guided-celular-levado':['Ajustes','Ver situação','Proteção do aparelho','Solicitar bloqueio simulado'],
-    'guided-conta-em-meu-nome':['Registrato de treino','Abrir relatório','Instituição de treino','Consultar vínculo'],
-    'guided-vaga-falsa':['Mensagens','Abrir mensagem','Carreiras de treino','Consultar vaga'],
-    'guided-tarefa-paga':['WhatsApp','Abrir grupo','Grupo de treino','Sair do grupo'],
-    'guided-investimento-falso':['Navegador','Ver anúncio','Consulta de treino','Conferir registro'],
-    'guided-anuncio-loja-falsa':['Navegador','Ver anúncio','Loja de treino','Consultar produto'],
-    'guided-aluguel-falso':['Navegador','Ver anúncio','Imóvel de treino','Conferir responsável'],
-    'guided-leilao-falso':['Navegador','Ver anúncio','Leilão de treino','Consultar edital'],
-    'guided-premio-falso':['Mensagens','Abrir mensagem','Promoção de treino','Consultar regulamento'],
-    'guided-boleto-falso':['Banco Educa','Ver cobrança','Empresa de treino','Consultar segunda via'],
-    'guided-pix-qr-trocado':['Banco Educa','Ver pagamento','Caixa de treino','Conferir recebedor'],
-    'guided-comprovante-falso':['Mensagens','Ver comprovante','Banco Educa','Consultar extrato'],
-    'guided-emprestimo-taxa':['Mensagens','Ver oferta','Banco Educa','Conferir instituição'],
-    'guided-cartao-compra':['Banco Educa','Ver fatura','Banco Educa','Bloquear e contestar no treino'],
-    'guided-falso-motoboy':['Telefone','Ver ligação','Banco Educa','Consultar atendimento'],
-    'guided-pix-apos-golpe':['Banco Educa','Ver situação','Banco Educa','Solicitar contestação simulada'],
-    'guided-whatsapp-conta-invadida':['WhatsApp','Abrir conversa','Contatos de treino','Consultar contato salvo'],
-    'guided-whatsapp-arquivo-falso':['WhatsApp','Ver anexo de treino','Empresa de treino','Consultar fatura'],
-    'guided-whatsapp-tela':['WhatsApp','Ver chamada','Suporte de treino','Consultar suporte conhecido'],
-    'guided-whatsapp-falso-comprador':['WhatsApp','Abrir conversa','Plataforma de treino','Consultar venda'],
-    'guided-whatsapp-advogado':['WhatsApp','Abrir conversa','Contatos de treino','Consultar escritório'],
-    'guided-whatsapp-romance':['WhatsApp','Abrir conversa','Contatos de treino','Buscar apoio de confiança'],
-    'guided-whatsapp-chantagem':['WhatsApp','Ver situação','Ajuda de treino','Preservar registros e buscar ajuda'],
-    'guided-gov-multa-falsa':['Mensagens','Abrir SMS','Serviço público de treino','Consultar pendência'],
-    'guided-gov-encomenda-taxada':['Mensagens','Abrir SMS','Transportadora de treino','Consultar rastreio'],
-    'guided-gov-inscricao-enem':['Navegador','Ver página','INEP de treino','Consultar inscrição'],
-    'guided-gov-valores-receber':['Mensagens','Abrir mensagem','Banco Central de treino','Consultar valores'],
-    'guided-gov-das-falso':['E-mail','Abrir mensagem','MEI de treino','Consultar DAS'],
-    'guided-gov-restituicao-falsa':['Mensagens','Abrir mensagem','Receita de treino','Consultar restituição'],
-    'guided-gov-acesso-suspeito':['Mensagens','Abrir alerta','GOV.BR de treino','Revisar segurança da conta']
-  });
-  function guidedPrototypeElement(tag, className, text) {
-    const el = document.createElement(tag);
-    el.className = className;
-    if (text) el.textContent = text;
-    return el;
-  }
-  function guidedPrototypeButton(label, id, click) {
-    const button = guidedPrototypeElement('button', 'guided-prototype-action', label);
-    button.type = 'button';
-    button.id = id;
-    button.addEventListener('click', click);
-    return button;
-  }
-  function guidedPrototypeStage(stage, app, instruction) {
-    clearGuide();
-    guidedPracticeView.dataset.prototypeStage = String(stage);
-    guidedPracticeView.dataset.prototypeApp = app;
-    guidedKicker.textContent = app + ' · ETAPA ' + stage + ' DE 4';
-    guidedInstruction.textContent = instruction;
-    setCoachMessage(app, guidedTitle.textContent, instruction);
-    announce(instruction, true);
-    const surface = guidedPracticeView.querySelector('.guided-surface');
-    if (surface) surface.scrollTop = 0;
-  }
-  function openGuidedPrototype(action, activity) {
-    const route = guidedPrototypeRoutes[action];
-    if (!route || !guidedExample || !guidedOptions) return;
-    const [source, openLabel] = route;
-    const evidence = Array.from(guidedExample.childNodes);
-    guidedOptions.hidden = true;
-    guidedPrototypeStage(1, source, activity.instruction + ' Toque em “' + openLabel + '” para começar.');
-    const appBar = guidedPrototypeElement('div','guided-prototype-appbar',source + ' · SIMULAÇÃO');
-    const notification = guidedPrototypeElement('div','guided-prototype-notification',activity.title);
-    const open = guidedPrototypeButton(openLabel,'guidedPrototypeOpen', () => {
-      if (currentTopicAction !== action || phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '1') return;
-      guidedPrototypeStage(2, source, 'Observe a situação no aplicativo. Siga o destaque azul para praticar a ação mais segura.');
-      guidedExample.replaceChildren(guidedPrototypeElement('div','guided-prototype-appbar',source + ' · SIMULAÇÃO'),...evidence);
-      guidedOptions.hidden = false;
-      const correct = guidedOptions.querySelector('[data-guided-correct="1"]');
-      scheduleGuide(correct,{label:'Ação segura'},100);
-    });
-    guidedExample.replaceChildren(appBar,notification,open);
-    scheduleGuide(open,{label:openLabel},100);
-  }
-  function showGuidedPrototypeDestination(action, activity, onDone) {
-    const route = guidedPrototypeRoutes[action];
-    if (!route || guidedPracticeView.dataset.prototypeStage !== '2') return false;
-    const [, , destination, actionLabel] = route;
-    guidedPrototypeStage(3,destination,'Toque em “' + actionLabel + '” para praticar a ação de proteção no aplicativo de treino.');
-    guidedOptions.hidden = true;
-    const appBar = guidedPrototypeElement('div','guided-prototype-appbar',destination + ' · SIMULAÇÃO');
-    const note = guidedPrototypeElement('p','guided-prototype-notification','Canal de treino independente. Nenhum dado real é solicitado ou enviado.');
-    const button = guidedPrototypeButton(actionLabel,'guidedPrototypeFinish',() => {
-      if (currentTopicAction !== action || phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '3') return;
-      clearGuide();
-      guidedPracticeView.dataset.prototypeStage = 'done';
-      button.disabled = true;
-      guidedKicker.textContent = destination + ' · ETAPA 4 DE 4';
-      guidedInstruction.textContent = 'Você praticou uma ação segura. Leia os sinais de alerta e toque em Concluir atividade.';
-      setCoachMessage(destination, 'Revise os sinais de alerta', guidedInstruction.textContent);
-      announce(guidedInstruction.textContent, true);
-      onDone();
-    });
-    guidedExample.replaceChildren(appBar,note,button);
-    scheduleGuide(button,{label:'Toque aqui'},100);
-    return true;
-  }
-  function showGuidedRecap(activity) {
-    if (!activity?.signals || !guidedRecap || !guidedSignals) return;
-    guidedSignals.replaceChildren(...activity.signals.map(signal => {
-      const item = document.createElement('li');
-      item.textContent = signal;
-      return item;
-    }));
-    guidedRecap.hidden = false;
-    guidedRecap.focus({preventScroll:true});
-    guidedRecap.scrollIntoView({block:'start',behavior:'instant'});
-    if (guidedPracticeView.dataset.prototypeStage === 'done') {
-      scheduleGuide(guidedContinue,{label:'Concluir atividade'},150);
-    }
-  }
-
   function renderGuidedActivity(action) {
     const activity = guidedActivities[action];
     if (!activity) return;
-    guidedPracticeView?.toggleAttribute('data-guided-prevention', Boolean(activity.signals));
-    delete guidedPracticeView.dataset.prototypeStage;
-    delete guidedPracticeView.dataset.prototypeApp;
-    guidedOptions.hidden = false;
-    if (guidedRecap) guidedRecap.hidden = true;
-    $('#guidedPrototypeRetry')?.remove();
-    guidedSignals?.replaceChildren();
     if (guidedKicker) guidedKicker.textContent = activity.kicker;
     if (guidedTitle) guidedTitle.textContent = activity.title;
     if (guidedInstruction) guidedInstruction.textContent = activity.instruction;
-    if (guidedExample && typeof activity.example === 'string') {
-      guidedExample.innerHTML = activity.example;
-    } else if (guidedExample) {
-      const channel = document.createElement('small');
-      channel.textContent = activity.example.channel;
-      const evidence = document.createElement('span');
-      evidence.textContent = activity.example.evidence;
-      guidedExample.replaceChildren(channel, evidence);
-    }
+    if (guidedExample) guidedExample.innerHTML = activity.example;
     if (guidedFeedback) { guidedFeedback.hidden = true; guidedFeedback.textContent = ''; guidedFeedback.className = 'guided-feedback'; }
-    if (guidedOptions) guidedOptions.innerHTML = activity.options.map(([label, correct], index) =>
-      `<button type="button" data-guided-choice="${index}" data-guided-correct="${correct ? '1' : '0'}"><span class="answer-copy">${label}</span><span class="answer-result" aria-hidden="true"></span></button>`
+    if (guidedOptions) guidedOptions.innerHTML = activity.options.map(([label, correct]) =>
+      `<button type="button" data-guided-correct="${correct ? '1' : '0'}"><span class="answer-copy">${label}</span><span class="answer-result" aria-hidden="true"></span></button>`
     ).join('');
     setView('guided-practice');
-    if (activity.signals) {
-      guidedPracticeView.querySelector('.guided-surface').scrollTop = 0;
-      guidedTitle?.focus({ preventScroll: true });
-    }
     if (miniCoachKicker) miniCoachKicker.textContent = activity.kicker;
     if (miniCoachTitle) miniCoachTitle.textContent = activity.title;
     if (miniCoachText) miniCoachText.textContent = activity.instruction;
-    if (activity.signals) openGuidedPrototype(action, activity);
   }
 
   function returnToLandingPretest() {
@@ -1991,192 +1700,8 @@
     }
   }
 
-  // V112.94 — first individually authored exercises in the existing apps.
-  // All views and account data are local demonstrations.
-  function stopNativeGuidedLesson() {
-    window.EducaGuidedAppFlow?.stop?.();
-    nativeGuidedSession?.controller.abort();
-    nativeGuidedSession = null;
-    $('.guided-native-panel').forEach(el => el.remove());
-    phoneScreen?.removeAttribute('data-guided-app-lesson');
-  }
-  function nativeGuidedStep(selector, title, description, next, label = 'Toque aqui') {
-    const session = nativeGuidedSession;
-    const target = typeof selector === 'string' ? $(selector) : selector;
-    if (!session || !target || currentTopicAction !== session.action) return;
-    session.controller.abort();
-    session.controller = new AbortController();
-    const view = phoneScreen.dataset.currentView;
-    setCoachMessage('TREINO GUIADO · ' + (++session.step), title, description);
-    announce(description,true);
-    target.addEventListener('click', event => {
-      if (nativeGuidedSession !== session || currentTopicAction !== session.action || phoneScreen.dataset.currentView !== view) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      session.controller.abort();
-      clearGuide();
-      next();
-    },{capture:true,signal:session.controller.signal});
-    scheduleGuide(target,{label},100);
-  }
-  function nativeGuidedPanel(container, heading, detail, buttonLabel, next) {
-    const parent = $(container);
-    if (!parent) return;
-    $('.guided-native-panel').forEach(el=>el.remove());
-    const panel = guidedPrototypeElement('section','guided-native-panel');
-    panel.append(guidedPrototypeElement('small','guided-native-badge','ATIVIDADE GUIADA · DADOS FICTÍCIOS'));
-    panel.append(guidedPrototypeElement('h3','guided-native-heading',heading));
-    panel.append(guidedPrototypeElement('p','guided-native-detail',detail));
-    const btn = guidedPrototypeButton(buttonLabel,'nativeGuidedAction',()=>{});
-    panel.append(btn);
-    parent.append(panel);
-    nativeGuidedStep(btn,heading,detail+' Toque em '+buttonLabel+'.',next,buttonLabel);
-  }
-  function finishNativeGuidedLesson() {
-    const lesson=guidedActivities[nativeGuidedSession?.action];
-    if(!lesson)return;
-    stopNativeGuidedLesson();
-    showLessonComplete(lesson.learned);
-  }
-  function nativeGuidedBankExtract(action) {
-    openBankView('bank-extract');
-    if(action==='guided-pix-devolucao'){
-      nativeGuidedPanel('#bankExtractView .bank-content','Pix recebido · R$ 50,00','Maria Souza · recebimento fictício. A devolução deve partir da transação original.','Abrir Pix recebido',()=>{
-        nativeGuidedPanel('#bankExtractView .bank-content','Detalhes do Pix recebido','Confira a origem. Neste treino a devolução não envia dinheiro.','Localizar opção Devolver',finishNativeGuidedLesson);
-      });
-    }else if(action==='guided-comprovante-falso'){
-      nativeGuidedPanel('#bankExtractView .bank-content','Confira as movimentações','O extrato de treino não contém o crédito esperado pela venda. O comprovante recebido não confirma pagamento.','Confirmar que o crédito não entrou',finishNativeGuidedLesson);
-    }else{
-      nativeGuidedPanel('#bankExtractView .bank-content','Pix de treino a contestar','Selecione a transferência fictícia para localizar a ajuda do banco.','Consultar transferência',()=>{
-        nativeGuidedPanel('#bankExtractView .bank-content','Ajuda com esta transferência','Use o atendimento do próprio banco e guarde o comprovante.','Solicitar orientação sobre contestação',finishNativeGuidedLesson);
-      });
-    }
-  }
-  function nativeGuidedGov(action){
-    // Demo home already exists; no authentication or data entry is performed.
-    openGovView('govbr-home');
-    if(action==='guided-gov-prova-vida'){
-      nativeGuidedStep('#govSearchBox','Encontre serviços','Toque em Encontre serviços públicos para consultar por conta própria.',()=>{
-        openGovView('govbr-services');
-        nativeGuidedStep('#govProofRow','Prova de vida','Localize Prova de vida na lista do aplicativo.',()=>{
-          openGovView('govbr-proof');
-          nativeGuidedStep('#govProofFoundBtn','Consulte a orientação','Confira a orientação no aplicativo simulado, sem abrir o link recebido.',finishNativeGuidedLesson,'Concluir');
-        },'Prova de vida');
-      },'Buscar serviço');
-    }else{
-      nativeGuidedStep('#govProfileNav','Abra o menu','Toque em Menu para encontrar as configurações da conta.',()=>{
-        openGovView('govbr-menu');
-        nativeGuidedStep('#govSecurityMenuRow','Segurança da conta','Abra Segurança da conta.',()=>{
-          openGovView('govbr-security');
-          nativeGuidedStep('#govTwoFactorRow','Proteja o acesso','Localize a verificação em duas etapas.',()=>{
-            openGovView('govbr-security-2fa');
-            nativeGuidedStep('#gov2faLearnBtn','Verificação em duas etapas','Confira como proteger a conta no aplicativo de treino.',finishNativeGuidedLesson,'Concluir');
-          },'Verificação em duas etapas');
-        },'Segurança da conta');
-      },'Menu');
-    }
-  }
-  // Static, prevention-focused examples in the original WhatsApp screen.
-  // No generated messages, links, external calls or transactions.
-  function nativeGuidedWhatsApp(action) {
-    const activity = guidedActivities[action];
-    const list = $('#whatsappView .wa-chat-list');
-    if (!activity || !list) return false;
-    setView('whatsapp');
-    const row = document.createElement('button');
-    row.type = 'button';
-    row.id = 'guidedIncomingChat';
-    row.className = 'chat-row guided-native-row';
-    const avatar = guidedPrototypeElement('span','avatar blue','!');
-    const copy = guidedPrototypeElement('span','chat-copy');
-    copy.append(guidedPrototypeElement('strong','','Contato de treino'),guidedPrototypeElement('small','','Nova mensagem · '+activity.title));
-    const meta = guidedPrototypeElement('span','chat-meta');
-    meta.append(guidedPrototypeElement('small','','Agora'),guidedPrototypeElement('b','','1'));
-    row.append(avatar,copy,meta);
-    list.prepend(row);
-    nativeGuidedStep(row,'Nova mensagem','Toque na conversa destacada para analisar uma situação fictícia.',()=>{
-      currentScenario = null;
-      scenarioTitle.textContent='Contato de treino';
-      scenarioSubtitle.textContent='Conversa simulada';
-      scenarioAvatar.textContent='!';
-      scenarioAvatar.className='avatar blue small';
-      const day=guidedPrototypeElement('span','chat-day','Hoje · SIMULAÇÃO');
-      const message=guidedPrototypeElement('div','message incoming',activity.instruction);
-      const evidence=guidedPrototypeElement('div','security-note',typeof activity.example==='object'?activity.example.evidence:activity.signals[0]);
-      chatWallpaper.replaceChildren(day,message,evidence);
-      decisionOptions.replaceChildren();
-      const actions = {
-        'guided-whatsapp-conta-invadida':'Confirmar pelo contato conhecido',
-        'guided-whatsapp-arquivo-falso':'Fechar sem instalar',
-        'guided-whatsapp-tela':'Encerrar e procurar suporte',
-        'guided-whatsapp-falso-comprador':'Conferir na plataforma',
-        'guided-whatsapp-advogado':'Consultar o escritório conhecido',
-        'guided-whatsapp-romance':'Buscar apoio de confiança',
-        'guided-whatsapp-chantagem':'Buscar ajuda e preservar registros',
-        'guided-whatsapp-voz':'Confirmar por número salvo',
-        'guided-whatsapp-loja':'Consultar a loja por canal oficial'
-      };
-      const label=actions[action]||'Conferir por outro canal';
-      const safe=guidedPrototypeButton(label,'guidedChatSafeAction',()=>{});
-      decisionOptions.append(safe);
-      if(scenarioAnswerFeedback)scenarioAnswerFeedback.hidden=true;
-      setView('chat');
-      nativeGuidedStep(safe,'Proteja seus dados',activity.signals[0]+' Toque em '+label+'.',()=>{
-        openNormalChat('daughter');
-        const panel = guidedPrototypeElement('div','guided-native-panel guided-native-chat-panel');
-        panel.append(guidedPrototypeElement('small','guided-native-badge','CANAL CONHECIDO · TREINO'));
-        panel.append(guidedPrototypeElement('p','guided-native-detail',activity.learned));
-        const done=guidedPrototypeButton('Concluir verificação','guidedChatConfirm',()=>{});
-        panel.append(done);
-        $('#normalMessages').append(panel);
-        nativeGuidedStep(done,'Verificação independente','Leia a orientação e conclua a verificação de treino.',finishNativeGuidedLesson,'Concluir');
-      },'Ação segura');
-    },'Abrir mensagem');
-    return true;
-  }
-
-  function openNativeGuidedLesson(action){
-    const apps={
-      'guided-pix-devolucao':'bank',
-      'guided-comprovante-falso':'bank',
-      'guided-pix-apos-golpe':'bank',
-      'guided-gov-prova-vida':'govbr',
-      'guided-gov-acesso-suspeito':'govbr'
-    };
-    const app=apps[action] || (action.startsWith('guided-whatsapp-') ? 'whatsapp' : null);
-    if(!app)return false;
-    stopNativeGuidedLesson();
-    nativeGuidedSession={action,step:0,controller:new AbortController()};
-    phoneScreen.dataset.guidedAppLesson=action;
-    // Igual às atividades originais: a seleção abre diretamente o aplicativo
-    // correspondente. A tela de ícones do Modo Livre não faz parte deste fluxo.
-    if(app==='whatsapp') return nativeGuidedWhatsApp(action);
-    if(app==='bank'){
-      openBankView('bank-home');
-      nativeGuidedStep('#bankExtractBtn','Abra o extrato','Toque em Extrato para conferir as movimentações da conta fictícia.',()=>nativeGuidedBankExtract(action),'Extrato');
-    }else nativeGuidedGov(action);
-    return true;
-  }
-
   function openTopicAction(action) {
     currentTopicAction = action;
-    if (guidedActivities[action]?.signals) {
-      const opened=window.EducaGuidedAppFlow?.start?.(action,guidedActivities[action],{
-        setView,clearGuide,scheduleGuide,announce,setCoachMessage,
-        finish:()=>{
-          const learned=guidedActivities[action]?.learned;
-          stopNativeGuidedLesson();
-          showLessonComplete(learned);
-        },
-        back:()=>openModulePath(currentLearningTopic)
-      });
-      if(opened)return;
-      // Never substitute a detached quiz screen if the real guided app failed.
-      announce('Não foi possível abrir o aplicativo de treino desta atividade. Volte à trilha e tente novamente.',false);
-      openModulePath(currentLearningTopic);
-      return;
-    }
-    if (openNativeGuidedLesson(action)) return;
     if (action.startsWith('pix-')) { guideBankPixAction(action); return; }
     const securityGuides = {
       family: { row: '[data-scenario="family"]', title: 'Abra a conversa suspeita', text: 'Toque em “Filho — número novo” para ver a situação.' },
@@ -2260,7 +1785,6 @@
     if (coachCard) { coachCard.hidden = true; coachCard.classList.remove('is-visible'); }
     if (accountCard) accountCard.hidden = true;
 
-    // V112.98: após autenticar, o menu de trilhas é a tela padrão.
     // V112.77: todas as entradas autenticadas na Web, desktop e mobile, inclusive
     // cadastro, código de retorno e conta lembrada. Não dependa de gesto antigo.
     if (accessMode === 'registered' && autoPrototypeWeb) {
@@ -2467,8 +1991,7 @@
       }
       saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       isGuestPretest = false;
-      // A tela de trilhas não espera a consulta de progresso, que pode demorar.
-      void loadServerProgress(data.phone || digits);
+      await loadServerProgress(data.phone || digits);
       showQuickStartMessage(data.message || 'Seu progresso foi salvo.', 'success');
       window.setTimeout(() => {
         closeStartModal();
@@ -2527,9 +2050,9 @@
       const data = await response.json();
       if (!response.ok) return showReturnMessage(returnCodeMessage, data.message || 'Código incorreto.');
       saveRememberedUser(data.name, data.phone, data.level_token);
+      await loadServerProgress(data.phone);
       closeReturnModal();
       startTraining({ focus: true, boot: true });
-      void loadServerProgress(data.phone);
     } catch (_) {
       showReturnMessage(returnCodeMessage, 'Não foi possível conectar ao servidor para entrar.');
     } finally {
@@ -2572,7 +2095,6 @@
     });
   });
   openAndroidHome?.addEventListener('click', () => {
-    exploringPhoneLauncher = true;
     clearGuide();
     setView('home');
     if (miniCoachKicker) miniCoachKicker.textContent = 'CELULAR ANDROID';
@@ -2582,7 +2104,7 @@
 
   guidedOptions?.addEventListener('click', (event) => {
     const btn = event.target.closest('[data-guided-correct]');
-    if (!btn || btn.disabled || guidedPracticeView.dataset.prototypeStage === '1') return;
+    if (!btn || btn.disabled) return;
     const activity = guidedActivities[currentTopicAction];
     const result = btn.querySelector('.answer-result');
     if (btn.dataset.guidedCorrect === '1') {
@@ -2591,52 +2113,13 @@
       btn.classList.add('is-correct');
       if (result) result.textContent = '✓ CORRETO';
       if (guidedFeedback) { guidedFeedback.hidden = false; guidedFeedback.className = 'guided-feedback good'; guidedFeedback.textContent = '✓ Correto! Muito bem. Você escolheu a opção mais segura.'; }
-      $('#guidedPrototypeRetry')?.remove();
-      if (activity?.signals && guidedRecap && guidedSignals) {
-        if (!showGuidedPrototypeDestination(currentTopicAction, activity, () => showGuidedRecap(activity))) {
-          clearGuide();
-          showGuidedRecap(activity);
-        }
-      } else {
-        window.setTimeout(() => showLessonComplete(activity?.learned), 1200);
-      }
+      window.setTimeout(() => showLessonComplete(activity?.learned), 1200);
     } else {
-      clearGuide();
       nativeHaptic('error');
       btn.classList.add('is-wrong');
       if (result) result.textContent = '✕ ERRO';
-      const explanation = activity?.options[Number(btn.dataset.guidedChoice)]?.[2];
-      if (guidedFeedback) {
-        guidedFeedback.hidden = false;
-        guidedFeedback.className = 'guided-feedback bad';
-        guidedFeedback.textContent = explanation || '✕ Errado. Tente novamente com calma.';
-        if (explanation) guidedFeedback.scrollIntoView({ block: 'nearest' });
-        if (guidedPracticeView.dataset.prototypeStage === '2') {
-          $('#guidedPrototypeRetry')?.remove();
-          const retry = guidedPrototypeButton('Tentar novamente', 'guidedPrototypeRetry', () => {
-            if (phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '2') return;
-            retry.remove();
-            guidedFeedback.hidden = true;
-            guidedOptions.querySelectorAll('button').forEach(option => {
-              option.classList.remove('is-wrong');
-              const label = option.querySelector('.answer-result');
-              if (label) label.textContent = '';
-            });
-            guidedInstruction.textContent = 'Vamos juntos. Toque na ação segura destacada.';
-            setCoachMessage(activity.kicker, activity.title, guidedInstruction.textContent);
-            announce(guidedInstruction.textContent, true);
-            scheduleGuide(guidedOptions.querySelector('[data-guided-correct="1"]'), {label:'Ação segura'},100);
-          });
-          guidedFeedback.after(retry);
-          announce(guidedFeedback.textContent + ' Toque em Tentar novamente.', true);
-          scheduleGuide(retry,{label:'Tentar novamente'},120);
-        }
-      }
+      if (guidedFeedback) { guidedFeedback.hidden = false; guidedFeedback.className = 'guided-feedback bad'; guidedFeedback.textContent = '✕ Errado. Tente novamente com calma.'; }
     }
-  });
-  guidedContinue?.addEventListener('click', () => {
-    if (guidedRecap.hidden || phoneScreen?.dataset.currentView !== 'guided-practice') return;
-    showLessonComplete(guidedActivities[currentTopicAction]?.learned);
   });
   $('#guidedBackBtn')?.addEventListener('click', () => {
     if (currentLearningTopic) openModulePath(currentLearningTopic);
@@ -2991,7 +2474,6 @@
   });
 
   videoPracticeBtn?.addEventListener('click', () => {
-    if (phoneScreen?.dataset.currentView !== 'video-lesson') return;
     lessonVideo?.pause();
     startTopic(currentVideoTopic || currentLearningTopic || 'pix', currentVideoLessonIndex || 0);
   });
@@ -3449,12 +2931,7 @@
   $$('.android-back').forEach(btn => btn.addEventListener('click', () => { clearGuide(); setView(btn.dataset.backHome || 'home'); }));
   // A camada Android V103 utiliza eventos explícitos para não duplicar o fluxo das aulas.
   window.addEventListener('educa:system-learning', () => { if (trainingStarted) openLearningHub(); else setView('home'); });
-  window.addEventListener('educa:system-home', () => {
-    clearGuide();
-    if (trainingStarted && accessMode === 'registered' && !window.EducaFreeMode?.isActive?.()) {
-      openLearningHub();
-    } else setView('home');
-  });
+  window.addEventListener('educa:system-home', () => { clearGuide(); setView('home'); });
   window.addEventListener('educa:system-back', () => {
     const active = $('.android-view.is-active');
     if (!active || active.dataset.view === 'home') return;
@@ -3716,8 +3193,8 @@
       if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
       saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       accountCard.hidden = true;
+      await loadServerProgress(data.phone || digits);
       startTraining({ focus: true, boot: true });
-      void loadServerProgress(data.phone || digits);
     } catch (_) { show('Não foi possível salvar agora. Verifique sua conexão.', 'error'); }
     finally { submit.disabled = false; submit.textContent = 'Quero continuar aprendendo'; }
   });

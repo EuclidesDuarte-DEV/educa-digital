@@ -23,7 +23,7 @@ for(const engine of [chromium,webkit]){
      return {order:cards.map(e=>e.id==='freeModeEntry'?'free':e.dataset.learningTopic),hero:r(hero),copy:r(hero.querySelector('.free-entry-copy')),badge:r(hero.querySelector('.free-entry-badge')),title:r(hero.querySelector('strong')),desc:r(hero.querySelector('em')),art:r(hero.querySelector('.free-entry-art')),arrow:r(hero.querySelector('.free-entry-chevron')),surface:r(surface),scroll:surface.scrollWidth,client:surface.clientWidth,secondary:cards.slice(1).map(e=>({card:r(e),icon:r(e.querySelector('.learning-featured-icon,.learning-card-icon')),title:r(e.querySelector('strong')),desc:r(e.querySelector('.learning-featured-copy>span,.learning-card>small')),arrow:r(e.querySelector('.learning-arrow,.learning-card-arrow')),pix:e.querySelector('img')?.getAttribute('src')}))};
     });
     const b=layout;const inside=(a,c)=>a.left>=c.left-1&&a.right<=c.right+1&&a.top>=c.top-1&&a.bottom<=c.bottom+1;
-    assert.deepEqual(b.order,['free','pix','security','whatsapp','govbr']);
+    assert.deepEqual(b.order,['free','pix','security','whatsapp','settings','govbr']);
     assert.ok(b.hero.height>b.secondary[0].card.height,'destaque menor que card secundário');
     assert.ok(inside(b.copy,b.hero)&&inside(b.arrow,b.hero)&&inside(b.badge,b.hero),'conteúdo do destaque cortado '+JSON.stringify(b));
     assert.ok(b.copy.right<=b.arrow.left+1&&b.title.bottom<=b.desc.top+1,'destaque sobreposto '+JSON.stringify(b));
@@ -36,8 +36,7 @@ for(const engine of [chromium,webkit]){
     assert.ok(b.hero.left>=b.surface.left-1&&b.hero.right<=b.surface.right+1&&b.secondary.every(c=>c.card.left>=b.surface.left-1&&c.card.right<=b.surface.right+1),'card fora da área útil');
     if(size==='normal'&&b.art.width>0)assert.ok(inside(b.art,b.hero)&&b.art.bottom<=b.arrow.top+1,'ilustração invade seta '+JSON.stringify(b));
     else if(size!=='normal')assert.equal(b.art.width,0,'arte decorativa deve liberar espaço para fonte ampliada');
-    else assert.ok(b.hero.width<280||(platform==='web'&&(width<=480||height<=480)),
-      'Ilustração ausente em card largo '+JSON.stringify({platform,width,height,cardWidth:b.hero.width}));
+    else assert.ok(b.hero.width<280,'Ilustração ausente em card largo');
     for(const c of b.secondary){
      assert.ok(inside(c.icon,c.card)&&inside(c.title,c.card)&&inside(c.desc,c.card)&&inside(c.arrow,c.card),'card cortado '+JSON.stringify(c));
      assert.ok(c.title.bottom<=c.desc.top+1&&c.desc.right<=c.arrow.left+1&&c.icon.right<=c.title.left+1,'texto ou ícone sobreposto '+JSON.stringify(c));
