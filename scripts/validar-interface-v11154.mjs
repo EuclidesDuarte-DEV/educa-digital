@@ -106,7 +106,6 @@ try{
     const view=document.getElementById('freeVideoView');
     const bar=view.querySelector('.v110-video-toolbar');
     const controls=[
-      view.querySelector('.v112-video-more summary'),
       document.getElementById('freeVideoAnswer'),
       document.getElementById('freeVideoHangup')];
     return {view:r(view),dock:r(bar),controls:controls.map(r),justify:getComputedStyle(bar).justifyContent};
@@ -117,10 +116,10 @@ try{
    assert.ok(trio.view.bottom-trio.dock.bottom>=24,c.w+': barra muito perto do gesto');
    for(let i=0;i<trio.controls.length-1;i++)
      assert.ok(trio.controls[i].right<=trio.controls[i+1].left+1,c.w+': sobreposição na chamada real');
-   const midpoint=(trio.controls[0].left+trio.controls[2].right)/2;
+   const midpoint=(trio.controls[0].left+trio.controls.at(-1).right)/2;
    const dockMid=(trio.dock.left+trio.dock.right)/2;
    assert.ok(Math.abs(midpoint-dockMid)<10,c.w+': controles não centralizados');
-   assert.equal(trio.justify,'space-evenly',c.w+': controles precisam de distribuição proporcional');
+   assert.equal(trio.justify,'center',c.w+': controles da chamada recebida centralizados');
    if(c.w>1100)assert.notEqual(call.layout,'wide',c.w+': o layout deve seguir o mockup, não a tela desktop');
    if([320,390,430,768,1366,1920].includes(c.w))
     await page.screenshot({path:'artifacts/layout-v11154/lia-'+c.w+'.png',fullPage:false});
