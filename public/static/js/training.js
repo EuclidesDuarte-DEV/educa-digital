@@ -619,6 +619,20 @@
     }
   };
 
+  for (const lesson of window.EducaGuidedPrevention ?? []) {
+    const topic = learningTopics[lesson.topic];
+    topic.lessons.push([lesson.title, lesson.summary, lesson.code, true, lesson.group]);
+    guidedActivities[lesson.code] = {
+      kicker: topic.title.toUpperCase(),
+      title: lesson.title,
+      instruction: lesson.story,
+      example: { channel: lesson.channel, evidence: lesson.evidence },
+      options: lesson.choices.map(([label, explanation]) => [label, !explanation, explanation]),
+      signals: lesson.signs,
+      learned: lesson.takeaway
+    };
+  }
+
   const normalChats = {
     daughter: {
       title: 'Maria (filha)', avatar: 'M',
@@ -1163,17 +1177,20 @@
     if (modulePathProgressFill) modulePathProgressFill.style.width = `${pct}%`;
 
     if (moduleLessonList) {
+      let visibleGroup;
       moduleLessonList.innerHTML = topic.lessons.map((lesson, index) => {
-        const [title, summary] = lesson;
+        const [title, summary, , , group] = lesson;
         const complete = isLessonComplete(topicId, index);
         // Cada atividade tem um único título visível e um botão com alvo de toque amplo.
         // O nome do capítulo permanece no catálogo, mas não duplica o título no card.
-        const current = index === firstIncompleteLesson(topicId);
+        const current = index === currentLessonIndex;
         const state = complete ? 'Concluída' : 'Abrir atividade';
         const nextStep = current && !complete;
         const stepLabel = complete ? '<span class="module-lesson-eyebrow is-done">CONCLUÍDA</span>'
           : nextStep ? '<span class="module-lesson-eyebrow is-next">COMECE AQUI</span>' : '';
-        return `<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${nextStep ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy">${stepLabel}<strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
+        const heading = group && group !== visibleGroup ? `<h3 class="module-lesson-group">${group}</h3>` : '';
+        visibleGroup = group;
+        return `${heading}<section class="module-chapter"><button class="module-lesson-card${complete ? ' is-complete' : ''}${nextStep ? ' is-current' : ''}" type="button" data-module-lesson="${index}" aria-label="Atividade ${index + 1}: ${title}. ${state}."><span class="module-lesson-number" aria-hidden="true">${complete ? '✓' : index + 1}</span><span class="module-lesson-card-copy">${stepLabel}<strong>${title}</strong><small>${summary}</small></span><span class="module-lesson-state" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button></section>`;
       }).join('');
     }
     setView('module-path');
@@ -1677,7 +1694,15 @@
     if (guidedKicker) guidedKicker.textContent = activity.kicker;
     if (guidedTitle) guidedTitle.textContent = activity.title;
     if (guidedInstruction) guidedInstruction.textContent = activity.instruction;
-    if (guidedExample) guidedExample.innerHTML = activity.example;
+    if (guidedExample && typeof activity.example === 'string') {
+      guidedExample.innerHTML = activity.example;
+    } else if (guidedExample) {
+      const channel = document.createElement('small');
+      channel.textContent = activity.example.channel;
+      const evidence = document.createElement('span');
+      evidence.textContent = activity.example.evidence;
+      guidedExample.replaceChildren(channel, evidence);
+    }
     if (guidedFeedback) { guidedFeedback.hidden = true; guidedFeedback.textContent = ''; guidedFeedback.className = 'guided-feedback'; }
     if (guidedOptions) guidedOptions.innerHTML = activity.options.map(([label, correct], index) =>
       `<button type="button" data-guided-choice="${index}" data-guided-correct="${correct ? '1' : '0'}"><span class="answer-copy">${label}</span><span class="answer-result" aria-hidden="true"></span></button>`

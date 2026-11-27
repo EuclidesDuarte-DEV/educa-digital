@@ -1,8 +1,10 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const configs=[{width:320,height:640},{width:390,height:844},{width:1366,height:768},{width:390,height:844,platform:'android'},{width:390,height:844,platform:'ios'}];
-const counts={pix:4,security:6,settings:3,whatsapp:6,govbr:5,playstore:4};
+const catalog=JSON.parse(await readFile('data/modulos.json','utf8'));
+const counts=Object.fromEntries(catalog.map(({codigo,capitulos})=>[codigo,capitulos.flatMap(c=>c.atividades).length]));
 try{
  for(const config of configs){
   const {platform,...viewport}=config;

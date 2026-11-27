@@ -91,3 +91,13 @@
   font-weight: 750;
   cursor: pointer;
 }
+
+#modulePathView .module-lesson-group {
+  min-width: 0;
+  margin: 12px 0 2px;
+  color: inherit;
+  font-size: calc(15px * var(--ed-font-factor, 1));
+  line-height: 1.35;
+  font-weight: 780;
+  overflow-wrap: anywhere;
+}

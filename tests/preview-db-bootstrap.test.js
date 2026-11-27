@@ -1,7 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
+import { readFileSync } from 'node:fs';
 import worker from '../src/worker.js';
+const catalog = JSON.parse(readFileSync(new URL('../data/modulos.json', import.meta.url), 'utf8'));
+const expectedLessons = catalog.flatMap(m => m.capitulos).flatMap(c => c.atividades).length;
 
 function bancoVazio() {
   const sqlite = new DatabaseSync(':memory:');
@@ -44,7 +47,7 @@ test('Preview D1 inicializa tabelas e permite cadastro por telefone', async () =
     assert.equal(banco.contarExecucoes(), instrucoes);
     assert.ok(banco.sqlite.prepare("SELECT name FROM sqlite_master WHERE name='progresso'").get());
     assert.ok(banco.sqlite.prepare("SELECT name FROM sqlite_master WHERE name='perfil_acessibilidade'").get());
-    assert.equal(banco.sqlite.prepare('SELECT COUNT(*) AS total FROM atividades').get().total, 28);
+    assert.equal(banco.sqlite.prepare('SELECT COUNT(*) AS total FROM atividades').get().total, expectedLessons);
   } finally {
     banco.sqlite.close();
   }

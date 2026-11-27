@@ -41,5 +41,6 @@ test('V112.59: todos os módulos compartilham cabeçalho de três colunas',async
  const browser=await readFile('scripts/validar-module-header-v11258.mjs','utf8');
  assert.match(css,/#modulePathView\.web-activity-simple \.module-path-header\{\s*grid-template-columns:44px 40px minmax\(0,1fr\)!important/);
  assert.match(css,/#modulePathView\.web-activity-simple #modulePathTitle/);
- for(const topic of ['security','settings','whatsapp','pix','govbr','playstore'])assert.match(browser,new RegExp(`\\b${topic}:\\d+`));
+ assert.match(browser,/Object\.keys\(counts\)/);
+ assert.match(browser,/data\/modulos\.json/);
 });

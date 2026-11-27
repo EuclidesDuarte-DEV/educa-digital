@@ -5,6 +5,8 @@ import { DatabaseSync } from 'node:sqlite';
 
 const packageJson = JSON.parse(readFileSync(new URL('../package.json',import.meta.url), 'utf8'));
 const schema = readFileSync(new URL('../banco/schema.sql',import.meta.url), 'utf8');
+const catalog = JSON.parse(readFileSync(new URL('../data/modulos.json', import.meta.url), 'utf8'));
+const expectedLessons = catalog.flatMap(m => m.capitulos).flatMap(c => c.atividades).length;
 
 test('inicio de desenvolvimento prepara somente o D1 local', () => {
   const scripts = packageJson.scripts;
@@ -20,6 +22,6 @@ test('schema local e idempotente, preservando usuarios e progresso', () => {
     db.prepare('INSERT INTO usuarios(nome, numero) VALUES (?, ?)').run('Pessoa teste', '65911111111');
     db.exec(schema);
     assert.equal(db.prepare("SELECT count(*) as n FROM usuarios WHERE numero='65911111111'").get().n, 1);
-    assert.equal(db.prepare('SELECT count(*) as n FROM atividades').get().n,28);
+    assert.equal(db.prepare('SELECT count(*) as n FROM atividades').get().n,expectedLessons);
   } finally { db.close(); }
 });
