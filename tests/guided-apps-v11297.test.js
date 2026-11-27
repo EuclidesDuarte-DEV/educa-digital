@@ -59,3 +59,11 @@ test('V112.97: web apps remain simulated and free mode remains separate',()=>{
  assert.match(engine,/function startSettings/);
  assert.doesNotMatch(engine,/window\.open\(|window\.location\s*=|fetch\(/);
 });
+
+test('V112.97: Gmail row keeps existing full-width layout, SMS uses its own grid',()=>{
+ assert.match(engine,/webx-mail-row unread guided-real-mail-row/);
+ assert.doesNotMatch(engine,/webx-mail-row unread guided-real-inbox-row/);
+ assert.match(engine,/guided-real-inbox-row/);
+ assert.match(engine,/function stop\(\)/);
+ assert.match(engine,/function finish\(\)/);
+});
