@@ -142,11 +142,12 @@ try{
    await page.setViewportSize({width:c.width,height:Math.max(340,c.height-300)});
    await page.locator('#freeOriginalInput').focus();
    await waitForViewport(page);
+   await page.locator('#chatView').evaluate(view=>Promise.allSettled(view.getAnimations().map(animation=>animation.finished)));
    const keyboard=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
     const phone=rect('phoneScreen'),input=rect('freeOriginalInput'),send=rect('freeOriginalSend');
     const top=window.visualViewport?.offsetTop||0;
-    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,sendTop:send.top,top,bottom:top+(window.visualViewport?.height||innerHeight),gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:input.height,sendWidth:send.width};
+    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,sendTop:send.top,top,bottom:top+(window.visualViewport?.height||innerHeight),gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:document.getElementById('freeOriginalInput').offsetHeight,sendWidth:document.getElementById('freeOriginalSend').offsetWidth};
    });
    assert.ok(keyboard.composerHeight>=43.5&&keyboard.sendWidth>=43.5,key+' compositor sem área de toque '+JSON.stringify(keyboard));
    assert.ok(keyboard.inputBottom<=keyboard.phoneBottom-12&&keyboard.sendBottom<=keyboard.phoneBottom-12,key+' compositor invade navegação '+JSON.stringify(keyboard));
@@ -173,6 +174,7 @@ try{
    await page.setViewportSize({width:c.width,height:Math.max(300,c.height-340)});
    await waitForViewport(page);
    await page.locator('#freeVideoInput').fill('Mensagem de teste');
+   await page.locator('#freeVideoView').evaluate(view=>Promise.allSettled(view.getAnimations().map(animation=>animation.finished)));
    const typing=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
     const input=rect('freeVideoInput'),send=rect('freeVideoSend'),view=visualViewport;

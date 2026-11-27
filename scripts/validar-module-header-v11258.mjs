@@ -41,7 +41,8 @@ try{
      assert.equal(m.cards,['pix','settings'].includes(topic)?3:4);
      const geometry=await page.evaluate(()=>{
       const v=document.querySelector('#modulePathView'), q=s=>v.querySelector(s);
-      const rect=s=>{const r=q(s).getBoundingClientRect();return {w:r.width,h:r.height,x:r.x,y:r.y};};
+      // Compare the layout dimensions, excluding the view's entry animation.
+      const rect=s=>{const el=q(s);return {w:el.offsetWidth,h:el.offsetHeight};};
       const styles=(s,props)=>Object.fromEntries(props.map(p=>[p,getComputedStyle(q(s))[p]]));
       return {
        frame:rect('.module-path-surface'),header:rect('.module-path-header'),card:rect('.module-lesson-card'),
@@ -60,7 +61,7 @@ try{
       for(const k of ['frame','header','card'])
        assert.ok(Math.abs(geometry[k].w-pixGeometry[k].w)<=1,'Largura diferente: '+k);
       assert.ok(Math.abs(geometry.frame.h-pixGeometry.frame.h)<=1,'Moldura com altura diferente');
-      if(font==='normal')assert.ok(Math.abs(geometry.card.h-pixGeometry.card.h)<=1,'Altura do cartão diferente');
+      if(font==='normal')assert.ok(Math.abs(geometry.card.h-pixGeometry.card.h)<=1,'Altura do cartão diferente: '+JSON.stringify({pix:pixGeometry.card.h,security:geometry.card.h,viewport,platform}));
      }
 
      console.log('V112.59 OK '+(platform||'web')+' '+viewport.width+' '+font+' '+topic+' '+m.title);
