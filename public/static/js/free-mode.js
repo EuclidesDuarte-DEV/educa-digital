@@ -313,6 +313,16 @@ function finish(kind='safe',reason=''){
   if(panel)panel.scrollTop=0;
  }
  show('free-summary');
+ // Complemento educativo revisado; não altera personagem, pontos ou decisões.
+ if(detail){
+  const scenarioId=s.id, initial=detail.textContent;
+  void fetch('/api/lia/prevention-tip?scenario='+encodeURIComponent(scenarioId),{credentials:'same-origin'})
+   .then(r=>r.ok?r.json():null).then(data=>{
+    if(data?.ok&&typeof data.text==='string'&&data.text.length<=240&&visible()==='free-summary'&&state.scenario?.id===scenarioId&&detail.textContent===initial&&!initial.includes(data.text)){
+     detail.textContent=initial+' '+data.text;
+    }
+   }).catch(()=>{});
+ }
  clearTransition();
  // Resultado curto não pausa ao rolar; participante pode avançar imediatamente.
  state.transitionTimer=setTimeout(()=>{state.transitionTimer=null;continueTraining();},quickRisk?3200:2800);
