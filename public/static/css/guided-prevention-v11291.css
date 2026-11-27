@@ -101,3 +101,66 @@
   font-weight: 780;
   overflow-wrap: anywhere;
 }
+
+/* V112.93 — local interactive prototype, sized for the phone and larger text. */
+#phoneScreen #guidedPracticeView[data-prototype-stage] .guided-example {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #cbdced;
+}
+#guidedPracticeView[data-prototype-stage] .guided-prototype-appbar {
+  display: block;
+  padding: 14px;
+  background: #1456a4;
+  color: #fff;
+  font-size: calc(15px * var(--ed-font-factor, 1));
+  font-weight: 750;
+  line-height: 1.4;
+}
+#guidedPracticeView[data-prototype-app="WhatsApp"] .guided-prototype-appbar {
+  background: #11654e;
+}
+#guidedPracticeView[data-prototype-stage] .guided-prototype-notification,
+#guidedPracticeView[data-prototype-stage] .guided-example > :is(small,strong,span,code) {
+  margin: 12px;
+  display: block;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+#guidedPracticeView[data-prototype-stage] .guided-prototype-notification {
+  color: #17395d;
+  font-size: calc(16px * var(--ed-font-factor, 1));
+}
+#guidedPracticeView[data-prototype-stage] .guided-prototype-action {
+  display: block;
+  width: calc(100% - 24px);
+  min-height: 52px;
+  margin: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #eaf3ff;
+  color: #123f77;
+  border: 1px solid #a9c8ec;
+  font-size: calc(16px * var(--ed-font-factor, 1));
+  font-weight: 750;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+#guidedPracticeView[data-prototype-stage] .guided-prototype-action:focus-visible {
+  outline: 3px solid #155bb2;
+  outline-offset: 2px;
+}
+#guidedPracticeView[data-prototype-stage] #guidedOptions[hidden] {
+  display: none !important;
+}
+#guidedPracticeView[data-prototype-stage] .guided-options button {
+  min-height: 48px;
+  text-align: left;
+}
+#guidedPracticeView[data-prototype-stage="done"] .guided-prototype-action {
+  opacity: .75;
+}
