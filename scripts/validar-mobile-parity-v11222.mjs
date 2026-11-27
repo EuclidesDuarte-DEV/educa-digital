@@ -125,6 +125,48 @@ try{
    assert.ok(await page.locator('.webv-day-list').isVisible());
    await page.locator('[data-wv="cal-add"]').first().tap({timeout:8000});
    assert.ok(await page.locator('#wvAgendaForm').isVisible());
+   // V112.85: estado visual isolado, sem iniciar chamada nem enviar mensagem.
+   await page.evaluate(()=>{
+    window.EducaFreeMode.stop();
+    document.body.classList.add('prototype-focus');
+    document.documentElement.classList.add('educa-fullscreen-active');
+    window.EducaFreeView.setView('chat');
+    const phone=document.getElementById('phoneScreen');
+    phone.classList.add('free-active');
+    document.getElementById('freeOriginalComposer').hidden=false;
+    document.querySelector('#chatView .chat-composer').hidden=true;
+    document.getElementById('freeOriginalInput').focus();
+   });
+   await page.setViewportSize({width:c.width,height:Math.max(340,c.height-300)});
+   await page.locator('#freeOriginalInput').focus();
+   await page.waitForTimeout(150);
+   const keyboard=await page.evaluate(()=>{
+    const rect=id=>document.getElementById(id).getBoundingClientRect();
+    const phone=rect('phoneScreen'),input=rect('freeOriginalInput'),send=rect('freeOriginalSend');
+    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,viewport:window.visualViewport?.height||innerHeight,gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:input.height,sendWidth:send.width};
+   });
+   assert.ok(keyboard.composerHeight>=44&&keyboard.sendWidth>=44,key+' compositor sem área de toque '+JSON.stringify(keyboard));
+   assert.ok(keyboard.inputBottom<=keyboard.phoneBottom-12&&keyboard.sendBottom<=keyboard.phoneBottom-12,key+' compositor invade navegação '+JSON.stringify(keyboard));
+   assert.ok(keyboard.sendBottom<=keyboard.viewport+1,key+' enviar abaixo do teclado '+JSON.stringify(keyboard));
+   assert.equal(keyboard.gesture,'hidden');
+   await page.screenshot({path:dir+'/'+key+'-keyboard.png'});
+   await page.evaluate(()=>{
+    document.getElementById('freeOriginalInput').blur();
+    window.EducaFreeView.setView('free-video');
+    document.getElementById('freeVideoAnswer').hidden=false;
+    document.getElementById('freeVideoHangup').hidden=false;
+   });
+   await page.setViewportSize({width:c.width,height:c.height});
+   const ringing=await page.evaluate(()=>{
+    const view=document.getElementById('freeVideoView').getBoundingClientRect();
+    const answer=document.getElementById('freeVideoAnswer').getBoundingClientRect();
+    return {avatar:getComputedStyle(document.getElementById('freeVideoPortrait')).display,offset:Math.abs((answer.top+answer.height/2)-(view.top+view.height/2)),height:view.height,answerWidth:answer.width};
+   });
+   assert.equal(ringing.avatar,'none',key+' avatar visível antes de atender');
+   assert.ok(ringing.offset<=ringing.height*.25&&ringing.answerWidth>=44,key+' atender fora do centro '+JSON.stringify(ringing));
+   await page.screenshot({path:dir+'/'+key+'-incoming.png'});
+   await page.evaluate(()=>document.getElementById('freeVideoAnswer').hidden=true);
+   assert.notEqual(await page.locator('#freeVideoPortrait').evaluate(e=>getComputedStyle(e).display),'none',key+' avatar não voltou ao atender');
    console.log('MOBILE_PARITY_V11222_OK '+key+' '+JSON.stringify({render:home.render,native:home.native,color}));
   }finally{await ctx.close();}
  }

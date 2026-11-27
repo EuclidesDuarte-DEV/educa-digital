@@ -96,3 +96,40 @@ html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-
 html[data-educa-platform="web"]:not([data-educa-native-platform]) body.lia-call-visible #phoneHardware #freeVideoView.is-active.android-view .v110-video-toolbar:has(> #freeVideoCameraToggle[hidden]):has(> #freeVideoSpeaker[hidden]):has(> #freeVideoMic[hidden]){
  --lia-control-size:min(52px,calc((100cqw - 32px)/3));
 }
+
+/* V112.85 — chamada recebida: a personagem só fica visível após Atender.
+   A interface existente controla o estado por meio do botão #freeVideoAnswer. */
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video{
+ background:linear-gradient(155deg,#14283b,#0b1723 65%)!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) :is(#freeVideoPortrait,.v110-selfie,.v112-caption-box,#freeVideoExpand,#freeVideoMore){
+ display:none!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-top{
+ position:absolute!important;inset:18% 12px auto!important;transform:none!important;
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ background:none!important;max-width:none!important;padding:0!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-top .wa-contact-info{
+ display:flex!important;align-items:center!important;text-align:center!important;gap:8px!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;white-space:normal!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) #freeVideoName{
+ font-size:clamp(24px,6vw,34px)!important;line-height:1.2!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-bottom{
+ position:absolute!important;inset:50% 8px auto!important;transform:translateY(-50%)!important;
+ width:auto!important;max-width:none!important;height:auto!important;max-height:none!important;gap:8px!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-toolbar{
+ display:flex!important;justify-content:center!important;gap:clamp(16px,5vw,32px)!important;
+ width:100%!important;max-width:280px!important;min-height:0!important;background:transparent!important;
+ box-shadow:none!important;border:none!important;
+}
+html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) :is(#freeVideoAnswer,#freeVideoHangup){
+ flex:0 0 56px!important;width:56px!important;height:56px!important;min-width:56px!important;min-height:56px!important;max-width:56px!important;max-height:56px!important;
+}
+@media(max-height:450px){
+ html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-top{top:8%!important}
+ html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAnswer:not([hidden])) .v110-video-bottom{top:65%!important}
+}

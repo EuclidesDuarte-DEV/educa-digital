@@ -44,7 +44,7 @@ test('V112.22: UI Web completa sem perda dos dois canais físicos',()=>{
  }
  for(const part of ['android','ios']){
   assert.equal(releases.channels[part].native,'112.31');
-  assert.equal(releases.channels[part].interface,'112.31');
+  assert.equal(releases.channels[part].interface,'112.84');
  }
 });
 
@@ -92,4 +92,15 @@ test('V112.22: browser automatizado cobre iOS/Android, viewport, modo dark e toq
  assert.match(audit,/\.tap\(/);
  assert.match(audit,/MOBILE_PARITY_V11222_OK/);
  assert.match(audit,/headless:true/);
+});
+
+test('V112.84: Android e iOS recebem o espaçamento de nível pela paridade Web',()=>{
+ const css=read('public/static/css/web-level-badge-v11211.css');
+ assert.match(css,/html\[data-educa-platform="web"\] #phoneScreen #learningView \.learning-surface\s*\{\s*padding-top: 38px !important/);
+ assert.ok(html.includes('web-level-badge-v11211.css?v=11211&spacing=11284'));
+ assert.equal(releases.channels.web.interface,'112.84');
+ const badgeAudit=read('scripts/validar-level-badge-v11211.mjs');
+ assert.ok(badgeAudit.includes('experience=web'));
+ assert.ok(badgeAudit.includes("platform:'android'"));
+ assert.ok(badgeAudit.includes("platform:'ios'"));
 });

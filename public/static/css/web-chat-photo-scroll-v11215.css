@@ -146,3 +146,37 @@ html[data-educa-platform="web"] #phoneScreen :is(#chatView,#normalChatView).andr
  box-sizing:border-box!important;overflow-y:auto!important;overflow-x:hidden!important;
  touch-action:pan-y!important;overscroll-behavior-y:contain!important;
 }
+
+/* V112.85 — teclado aberto: reservar a região de gestos fora do compositor. */
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView.is-active > .chat-surface{
+ grid-template-rows:minmax(55px,auto) minmax(0,1fr) auto auto!important;
+ padding-bottom:32px!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView #freeOriginalComposer:not([hidden]){
+ inset:auto!important;position:relative!important;grid-row:4!important;
+ box-sizing:border-box!important;width:auto!important;min-width:0!important;
+ margin:0!important;padding:5px 9px!important;min-height:56px!important;
+ background:#efeae2!important;z-index:65!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView #freeOriginalInput{
+ min-height:44px!important;max-width:100%!important;
+}
+html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView #freeOriginalSend{
+ flex:0 0 44px!important;
+}
+@media (max-width:900px),(pointer:coarse){
+ html[data-educa-platform="web"].educa-fullscreen-active body.prototype-focus:has(#chatView.is-active #freeOriginalInput:focus) #phoneStage{
+  height:calc(var(--educa-visible-h,100dvh) - var(--mobile-menu-end,var(--educa-fullscreen-toolbar,68px)) - var(--mobile-safe-bottom,0px))!important;
+  min-height:0!important;max-height:none!important;bottom:auto!important;
+ }
+ html[data-educa-platform="web"].educa-fullscreen-active body.prototype-focus:has(#chatView.is-active #freeOriginalInput:focus) #phoneStage #phoneHardware{
+  height:100%!important;max-height:100%!important;min-height:0!important;
+  aspect-ratio:auto!important;
+ }
+ html[data-educa-platform="web"] #phoneScreen:has(#chatView.is-active #freeOriginalInput:focus) #gestureHome{
+  visibility:hidden!important;pointer-events:none!important;
+ }
+}
+
+/* O botão Voltar do WhatsApp continua disponível; a barra de gestos não pode cobrir o compositor. */
+html[data-educa-platform="web"] #phoneScreen:has(#chatView.is-active #freeOriginalComposer:not([hidden])) #gestureHome{display:none!important;visibility:hidden!important;pointer-events:none!important;}

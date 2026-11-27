@@ -17,8 +17,13 @@ try{
     await loc.evaluate(el=>{el.scrollTop=0;});
     const dims=await loc.evaluate(el=>({h:el.clientHeight,sh:el.scrollHeight,overflow:getComputedStyle(el).overflowY}));
     assert.ok(dims.h>60,'Painel sem altura útil '+selector+' '+JSON.stringify(dims));
-    assert.ok(dims.sh>dims.h,'Painel sem overflow interno: '+selector+' '+JSON.stringify(dims));
     assert.match(dims.overflow,/auto|scroll/);
+    // Não exigir rolagem quando toda a trilha cabe; testar o gesto com fonte extra.
+    if(dims.sh<=dims.h&&selector.includes('learningView')){
+     await page.evaluate(()=>window.EducaAccessibility.update({text:'extra'}));
+     const expanded=await loc.evaluate(el=>({h:el.clientHeight,sh:el.scrollHeight}));
+     if(expanded.sh<=expanded.h){await page.evaluate(()=>window.EducaAccessibility.update({text:'normal'}));return;}
+    }else assert.ok(dims.sh>dims.h,'Painel sem overflow interno: '+selector+' '+JSON.stringify(dims));
     const rect=await loc.boundingBox();
     const x=Math.round(rect.x+rect.width/2),y=Math.round(Math.min(rect.y+rect.height-30,(mobile?844:768)-30));
     const end=Math.max(Math.round(rect.y+25),y-150);

@@ -2,7 +2,7 @@
    tipografia que respeita as preferências de acessibilidade. Não afeta o treino. */
 html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{
  --home-title:clamp(32px,4.2vw,58px);
- --home-subtitle:clamp(16px,1.4vw,19px);
+ --home-subtitle:clamp(18px,1.4vw,19px);
  --home-cta:19px;
  box-sizing:border-box!important;
 }
@@ -103,11 +103,11 @@ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus)
  html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .preview-badge.training-badge{display:none!important;}
 }
 @media(min-width:901px) and (max-height:720px){
- html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{--home-title:clamp(32px,4vw,46px);--home-subtitle:16px;}
+ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{--home-title:clamp(32px,4vw,46px);--home-subtitle:18px;}
 }
 @media(max-width:900px){
  html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{
-  --home-title:clamp(29px,6.5vw,43px);--home-subtitle:16px;--home-cta:18px;
+  --home-title:clamp(29px,6.5vw,43px);--home-subtitle:18px;--home-cta:18px;
   display:grid!important;grid-template-columns:minmax(0,1fr)!important;
   align-items:start!important;justify-items:center!important;gap:20px!important;
   min-height:0!important;height:auto!important;padding:24px clamp(14px,4vw,32px) 28px!important;
@@ -390,3 +390,20 @@ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus)
 
 /* V112.75 — botão de ampliação da home com alvo de toque seguro. */
 html[data-educa-platform="web"]:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .phone-preview-wrap .phone-tools #fullscreenBtn:not([hidden]){min-height:48px!important;height:auto!important;max-height:none!important;}
+
+/* V112.84 — alvos de toque das telas de treino identificados na matriz. */
+#phoneScreen .android-view :is(input[type="range"],.gov-link-row,.gov-real-search input,.gov-agenda-toolbar button,#playProtectBtn){
+ min-height:32px!important;box-sizing:border-box!important;
+}
+#phoneScreen .android-view :is(.gov-avatar-photo.small,.gov-back-line,.gov-browser-round,.gov-calendar-month button){
+ min-width:32px!important;min-height:32px!important;box-sizing:border-box!important;flex-shrink:0!important;
+}
+#phoneScreen .android-view :is(button[aria-label="Emojis"],button[aria-label="Anexos"],button[aria-label="Câmera"]):not(.app-tile){
+ min-width:30px!important;min-height:30px!important;box-sizing:border-box!important;
+}
+#phoneScreen #freeVideoMore:not([open])>.v112-video-more-content{display:none!important;}
+#phoneScreen #freeVideoMore[open] .v112-video-more-content button:not([hidden]){
+ min-width:0!important;width:100%!important;min-height:36px!important;height:auto!important;white-space:normal!important;box-sizing:border-box!important;
+}
+
+#phoneScreen .android-view #playProtectBtn{min-width:44px!important;min-height:44px!important;flex-shrink:0!important;}

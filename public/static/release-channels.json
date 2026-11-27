@@ -4,16 +4,16 @@
   "cloudflare": "https://educa-digital.educamaisdigital.workers.dev",
   "channels": {
     "web": {
-      "interface": "112.22",
+      "interface": "112.84",
       "mode": "website"
     },
     "android": {
-      "interface": "112.31",
+      "interface": "112.84",
       "native": "112.31",
       "mode": "webview-apk"
     },
     "ios": {
-      "interface": "112.31",
+      "interface": "112.84",
       "native": "112.31",
       "mode": "swift-wkwebview"
     }
