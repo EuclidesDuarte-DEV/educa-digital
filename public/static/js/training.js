@@ -1144,6 +1144,7 @@
   }
 
   function openModulePath(topicId) {
+    stopNativeGuidedLesson();
     if (pretestLocked()) return blockPretestNavigation();
     clearLandingPretest();
     clearGuide();
@@ -1641,6 +1642,7 @@
   }
 
   function openLearningHub() {
+    stopNativeGuidedLesson();
     if (pretestLocked()) return blockPretestNavigation();
     isGuestPretest = false;
     trainingStarted = true;
@@ -1950,8 +1952,118 @@
     }
   }
 
+  // V112.94 — first individually authored exercises in the existing apps.
+  // All views and account data are local demonstrations.
+  let nativeGuidedSession = null;
+  function stopNativeGuidedLesson() {
+    nativeGuidedSession?.controller.abort();
+    nativeGuidedSession = null;
+    $('.guided-native-panel').forEach(el => el.remove());
+    phoneScreen?.removeAttribute('data-guided-app-lesson');
+  }
+  function nativeGuidedStep(selector, title, description, next, label = 'Toque aqui') {
+    const session = nativeGuidedSession;
+    const target = typeof selector === 'string' ? $(selector) : selector;
+    if (!session || !target || currentTopicAction !== session.action) return;
+    session.controller.abort();
+    session.controller = new AbortController();
+    const view = phoneScreen.dataset.currentView;
+    setCoachMessage('TREINO GUIADO · ' + (++session.step), title, description);
+    announce(description,true);
+    target.addEventListener('click', event => {
+      if (nativeGuidedSession !== session || currentTopicAction !== session.action || phoneScreen.dataset.currentView !== view) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      session.controller.abort();
+      clearGuide();
+      next();
+    },{capture:true,signal:session.controller.signal});
+    scheduleGuide(target,{label},100);
+  }
+  function nativeGuidedPanel(container, heading, detail, buttonLabel, next) {
+    const parent = $(container);
+    if (!parent) return;
+    $('.guided-native-panel').forEach(el=>el.remove());
+    const panel = guidedPrototypeElement('section','guided-native-panel');
+    panel.append(guidedPrototypeElement('small','guided-native-badge','ATIVIDADE GUIADA · DADOS FICTÍCIOS'));
+    panel.append(guidedPrototypeElement('h3','guided-native-heading',heading));
+    panel.append(guidedPrototypeElement('p','guided-native-detail',detail));
+    const btn = guidedPrototypeButton(buttonLabel,'nativeGuidedAction',()=>{});
+    panel.append(btn);
+    parent.append(panel);
+    nativeGuidedStep(btn,heading,detail+' Toque em '+buttonLabel+'.',next,buttonLabel);
+  }
+  function finishNativeGuidedLesson() {
+    const lesson=guidedActivities[nativeGuidedSession?.action];
+    if(!lesson)return;
+    stopNativeGuidedLesson();
+    showLessonComplete(lesson.learned);
+  }
+  function nativeGuidedBankExtract(action) {
+    openBankView('bank-extract');
+    if(action==='guided-pix-devolucao'){
+      nativeGuidedPanel('#bankExtractView .bank-content','Pix recebido · R$ 50,00','Maria Souza · recebimento fictício. A devolução deve partir da transação original.','Abrir Pix recebido',()=>{
+        nativeGuidedPanel('#bankExtractView .bank-content','Detalhes do Pix recebido','Confira a origem. Neste treino a devolução não envia dinheiro.','Localizar opção Devolver',finishNativeGuidedLesson);
+      });
+    }else if(action==='guided-comprovante-falso'){
+      nativeGuidedPanel('#bankExtractView .bank-content','Confira as movimentações','O extrato de treino não contém o crédito esperado pela venda. O comprovante recebido não confirma pagamento.','Confirmar que o crédito não entrou',finishNativeGuidedLesson);
+    }else{
+      nativeGuidedPanel('#bankExtractView .bank-content','Pix de treino a contestar','Selecione a transferência fictícia para localizar a ajuda do banco.','Consultar transferência',()=>{
+        nativeGuidedPanel('#bankExtractView .bank-content','Ajuda com esta transferência','Use o atendimento do próprio banco e guarde o comprovante.','Solicitar orientação sobre contestação',finishNativeGuidedLesson);
+      });
+    }
+  }
+  function nativeGuidedGov(action){
+    // Demo home already exists; no authentication or data entry is performed.
+    openGovView('govbr-home');
+    if(action==='guided-gov-prova-vida'){
+      nativeGuidedStep('#govSearchBox','Encontre serviços','Toque em Encontre serviços públicos para consultar por conta própria.',()=>{
+        openGovView('govbr-services');
+        nativeGuidedStep('#govProofRow','Prova de vida','Localize Prova de vida na lista do aplicativo.',()=>{
+          openGovView('govbr-proof');
+          nativeGuidedStep('#govProofFoundBtn','Consulte a orientação','Confira a orientação no aplicativo simulado, sem abrir o link recebido.',finishNativeGuidedLesson,'Concluir');
+        },'Prova de vida');
+      },'Buscar serviço');
+    }else{
+      nativeGuidedStep('#govProfileNav','Abra o menu','Toque em Menu para encontrar as configurações da conta.',()=>{
+        openGovView('govbr-menu');
+        nativeGuidedStep('#govSecurityMenuRow','Segurança da conta','Abra Segurança da conta.',()=>{
+          openGovView('govbr-security');
+          nativeGuidedStep('#govTwoFactorRow','Proteja o acesso','Localize a verificação em duas etapas.',()=>{
+            openGovView('govbr-security-2fa');
+            nativeGuidedStep('#gov2faLearnBtn','Verificação em duas etapas','Confira como proteger a conta no aplicativo de treino.',finishNativeGuidedLesson,'Concluir');
+          },'Verificação em duas etapas');
+        },'Segurança da conta');
+      },'Menu');
+    }
+  }
+  function openNativeGuidedLesson(action){
+    const apps={
+      'guided-pix-devolucao':'bank',
+      'guided-comprovante-falso':'bank',
+      'guided-pix-apos-golpe':'bank',
+      'guided-gov-prova-vida':'govbr',
+      'guided-gov-acesso-suspeito':'govbr'
+    };
+    const app=apps[action];
+    if(!app)return false;
+    stopNativeGuidedLesson();
+    nativeGuidedSession={action,step:0,controller:new AbortController()};
+    phoneScreen.dataset.guidedAppLesson=action;
+    setView('home');
+    nativeGuidedStep('#homeView [data-open-app="'+app+'"]',guidedActivities[action].title,
+      'Abra o aplicativo '+(app==='bank'?'Banco Educa':'GOV.BR')+' no celular de treino.',()=>{
+      if(app==='bank'){
+        openBankView('bank-home');
+        nativeGuidedStep('#bankExtractBtn','Abra o extrato','Toque em Extrato para conferir as movimentações da conta fictícia.',()=>nativeGuidedBankExtract(action),'Extrato');
+      }else nativeGuidedGov(action);
+    },app==='bank'?'Banco':'GOV.BR');
+    return true;
+  }
+
   function openTopicAction(action) {
     currentTopicAction = action;
+    if (openNativeGuidedLesson(action)) return;
     if (action.startsWith('pix-')) { guideBankPixAction(action); return; }
     const securityGuides = {
       family: { row: '[data-scenario="family"]', title: 'Abra a conversa suspeita', text: 'Toque em “Filho — número novo” para ver a situação.' },
