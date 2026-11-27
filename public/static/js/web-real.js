@@ -25,7 +25,8 @@ function openApp(app,options={}){
  leave();current=app;
  $('#webRealTitle').textContent=titles[app];
  $('#webRealIcon').src='/static/icons/'+icons[app]+'.svg';
- $('#webRealSubtitle').textContent=app==='camera'?'Permissão necessária para usar a câmera':'Modo Livre · recursos web';
+ $('#webRealSubtitle').textContent=options.guided?'Treino guiado · aplicativo simulado':app==='camera'?'Permissão necessária para usar a câmera':'Modo Livre · recursos web';
+ $('#webRealBack')?.setAttribute('aria-label',options.guided?'Voltar às atividades':'Voltar à tela inicial');
  window.EducaFreeView?.setView('webreal');
  if(window.EducaWebAppsV11216?.open?.(app,{readPhotos,addFiles,removePhoto,downloadBlob}))return;
  if(window.EducaWebMoreAppsV11219?.open?.(app))return;
