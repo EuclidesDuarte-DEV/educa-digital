@@ -1,5 +1,5 @@
 /* V112.88 — uma única geometria para todas as trilhas, tomando Pix como referência.
-   As dimensões, fontes, espaçamentos e estados vêm de channels/web/overrides.css.
+   A base de dimensões, fontes e estados vem de channels/web/overrides.css.
    Segurança usa apenas o tema roxo do design system compartilhado.
    Não há ajustes exclusivos de tamanho, nem altura fixa para texto ampliado. */
 html[data-educa-platform="web"] #modulePathView.web-activity-simple .module-path-header>div::before{
@@ -24,4 +24,12 @@ html[data-educa-platform="web"] #modulePathView.web-activity-simple #modulePathT
   word-break:normal!important;
   overflow-wrap:normal!important;
   white-space:normal!important;
+}
+
+/* Em molduras estreitas, reserve três linhas de título com a altura do Pix.
+   Títulos maiores ainda podem crescer com a fonte de acessibilidade. */
+@container (max-width: 270px) {
+  html[data-educa-platform="web"] #modulePathView.web-activity-simple .module-lesson-card {
+    min-height: max(92px, calc(36px + 3.9 * var(--ed-activity-card-size, 17px))) !important;
+  }
 }
