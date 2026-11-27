@@ -10,7 +10,7 @@ test('V112.88: Segurança herda a geometria do Pix e preserva o tema roxo',async
  assert.match(common,/min-height:92px\s*!important/);
  assert.match(common,/\.is-theme-security\s*\{[\s\S]*?--ed-topic-accent:#7457C7/);
 });
-test('fluxo Segurança mantém quatro lições e controles originais',async()=>{
+test('fluxo Segurança preserva as lições e os controles originais',async()=>{
  const html=await readFile('public/html/index.html','utf8');
  const js=await readFile('public/static/js/training.js','utf8');
  assert.match(html,/security-path-polish-v11252\.css\?v=11252/);
@@ -18,6 +18,7 @@ test('fluxo Segurança mantém quatro lições e controles originais',async()=>{
  assert.match(js,/topicId === 'security'\s*\? `\$\{completedCount\}\/\$\{topic\.lessons\.length\}`/);
  assert.match(js,/\['Golpe do falso filho'/);
  assert.match(js,/\['Link falso do banco'/);
+ assert.match(js,/\['Código por SMS'/);
  assert.match(js,/\['Falsa central bancária'/);
  assert.match(html,/id="moduleLessonList"/);
  assert.match(html,/id="modulePathBack"/);
@@ -40,5 +41,5 @@ test('V112.59: todos os módulos compartilham cabeçalho de três colunas',async
  const browser=await readFile('scripts/validar-module-header-v11258.mjs','utf8');
  assert.match(css,/#modulePathView\.web-activity-simple \.module-path-header\{\s*grid-template-columns:44px 40px minmax\(0,1fr\)!important/);
  assert.match(css,/#modulePathView\.web-activity-simple #modulePathTitle/);
- for(const topic of ['security','settings','whatsapp','pix','govbr','playstore'])assert.ok(browser.includes("'"+topic+"'"));
+ for(const topic of ['security','settings','whatsapp','pix','govbr','playstore'])assert.match(browser,new RegExp(`\\b${topic}:\\d+`));
 });

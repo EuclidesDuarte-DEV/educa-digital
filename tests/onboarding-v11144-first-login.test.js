@@ -35,8 +35,9 @@ test('V111.49: ajuda opcional reduzida a dois passos objetivos', () => {
 test('V111.49: uma acessibilidade global, sem duplicações dentro do celular', () => {
   assert.equal((html.match(/id="openAccessibilitySettings"/g) || []).length, 1);
   assert.doesNotMatch(html, /id="learningAccessibilityQuickBtn"|id="learningAccessibilityBtn"|id="learningReplayGuideBtn"/);
-  for (const topic of ['pix','security','whatsapp','settings','govbr'])
+  for (const topic of ['pix','security','whatsapp','govbr'])
     assert.match(html, new RegExp(`data-learning-topic="${topic}"`));
+  assert.doesNotMatch(html, /data-learning-topic="settings"/);
   assert.match(html, /id="freeModeEntry"/);
   assert.match(html, /id="phoneStage"/);
   assert.match(html, /lia-kokoro-browser\.js/);

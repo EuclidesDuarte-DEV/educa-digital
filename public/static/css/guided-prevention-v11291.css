@@ -1,0 +1,93 @@
+#phoneScreen #guidedPracticeView[data-guided-prevention] .guided-surface {
+  padding-top: 42px;
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
+  color: #15375e;
+  overflow-wrap: anywhere;
+}
+
+#phoneScreen #guidedPracticeView[data-guided-prevention] .guided-header {
+  grid-template-columns: 44px minmax(0, 1fr);
+}
+
+#guidedPracticeView[data-guided-prevention] .guided-back {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #bfd3eb;
+}
+
+#guidedPracticeView[data-guided-prevention] #guidedTitle {
+  font-size: calc(20px * var(--ed-font-factor, 1));
+  line-height: 1.2;
+}
+
+#phoneScreen #guidedPracticeView[data-guided-prevention] :is(.guided-instruction, .guided-example > span, .guided-options button, .guided-feedback, .guided-recap li, #guidedContinue) {
+  font-size: calc(15px * var(--ed-font-factor, 1)) !important;
+  line-height: 1.45;
+}
+
+#guidedPracticeView[data-guided-prevention] .guided-example {
+  background: #e8f3ff;
+  border-color: #c9def5;
+}
+
+#guidedPracticeView[data-guided-prevention] :is(#guidedKicker, .guided-example small) {
+  color: #365b87;
+  font-size: calc(11px * var(--ed-font-factor, 1));
+}
+
+#guidedPracticeView[data-guided-prevention] :is(.guided-example strong, .guided-recap h2) {
+  font-size: calc(17px * var(--ed-font-factor, 1));
+}
+
+#guidedPracticeView[data-guided-prevention] .guided-example code {
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: #fff;
+  color: #174777;
+  font-size: calc(13px * var(--ed-font-factor, 1));
+}
+
+#guidedPracticeView[data-guided-prevention] .guided-options button {
+  display: grid;
+  gap: 3px;
+}
+
+#guidedPracticeView[data-guided-prevention] .answer-result:empty {
+  display: none;
+}
+
+#guidedPracticeView .guided-recap {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #c9def5;
+  border-radius: 16px;
+  background: #fff;
+  scroll-margin-block-start: 12px;
+}
+
+#guidedPracticeView .guided-recap h2 {
+  margin: 0 0 8px;
+}
+
+#guidedPracticeView .guided-recap ul {
+  margin: 0 0 16px;
+  padding-inline-start: 21px;
+}
+
+#guidedPracticeView .guided-recap li + li {
+  margin-top: 6px;
+}
+
+#guidedContinue {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #1456a4;
+  color: #fff;
+  font-weight: 750;
+  cursor: pointer;
+}

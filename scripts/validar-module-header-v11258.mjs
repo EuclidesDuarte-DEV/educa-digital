@@ -2,6 +2,7 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const configs=[{width:320,height:640},{width:390,height:844},{width:1366,height:768},{width:390,height:844,platform:'android'},{width:390,height:844,platform:'ios'}];
+const counts={pix:4,security:6,settings:3,whatsapp:6,govbr:5,playstore:4};
 try{
  for(const config of configs){
   const {platform,...viewport}=config;
@@ -16,13 +17,12 @@ try{
    for(const font of ['normal','extra']){
     await page.evaluate(font=>window.EducaAccessibility.update({text:font}),font);
     let pixGeometry;
-    for(const topic of ['pix','security','settings','whatsapp','govbr','playstore']){
-     // Apps seguros integra o catálogo, mas não possui cartão no menu atual.
-     // Apenas no teste, reutilizar o acionador existente e seu handler real.
+    for(const topic of Object.keys(counts)){
+     // Apenas no teste, acione Ajustes e Apps seguros pelo handler da trilha.
      await page.evaluate(topic=>{
       const button=document.querySelector('[data-learning-topic="'+topic+'"]');
       if(button){button.click();return;}
-      if(topic!=='playstore')throw Error('Módulo ausente: '+topic);
+      if(!['settings','playstore'].includes(topic))throw Error('Módulo ausente: '+topic);
       const fixture=document.querySelector('[data-learning-topic="govbr"]');
       const before=fixture.dataset.learningTopic;fixture.dataset.learningTopic=topic;
       try{fixture.click();}finally{fixture.dataset.learningTopic=before;}
@@ -38,7 +38,7 @@ try{
      assert.ok(m.titleBox.x>=m.icon.right-1&&m.icon.x>=m.back.right-1,JSON.stringify(m));
      assert.ok(m.textBoxes.length<=2&&m.titleBox.w>=80&&m.header.h<180,JSON.stringify(m));
      assert.ok(m.textBoxes.every(t=>t.right<=m.header.right+1&&t.left>=m.icon.right-1),JSON.stringify(m));
-     assert.equal(m.cards,['pix','settings'].includes(topic)?3:4);
+     assert.equal(m.cards,counts[topic]);
      const geometry=await page.evaluate(()=>{
       const v=document.querySelector('#modulePathView'), q=s=>v.querySelector(s);
       // Compare the layout dimensions, excluding the view's entry animation.

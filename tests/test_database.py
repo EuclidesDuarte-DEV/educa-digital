@@ -16,7 +16,7 @@ class ModeloBancoTests(unittest.TestCase):
             required = {"modulos", "capitulos", "atividades", "usuarios", "progresso", "codigos_acesso", "perfil_acessibilidade"}
             self.assertTrue(required.issubset(names))
             self.assertEqual(db.execute("SELECT COUNT(*) FROM modulos").fetchone()[0], 6)
-            self.assertEqual(db.execute("SELECT COUNT(*) FROM atividades").fetchone()[0], 22)
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM atividades").fetchone()[0], 28)
             self.assertEqual(db.execute("SELECT COUNT(*) FROM capitulos").fetchone()[0], 22)
 
             db.execute("INSERT INTO usuarios(nome,numero) VALUES (?,?)", ("Pessoa Teste", "65999990000"))
@@ -30,7 +30,7 @@ class ModeloBancoTests(unittest.TestCase):
         data = json.loads((ROOT / "data" / "modulos.json").read_text(encoding="utf-8"))
         codes = [a["codigo"] for m in data for c in m["capitulos"] for a in c["atividades"]]
         self.assertEqual(len(codes), len(set(codes)))
-        self.assertEqual(len(codes), 22)
+        self.assertEqual(len(codes), 28)
 
 
 if __name__ == "__main__":
