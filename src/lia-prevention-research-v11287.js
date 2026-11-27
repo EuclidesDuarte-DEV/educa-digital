@@ -68,3 +68,16 @@ export async function preventionResearchStatus(env){
   return {...result,last_check:row?.last_check||null,checked_sources:Number(row?.checked_sources||0)};
  }catch(_){return result;}
 }
+
+/* Editorially reviewed, prevention-only advice. Never used to select a
+ * character's dialogue or to make a fraudulent request more persuasive. */
+export const PREVENTION_TIPS=Object.freeze({
+ video:Object.freeze({source:'https://www.bcb.gov.br/meubc/faqs/p/dicas-gerais-para-evitar-golpes',text:'Mesmo quando reconhece um rosto ou uma voz, confirme a identidade por um número que você já conhece.'}),
+ family:Object.freeze({source:'https://www.bcb.gov.br/meubc/faqs/p/dicas-gerais-para-evitar-golpes',text:'Antes de transferir dinheiro a um familiar, confirme o pedido por um contato conhecido.'}),
+ 'family-photo':Object.freeze({source:'https://www.bcb.gov.br/meubc/faqs/p/dicas-gerais-para-evitar-golpes',text:'Uma foto de perfil não confirma identidade. Ligue para o número que você já conhece.'}),
+ bank:Object.freeze({source:'https://www.bcb.gov.br/estabilidadefinanceira/pix-seguranca',text:'Confira a movimentação no aplicativo oficial e procure seu banco por um canal conhecido.'}),
+ default:Object.freeze({source:'https://www.gov.br/mj/pt-br/assuntos/noticias/veja-como-se-proteger-de-golpes-na-internet-e-orientar-sua-familia/',text:'Se desconfiar de uma mensagem, procure o serviço pelo canal oficial e proteja seus dados pessoais.'})
+});
+export function preventionTip(scenario){
+ return Object.hasOwn(PREVENTION_TIPS,scenario)?PREVENTION_TIPS[scenario]:PREVENTION_TIPS.default;
+}
