@@ -150,7 +150,7 @@ html[data-educa-platform="web"] #phoneScreen :is(#chatView,#normalChatView).andr
 /* V112.85 — teclado aberto: reservar a região de gestos fora do compositor. */
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView.is-active > .chat-surface{
  grid-template-rows:minmax(55px,auto) minmax(0,1fr) auto auto!important;
- padding-bottom:22px!important;
+ padding-bottom:32px!important;
 }
 html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat"] #chatView #freeOriginalComposer:not([hidden]){
  inset:auto!important;position:relative!important;grid-row:4!important;
@@ -177,3 +177,6 @@ html[data-educa-platform="web"] #phoneScreen.free-active[data-current-view="chat
   visibility:hidden!important;pointer-events:none!important;
  }
 }
+
+/* O botão Voltar do WhatsApp continua disponível; a barra de gestos não pode cobrir o compositor. */
+html[data-educa-platform="web"] #phoneScreen:has(#chatView.is-active #freeOriginalComposer:not([hidden])) #gestureHome{display:none!important;visibility:hidden!important;pointer-events:none!important;}
