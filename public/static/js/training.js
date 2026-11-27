@@ -1745,7 +1745,7 @@
     clearGuide();
     guidedPracticeView.dataset.prototypeStage = String(stage);
     guidedPracticeView.dataset.prototypeApp = app;
-    guidedKicker.textContent = app + ' · ETAPA ' + stage + ' DE 3';
+    guidedKicker.textContent = app + ' · ETAPA ' + stage + ' DE 4';
     guidedInstruction.textContent = instruction;
     setCoachMessage(app, guidedTitle.textContent, instruction);
     announce(instruction, true);
@@ -1755,15 +1755,15 @@
   function openGuidedPrototype(action, activity) {
     const route = guidedPrototypeRoutes[action];
     if (!route || !guidedExample || !guidedOptions) return;
-    const [source, openLabel, destination] = route;
+    const [source, openLabel] = route;
     const evidence = Array.from(guidedExample.childNodes);
     guidedOptions.hidden = true;
-    guidedPrototypeStage(1, source, activity.instruction);
+    guidedPrototypeStage(1, source, activity.instruction + ' Toque em “' + openLabel + '” para começar.');
     const appBar = guidedPrototypeElement('div','guided-prototype-appbar',source + ' · SIMULAÇÃO');
     const notification = guidedPrototypeElement('div','guided-prototype-notification',activity.title);
     const open = guidedPrototypeButton(openLabel,'guidedPrototypeOpen', () => {
       if (currentTopicAction !== action || phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '1') return;
-      guidedPrototypeStage(2, source, 'Observe a situação no aplicativo e toque na ação mais segura.');
+      guidedPrototypeStage(2, source, 'Observe a situação no aplicativo. Siga o destaque azul para praticar a ação mais segura.');
       guidedExample.replaceChildren(guidedPrototypeElement('div','guided-prototype-appbar',source + ' · SIMULAÇÃO'),...evidence);
       guidedOptions.hidden = false;
       const correct = guidedOptions.querySelector('[data-guided-correct="1"]');
@@ -1776,7 +1776,7 @@
     const route = guidedPrototypeRoutes[action];
     if (!route || guidedPracticeView.dataset.prototypeStage !== '2') return false;
     const [, , destination, actionLabel] = route;
-    guidedPrototypeStage(3,destination,'Agora pratique a ação de proteção no aplicativo de treino.');
+    guidedPrototypeStage(3,destination,'Toque em “' + actionLabel + '” para praticar a ação de proteção no aplicativo de treino.');
     guidedOptions.hidden = true;
     const appBar = guidedPrototypeElement('div','guided-prototype-appbar',destination + ' · SIMULAÇÃO');
     const note = guidedPrototypeElement('p','guided-prototype-notification','Canal de treino independente. Nenhum dado real é solicitado ou enviado.');
@@ -1785,7 +1785,10 @@
       clearGuide();
       guidedPracticeView.dataset.prototypeStage = 'done';
       button.disabled = true;
-      guidedInstruction.textContent = 'Você praticou uma ação segura. Revise os sinais de alerta.';
+      guidedKicker.textContent = destination + ' · ETAPA 4 DE 4';
+      guidedInstruction.textContent = 'Você praticou uma ação segura. Leia os sinais de alerta e toque em Concluir atividade.';
+      setCoachMessage(destination, 'Revise os sinais de alerta', guidedInstruction.textContent);
+      announce(guidedInstruction.textContent, true);
       onDone();
     });
     guidedExample.replaceChildren(appBar,note,button);
@@ -1801,7 +1804,10 @@
     }));
     guidedRecap.hidden = false;
     guidedRecap.focus({preventScroll:true});
-    guidedRecap.scrollIntoView({block:'start'});
+    guidedRecap.scrollIntoView({block:'start',behavior:'instant'});
+    if (guidedPracticeView.dataset.prototypeStage === 'done') {
+      scheduleGuide(guidedContinue,{label:'Concluir atividade'},150);
+    }
   }
 
   function renderGuidedActivity(action) {
@@ -1812,6 +1818,7 @@
     delete guidedPracticeView.dataset.prototypeApp;
     guidedOptions.hidden = false;
     if (guidedRecap) guidedRecap.hidden = true;
+    $('#guidedPrototypeRetry')?.remove();
     guidedSignals?.replaceChildren();
     if (guidedKicker) guidedKicker.textContent = activity.kicker;
     if (guidedTitle) guidedTitle.textContent = activity.title;
@@ -2356,6 +2363,7 @@
       btn.classList.add('is-correct');
       if (result) result.textContent = '✓ CORRETO';
       if (guidedFeedback) { guidedFeedback.hidden = false; guidedFeedback.className = 'guided-feedback good'; guidedFeedback.textContent = '✓ Correto! Muito bem. Você escolheu a opção mais segura.'; }
+      $('#guidedPrototypeRetry')?.remove();
       if (activity?.signals && guidedRecap && guidedSignals) {
         if (!showGuidedPrototypeDestination(currentTopicAction, activity, () => showGuidedRecap(activity))) {
           clearGuide();
@@ -2375,6 +2383,26 @@
         guidedFeedback.className = 'guided-feedback bad';
         guidedFeedback.textContent = explanation || '✕ Errado. Tente novamente com calma.';
         if (explanation) guidedFeedback.scrollIntoView({ block: 'nearest' });
+        if (guidedPracticeView.dataset.prototypeStage === '2') {
+          $('#guidedPrototypeRetry')?.remove();
+          const retry = guidedPrototypeButton('Tentar novamente', 'guidedPrototypeRetry', () => {
+            if (phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '2') return;
+            retry.remove();
+            guidedFeedback.hidden = true;
+            guidedOptions.querySelectorAll('button').forEach(option => {
+              option.classList.remove('is-wrong');
+              const label = option.querySelector('.answer-result');
+              if (label) label.textContent = '';
+            });
+            guidedInstruction.textContent = 'Vamos juntos. Toque na ação segura destacada.';
+            setCoachMessage(activity.kicker, activity.title, guidedInstruction.textContent);
+            announce(guidedInstruction.textContent, true);
+            scheduleGuide(guidedOptions.querySelector('[data-guided-correct="1"]'), {label:'Ação segura'},100);
+          });
+          guidedFeedback.after(retry);
+          announce(guidedFeedback.textContent + ' Toque em Tentar novamente.', true);
+          scheduleGuide(retry,{label:'Tentar novamente'},120);
+        }
       }
     }
   });
