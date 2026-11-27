@@ -2467,7 +2467,8 @@
       }
       saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       isGuestPretest = false;
-      await loadServerProgress(data.phone || digits);
+      // A tela de trilhas não espera a consulta de progresso, que pode demorar.
+      void loadServerProgress(data.phone || digits);
       showQuickStartMessage(data.message || 'Seu progresso foi salvo.', 'success');
       window.setTimeout(() => {
         closeStartModal();
@@ -2526,9 +2527,9 @@
       const data = await response.json();
       if (!response.ok) return showReturnMessage(returnCodeMessage, data.message || 'Código incorreto.');
       saveRememberedUser(data.name, data.phone, data.level_token);
-      await loadServerProgress(data.phone);
       closeReturnModal();
       startTraining({ focus: true, boot: true });
+      void loadServerProgress(data.phone);
     } catch (_) {
       showReturnMessage(returnCodeMessage, 'Não foi possível conectar ao servidor para entrar.');
     } finally {
@@ -3715,8 +3716,8 @@
       if (!response.ok) return show(data.message || 'Não foi possível criar sua conta.', 'error');
       saveRememberedUser(data.name || 'Participante', data.phone || digits, data.level_token);
       accountCard.hidden = true;
-      await loadServerProgress(data.phone || digits);
       startTraining({ focus: true, boot: true });
+      void loadServerProgress(data.phone || digits);
     } catch (_) { show('Não foi possível salvar agora. Verifique sua conexão.', 'error'); }
     finally { submit.disabled = false; submit.textContent = 'Quero continuar aprendendo'; }
   });
