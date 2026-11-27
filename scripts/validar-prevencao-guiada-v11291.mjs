@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { runInNewContext } from 'node:vm';
 import { chromium, webkit } from 'playwright';
 
 const baseUrl = process.env.EDUCA_URL || 'http://127.0.0.1:8789';
 const useWebKit = process.env.EDUCA_BROWSER === 'webkit';
 const engine = useWebKit ? webkit : chromium;
 const browser = await engine.launch(useWebKit ? {} : { args: ['--no-sandbox'] });
-const courses = [
+const originalCourses = [
   ['security', 'Link falso para roubar dados', 'guided-link-dados', /transportadora|oficial/i, /proteja seu CPF/i],
   ['security', 'Ligação de falso sequestro', 'guided-falso-sequestro', /encerre|desligue/i, /190/],
   ['pix', 'Golpe do Pix errado', 'guided-pix-devolucao', /extrato/i, /opção Devolver/],
@@ -13,6 +15,11 @@ const courses = [
   ['whatsapp', 'Loja falsa no WhatsApp', 'guided-whatsapp-loja', /loja/i, /confira o destinatário/i],
   ['govbr', 'Falsa prova de vida', 'guided-gov-prova-vida', /dados|documento/i, /Central 135/i]
 ];
+const catalog = {};
+runInNewContext(await readFile('public/static/js/guided-prevention-catalog-v11292.js', 'utf8'), { window: catalog });
+const expandedCourses = catalog.EducaGuidedPrevention.map(lesson => [
+  lesson.topic, lesson.title, lesson.code, lesson.choices.find(choice => choice.length > 1)[1], lesson.takeaway, lesson.group
+]);
 const profiles = [
   { platform: 'web', viewport: { width: 1366, height: 768 }, font: 'normal' },
   { platform: 'android', viewport: { width: 320, height: 700 }, font: 'extra' },
@@ -20,7 +27,8 @@ const profiles = [
 ];
 
 try {
-  for (const { platform, viewport, font } of profiles) {
+  for (const [profile, { platform, viewport, font }] of profiles.entries()) {
+    const courses = [...originalCourses, ...expandedCourses.filter((_, index) => index % profiles.length === profile)];
     const mobile = platform !== 'web';
     const page = await browser.newPage({ viewport, hasTouch: mobile, isMobile: mobile });
     const recorded = [];
@@ -47,10 +55,11 @@ try {
       ['pix', 'security', 'whatsapp', 'govbr']);
     assert.equal(await page.locator('#openAccessibilitySettings').isVisible(), true);
 
-    for (const [topic, title, code, retry, advice] of courses) {
+    for (const [topic, title, code, retry, advice, group] of courses) {
       await hit(home.locator(`[data-learning-topic="${topic}"]`));
       const path = page.locator('#modulePathView.is-active');
-      const lesson = path.getByRole('button', { name: new RegExp(title) });
+      const lesson = path.locator('[data-module-lesson]').filter({ has: path.getByText(title, { exact: true }) });
+      if (group) assert.equal(await path.getByRole('heading', { name: group, exact: true }).count(), 1);
       await hit(lesson);
       const activity = page.locator('#guidedPracticeView.is-active[data-guided-prevention]');
       await activity.waitFor({ state: 'visible' });
@@ -66,7 +75,9 @@ try {
         assert.equal(await recap.isHidden(), true);
       }
       await hit(wrong);
-      assert.match(await activity.getByRole('status').textContent(), retry);
+      const feedback = await activity.getByRole('status').textContent();
+      if (group) assert.equal(feedback, retry);
+      else assert.match(feedback, retry);
       assert.equal(await recap.isHidden(), true);
       assert.equal(recorded.some(event => event.activity_code === code && event.event === 'complete'), false);
       await hit(activity.locator('[data-guided-correct="1"]'));
@@ -77,14 +88,16 @@ try {
       assert.ok(await surface.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
       await hit(continueButton);
       const success = page.locator('#successView.is-active');
-      assert.match(await success.locator('#successLearned').textContent(), advice);
+      const takeaway = await success.locator('#successLearned').textContent();
+      if (group) assert.equal(takeaway, advice);
+      else assert.match(takeaway, advice);
       await hit(success.locator('#nextLessonBtn'));
       assert.match(await lesson.getAttribute('aria-label'), /Concluída/);
       await hit(path.locator('#modulePathBack'));
     }
     assert.deepEqual(recorded.filter(event => event.event === 'complete').map(event => event.activity_code).sort(),
       courses.map(([, , code]) => code).sort());
-    console.log(`V112.91 ${engine.name()} ${platform} ${font} — ${courses.length} atividades concluídas`);
+    console.log(`V112.92 ${engine.name()} ${platform} ${font} — ${courses.length} atividades concluídas`);
     await page.close();
   }
 } finally {
