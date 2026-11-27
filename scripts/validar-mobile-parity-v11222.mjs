@@ -166,6 +166,7 @@ try{
    await page.locator('#freeVideoText').tap({timeout:8000});
    assert.equal(await page.locator('#freeVideoText').getAttribute('aria-expanded'),'true');
    await page.setViewportSize({width:c.width,height:Math.max(300,c.height-340)});
+   await page.waitForFunction(()=>parseFloat(document.documentElement.style.getPropertyValue('--educa-visible-h'))===Math.round(window.visualViewport?.height||innerHeight));
    await page.locator('#freeVideoInput').fill('Mensagem de teste');
    const typing=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
@@ -176,7 +177,10 @@ try{
    });
    assert.ok(typing.inputTop>=typing.top-1&&typing.inputBottom<=typing.bottom+1&&typing.sendTop>=typing.top-1&&typing.sendBottom<=typing.bottom+1&&typing.width>=43.5&&typing.height>=43.5&&typing.clickable,key+' campo da Lia fora da área visível '+JSON.stringify(typing));
    await page.screenshot({path:dir+'/'+key+'-lia-keyboard.png'});
-   await page.locator('#freeVideoText').tap({timeout:8000});
+   await page.route('**/api/modo-livre/conversar-web',route=>route.fulfill({json:{ok:true,mode:'ia',reply:'Resposta de teste.'}}));
+   const sent=page.waitForRequest(request=>request.url().endsWith('/api/modo-livre/conversar-web')&&request.method()==='POST');
+   await page.locator('#freeVideoSend').tap({timeout:8000});
+   assert.equal((await sent).postDataJSON().message,'Mensagem de teste');
    assert.equal(await page.locator('#freeVideoForm').isHidden(),true);
    await page.setViewportSize({width:c.width,height:c.height});
    console.log('MOBILE_PARITY_V11222_OK '+key+' '+JSON.stringify({render:home.render,native:home.native,color}));
