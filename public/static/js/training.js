@@ -653,6 +653,9 @@
   };
 
   let trainingStarted = false;
+  // V112.98: o launcher Android só pode substituir o menu quando a pessoa
+  // solicita explicitamente explorar o aparelho ou está no Modo Livre.
+  let exploringPhoneLauncher = false;
   let nativeGuidedSession = null;
   let currentScenario = null;
   let completed = new Set();
@@ -690,6 +693,13 @@
     if (pretestFinished) openStartModal({ fromPretest: true });
   }
   function setView(name) {
+    // Um evento tardio de voltar ao início do Android não pode esconder as
+    // trilhas após login. O pré-teste, o Modo Livre e o botão "Explorar"
+    // continuam autorizados a abrir o launcher.
+    if (name === 'home' && trainingStarted && accessMode === 'registered' &&
+        !exploringPhoneLauncher && !window.EducaFreeMode?.isActive?.()) {
+      name = 'learning';
+    }
     if (pretestLocked() && !pretestAllowsView(name, trainingStarted, pretestFinished)) return false;
     // Every screen change invalidates pending arrows from the previous screen.
     guideEpoch += 1;
@@ -1667,6 +1677,7 @@
 
   function openLearningHub() {
     if (pretestLocked()) return blockPretestNavigation();
+    exploringPhoneLauncher = false;
     if (window.EducaFreeMode?.isActive?.()) window.EducaFreeMode.stop();
     stopNativeGuidedLesson();
     isGuestPretest = false;
@@ -2249,6 +2260,7 @@
     if (coachCard) { coachCard.hidden = true; coachCard.classList.remove('is-visible'); }
     if (accountCard) accountCard.hidden = true;
 
+    // V112.98: após autenticar, o menu de trilhas é a tela padrão.
     // V112.77: todas as entradas autenticadas na Web, desktop e mobile, inclusive
     // cadastro, código de retorno e conta lembrada. Não dependa de gesto antigo.
     if (accessMode === 'registered' && autoPrototypeWeb) {
@@ -2559,6 +2571,7 @@
     });
   });
   openAndroidHome?.addEventListener('click', () => {
+    exploringPhoneLauncher = true;
     clearGuide();
     setView('home');
     if (miniCoachKicker) miniCoachKicker.textContent = 'CELULAR ANDROID';
@@ -3435,7 +3448,12 @@
   $$('.android-back').forEach(btn => btn.addEventListener('click', () => { clearGuide(); setView(btn.dataset.backHome || 'home'); }));
   // A camada Android V103 utiliza eventos explícitos para não duplicar o fluxo das aulas.
   window.addEventListener('educa:system-learning', () => { if (trainingStarted) openLearningHub(); else setView('home'); });
-  window.addEventListener('educa:system-home', () => { clearGuide(); setView('home'); });
+  window.addEventListener('educa:system-home', () => {
+    clearGuide();
+    if (trainingStarted && accessMode === 'registered' && !window.EducaFreeMode?.isActive?.()) {
+      openLearningHub();
+    } else setView('home');
+  });
   window.addEventListener('educa:system-back', () => {
     const active = $('.android-view.is-active');
     if (!active || active.dataset.view === 'home') return;
