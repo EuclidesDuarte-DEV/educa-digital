@@ -6,6 +6,8 @@ export const PREVENTION_SOURCES=Object.freeze([
  Object.freeze({id:'cert-cartilha',title:'CERT.br — Cartilha de Segurança',url:'https://cartilha.cert.br/fasciculos/',summary:'Identificação de mensagens suspeitas, proteção de contas e orientações a vítimas.'}),
  Object.freeze({id:'bc-pix',title:'Banco Central — Segurança no Pix',url:'https://www.bcb.gov.br/estabilidadefinanceira/pix-seguranca',summary:'Conferência independente, proteção financeira e contestação de transações.'}),
  Object.freeze({id:'bc-dicas',title:'Banco Central — Prevenção de golpes',url:'https://www.bcb.gov.br/meubc/faqs/p/dicas-gerais-para-evitar-golpes',summary:'Verificação de identidade e confirmação por canais conhecidos.'}),
+ Object.freeze({id:'bc-vitimas',title:'Banco Central — Orientação a vítimas',url:'https://www.bcb.gov.br/meubc/faqs/p/o-que-fazer-em-caso-de-golpe-fraude-ou-um-crime',summary:'Orientações sobre comunicar o banco, contestar transações e buscar ajuda após uma fraude.'}),
+ Object.freeze({id:'gov-familias',title:'Ministério da Justiça — Proteção de famílias',url:'https://www.gov.br/mj/pt-br/assuntos/noticias/veja-como-se-proteger-de-golpes-na-internet-e-orientar-sua-familia/',summary:'Proteção de contas, autenticação em dois fatores e orientação de pessoas vulneráveis.'}),
  Object.freeze({id:'gov-alertas',title:'Governo Federal — Alertas digitais',url:'https://www.gov.br/cisc/pt-br/alertas-de-golpes-digitais',summary:'Alertas públicos para conscientização e proteção do cidadão.'})
 ]);
 const maxBytes=1024*1024;
@@ -54,4 +56,15 @@ export async function refreshPreventionSources(env,{fetcher=fetch}={}){
   }catch(_){errors++;}
  }
  return {enabled:true,checked,changed,errors};
+}
+
+// Diagnóstico agregado; não revela documentos ou informações pessoais.
+export async function preventionResearchStatus(env){
+ const enabled=env?.LIA_PREVENTION_RESEARCH==='true'&&env?.PREVIEW_DB_BOOTSTRAP!=='true';
+ const result={enabled,sources:PREVENTION_SOURCES.length,interval_hours:6,last_check:null,checked_sources:0};
+ if(!env?.DB)return result;
+ try{
+  const row=await env.DB.prepare('SELECT MAX(checked_at) AS last_check,COUNT(*) AS checked_sources FROM lia_prevention_source_checks').first();
+  return {...result,last_check:row?.last_check||null,checked_sources:Number(row?.checked_sources||0)};
+ }catch(_){return result;}
 }
