@@ -1097,7 +1097,7 @@ async function answer(){if(!session.active||session.connected)return;
  if(!session.active||!session.connected)return;
  free()?.videoAccepted?.();speak(intro);}
 function listen(){
- if(!session.active||!session.connected||session.waiting||session.rec||session.utterance||document.hidden)return;
+ if(!session.active||!session.connected||session.waiting||session.rec||session.utterance||session.speechQueue.length||!ui.form.hidden||document.hidden)return;
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){setHandsFree(false);status('Reconhecimento de voz indisponível. Você ainda pode digitar.');return;}
  try{
@@ -1219,7 +1219,7 @@ ui.answer?.addEventListener('pointerup',()=>{if(webNeuralPlayback())primeSpeechM
  ui.answer?.addEventListener('click',()=>{void answer();});ui.hang?.addEventListener('click',()=>free()?.hangupVideo?.());ui.setup?.addEventListener('click',()=>{void configure();});
  $('freeVideoVoiceSettings')?.addEventListener('click',()=>{abortSpeech();window.EducaLiaVoice?.openSettings?.();});
 ui.mic?.addEventListener('click',()=>{if(session.micEnabled){setHandsFree(false);status('Microfone desativado.');}else{primeSpeechMotion();setHandsFree(true);abortSpeech();listen();}});
-ui.text?.addEventListener('click',()=>{if(!session.active||!session.connected)return;const opening=ui.form.hidden;ui.form.hidden=!opening;ui.text.setAttribute('aria-expanded',String(opening));if(opening)ui.input.focus?.();});
+ui.text?.addEventListener('click',()=>{if(!session.active||!session.connected)return;const opening=ui.form.hidden;ui.form.hidden=!opening;ui.text.setAttribute('aria-expanded',String(opening));if(opening){setHandsFree(false);ui.input.focus?.({preventScroll:true});}else ui.input.blur?.();syncLiaCallLayout();});
 ui.repeat?.addEventListener('click',()=>{if(session.active&&session.connected&&!session.waiting&&session.lastSpoken)speak(session.lastSpoken);});
 ui.camera?.addEventListener('click',()=>{void toggleCamera();});
 speaker?.addEventListener('click',()=>{
@@ -1267,7 +1267,7 @@ ui.play?.addEventListener('click',()=>{
   document.documentElement?.dataset?.educaPlatform==='web'&&selectedEngine()==='gratuita'?
   'LIA falando · Dora neural gratuita':'LIA falando · voz do aparelho'
  );}).catch(()=>{showVoiceProgress('Áudio bloqueado: confira o som.');status('Não foi possível liberar a reprodução.');});});
-ui.form?.addEventListener('submit',e=>{e.preventDefault();const t=ui.input.value.trim();if(!t||!session.active||!session.connected||session.waiting)return;ui.input.value='';ui.form.hidden=true;ui.text?.setAttribute('aria-expanded','false');abortSpeech();free()?.sendVideo?.(t);});
+ui.form?.addEventListener('submit',e=>{e.preventDefault();const t=ui.input.value.trim();if(!t||!session.active||!session.connected||session.waiting)return;ui.input.value='';ui.input.blur?.();ui.form.hidden=true;ui.text?.setAttribute('aria-expanded','false');abortSpeech();free()?.sendVideo?.(t);syncLiaCallLayout();});
 document.addEventListener('pointerdown',e=>{
  const menu=$('freeVideoMore');if(menu?.open&&!menu.contains(e.target))menu.open=false;
 });
