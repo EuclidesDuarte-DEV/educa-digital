@@ -333,8 +333,9 @@ function start(code,activity,bridge){
  if(!ok){stop();return false;}
  return true;
 }
+// Back remains available even while the spotlight blocks unrelated actions.
 document.addEventListener('click',e=>{
- if(!session||!e.target.closest('#webRealBack'))return;
+ if(!session||!e.target.closest('#webRealBack, #phoneScreen .bank-back-btn, #phoneScreen .android-back, #phoneScreen .gov-back-btn, #phoneScreen .settings-home-back'))return;
  e.preventDefault();e.stopImmediatePropagation();
  session.bridge.back();
 },true);
