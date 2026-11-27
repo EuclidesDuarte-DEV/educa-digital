@@ -190,7 +190,15 @@ function safeHistory(history,choices){
 export async function selectStrictReply(parsed,env,model,{timeoutMs=3500}={}){
  const choices=approvedReplies(parsed.scenario);
  if(!choices)throw Error('unknown scenario');
- const respond=(id,source)=>({reply:choices[id],source,guarded:source==='catalog-protection'});
+ const recent=new Set(parsed.history.filter(row=>row.role==='assistant').slice(-4).map(row=>normalize(row.content)));
+ const respond=(id,source)=>{
+  // Never invent extra claims or escalate a scenario to avoid repetition.
+  // Keep safety decisions and factual answers stable; otherwise stop a loop.
+  if(source!=='catalog-protection'&&recent.has(normalize(choices[id]))&&!['identity','amount','photo','timing','close','doubt','verify'].includes(id)){
+   id=['repeated','clarifydirect','wait','pause'].find(key=>!recent.has(normalize(choices[key])))||'close';
+  }
+  return {reply:choices[id],source,guarded:source==='catalog-protection'};
+ };
  if(injectionAttempt(parsed.message))return respond(explicitExit(parsed.message)?'close':'context','catalog-protection');
  if(explicitExit(parsed.message))return respond('close','catalog-protection');
  // Respect a refusal before the story/classifier can reinterpret it as a continuation.
