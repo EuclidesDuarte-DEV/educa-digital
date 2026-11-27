@@ -1685,10 +1685,132 @@
     openTopicAction(currentTopicAction);
   }
 
+  // V112.93: every prevention lesson has a local, interactive phone flow.
+  // Source and destination are demonstrations only; no external app, call,
+  // payment, data entry or real account is used.
+  const guidedPrototypeRoutes = Object.freeze({
+    'guided-link-dados':['Mensagens','Abrir SMS','Loja de treino','Consultar pedido'],
+    'guided-falso-sequestro':['Telefone','Ver ligação','Contatos de treino','Ligar para contato salvo'],
+    'guided-pix-devolucao':['Mensagens','Ver pedido','Banco Educa','Conferir extrato e opção Devolver'],
+    'guided-whatsapp-voz':['WhatsApp','Abrir áudio de treino','Contatos de treino','Ligar para contato salvo'],
+    'guided-whatsapp-loja':['WhatsApp','Abrir conversa','Loja de treino','Consultar oferta'],
+    'guided-gov-prova-vida':['Mensagens','Abrir aviso','Meu INSS de treino','Consultar benefício'],
+    'guided-suporte-remoto':['Navegador','Ver aviso','Suporte de treino','Consultar suporte conhecido'],
+    'guided-qr-publico':['Navegador','Ver página','Estabelecimento de treino','Solicitar cardápio'],
+    'guided-celular-levado':['Ajustes','Ver situação','Proteção do aparelho','Solicitar bloqueio simulado'],
+    'guided-conta-em-meu-nome':['Registrato de treino','Abrir relatório','Instituição de treino','Consultar vínculo'],
+    'guided-vaga-falsa':['Mensagens','Abrir mensagem','Carreiras de treino','Consultar vaga'],
+    'guided-tarefa-paga':['WhatsApp','Abrir grupo','Grupo de treino','Sair do grupo'],
+    'guided-investimento-falso':['Navegador','Ver anúncio','Consulta de treino','Conferir registro'],
+    'guided-anuncio-loja-falsa':['Navegador','Ver anúncio','Loja de treino','Consultar produto'],
+    'guided-aluguel-falso':['Navegador','Ver anúncio','Imóvel de treino','Conferir responsável'],
+    'guided-leilao-falso':['Navegador','Ver anúncio','Leilão de treino','Consultar edital'],
+    'guided-premio-falso':['Mensagens','Abrir mensagem','Promoção de treino','Consultar regulamento'],
+    'guided-boleto-falso':['Banco Educa','Ver cobrança','Empresa de treino','Consultar segunda via'],
+    'guided-pix-qr-trocado':['Banco Educa','Ver pagamento','Caixa de treino','Conferir recebedor'],
+    'guided-comprovante-falso':['Mensagens','Ver comprovante','Banco Educa','Consultar extrato'],
+    'guided-emprestimo-taxa':['Mensagens','Ver oferta','Banco Educa','Conferir instituição'],
+    'guided-cartao-compra':['Banco Educa','Ver fatura','Banco Educa','Bloquear e contestar no treino'],
+    'guided-falso-motoboy':['Telefone','Ver ligação','Banco Educa','Consultar atendimento'],
+    'guided-pix-apos-golpe':['Banco Educa','Ver situação','Banco Educa','Solicitar contestação simulada'],
+    'guided-whatsapp-conta-invadida':['WhatsApp','Abrir conversa','Contatos de treino','Consultar contato salvo'],
+    'guided-whatsapp-arquivo-falso':['WhatsApp','Ver anexo de treino','Empresa de treino','Consultar fatura'],
+    'guided-whatsapp-tela':['WhatsApp','Ver chamada','Suporte de treino','Consultar suporte conhecido'],
+    'guided-whatsapp-falso-comprador':['WhatsApp','Abrir conversa','Plataforma de treino','Consultar venda'],
+    'guided-whatsapp-advogado':['WhatsApp','Abrir conversa','Contatos de treino','Consultar escritório'],
+    'guided-whatsapp-romance':['WhatsApp','Abrir conversa','Contatos de treino','Buscar apoio de confiança'],
+    'guided-whatsapp-chantagem':['WhatsApp','Ver situação','Ajuda de treino','Preservar registros e buscar ajuda'],
+    'guided-gov-multa-falsa':['Mensagens','Abrir SMS','Serviço público de treino','Consultar pendência'],
+    'guided-gov-encomenda-taxada':['Mensagens','Abrir SMS','Transportadora de treino','Consultar rastreio'],
+    'guided-gov-inscricao-enem':['Navegador','Ver página','INEP de treino','Consultar inscrição'],
+    'guided-gov-valores-receber':['Mensagens','Abrir mensagem','Banco Central de treino','Consultar valores'],
+    'guided-gov-das-falso':['E-mail','Abrir mensagem','MEI de treino','Consultar DAS'],
+    'guided-gov-restituicao-falsa':['Mensagens','Abrir mensagem','Receita de treino','Consultar restituição'],
+    'guided-gov-acesso-suspeito':['Mensagens','Abrir alerta','GOV.BR de treino','Revisar segurança da conta']
+  });
+  function guidedPrototypeElement(tag, className, text) {
+    const el = document.createElement(tag);
+    el.className = className;
+    if (text) el.textContent = text;
+    return el;
+  }
+  function guidedPrototypeButton(label, id, click) {
+    const button = guidedPrototypeElement('button', 'guided-prototype-action', label);
+    button.type = 'button';
+    button.id = id;
+    button.addEventListener('click', click);
+    return button;
+  }
+  function guidedPrototypeStage(stage, app, instruction) {
+    clearGuide();
+    guidedPracticeView.dataset.prototypeStage = String(stage);
+    guidedPracticeView.dataset.prototypeApp = app;
+    guidedKicker.textContent = app + ' · ETAPA ' + stage + ' DE 3';
+    guidedInstruction.textContent = instruction;
+    setCoachMessage(app, guidedTitle.textContent, instruction);
+    announce(instruction, true);
+    const surface = guidedPracticeView.querySelector('.guided-surface');
+    if (surface) surface.scrollTop = 0;
+  }
+  function openGuidedPrototype(action, activity) {
+    const route = guidedPrototypeRoutes[action];
+    if (!route || !guidedExample || !guidedOptions) return;
+    const [source, openLabel, destination] = route;
+    const evidence = Array.from(guidedExample.childNodes);
+    guidedOptions.hidden = true;
+    guidedPrototypeStage(1, source, activity.instruction);
+    const appBar = guidedPrototypeElement('div','guided-prototype-appbar',source + ' · SIMULAÇÃO');
+    const notification = guidedPrototypeElement('div','guided-prototype-notification',activity.title);
+    const open = guidedPrototypeButton(openLabel,'guidedPrototypeOpen', () => {
+      if (currentTopicAction !== action || phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '1') return;
+      guidedPrototypeStage(2, source, 'Observe a situação no aplicativo e toque na ação mais segura.');
+      guidedExample.replaceChildren(guidedPrototypeElement('div','guided-prototype-appbar',source + ' · SIMULAÇÃO'),...evidence);
+      guidedOptions.hidden = false;
+      const correct = guidedOptions.querySelector('[data-guided-correct="1"]');
+      scheduleGuide(correct,{label:'Ação segura'},100);
+    });
+    guidedExample.replaceChildren(appBar,notification,open);
+    scheduleGuide(open,{label:openLabel},100);
+  }
+  function showGuidedPrototypeDestination(action, activity, onDone) {
+    const route = guidedPrototypeRoutes[action];
+    if (!route || guidedPracticeView.dataset.prototypeStage !== '2') return false;
+    const [, , destination, actionLabel] = route;
+    guidedPrototypeStage(3,destination,'Agora pratique a ação de proteção no aplicativo de treino.');
+    guidedOptions.hidden = true;
+    const appBar = guidedPrototypeElement('div','guided-prototype-appbar',destination + ' · SIMULAÇÃO');
+    const note = guidedPrototypeElement('p','guided-prototype-notification','Canal de treino independente. Nenhum dado real é solicitado ou enviado.');
+    const button = guidedPrototypeButton(actionLabel,'guidedPrototypeFinish',() => {
+      if (currentTopicAction !== action || phoneScreen?.dataset.currentView !== 'guided-practice' || guidedPracticeView.dataset.prototypeStage !== '3') return;
+      clearGuide();
+      guidedPracticeView.dataset.prototypeStage = 'done';
+      button.disabled = true;
+      guidedInstruction.textContent = 'Você praticou uma ação segura. Revise os sinais de alerta.';
+      onDone();
+    });
+    guidedExample.replaceChildren(appBar,note,button);
+    scheduleGuide(button,{label:'Toque aqui'},100);
+    return true;
+  }
+  function showGuidedRecap(activity) {
+    if (!activity?.signals || !guidedRecap || !guidedSignals) return;
+    guidedSignals.replaceChildren(...activity.signals.map(signal => {
+      const item = document.createElement('li');
+      item.textContent = signal;
+      return item;
+    }));
+    guidedRecap.hidden = false;
+    guidedRecap.focus({preventScroll:true});
+    guidedRecap.scrollIntoView({block:'start'});
+  }
+
   function renderGuidedActivity(action) {
     const activity = guidedActivities[action];
     if (!activity) return;
     guidedPracticeView?.toggleAttribute('data-guided-prevention', Boolean(activity.signals));
+    delete guidedPracticeView.dataset.prototypeStage;
+    delete guidedPracticeView.dataset.prototypeApp;
+    guidedOptions.hidden = false;
     if (guidedRecap) guidedRecap.hidden = true;
     guidedSignals?.replaceChildren();
     if (guidedKicker) guidedKicker.textContent = activity.kicker;
@@ -1715,6 +1837,7 @@
     if (miniCoachKicker) miniCoachKicker.textContent = activity.kicker;
     if (miniCoachTitle) miniCoachTitle.textContent = activity.title;
     if (miniCoachText) miniCoachText.textContent = activity.instruction;
+    if (activity.signals) openGuidedPrototype(action, activity);
   }
 
   function returnToLandingPretest() {
@@ -2224,7 +2347,7 @@
 
   guidedOptions?.addEventListener('click', (event) => {
     const btn = event.target.closest('[data-guided-correct]');
-    if (!btn || btn.disabled) return;
+    if (!btn || btn.disabled || guidedPracticeView.dataset.prototypeStage === '1') return;
     const activity = guidedActivities[currentTopicAction];
     const result = btn.querySelector('.answer-result');
     if (btn.dataset.guidedCorrect === '1') {
@@ -2234,18 +2357,15 @@
       if (result) result.textContent = '✓ CORRETO';
       if (guidedFeedback) { guidedFeedback.hidden = false; guidedFeedback.className = 'guided-feedback good'; guidedFeedback.textContent = '✓ Correto! Muito bem. Você escolheu a opção mais segura.'; }
       if (activity?.signals && guidedRecap && guidedSignals) {
-        guidedSignals.replaceChildren(...activity.signals.map(signal => {
-          const item = document.createElement('li');
-          item.textContent = signal;
-          return item;
-        }));
-        guidedRecap.hidden = false;
-        guidedRecap.focus({ preventScroll: true });
-        guidedRecap.scrollIntoView({ block: 'start' });
+        if (!showGuidedPrototypeDestination(currentTopicAction, activity, () => showGuidedRecap(activity))) {
+          clearGuide();
+          showGuidedRecap(activity);
+        }
       } else {
         window.setTimeout(() => showLessonComplete(activity?.learned), 1200);
       }
     } else {
+      clearGuide();
       nativeHaptic('error');
       btn.classList.add('is-wrong');
       if (result) result.textContent = '✕ ERRO';
