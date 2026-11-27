@@ -24,6 +24,10 @@ const inspect=page=>page.evaluate(()=>{
    stage:sel('#phoneStage'),title:document.querySelector('.hero-copy h1')?.textContent||'',
    launcher:document.querySelectorAll('.educa-ios-safety-launcher').length};
 });
+const waitForViewport=page=>page.waitForFunction(()=>{
+ const height=window.visualViewport?.height||innerHeight;
+ return parseFloat(document.documentElement.style.getPropertyValue('--educa-visible-h'))===Math.round(height);
+});
 try{
  for(const c of cases){
   const key=c.platform+'-'+c.width+'x'+c.height+'-'+(process.env.EDUCA_BROWSER||'chromium');
@@ -137,15 +141,16 @@ try{
    await page.locator('#freeOriginalInput').focus();
    await page.setViewportSize({width:c.width,height:Math.max(340,c.height-300)});
    await page.locator('#freeOriginalInput').focus();
-   await page.waitForTimeout(150);
+   await waitForViewport(page);
    const keyboard=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
     const phone=rect('phoneScreen'),input=rect('freeOriginalInput'),send=rect('freeOriginalSend');
-    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,viewport:window.visualViewport?.height||innerHeight,gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:input.height,sendWidth:send.width};
+    const top=window.visualViewport?.offsetTop||0;
+    return {phoneBottom:phone.bottom,inputBottom:input.bottom,sendBottom:send.bottom,sendTop:send.top,top,bottom:top+(window.visualViewport?.height||innerHeight),gesture:getComputedStyle(document.getElementById('gestureHome')).visibility,composerHeight:input.height,sendWidth:send.width};
    });
    assert.ok(keyboard.composerHeight>=43.5&&keyboard.sendWidth>=43.5,key+' compositor sem área de toque '+JSON.stringify(keyboard));
    assert.ok(keyboard.inputBottom<=keyboard.phoneBottom-12&&keyboard.sendBottom<=keyboard.phoneBottom-12,key+' compositor invade navegação '+JSON.stringify(keyboard));
-   assert.ok(keyboard.sendBottom<=keyboard.viewport+1,key+' enviar abaixo do teclado '+JSON.stringify(keyboard));
+   assert.ok(keyboard.sendTop>=keyboard.top-1&&keyboard.sendBottom<=keyboard.bottom+1,key+' enviar fora da área visível '+JSON.stringify(keyboard));
    assert.equal(keyboard.gesture,'hidden');
    await page.screenshot({path:dir+'/'+key+'-keyboard.png'});
    await page.evaluate(()=>{
@@ -166,7 +171,7 @@ try{
    await page.locator('#freeVideoText').tap({timeout:8000});
    assert.equal(await page.locator('#freeVideoText').getAttribute('aria-expanded'),'true');
    await page.setViewportSize({width:c.width,height:Math.max(300,c.height-340)});
-   await page.waitForFunction(()=>parseFloat(document.documentElement.style.getPropertyValue('--educa-visible-h'))===Math.round(window.visualViewport?.height||innerHeight));
+   await waitForViewport(page);
    await page.locator('#freeVideoInput').fill('Mensagem de teste');
    const typing=await page.evaluate(()=>{
     const rect=id=>document.getElementById(id).getBoundingClientRect();
