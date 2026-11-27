@@ -37,3 +37,12 @@ test('V112.98 — atividade guiada começa depois do botão Quero praticar',()=>
  assert.match(script,/window\.EducaGuidedAppFlow\?\.start/);
  assert.match(script,/function startTraining\([\s\S]*?openLearningHub\(\)/);
 });
+
+test('V112.98 — novo cache offline e inscrição do service worker em ambos os canais',()=>{
+ const sw=readFileSync('public/static/sw.js','utf8');
+ assert.match(sw,/educa-cf11298-login-menu-restored/);
+ for(const entry of [html,mobileHtml]){
+  assert.match(entry,/training\.js\?[^"']*loginmenu=11298/);
+  assert.match(entry,/navigator\.serviceWorker\.register\('\\/static\\/sw\.js\?[^']*loginmenu=11298/);
+ }
+});
