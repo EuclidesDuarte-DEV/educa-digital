@@ -1983,6 +1983,7 @@
   // V112.94 — first individually authored exercises in the existing apps.
   // All views and account data are local demonstrations.
   function stopNativeGuidedLesson() {
+    window.EducaGuidedAppFlow?.stop?.();
     nativeGuidedSession?.controller.abort();
     nativeGuidedSession = null;
     $('.guided-native-panel').forEach(el => el.remove());
@@ -2148,6 +2149,22 @@
 
   function openTopicAction(action) {
     currentTopicAction = action;
+    if (guidedActivities[action]?.signals) {
+      const opened=window.EducaGuidedAppFlow?.start?.(action,guidedActivities[action],{
+        setView,clearGuide,scheduleGuide,announce,setCoachMessage,
+        finish:()=>{
+          const learned=guidedActivities[action]?.learned;
+          stopNativeGuidedLesson();
+          showLessonComplete(learned);
+        },
+        back:()=>openModulePath(currentLearningTopic)
+      });
+      if(opened)return;
+      // Never substitute a detached quiz screen if the real guided app failed.
+      announce('Não foi possível abrir o aplicativo de treino desta atividade. Volte à trilha e tente novamente.',false);
+      openModulePath(currentLearningTopic);
+      return;
+    }
     if (openNativeGuidedLesson(action)) return;
     if (action.startsWith('pix-')) { guideBankPixAction(action); return; }
     const securityGuides = {

@@ -20,12 +20,13 @@ function stopCamera(){if(stream){for(const track of stream.getTracks())track.sto
 function clearUrls(){photoUrls.forEach(URL.revokeObjectURL);photoUrls=[];}
 function leave(){window.EducaWebAppsV11216?.close?.();window.EducaWebMoreAppsV11219?.close?.();stopCamera();clearUrls();current='';clearNotice();}
 function back(){leave();window.EducaFreeView?.setView('home');}
-function openApp(app){
- if(!isFree()||!intercepted.has(app))return;
+function openApp(app,options={}){
+ if((!isFree()&&!options.guided)||!intercepted.has(app))return false;
  leave();current=app;
  $('#webRealTitle').textContent=titles[app];
  $('#webRealIcon').src='/static/icons/'+icons[app]+'.svg';
- $('#webRealSubtitle').textContent=app==='camera'?'Permissão necessária para usar a câmera':'Modo Livre · recursos web';
+ $('#webRealSubtitle').textContent=options.guided?'Treino guiado · aplicativo simulado':app==='camera'?'Permissão necessária para usar a câmera':'Modo Livre · recursos web';
+ $('#webRealBack')?.setAttribute('aria-label',options.guided?'Voltar às atividades':'Voltar à tela inicial');
  window.EducaFreeView?.setView('webreal');
  if(window.EducaWebAppsV11216?.open?.(app,{readPhotos,addFiles,removePhoto,downloadBlob}))return;
  if(window.EducaWebMoreAppsV11219?.open?.(app))return;
@@ -110,5 +111,5 @@ body?.addEventListener('submit',event=>{event.preventDefault();const form=event.
 if(screen)new MutationObserver(()=>{if(screen.getAttribute('data-current-view')!=='webreal'&&current){leave();}}).observe(screen,{attributes:true,attributeFilter:['data-current-view']});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopCamera();});
 window.addEventListener('pagehide',stopCamera);
-window.EducaWebReal=Object.freeze({openApp,stopCamera,isActive:()=>current==='camera'||current==='photos'});
+window.EducaWebReal=Object.freeze({openApp,openGuidedApp:app=>{if(!screen?.dataset.guidedAppLesson||isFree())return false;openApp(app,{guided:true});return screen.dataset.currentView==='webreal';},stopCamera,isActive:()=>current==='camera'||current==='photos'});
 })();
