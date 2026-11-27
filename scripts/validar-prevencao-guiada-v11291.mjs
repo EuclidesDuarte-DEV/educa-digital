@@ -75,6 +75,13 @@ try {
       assert.ok(await path.isVisible());
       assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
       await hit(lesson);
+      const intro=page.locator('#videoLessonView.is-active');
+      await intro.waitFor({state:'visible'});
+      assert.ok(await intro.locator('#videoPracticeBtn').isVisible());
+      assert.ok(await intro.locator('#videoIntroPlaceholder').isVisible());
+      assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
+      assert.ok(await page.locator('#guideOverlay').isHidden());
+      await hit(intro.locator('#videoPracticeBtn'));
       assert.equal(await page.locator('#phoneScreen').evaluate(el=>el.classList.contains('free-active')),false);
       assert.ok(await page.locator('#freeExitBtn').isHidden());
       const nativeRoutes={
@@ -84,6 +91,7 @@ try {
         'guided-gov-prova-vida':[['govbr-home','#govSearchBox'],['govbr-services','#govProofRow'],['govbr-proof','#govProofFoundBtn']],
         'guided-gov-acesso-suspeito':[['govbr-home','#govProfileNav'],['govbr-menu','#govSecurityMenuRow'],['govbr-security','#govTwoFactorRow'],['govbr-security-2fa','#gov2faLearnBtn']]
       };
+      if(code.startsWith('guided-whatsapp-'))nativeRoutes[code]=[['whatsapp','#guidedIncomingChat'],['chat','#guidedChatSafeAction'],['normal-chat','#guidedChatConfirm']];
       if(nativeRoutes[code]){
         assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),code);
         for(const [view,target] of nativeRoutes[code]){
@@ -119,6 +127,7 @@ try {
       if (code === 'guided-falso-sequestro') {
         await hit(activity.getByRole('button', { name: 'Voltar às atividades' }));
         await hit(lesson);
+        await hit(page.locator('#videoLessonView.is-active #videoPracticeBtn'));
         assert.equal(await recap.isHidden(), true);
       }
       await expectGuide('#guidedPrototypeOpen');
