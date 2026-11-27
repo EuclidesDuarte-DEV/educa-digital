@@ -48,6 +48,14 @@ try {
     await page.evaluate(font => window.EducaAccessibility.update({ text: font }), font);
 
     const hit = locator => mobile ? locator.tap() : locator.click();
+    const expectGuide = async selector => {
+      await page.waitForFunction(selector => {
+        const target=document.querySelector(selector),overlay=document.querySelector('#guideOverlay'),spot=document.querySelector('#guideSpotlight');
+        if(!target?.classList.contains('guide-target')||overlay?.hidden||!spot)return false;
+        const a=target.getBoundingClientRect(),b=spot.getBoundingClientRect();
+        return Math.min(a.right,b.right)-Math.max(a.left,b.left)>8&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>8;
+      },selector);
+    };
     await hit(page.locator('#startNowBtn'));
     const home = page.locator('#learningView.is-active');
     await home.waitFor({ state: 'visible' });
@@ -77,21 +85,27 @@ try {
         await hit(lesson);
         assert.equal(await recap.isHidden(), true);
       }
+      await expectGuide('#guidedPrototypeOpen');
       await hit(activity.locator('#guidedPrototypeOpen'));
       assert.equal(await activity.getAttribute('data-prototype-stage'), '2');
       assert.equal(await activity.locator('#guidedExample .guided-prototype-appbar').count(), 1);
+      await expectGuide('#guidedOptions [data-guided-correct="1"]');
       await hit(wrong);
       const feedback = await activity.getByRole('status').textContent();
       if (group) assert.equal(feedback, retry);
       else assert.match(feedback, retry);
       assert.equal(await recap.isHidden(), true);
       assert.equal(recorded.some(event => event.activity_code === code && event.event === 'complete'), false);
+      await expectGuide('#guidedPrototypeRetry');
+      await hit(activity.locator('#guidedPrototypeRetry'));
+      await expectGuide('#guidedOptions [data-guided-correct="1"]');
       await hit(activity.locator('[data-guided-correct="1"]'));
       assert.equal(await activity.getAttribute('data-prototype-stage'), '3');
       assert.equal(await recap.isHidden(), true);
       assert.equal(recorded.some(event => event.activity_code === code && event.event === 'complete'), false);
       const action = activity.locator('#guidedPrototypeFinish');
       assert.ok((await action.boundingBox()).height >= 44);
+      await expectGuide('#guidedPrototypeFinish');
       await hit(action);
       assert.equal(await activity.getAttribute('data-prototype-stage'), 'done');
       await recap.waitFor({ state: 'visible' });
@@ -99,7 +113,9 @@ try {
       const continueButton = recap.getByRole('button', { name: 'Concluir atividade' });
       assert.ok((await continueButton.boundingBox()).height >= 44);
       assert.ok(await surface.evaluate(el => el.scrollWidth <= el.clientWidth + 1));
+      await expectGuide('#guidedContinue');
       await hit(continueButton);
+      assert.ok(await page.locator('#guideOverlay').isHidden());
       const success = page.locator('#successView.is-active');
       const takeaway = await success.locator('#successLearned').textContent();
       if (group) assert.equal(takeaway, advice);
