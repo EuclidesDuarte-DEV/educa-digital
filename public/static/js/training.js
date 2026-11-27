@@ -82,6 +82,10 @@
   const guidedExample = $('#guidedExample');
   const guidedOptions = $('#guidedOptions');
   const guidedFeedback = $('#guidedFeedback');
+  const guidedPracticeView = $('#guidedPracticeView');
+  const guidedRecap = $('#guidedRecap');
+  const guidedSignals = $('#guidedSignals');
+  const guidedContinue = $('#guidedContinue');
   const bankGreeting = $('#bankGreeting');
   const bankPixBtn = $('#bankPixBtn');
   const bankSendPixBtn = $('#bankSendPixBtn');
@@ -262,7 +266,9 @@
         ['Golpe do falso filho', 'Aprenda a confirmar antes de fazer um PIX.', 'family', true],
         ['Link falso do banco', 'Veja como agir quando receber um link urgente.', 'bank', true],
         ['Código por SMS', 'Saiba por que nunca compartilhar códigos.', 'code', true],
-        ['Falsa central bancária', 'Treine como agir quando alguém liga pedindo senha ou instalação de app.', 'fake-bank-call', true]
+        ['Falsa central bancária', 'Treine como agir quando alguém liga pedindo senha ou instalação de app.', 'fake-bank-call', true],
+        ['Link falso para roubar dados', 'Confira o endereço antes de informar seus dados.', 'guided-link-dados', true],
+        ['Ligação de falso sequestro', 'Pratique como confirmar se sua filha está segura.', 'guided-falso-sequestro', true]
       ]
     },
     whatsapp: {
@@ -273,7 +279,9 @@
         ['Encontrar uma conversa', 'Aprenda a localizar uma pessoa na lista.', 'wa-list', true],
         ['Enviar uma mensagem', 'Abra uma conversa e escreva uma mensagem.', 'wa-message', true],
         ['Fazer uma ligação', 'Conheça onde fica o botão de chamada.', 'wa-call', true],
-        ['Proteger código de verificação', 'Aprenda por que códigos nunca devem ser enviados por mensagem.', 'wa-code-safety', true]
+        ['Proteger código de verificação', 'Aprenda por que códigos nunca devem ser enviados por mensagem.', 'wa-code-safety', true],
+        ['Áudio com voz conhecida', 'Confirme quem enviou um pedido antes de agir.', 'guided-whatsapp-voz', true],
+        ['Loja falsa no WhatsApp', 'Confira quem está vendendo antes de pagar.', 'guided-whatsapp-loja', true]
       ]
     },
     pix: {
@@ -283,7 +291,8 @@
       lessons: [
         ['Encontrar o Pix no banco', 'Abra o banco, entre no Pix e confira o destinatário.', 'pix-recipient', true],
         ['Entender as chaves Pix', 'Veja CPF, celular, e-mail e chave aleatória.', 'pix-key', true],
-        ['Reconhecer pedido suspeito', 'Aprenda a parar diante de urgência e número novo.', 'pix-scam', true]
+        ['Reconhecer pedido suspeito', 'Aprenda a parar diante de urgência e número novo.', 'pix-scam', true],
+        ['Golpe do Pix errado', 'Confira o extrato e pratique uma devolução segura.', 'guided-pix-devolucao', true]
       ]
     },
     settings: {
@@ -304,7 +313,8 @@
         ['Entrar com segurança', 'Reconheça o acesso oficial do GOV.BR.', 'gov-login', true],
         ['Encontrar um serviço', 'Saiba onde procurar o que você precisa.', 'gov-service', true],
         ['Sair da conta', 'Proteja seus dados depois de usar.', 'gov-logout', true],
-        ['Verificação em duas etapas', 'Entenda onde o código é gerado e como protegê-lo.', 'gov-2fa', true]
+        ['Verificação em duas etapas', 'Entenda onde o código é gerado e como protegê-lo.', 'gov-2fa', true],
+        ['Falsa prova de vida', 'Consulte o benefício por um canal oficial.', 'guided-gov-prova-vida', true]
       ]
     },
     playstore: {
@@ -438,6 +448,84 @@
   };
 
   const guidedActivities = {
+    'guided-link-dados': {
+      kicker: 'SEGURANÇA · SMS',
+      title: 'Link falso para roubar dados',
+      instruction: 'Você está esperando uma encomenda. Chega um SMS dizendo que a entrega depende de uma atualização. O que você faria?',
+      example: '<small>SMS SIMULADO</small><strong>Suposto aviso de entrega</strong><span>A mensagem manda atualizar seu cadastro hoje e pede CPF e dados do cartão.</span><code>atualiza-entrega.invalid</code>',
+      options: [
+        ['Usar o link da mensagem', false, 'O endereço do SMS pode levar a uma página que imita a transportadora. Confira a entrega por onde fez a compra.'],
+        ['Abrir o app da loja e conferir o pedido', true],
+        ['Responder ao SMS com meu CPF', false, 'Responder também pode expor seus dados. Confira o pedido pelo aplicativo ou site oficial que você já usa.']
+      ],
+      signals: ['O endereço é diferente do site oficial da loja ou transportadora.', 'A mensagem exige uma atualização imediata.', 'O pedido de dados do cartão é inesperado para acompanhar uma entrega.'],
+      learned: 'Abra o aplicativo ou site oficial por conta própria e procure seu pedido. Proteja seu CPF, sua senha e os dados do seu cartão.'
+    },
+    'guided-falso-sequestro': {
+      kicker: 'SEGURANÇA · LIGAÇÃO',
+      title: 'Ligação de falso sequestro',
+      instruction: 'Sua filha saiu para trabalhar. Um número desconhecido liga. Você ouve uma voz chorando que parece a dela. O que você faria?',
+      example: '<small>LIGAÇÃO SIMULADA</small><strong>Número desconhecido</strong><span>A pessoa que assumiu a chamada diz que sua filha foi sequestrada, exige dinheiro e tenta impedir que você desligue.</span>',
+      options: [
+        ['Desligar e ligar para o número salvo da minha filha', true],
+        ['Dizer o nome da minha filha para confirmar', false, 'Dizer o nome dá à pessoa informações que ela pode usar para convencer você. Desligue e procure sua filha pelo contato salvo.'],
+        ['Continuar na ligação e mandar dinheiro', false, 'A pressão pode levar a uma transferência antes de você confirmar a situação. Encerre a chamada e busque um contato conhecido.']
+      ],
+      signals: ['A pessoa exige dinheiro com urgência.', 'Ela tenta impedir que você desligue ou fale com alguém.', 'Uma voz parecida e o número da chamada, sozinhos, não confirmam quem está do outro lado.'],
+      learned: 'Desligue sem confirmar nomes nem enviar dinheiro. Procure sua filha ou alguém próximo a ela por um número conhecido. Em caso de emergência ou suspeita real de sequestro, ligue para a Polícia Militar no 190.'
+    },
+    'guided-pix-devolucao': {
+      kicker: 'PIX · DEVOLUÇÃO',
+      title: 'Golpe do Pix errado',
+      instruction: 'Alguém que você não conhece diz que fez um Pix por engano. Envia um comprovante e pede que você devolva o dinheiro para outra chave.',
+      example: '<small>MENSAGEM SIMULADA</small><strong>Pedido de devolução</strong><span>O comprovante veio por mensagem. A chave que a pessoa passou é diferente da conta de origem.</span>',
+      options: [
+        ['Fazer um Pix novo para a chave que recebi', false, 'Um Pix novo pode ir para outra conta. Confira primeiro se o dinheiro entrou no seu extrato.'],
+        ['Confiar na imagem do comprovante', false, 'Uma imagem pode ser alterada. A confirmação do dinheiro recebido está no extrato do seu banco.'],
+        ['Conferir o extrato e devolver pelo Pix recebido, se ele constar', true]
+      ],
+      signals: ['A pessoa apresenta apenas uma imagem como prova.', 'O pedido de devolução aponta para uma chave diferente da origem.', 'O dinheiro só pode ser confirmado no extrato do seu banco.'],
+      learned: 'Abra o app do seu banco. Se o Pix entrou e você vai devolvê-lo, use a opção Devolver na própria transação. Assim o dinheiro volta para a conta de origem.'
+    },
+    'guided-whatsapp-voz': {
+      kicker: 'WHATSAPP · ÁUDIO',
+      title: 'Áudio com voz conhecida',
+      instruction: 'Você recebe um áudio de um número novo. A voz parece a de seu irmão e pede ajuda para pagar uma despesa. Como você confere?',
+      example: '<small>ÁUDIO SIMULADO · RESUMO</small><strong>Contato desconhecido</strong><span>A pessoa diz que trocou de número e que precisa de dinheiro antes do fim do dia.</span>',
+      options: [
+        ['Ligar para meu irmão pelo contato que já tenho', true],
+        ['Confiar na voz e enviar o dinheiro', false, 'Uma voz familiar pode ser imitada. Uma ligação para o contato que você já conhece ajuda a confirmar o pedido.'],
+        ['Pedir outro áudio no mesmo número', false, 'Outro áudio vindo do mesmo número não confirma a identidade. Procure seu irmão por um contato conhecido.']
+      ],
+      signals: ['O pedido chegou de um número novo.', 'A pessoa pede dinheiro com pressa.', 'Uma voz pode ser imitada, mesmo quando soa familiar.'],
+      learned: 'Confirme o pedido por um número já salvo ou com alguém próximo à pessoa. Só tome uma decisão depois dessa confirmação.'
+    },
+    'guided-whatsapp-loja': {
+      kicker: 'WHATSAPP · COMPRAS',
+      title: 'Loja falsa no WhatsApp',
+      instruction: 'Você quer comprar um presente. Um perfil com foto de uma loja conhecida oferece um desconto se o pagamento for feito logo.',
+      example: '<small>CONVERSA SIMULADA</small><strong>Oferta por mensagem</strong><span>O perfil usa o logo da loja. Para reservar o produto, pede um Pix para uma pessoa que você não conhece.</span>',
+      options: [
+        ['Reservar pelo Pix porque o perfil tem o logo', false, 'O logo pode ser copiado. Procure a oferta e os contatos no site ou aplicativo oficial da loja.'],
+        ['Conferir a oferta e o contato no canal oficial da loja', true],
+        ['Pagar agora e conferir a loja depois', false, 'A pressão para reservar é um alerta. Confirme a loja, a oferta e a forma de pagamento antes de enviar dinheiro.']
+      ],
+      signals: ['O perfil usa o logo, mas o número ainda não foi confirmado.', 'A oferta pressiona você a pagar rápido.', 'O nome de quem vai receber o Pix é diferente do esperado.'],
+      learned: 'Encontre o contato da loja por conta própria. Confirme se a oferta existe e confira o destinatário antes de pagar.'
+    },
+    'guided-gov-prova-vida': {
+      kicker: 'GOV.BR · BENEFÍCIOS',
+      title: 'Falsa prova de vida',
+      instruction: 'Uma mensagem diz que sua aposentadoria será bloqueada hoje se você não atualizar a prova de vida. O que você faria?',
+      example: '<small>MENSAGEM SIMULADA</small><strong>Suposto aviso sobre seu benefício</strong><span>A mensagem ameaça bloquear o benefício e pede que você envie uma foto do documento pelo link recebido.</span>',
+      options: [
+        ['Enviar a foto do documento para evitar o bloqueio', false, 'Uma foto do documento expõe dados pessoais. Confira a situação do benefício dentro do Meu INSS.'],
+        ['Responder à mensagem com meu CPF', false, 'A situação do benefício pode ser consultada pelo canal oficial. Evite enviar dados em resposta à mensagem.'],
+        ['Abrir o Meu INSS por conta própria e conferir a situação', true]
+      ],
+      signals: ['A mensagem ameaça cortar o benefício no mesmo dia.', 'O pedido de foto do documento vem por um link inesperado.', 'O alerta pede dados antes de você poder consultar sua própria conta.'],
+      learned: 'Consulte a prova de vida no aplicativo ou site oficial Meu INSS. Se precisar de orientação, use a Central 135.'
+    },
     'pix-recipient': {
       kicker: 'PIX', title: 'Confira antes de pagar',
       instruction: 'Antes de confirmar um PIX, qual é a atitude mais segura?',
@@ -1583,15 +1671,22 @@
   function renderGuidedActivity(action) {
     const activity = guidedActivities[action];
     if (!activity) return;
+    guidedPracticeView?.toggleAttribute('data-guided-prevention', Boolean(activity.signals));
+    if (guidedRecap) guidedRecap.hidden = true;
+    guidedSignals?.replaceChildren();
     if (guidedKicker) guidedKicker.textContent = activity.kicker;
     if (guidedTitle) guidedTitle.textContent = activity.title;
     if (guidedInstruction) guidedInstruction.textContent = activity.instruction;
     if (guidedExample) guidedExample.innerHTML = activity.example;
     if (guidedFeedback) { guidedFeedback.hidden = true; guidedFeedback.textContent = ''; guidedFeedback.className = 'guided-feedback'; }
-    if (guidedOptions) guidedOptions.innerHTML = activity.options.map(([label, correct]) =>
-      `<button type="button" data-guided-correct="${correct ? '1' : '0'}"><span class="answer-copy">${label}</span><span class="answer-result" aria-hidden="true"></span></button>`
+    if (guidedOptions) guidedOptions.innerHTML = activity.options.map(([label, correct], index) =>
+      `<button type="button" data-guided-choice="${index}" data-guided-correct="${correct ? '1' : '0'}"><span class="answer-copy">${label}</span><span class="answer-result" aria-hidden="true"></span></button>`
     ).join('');
     setView('guided-practice');
+    if (activity.signals) {
+      guidedPracticeView.querySelector('.guided-surface').scrollTop = 0;
+      guidedTitle?.focus({ preventScroll: true });
+    }
     if (miniCoachKicker) miniCoachKicker.textContent = activity.kicker;
     if (miniCoachTitle) miniCoachTitle.textContent = activity.title;
     if (miniCoachText) miniCoachText.textContent = activity.instruction;
@@ -2113,13 +2208,34 @@
       btn.classList.add('is-correct');
       if (result) result.textContent = '✓ CORRETO';
       if (guidedFeedback) { guidedFeedback.hidden = false; guidedFeedback.className = 'guided-feedback good'; guidedFeedback.textContent = '✓ Correto! Muito bem. Você escolheu a opção mais segura.'; }
-      window.setTimeout(() => showLessonComplete(activity?.learned), 1200);
+      if (activity?.signals && guidedRecap && guidedSignals) {
+        guidedSignals.replaceChildren(...activity.signals.map(signal => {
+          const item = document.createElement('li');
+          item.textContent = signal;
+          return item;
+        }));
+        guidedRecap.hidden = false;
+        guidedRecap.focus({ preventScroll: true });
+        guidedRecap.scrollIntoView({ block: 'start' });
+      } else {
+        window.setTimeout(() => showLessonComplete(activity?.learned), 1200);
+      }
     } else {
       nativeHaptic('error');
       btn.classList.add('is-wrong');
       if (result) result.textContent = '✕ ERRO';
-      if (guidedFeedback) { guidedFeedback.hidden = false; guidedFeedback.className = 'guided-feedback bad'; guidedFeedback.textContent = '✕ Errado. Tente novamente com calma.'; }
+      const explanation = activity?.options[Number(btn.dataset.guidedChoice)]?.[2];
+      if (guidedFeedback) {
+        guidedFeedback.hidden = false;
+        guidedFeedback.className = 'guided-feedback bad';
+        guidedFeedback.textContent = explanation || '✕ Errado. Tente novamente com calma.';
+        if (explanation) guidedFeedback.scrollIntoView({ block: 'nearest' });
+      }
     }
+  });
+  guidedContinue?.addEventListener('click', () => {
+    if (guidedRecap.hidden || phoneScreen?.dataset.currentView !== 'guided-practice') return;
+    showLessonComplete(guidedActivities[currentTopicAction]?.learned);
   });
   $('#guidedBackBtn')?.addEventListener('click', () => {
     if (currentLearningTopic) openModulePath(currentLearningTopic);

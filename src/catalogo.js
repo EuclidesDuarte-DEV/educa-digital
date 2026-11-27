@@ -59,6 +59,17 @@ export const MODULOS = [
             },
             "video_url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3ITdvjP8F16LCyy9GylHD3JQeFs/a5a4b9cc-d596-4040-9a48-131c706b76d9.mp4",
             "ordem": 1
+          },
+          {
+            "codigo": "guided-pix-devolucao",
+            "titulo": "Golpe do Pix errado",
+            "tipo": "pratica_guiada",
+            "conteudo": {
+              "resumo": "Confira o extrato e pratique uma devolução segura.",
+              "acao_frontend": "guided-pix-devolucao"
+            },
+            "video_url": null,
+            "ordem": 2
           }
         ]
       }
@@ -84,6 +95,17 @@ export const MODULOS = [
             },
             "video_url": "/static/videos/family.mp4?v=71",
             "ordem": 1
+          },
+          {
+            "codigo": "guided-falso-sequestro",
+            "titulo": "Ligação de falso sequestro",
+            "tipo": "pratica_guiada",
+            "conteudo": {
+              "resumo": "Pratique como confirmar se sua filha está segura.",
+              "acao_frontend": "guided-falso-sequestro"
+            },
+            "video_url": null,
+            "ordem": 2
           }
         ]
       },
@@ -102,6 +124,17 @@ export const MODULOS = [
             },
             "video_url": "/static/videos/bank.mp4?v=71",
             "ordem": 1
+          },
+          {
+            "codigo": "guided-link-dados",
+            "titulo": "Link falso para roubar dados",
+            "tipo": "pratica_guiada",
+            "conteudo": {
+              "resumo": "Confira o endereço antes de informar seus dados.",
+              "acao_frontend": "guided-link-dados"
+            },
+            "video_url": null,
+            "ordem": 2
           }
         ]
       },
@@ -163,6 +196,17 @@ export const MODULOS = [
             },
             "video_url": "/static/videos/wa-list.mp4?v=71",
             "ordem": 1
+          },
+          {
+            "codigo": "guided-whatsapp-loja",
+            "titulo": "Loja falsa no WhatsApp",
+            "tipo": "pratica_guiada",
+            "conteudo": {
+              "resumo": "Confira quem está vendendo antes de pagar.",
+              "acao_frontend": "guided-whatsapp-loja"
+            },
+            "video_url": null,
+            "ordem": 2
           }
         ]
       },
@@ -199,6 +243,17 @@ export const MODULOS = [
             },
             "video_url": "/static/videos/wa-call.mp4?v=71",
             "ordem": 1
+          },
+          {
+            "codigo": "guided-whatsapp-voz",
+            "titulo": "Áudio com voz conhecida",
+            "tipo": "pratica_guiada",
+            "conteudo": {
+              "resumo": "Confirme quem enviou um pedido antes de agir.",
+              "acao_frontend": "guided-whatsapp-voz"
+            },
+            "video_url": null,
+            "ordem": 2
           }
         ]
       },
@@ -321,6 +376,17 @@ export const MODULOS = [
             },
             "video_url": "/static/videos/gov-service.mp4?v=71",
             "ordem": 1
+          },
+          {
+            "codigo": "guided-gov-prova-vida",
+            "titulo": "Falsa prova de vida",
+            "tipo": "pratica_guiada",
+            "conteudo": {
+              "resumo": "Consulte o benefício por um canal oficial.",
+              "acao_frontend": "guided-gov-prova-vida"
+            },
+            "video_url": null,
+            "ordem": 2
           }
         ]
       },

@@ -20,6 +20,6 @@ test('schema local e idempotente, preservando usuarios e progresso', () => {
     db.prepare('INSERT INTO usuarios(nome, numero) VALUES (?, ?)').run('Pessoa teste', '65911111111');
     db.exec(schema);
     assert.equal(db.prepare("SELECT count(*) as n FROM usuarios WHERE numero='65911111111'").get().n, 1);
-    assert.equal(db.prepare('SELECT count(*) as n FROM atividades').get().n,22);
+    assert.equal(db.prepare('SELECT count(*) as n FROM atividades').get().n,28);
   } finally { db.close(); }
 });

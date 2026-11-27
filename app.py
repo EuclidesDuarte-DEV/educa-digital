@@ -27,6 +27,13 @@ ACTIVITY_CODES = {
     for capitulo in modulo["capitulos"]
     for atividade in capitulo["atividades"]
 }
+GUIDED_ACTIVITIES = {
+    atividade["codigo"]: (capitulo["codigo"], atividade)
+    for modulo in MODULOS
+    for capitulo in modulo["capitulos"]
+    for atividade in capitulo["atividades"]
+    if atividade["tipo"] == "pratica_guiada"
+}
 
 # O Flask aponta para os arquivos V102 originais, sem recriar o layout.
 app = Flask(
@@ -257,6 +264,11 @@ def progresso():
     user = user_from_phone(phone)
     if not user:
         return fail(404, "Usuário não encontrado.")
+    if code in GUIDED_ACTIVITIES:
+        chapter, activity = GUIDED_ACTIVITIES[code]
+        db().execute("""INSERT OR IGNORE INTO atividades (capitulo_id, codigo, titulo, tipo, conteudo, ordem)
+            SELECT id, ?, ?, ?, ?, ? FROM capitulos WHERE codigo = ?""",
+            (code, activity["titulo"], activity["tipo"], json.dumps(activity["conteudo"], ensure_ascii=False), activity["ordem"], chapter))
     db().execute("INSERT OR IGNORE INTO progresso(usuario_id,atividade_codigo) VALUES(?,?)", (user["id"], code))
     if event == "attempt":
         db().execute("""UPDATE progresso SET tentativas=tentativas+1,atualizado_em=CURRENT_TIMESTAMP

@@ -16,10 +16,10 @@ import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-
 import { populateReviewedNeuralLibrary } from './lia-neural-library-v11200.js';
 import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
-const CODIGOS_ATIVIDADES = new Set(
+const ATIVIDADES_POR_CODIGO = new Map(
   MODULOS.flatMap(modulo =>
     modulo.capitulos.flatMap(capitulo =>
-      capitulo.atividades.map(atividade => atividade.codigo)
+      capitulo.atividades.map(atividade => [atividade.codigo, { atividade, capitulo: capitulo.codigo }])
     )
   )
 );
@@ -250,13 +250,26 @@ async function salvarProgresso(request, env) {
   if (!['attempt', 'complete'].includes(evento)) {
     return erro(400, 'Evento de progresso inválido.');
   }
-  if (!CODIGOS_ATIVIDADES.has(codigoAtividade)) {
+  const entrada = ATIVIDADES_POR_CODIGO.get(codigoAtividade);
+  if (!entrada) {
     return erro(404, 'Atividade não encontrada.');
   }
 
   const usuario = await buscarUsuario(env, telefone);
   if (!usuario) {
     return erro(404, 'Usuário não encontrado.');
+  }
+
+  const { atividade, capitulo } = entrada;
+  if (atividade.tipo === 'pratica_guiada') {
+    // Bancos existentes já têm os capítulos. Cadastre a nova atividade antes
+    // de gravar o progresso para que o gatilho possa preencher atividade_id.
+    await consulta(
+      env,
+      `INSERT OR IGNORE INTO atividades (capitulo_id, codigo, titulo, tipo, conteudo, ordem)
+       SELECT id, ?, ?, ?, ?, ? FROM capitulos WHERE codigo = ?`,
+      atividade.codigo, atividade.titulo, atividade.tipo, JSON.stringify(atividade.conteudo), atividade.ordem, capitulo
+    ).run();
   }
 
   // O gatilho SQL preenche atividade_id sem alterar o contrato da API V102.
