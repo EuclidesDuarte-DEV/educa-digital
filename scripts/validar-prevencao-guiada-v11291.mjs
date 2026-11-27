@@ -69,6 +69,31 @@ try {
       const lesson = path.locator('[data-module-lesson]').filter({ has: page.getByText(title, { exact: true }) });
       if (group) assert.equal(await path.getByRole('heading', { name: group, exact: true }).count(), 1);
       await hit(lesson);
+      const nativeRoutes={
+        'guided-pix-devolucao':[['home','#homeView [data-open-app="bank"]'],['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction'],['bank-extract','#nativeGuidedAction']],
+        'guided-comprovante-falso':[['home','#homeView [data-open-app="bank"]'],['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction']],
+        'guided-pix-apos-golpe':[['home','#homeView [data-open-app="bank"]'],['bank-home','#bankExtractBtn'],['bank-extract','#nativeGuidedAction'],['bank-extract','#nativeGuidedAction']],
+        'guided-gov-prova-vida':[['home','#homeView [data-open-app="govbr"]'],['govbr-home','#govSearchBox'],['govbr-services','#govProofRow'],['govbr-proof','#govProofFoundBtn']],
+        'guided-gov-acesso-suspeito':[['home','#homeView [data-open-app="govbr"]'],['govbr-home','#govProfileNav'],['govbr-menu','#govSecurityMenuRow'],['govbr-security','#govTwoFactorRow'],['govbr-security-2fa','#gov2faLearnBtn']]
+      };
+      if(nativeRoutes[code]){
+        assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),code);
+        for(const [view,target] of nativeRoutes[code]){
+          await page.locator('.android-view.is-active[data-view="'+view+'"]').waitFor({state:'visible'});
+          await expectGuide(target);
+          assert.equal(recorded.some(event=>event.activity_code===code&&event.event==='complete'),false);
+          await hit(page.locator(target));
+        }
+        const success=page.locator('#successView.is-active');
+        await success.waitFor({state:'visible'});
+        const takeaway=await success.locator('#successLearned').textContent();
+        if(group)assert.equal(takeaway,advice);else assert.match(takeaway,advice);
+        assert.equal(await page.locator('#phoneScreen').getAttribute('data-guided-app-lesson'),null);
+        await hit(success.locator('#nextLessonBtn'));
+        assert.match(await lesson.getAttribute('aria-label'),/Concluída/);
+        await hit(path.locator('#modulePathBack'));
+        continue;
+      }
       const activity = page.locator('#guidedPracticeView.is-active[data-guided-prevention]');
       await activity.waitFor({ state: 'visible' });
       assert.equal(await activity.locator('#guidedTitle').textContent(), title);
