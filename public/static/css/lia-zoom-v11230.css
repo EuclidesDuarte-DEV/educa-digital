@@ -204,7 +204,8 @@ html body #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoAns
     flex: 0 0 44px !important;
   }
 
-  html[data-educa-platform="web"] body.prototype-focus #phoneScreen:has(#freeVideoView.is-active #freeVideoForm:not([hidden])) #gestureHome {
+  html[data-educa-platform="web"] body.prototype-focus #phoneScreen:has(#freeVideoView.is-active #freeVideoForm:not([hidden])) > :is(.status-bar, .camera-hole, #androidShadeTrigger, #gestureHome),
+  html[data-educa-platform="web"] body.prototype-focus #phoneHardware #freeVideoView.is-active.android-view:has(#freeVideoForm:not([hidden])) :is(#freeVideoSelfie, #liaPhotoPlay) {
     display: none !important;
   }
 }
