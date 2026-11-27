@@ -2,7 +2,7 @@
    tipografia que respeita as preferências de acessibilidade. Não afeta o treino. */
 html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{
  --home-title:clamp(32px,4.2vw,58px);
- --home-subtitle:clamp(16px,1.4vw,19px);
+ --home-subtitle:clamp(18px,1.4vw,19px);
  --home-cta:19px;
  box-sizing:border-box!important;
 }
@@ -103,11 +103,11 @@ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus)
  html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio .preview-badge.training-badge{display:none!important;}
 }
 @media(min-width:901px) and (max-height:720px){
- html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{--home-title:clamp(32px,4vw,46px);--home-subtitle:16px;}
+ html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{--home-title:clamp(32px,4vw,46px);--home-subtitle:18px;}
 }
 @media(max-width:900px){
  html:not(.educa-fullscreen-active) body.home-training-page:not(.prototype-focus) #inicio{
-  --home-title:clamp(29px,6.5vw,43px);--home-subtitle:16px;--home-cta:18px;
+  --home-title:clamp(29px,6.5vw,43px);--home-subtitle:18px;--home-cta:18px;
   display:grid!important;grid-template-columns:minmax(0,1fr)!important;
   align-items:start!important;justify-items:center!important;gap:20px!important;
   min-height:0!important;height:auto!important;padding:24px clamp(14px,4vw,32px) 28px!important;
