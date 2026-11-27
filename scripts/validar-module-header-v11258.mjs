@@ -15,7 +15,8 @@ try{
    if(platform)assert.equal(await page.locator('html').getAttribute('data-educa-native-platform'),platform);
    for(const font of ['normal','extra']){
     await page.evaluate(font=>window.EducaAccessibility.update({text:font}),font);
-    for(const topic of ['security','settings','whatsapp','pix','govbr','playstore']){
+    let pixGeometry;
+    for(const topic of ['pix','security','settings','whatsapp','govbr','playstore']){
      // Apps seguros integra o catálogo, mas não possui cartão no menu atual.
      // Apenas no teste, reutilizar o acionador existente e seu handler real.
      await page.evaluate(topic=>{
@@ -38,6 +39,30 @@ try{
      assert.ok(m.textBoxes.length<=2&&m.titleBox.w>=80&&m.header.h<180,JSON.stringify(m));
      assert.ok(m.textBoxes.every(t=>t.right<=m.header.right+1&&t.left>=m.icon.right-1),JSON.stringify(m));
      assert.equal(m.cards,['pix','settings'].includes(topic)?3:4);
+     const geometry=await page.evaluate(()=>{
+      const v=document.querySelector('#modulePathView'), q=s=>v.querySelector(s);
+      const rect=s=>{const r=q(s).getBoundingClientRect();return {w:r.width,h:r.height,x:r.x,y:r.y};};
+      const styles=(s,props)=>Object.fromEntries(props.map(p=>[p,getComputedStyle(q(s))[p]]));
+      return {
+       frame:rect('.module-path-surface'),header:rect('.module-path-header'),card:rect('.module-lesson-card'),
+       headerStyle:styles('.module-path-header',['minHeight','padding','gap','gridTemplateColumns']),
+       contentStyle:styles('.module-path-content',['padding']),
+       introStyle:styles('.module-path-intro',['padding','borderRadius']),
+       cardStyle:styles('.module-lesson-card',['minHeight','padding','gap','borderRadius']),
+       titleStyle:styles('.module-lesson-card-copy strong',['fontSize','fontWeight','lineHeight']),
+       listStyle:styles('.module-lesson-list',['gap'])
+      };
+     });
+     if(topic==='pix')pixGeometry=geometry;
+     else if(topic==='security'){
+      for(const k of ['headerStyle','contentStyle','introStyle','cardStyle','titleStyle','listStyle'])
+       assert.deepEqual(geometry[k],pixGeometry[k], 'Segurança diverge do Pix: '+k);
+      for(const k of ['frame','header','card'])
+       assert.ok(Math.abs(geometry[k].w-pixGeometry[k].w)<=1,'Largura diferente: '+k);
+      assert.ok(Math.abs(geometry.frame.h-pixGeometry.frame.h)<=1,'Moldura com altura diferente');
+      if(font==='normal')assert.ok(Math.abs(geometry.card.h-pixGeometry.card.h)<=1,'Altura do cartão diferente');
+     }
+
      console.log('V112.59 OK '+(platform||'web')+' '+viewport.width+' '+font+' '+topic+' '+m.title);
     }
    }
