@@ -10,7 +10,7 @@ let session=null;
 const element=(tag,cls='',text='')=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text)e.textContent=text;return e;};
 const button=(id,label,cls='guided-real-button')=>{const e=element('button',cls,label);e.type='button';e.id=id;return e;};
 function clearNodes(){
- $('.guided-native-panel,.guided-native-row,.guided-real-scene,.guided-real-flag,.guided-real-inbox-row,.guided-real-verification,.guided-real-topline,.guided-real-detail-card,.guided-real-chat-inspect,.guided-real-chat-disclaimer').forEach(el=>el.remove());
+ $('.guided-native-panel,.guided-native-row,.guided-real-scene,.guided-real-flag,.guided-real-inbox-row,.guided-real-mail-row,.guided-real-verification,.guided-real-topline,.guided-real-detail-card,.guided-real-chat-inspect,.guided-real-chat-disclaimer').forEach(el=>el.remove());
  $('#webRealView')?.removeAttribute('data-guided-flow-app');
  phone?.removeAttribute('data-guided-app-lesson');
  phone?.removeAttribute('data-guided-bank-detail');
@@ -150,7 +150,7 @@ function startWeb(){
  if(app==='gmail'){
   const list=$('.webx-mail-scroll',body);
   if(!list)return false;
-  const row=element('div','webx-mail-row unread guided-real-inbox-row');
+  const row=element('div','webx-mail-row unread guided-real-mail-row');
   const btn=button('guidedRealOpen','', 'webx-mail-message');
   btn.append(element('span','webx-mail-avatar',s.route.sender.slice(0,1)));
   const copy=element('span','webx-mail-copy');
