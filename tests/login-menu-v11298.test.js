@@ -43,6 +43,6 @@ test('V112.98 — novo cache offline e inscrição do service worker em ambos os
  assert.match(sw,/educa-cf11298-login-menu-restored/);
  for(const entry of [html,mobileHtml]){
   assert.match(entry,/training\.js\?[^"']*loginmenu=11298/);
-  assert.match(entry,/navigator\.serviceWorker\.register\('\\/static\\/sw\.js\?[^']*loginmenu=11298/);
+  assert.ok(entry.includes("navigator.serviceWorker.register('/static/sw.js?") && entry.includes('&loginmenu=11298'));
  }
 });
