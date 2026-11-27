@@ -291,9 +291,9 @@ function startWhats(){
    addText(flag,'strong','','Atenção aos sinais');
    s.activity.signals.forEach(x=>addText(flag,'p','',x));
    wallpaper.append(flag);
-   const action=button('guidedRealSafe','Verificar por outro canal','guided-real-chat-inspect');
+   const action=button('guidedRealSafe',s.route.verifyAction,'guided-real-chat-inspect');
    $('#decisionOptions').append(action);
-   step(action,'Confirme fora da conversa','Não responda com códigos nem transfira dinheiro. Procure um canal conhecido.',verification,'Verificar');
+   step(action,'Faça a verificação adequada',s.activity.signals[1]+' Escolha a ação destacada para proteger seus dados.',verification,'Ação segura');
   },'Analisar');
  },'Abrir');
  return true;
