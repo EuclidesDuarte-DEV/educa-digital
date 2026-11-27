@@ -14,6 +14,7 @@ import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
 import { populateReviewedNeuralLibrary } from './lia-neural-library-v11200.js';
+import { refreshPreventionSources } from './lia-prevention-research-v11287.js';
 import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
 const CODIGOS_ATIVIDADES = new Set(
@@ -686,6 +687,15 @@ async function garantirBancoDeTeste(env) {
 }
 
 export default {
+  async scheduled(_controller, env, ctx) {
+    if(env.LIA_PREVENTION_RESEARCH!=='true'||!env.DB||env.PREVIEW_DB_BOOTSTRAP==='true')return;
+    ctx.waitUntil((async()=>{
+      await setupNeuralDB(env);
+      await populateReviewedNeuralLibrary(env);
+      const result=await refreshPreventionSources(env);
+      console.log('LIA_PREVENTION_RESEARCH',JSON.stringify(result));
+    })());
+  },
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
