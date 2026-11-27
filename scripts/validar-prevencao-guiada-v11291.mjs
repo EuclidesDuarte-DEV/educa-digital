@@ -68,12 +68,18 @@ try {
       const recap = activity.locator('#guidedRecap');
       assert.equal(await recap.isHidden(), true);
       assert.equal(await activity.locator('#guidedExample a, input, audio').count(), 0);
+      assert.equal(await activity.getAttribute('data-prototype-stage'), '1');
+      assert.ok(await activity.locator('#guidedOptions').isHidden());
+      assert.equal(await activity.locator('#guidedPrototypeOpen').isVisible(), true);
       const wrong = activity.locator('[data-guided-correct="0"]').first();
       if (code === 'guided-falso-sequestro') {
         await hit(activity.getByRole('button', { name: 'Voltar às atividades' }));
         await hit(lesson);
         assert.equal(await recap.isHidden(), true);
       }
+      await hit(activity.locator('#guidedPrototypeOpen'));
+      assert.equal(await activity.getAttribute('data-prototype-stage'), '2');
+      assert.equal(await activity.locator('#guidedExample .guided-prototype-appbar').count(), 1);
       await hit(wrong);
       const feedback = await activity.getByRole('status').textContent();
       if (group) assert.equal(feedback, retry);
@@ -81,6 +87,13 @@ try {
       assert.equal(await recap.isHidden(), true);
       assert.equal(recorded.some(event => event.activity_code === code && event.event === 'complete'), false);
       await hit(activity.locator('[data-guided-correct="1"]'));
+      assert.equal(await activity.getAttribute('data-prototype-stage'), '3');
+      assert.equal(await recap.isHidden(), true);
+      assert.equal(recorded.some(event => event.activity_code === code && event.event === 'complete'), false);
+      const action = activity.locator('#guidedPrototypeFinish');
+      assert.ok((await action.boundingBox()).height >= 44);
+      await hit(action);
+      assert.equal(await activity.getAttribute('data-prototype-stage'), 'done');
       await recap.waitFor({ state: 'visible' });
       assert.equal(await recap.getByRole('listitem').count(), 3);
       const continueButton = recap.getByRole('button', { name: 'Concluir atividade' });
