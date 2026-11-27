@@ -653,6 +653,7 @@
   };
 
   let trainingStarted = false;
+  let nativeGuidedSession = null;
   let currentScenario = null;
   let completed = new Set();
   let transitionLock = false;
@@ -1642,8 +1643,9 @@
   }
 
   function openLearningHub() {
-    stopNativeGuidedLesson();
     if (pretestLocked()) return blockPretestNavigation();
+    if (window.EducaFreeMode?.isActive?.()) window.EducaFreeMode.stop();
+    stopNativeGuidedLesson();
     isGuestPretest = false;
     trainingStarted = true;
     clearLandingPretest();
@@ -1676,6 +1678,9 @@
   }
 
   function startTopic(topicId, lessonIndex = 0) {
+    if (pretestLocked()) return blockPretestNavigation();
+    if (window.EducaFreeMode?.isActive?.()) window.EducaFreeMode.stop();
+    stopNativeGuidedLesson();
     waSearchUsed = false;
     govSearchUsed = false;
     const topic = learningTopics[topicId];
@@ -1954,7 +1959,6 @@
 
   // V112.94 — first individually authored exercises in the existing apps.
   // All views and account data are local demonstrations.
-  let nativeGuidedSession = null;
   function stopNativeGuidedLesson() {
     nativeGuidedSession?.controller.abort();
     nativeGuidedSession = null;
@@ -2050,14 +2054,12 @@
     stopNativeGuidedLesson();
     nativeGuidedSession={action,step:0,controller:new AbortController()};
     phoneScreen.dataset.guidedAppLesson=action;
-    setView('home');
-    nativeGuidedStep('#homeView [data-open-app="'+app+'"]',guidedActivities[action].title,
-      'Abra o aplicativo '+(app==='bank'?'Banco Educa':'GOV.BR')+' no celular de treino.',()=>{
-      if(app==='bank'){
-        openBankView('bank-home');
-        nativeGuidedStep('#bankExtractBtn','Abra o extrato','Toque em Extrato para conferir as movimentações da conta fictícia.',()=>nativeGuidedBankExtract(action),'Extrato');
-      }else nativeGuidedGov(action);
-    },app==='bank'?'Banco':'GOV.BR');
+    // Igual às atividades originais: a seleção abre diretamente o aplicativo
+    // correspondente. A tela de ícones do Modo Livre não faz parte deste fluxo.
+    if(app==='bank'){
+      openBankView('bank-home');
+      nativeGuidedStep('#bankExtractBtn','Abra o extrato','Toque em Extrato para conferir as movimentações da conta fictícia.',()=>nativeGuidedBankExtract(action),'Extrato');
+    }else nativeGuidedGov(action);
     return true;
   }
 
