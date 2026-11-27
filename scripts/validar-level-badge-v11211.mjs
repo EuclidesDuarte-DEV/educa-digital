@@ -1,6 +1,6 @@
 /* V112.11 — Badge Nível compacto no celular simulado Web.
  * Chromium real, sem endpoints de IA ou produção. */
-import {chromium} from 'playwright';
+import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir} from 'node:fs/promises';
 
@@ -8,14 +8,19 @@ const cases=[
  {width:320,height:640,font:'normal'},
  {width:390,height:844,font:'normal'},
  {width:390,height:844,font:'extra'},
- {width:1366,height:768,font:'normal'}
+ {width:1366,height:768,font:'normal'},
+ {platform:'android',width:360,height:800,font:'normal',ua:'Mozilla/5.0 (Linux; Android 15; Pixel 7) AppleWebKit/537.36 Chrome/131 Mobile Safari/537.36 EducaNativeAndroid/1.1'},
+ {platform:'android',width:430,height:932,font:'extra',ua:'Mozilla/5.0 (Linux; Android 15; Pixel 9) AppleWebKit/537.36 Chrome/131 Mobile Safari/537.36 EducaNativeAndroid/1.1'},
+ {platform:'ios',width:390,height:844,font:'normal',ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 EducaNativeIOS/1.1'},
+ {platform:'ios',width:390,height:844,font:'extra',ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 26_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 EducaNativeIOS/1.1'}
 ];
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const engine=process.env.EDUCA_BROWSER==='webkit'?webkit:chromium;
+const browser=await engine.launch(engine===webkit?{headless:true}:{headless:true,args:['--no-sandbox']});
 await mkdir('artifacts/level-badge-v11211',{recursive:true});
 try{
  for(const c of cases){
-  const name=c.width+'x'+c.height+'-'+c.font;
-  const page=await browser.newPage({viewport:{width:c.width,height:c.height}});
+  const name=(c.platform||'web')+'-'+c.width+'x'+c.height+'-'+c.font+'-'+(process.env.EDUCA_BROWSER||'chromium');
+  const page=await browser.newPage({viewport:{width:c.width,height:c.height},...(c.platform?{userAgent:c.ua,isMobile:true,hasTouch:true}: {})});
   try{
    await page.addInitScript(()=>{
     // Conta fictícia, sem chamada ao servidor. O XP legado deve ser ignorado.
@@ -23,7 +28,7 @@ try{
     localStorage.setItem('educaWebModoLivreNivelV11182',JSON.stringify({xp:0}));
     localStorage.setItem('educaWebModoLivreNivelV11182:account:6500000000',JSON.stringify({xp:220,confirmed:220,pending:[]}));
    });
-   await page.goto('http://127.0.0.1:8789/html/',{waitUntil:'domcontentloaded',timeout:30000});
+   await page.goto('http://127.0.0.1:8789/html/'+(c.platform?'?app=1&platform='+c.platform+'&experience=web':''),{waitUntil:'domcontentloaded',timeout:30000});
    await page.waitForSelector('#edModoLevelBadge',{state:'attached',timeout:12000});
    await page.waitForFunction(()=>Boolean(window.EducaFreeView),{timeout:12000});
    await page.evaluate(font=>{
@@ -40,11 +45,12 @@ try{
     const title=document.querySelector('#learningGreeting').getBoundingClientRect();
     return {width:br.width,height:br.height,iconWidth:icon?.width,iconHeight:icon?.height,
       label:el.textContent.trim(),accessible:el.getAttribute('aria-label'),
-      platform:document.documentElement.dataset.educaPlatform,
+      platform:document.documentElement.dataset.educaPlatform,native:document.documentElement.dataset.educaNativePlatform,
       headerRight:h.right,badgeRight:br.right,
       statusGap:br.top-status.bottom,titleGap:title.top-br.bottom};
    });
    assert.equal(m.platform,'web',name+': plataforma errada');
+   if(c.platform)assert.equal(m.native,c.platform,name+': canal nativo errado');
    assert.equal(m.label,'Nível 3',name+': o nível mudou incorretamente');
    assert.ok(m.width>60&&m.width<105,name+': badge não compactou '+JSON.stringify(m));
    assert.ok(m.height>=28&&m.height<=34,name+': altura fora da medida '+JSON.stringify(m));
