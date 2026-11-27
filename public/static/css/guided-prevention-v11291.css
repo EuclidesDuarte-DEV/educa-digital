@@ -164,3 +164,27 @@
 #guidedPracticeView[data-prototype-stage="done"] .guided-prototype-action {
   opacity: .75;
 }
+
+/* V112.94 — actionable lesson cards within the existing bank app. */
+#phoneScreen[data-guided-app-lesson] .guided-native-panel {
+  display:grid;gap:10px;min-width:0;margin:14px 0 28px;padding:16px;
+  border:1px solid #c4d9ee;border-radius:16px;background:#fff;
+  color:#183754;box-shadow:0 4px 16px #153d6910;overflow-wrap:anywhere;
+}
+#phoneScreen[data-guided-app-lesson] .guided-native-badge {
+  color:#345e86;font-size:calc(12px * var(--ed-font-factor,1));font-weight:750;
+}
+#phoneScreen[data-guided-app-lesson] .guided-native-heading {
+  margin:0;font-size:calc(18px * var(--ed-font-factor,1));line-height:1.35;
+}
+#phoneScreen[data-guided-app-lesson] .guided-native-detail {
+  margin:0!important;color:#284760;font-size:calc(15px * var(--ed-font-factor,1))!important;line-height:1.5!important;
+}
+#phoneScreen[data-guided-app-lesson] .guided-native-panel button {
+  width:100%;min-height:52px;padding:12px;border:0;border-radius:12px;
+  background:#1556a3;color:#fff;font-size:calc(16px * var(--ed-font-factor,1));
+  font-weight:700;line-height:1.4;white-space:normal;overflow-wrap:anywhere;
+}
+#phoneScreen[data-guided-app-lesson] .guided-native-panel button:focus-visible{
+  outline:3px solid #1565c0;outline-offset:3px;
+}
