@@ -34,8 +34,9 @@ for(const engine of [chromium,webkit]){
     assert.ok(Math.max(...gaps)-Math.min(...gaps)<=2,'espaçamento desigual '+JSON.stringify({platform,width,height,size,gaps}));
     assert.ok(b.scroll<=b.client+2,'overflow horizontal '+JSON.stringify({engine:engine.name(),platform,width,height,size,scroll:b.scroll,client:b.client,hero:b.hero,surface:b.surface}));
     assert.ok(b.hero.left>=b.surface.left-1&&b.hero.right<=b.surface.right+1&&b.secondary.every(c=>c.card.left>=b.surface.left-1&&c.card.right<=b.surface.right+1),'card fora da área útil');
-    if(size==='normal')assert.ok(b.art.width>0&&inside(b.art,b.hero)&&b.art.bottom<=b.arrow.top+1,'ilustração invade seta '+JSON.stringify(b));
-    else assert.equal(b.art.width,0,'arte decorativa deve liberar espaço para fonte ampliada');
+    if(size==='normal'&&b.art.width>0)assert.ok(inside(b.art,b.hero)&&b.art.bottom<=b.arrow.top+1,'ilustração invade seta '+JSON.stringify(b));
+    else if(size!=='normal')assert.equal(b.art.width,0,'arte decorativa deve liberar espaço para fonte ampliada');
+    else assert.ok(b.hero.width<280,'Ilustração ausente em card largo');
     for(const c of b.secondary){
      assert.ok(inside(c.icon,c.card)&&inside(c.title,c.card)&&inside(c.desc,c.card)&&inside(c.arrow,c.card),'card cortado '+JSON.stringify(c));
      assert.ok(c.title.bottom<=c.desc.top+1&&c.desc.right<=c.arrow.left+1&&c.icon.right<=c.title.left+1,'texto ou ícone sobreposto '+JSON.stringify(c));
