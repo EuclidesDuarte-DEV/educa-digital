@@ -167,6 +167,24 @@ try{
    await page.screenshot({path:dir+'/'+key+'-incoming.png'});
    await page.evaluate(()=>document.getElementById('freeVideoAnswer').hidden=true);
    assert.notEqual(await page.locator('#freeVideoPortrait').evaluate(e=>getComputedStyle(e).display),'none',key+' avatar não voltou ao atender');
+   // V112.86: video input with reduced viewport, no real call or microphone.
+   await page.evaluate(()=>{
+    document.getElementById('freeVideoForm').hidden=false;
+    document.getElementById('freeVideoInput').focus({preventScroll:true});
+   });
+   await page.setViewportSize({width:c.width,height:Math.max(300,c.height-340)});
+   await page.locator('#freeVideoInput').fill('Mensagem de teste');
+   await page.waitForTimeout(150);
+   const typing=await page.evaluate(()=>{
+    const r=id=>document.getElementById(id).getBoundingClientRect();
+    const input=r('freeVideoInput'),send=r('freeVideoSend'),v=visualViewport;
+    const top=v?.offsetTop||0,bottom=top+(v?.height||innerHeight);
+    return {inputTop:input.top,inputBottom:input.bottom,sendTop:send.top,sendBottom:send.bottom,top,bottom,width:send.width,height:input.height};
+   });
+   assert.ok(typing.inputTop>=typing.top-1&&typing.inputBottom<=typing.bottom+1&&typing.sendTop>=typing.top-1&&typing.sendBottom<=typing.bottom+1&&typing.width>=44&&typing.height>=44,key+' campo Lia fora do viewport '+JSON.stringify(typing));
+   await page.screenshot({path:dir+'/'+key+'-lia-keyboard.png'});
+   await page.evaluate(()=>{document.getElementById('freeVideoInput').blur();document.getElementById('freeVideoForm').hidden=true;});
+   await page.setViewportSize({width:c.width,height:c.height});
    console.log('MOBILE_PARITY_V11222_OK '+key+' '+JSON.stringify({render:home.render,native:home.native,color}));
   }finally{await ctx.close();}
  }

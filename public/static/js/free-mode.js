@@ -249,9 +249,13 @@ async function send(text){const s=state.scenario;if(!state.active||!s||state.rep
  finally{clearTimeout(responseTimer);ownsRequest=state.request===abort;if(ownsRequest){state.request=null;state.replying=false;els.send.disabled=false;if(els.smsSend)els.smsSend.disabled=false;els.typing.hidden=true;}}
  if(!ownsRequest||!state.active||state.scenario?.id!==current||(abort.signal.aborted&&!timedOut))return;
  if(err){if(visible()==='chat')setStatus(err);else if(visible()==='free-video')video()?.error(err);else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=err;else els.callLine.textContent=err;return;}
- if(isWebTraining()&&s.channel==='whatsapp'&&visible()==='chat'&&repeatedWhatsAppReply(reply,state.conversations.get(s.id)||[])){
-  // Não inventar uma nova resposta nem insistir repetidamente: mensagem de estado fora do diálogo.
-  setStatus('O contato repetiu uma resposta anterior. Nenhuma nova mensagem foi adicionada. Você pode continuar ou revisar os sinais de segurança.');
+ if(repeatedWhatsAppReply(reply,state.conversations.get(s.id)||[])){
+  // A mesma proteção vale em todos os canais, inclusive áudio e SMS.
+  const notice='O contato não trouxe novas informações. Você pode fazer outra pergunta, verificar a identidade ou encerrar a atividade.';
+  if(visible()==='free-video')video()?.error(notice);
+  else if(visible()==='free-call')els.callLine.textContent=notice;
+  else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent=notice;
+  else setStatus(notice);
   return;
  }
  append('assistant',reply);if(visible()==='free-video')video()?.reply(reply);else if(visible()==='free-call'&&state.callAccepted)speak();else if(visible()==='free-sms'&&els.smsStatus)els.smsStatus.textContent='SMS simulado · responda ou escolha uma ação segura';}
@@ -309,6 +313,16 @@ function finish(kind='safe',reason=''){
   if(panel)panel.scrollTop=0;
  }
  show('free-summary');
+ // Complemento educativo revisado; não altera personagem, pontos ou decisões.
+ if(detail){
+  const scenarioId=s.id, initial=detail.textContent;
+  void fetch('/api/lia/prevention-tip?scenario='+encodeURIComponent(scenarioId),{credentials:'same-origin'})
+   .then(r=>r.ok?r.json():null).then(data=>{
+    if(data?.ok&&typeof data.text==='string'&&data.text.length<=240&&visible()==='free-summary'&&state.scenario?.id===scenarioId&&detail.textContent===initial&&!initial.includes(data.text)){
+     detail.textContent=initial+' '+data.text;
+    }
+   }).catch(()=>{});
+ }
  clearTransition();
  // Resultado curto não pausa ao rolar; participante pode avançar imediatamente.
  state.transitionTimer=setTimeout(()=>{state.transitionTimer=null;continueTraining();},quickRisk?3200:2800);

@@ -14,6 +14,7 @@ import { responderModoLivre } from './free-chat.js';
 import { neuralApi, neuralReadiness } from './lia-neural.js';
 import { setupNeuralDB, trainingOutcome, trainingReadiness } from './lia-neural-learning-v11196.js';
 import { populateReviewedNeuralLibrary } from './lia-neural-library-v11200.js';
+import { refreshPreventionSources, preventionResearchStatus, preventionTip } from './lia-prevention-research-v11287.js';
 import { hqWebVoiceStatus, webHQVoice } from './lia-web-hq-tts.js';
 
 const CODIGOS_ATIVIDADES = new Set(
@@ -592,12 +593,13 @@ async function rotearApi(request, env, url, ctx) {
   if (metodo === 'POST' && rota === '/api/lia/training/outcome')
     return trainingOutcome(request,env);
   if (metodo === 'GET' && rota === '/api/lia/neural/health')
-    return responder({ok:true,...await neuralReadiness(env),...await trainingReadiness(env)});
+    return responder({ok:true,...await neuralReadiness(env),...await trainingReadiness(env),prevention_research:await preventionResearchStatus(env)});
   if (rota === '/api/lia/neural' || rota.startsWith('/api/lia/neural/'))
     return neuralApi(request,env,url);
   if (metodo === 'GET' && rota === '/api/modo-livre/capacidades') {
     return responder({ok:true,projeto:'Educa+ Digital',conversa:env?.AI?.run?'workers-ai':'aguardando-binding-ai',voz_neural_online:liaConfigured(env)&&liaPublicVoice(env),voz_alternativa:'voz-feminina-pt-br-do-navegador',precisa_cmd:false});
   }
+  if (metodo === 'GET' && rota === '/api/lia/prevention-tip') return responder({ok:true,...preventionTip(url.searchParams.get('scenario'))});
   if (metodo === 'GET' && rota === '/api/saude') {
     return responder({ ok: true, servico: 'Educa+ Digital Cloudflare' });
   }
@@ -686,6 +688,15 @@ async function garantirBancoDeTeste(env) {
 }
 
 export default {
+  async scheduled(_controller, env, ctx) {
+    if(env.LIA_PREVENTION_RESEARCH!=='true'||!env.DB||env.PREVIEW_DB_BOOTSTRAP==='true')return;
+    ctx.waitUntil((async()=>{
+      await setupNeuralDB(env);
+      await populateReviewedNeuralLibrary(env);
+      const result=await refreshPreventionSources(env);
+      console.log('LIA_PREVENTION_RESEARCH',JSON.stringify(result));
+    })());
+  },
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
@@ -701,7 +712,7 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    const rotaPublica = (request.method === 'GET' && (url.pathname.startsWith('/api/lia-model/') || url.pathname.startsWith('/api/lia-free-model/'))) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades'].includes(url.pathname) || (['/api/modo-livre/conversar','/api/modo-livre/conversar-web'].includes(url.pathname) && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
+    const rotaPublica = (request.method === 'GET' && (url.pathname.startsWith('/api/lia-model/') || url.pathname.startsWith('/api/lia-free-model/'))) || ['/api/saude', '/api/estrutura','/api/modo-livre/capacidades','/api/lia/prevention-tip'].includes(url.pathname) || (['/api/modo-livre/conversar','/api/modo-livre/conversar-web'].includes(url.pathname) && request.method === 'POST') || (url.pathname.startsWith('/api/avatar/') && ['GET','POST'].includes(request.method));
     if (!env.DB && !rotaPublica) {
       return erro(503, 'Banco D1 não configurado. Consulte as instruções de publicação.');
     }
